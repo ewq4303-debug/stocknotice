@@ -1,8 +1,7 @@
 """
-每日台股分析機器人 v3.2 (Claude API)
-v3.2 改動: 切回 Claude API, 個股訊息移除「大盤訊號摘要」與「個股 vs 大盤」區塊
-保留: 個股籌碼 + 大盤動態 (匯率/期貨法人OI/選擇權PUT-CALL) + 衍生訊號
-注意: 大盤動態仍會在主流程開頭推播一則摘要; 個股訊息僅聚焦該檔
+每日台股分析機器人 v3.3 (Claude API)
+v3.3 改動: 標題顯示「代號 名稱」(例: 2330 台積電), 內文 AI 用名稱敘述提升可讀性
+保留: 個股籌碼 + 大盤動態 + 衍生訊號; 大盤摘要與個股訊息分開推播
 """
 
 import os
@@ -19,7 +18,6 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
-# 模型: claude-haiku-4-5 (省錢) / claude-sonnet-4-6 (推薦) / claude-opus-4-7 (最強)
 MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
@@ -40,6 +38,23 @@ def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
     except Exception as e:
         print(f"  ⚠️ FinMind {dataset} 失敗: {e}")
         return []
+
+
+# ===== 股票名稱查詢 =====
+def get_stock_names(stock_ids: list) -> dict:
+    """一次抓全市場股票對照, 過濾出追蹤清單. 失敗時用代號當名稱"""
+    try:
+        # TaiwanStockInfo 不依賴日期, 但 fetch_finmind 一律帶 start_date
+        info = fetch_finmind("TaiwanStockInfo", "2024-01-01")
+        all_names = {r["stock_id"]: r.get("stock_name", "") for r in info}
+        result = {}
+        for sid in stock_ids:
+            name = all_names.get(sid, "")
+            result[sid] = name if name else sid
+        return result
+    except Exception as e:
+        print(f"  ⚠️ 取得股票名稱失敗: {e}")
+        return {sid: sid for sid in stock_ids}
 
 
 # ===== 個股資料抓取 =====
@@ -288,17 +303,24 @@ def calc_market_signals(market: dict) -> dict:
 # ===== AI 分析 (Claude) =====
 def analyze(
     stock_id: str,
+    stock_name: str,
     data: dict,
     market: dict,
     market_sig: dict,
     news: list,
     signals: dict,
 ) -> str:
-    """個股分析; 大盤資料仍餵給 AI 作背景參考, 但輸出不另立大盤段落"""
+    """個股分析; 內文使用股票名稱敘述提升可讀性"""
     client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    prompt = f"""你是專業台股分析師。請依據以下資料給出「{stock_id}」的客觀分析。
-大盤動態僅供 AI 內部參考, 不要在輸出中重複大盤摘要也不要寫個股 vs 大盤段落。
+    # 在 prompt 用 display_name 統一指代; 名稱為空時退回代號
+    display_name = stock_name if stock_name and stock_name != stock_id else stock_id
+
+    prompt = f"""你是專業台股分析師。請依據以下資料給出「{display_name}」({stock_id}) 的客觀分析。
+
+【重要寫作要求】
+- 內文中提及這檔股票時, 請使用「{display_name}」這個名稱, 不要使用代號 {stock_id}
+- 不要在輸出中重述大盤摘要也不要寫個股 vs 大盤段落 (大盤背景僅供你內部分析參考)
 
 ═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
 加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
@@ -308,14 +330,14 @@ USD/TWD {market_sig.get('usdtwd')} | {market_sig.get('usdtwd_trend', '')}
 微台散戶推估: {market_sig.get('TMF_retail_sentiment')}
 TXO Put/Call 比: {market_sig.get('txo_pc_ratio')}
 
-═══ 個股「{stock_id}」原始資料 ═══
+═══ 「{display_name}」原始資料 ═══
 近 7 日股價(OHLCV): {data.get('price')}
 近期三大法人 (分外資/投信/自營商): {data.get('institutional')}
 近 7 日融資融券: {data.get('margin')}
 近 7 日外資持股: {data.get('shareholding')}
 近 7 日借券賣出餘額: {data.get('securities_lending')}
 
-═══ 個股籌碼訊號 ═══
+═══ 「{display_name}」籌碼訊號 ═══
 [法人]
 - 外資 5 日累計 (張): {signals.get('foreign_5d_net', 'N/A')} | 連續方向: {signals.get('foreign_streak', 'N/A')}
 - 投信 5 日累計 (張): {signals.get('trust_5d_net', 'N/A')} | 連續方向: {signals.get('trust_streak', 'N/A')}
@@ -331,17 +353,17 @@ TXO Put/Call 比: {market_sig.get('txo_pc_ratio')}
 ═══ 最新新聞 ═══
 {news}
 
-請嚴格依以下格式回覆 (限 300 字內, 條列為主, 不要新增其他段落):
+請嚴格依以下格式回覆 (限 300 字內, 條列為主, 內文使用「{display_name}」敘述, 不要新增其他段落):
 
 📊 *籌碼面綜合* [偏多 / 中性偏多 / 中性 / 中性偏空 / 偏空]
-- 法人動向: 外資+投信合計訊號
+- 法人動向: 外資+投信對「{display_name}」的合計訊號
 - 主力動向: 融資融券+借券+外資持股的綜合解讀
 - 矛盾訊號: 若有 (例如外資買但融資也大增)
 
 📰 *新聞重點* (挑 2 則最具影響力, 標註利多/利空)
 
 🔍 *短期觀察*
-- 中性陳述近期動能, 不直接喊買賣
+- 中性陳述「{display_name}」近期動能, 不直接喊買賣
 
 ⚠️ *風險提示*
 - 1-2 點具體風險
@@ -380,7 +402,6 @@ def send_telegram(text: str):
 
 
 def send_market_summary(market_sig: dict):
-    """主流程開頭推一則大盤摘要 (個股訊息不再重複)"""
     msg = f"""*🌐 大盤動態快訊* `{market_sig.get('market_date', '')}`
 
 📈 *加權指數*
@@ -406,25 +427,34 @@ TMF: {market_sig.get('TMF_inst_net_oi')} (5日 {market_sig.get('TMF_inst_net_oi_
 # ===== 主流程 =====
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-    print(f"=== 每日股票分析 v3.2 Claude ({today}) ===")
+    print(f"=== 每日股票分析 v3.3 Claude ({today}) ===")
     print(f"模型: {MODEL}")
 
-    print("\n[1/3] 抓取大盤動態...")
+    # 清理 STOCKS 字串
+    stock_ids = [s.strip() for s in STOCKS if s.strip()]
+
+    print("\n[1/4] 取得股票名稱對照...")
+    stock_names = get_stock_names(stock_ids)
+    for sid in stock_ids:
+        print(f"  {sid} = {stock_names.get(sid, sid)}")
+
+    print("\n[2/4] 抓取大盤動態...")
     market = get_market_context()
     market_sig = calc_market_signals(market)
     print(f"  大盤訊號: {len(market_sig)} 筆")
 
-    print("\n[2/3] 推播大盤摘要...")
+    print("\n[3/4] 推播大盤摘要...")
     try:
         send_market_summary(market_sig)
         print("  ✓ 已送出")
     except Exception as e:
         print(f"  ⚠️ 失敗: {e}")
 
-    print(f"\n[3/3] 處理 {len(STOCKS)} 檔股票...")
-    for stock_id in STOCKS:
-        stock_id = stock_id.strip()
-        print(f"\n--- {stock_id} ---")
+    print(f"\n[4/4] 處理 {len(stock_ids)} 檔股票...")
+    for stock_id in stock_ids:
+        stock_name = stock_names.get(stock_id, stock_id)
+        display = f"{stock_id} {stock_name}" if stock_name != stock_id else stock_id
+        print(f"\n--- {display} ---")
 
         data = get_stock_data(stock_id)
         if not data["price"]:
@@ -436,9 +466,11 @@ def main():
         print(f"  訊號: {len(signals)} 筆 / 新聞: {len(news)} 則")
 
         try:
-            analysis = analyze(stock_id, data, market, market_sig, news, signals)
+            analysis = analyze(
+                stock_id, stock_name, data, market, market_sig, news, signals
+            )
             message = (
-                f"*📈 {stock_id} 每日分析* `{today}`\n\n"
+                f"*📈 {display} 每日分析* `{today}`\n\n"
                 f"{analysis}\n\n"
                 f"_僅供參考, 投資請自行判斷_"
             )
