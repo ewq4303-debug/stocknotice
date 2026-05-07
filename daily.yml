@@ -1,0 +1,30 @@
+name: Daily Stock Analysis
+
+on:
+  schedule:
+    # 台灣時間每週一到五早上 8:30 (UTC+8 → UTC 00:30)
+    - cron: '30 0 * * 1-5'
+  workflow_dispatch:  # 也可以在 Actions 頁面手動執行
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run analysis
+        run: python stock_analyzer.py
+        env:
+          STOCKS: ${{ vars.STOCKS }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
