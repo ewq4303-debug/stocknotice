@@ -3,7 +3,7 @@ name: Daily Stock Analysis
 on:
   schedule:
     # 台灣時間每週一到五早上 8:30 (UTC+8 → UTC 00:30)
-    - cron: '30 0 * * 1-5'
+    - cron: '42 23 * * 0-4' 
   workflow_dispatch:  # 也可以在 Actions 頁面手動執行
 
 jobs:
