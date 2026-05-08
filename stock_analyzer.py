@@ -1,15 +1,19 @@
 """
-每日台股分析機器人 v3.5 (Claude API)
-v3.5 改動: 匯率改用中央銀行 BP01D01 API (銀行間即期 16:00 收盤)
-      移除 BeautifulSoup 依賴 (不再需要爬台銀網頁)
-保留: 個股籌碼 + 大盤動態 + TX 法人分開 + TMF 散戶多空比
+每日台股分析機器人 v3.7 (Claude API)
+v3.7 改動:
+  - 匯率改用台北外匯市場發展基金會 (TPEFX) CSV
+    這是台灣美元/新台幣每日成交收盤的官方來源 (新聞所報「今日收盤匯率」即此值)
+  - URL 隨年份變化, 自動依當前年份組裝 (年初邊界會自動 fallback 到去年 CSV)
+  - 移除 BeautifulSoup 依賴 (CSV 比 HTML 解析穩)
 """
 
 import os
+import csv
 import requests
 import feedparser
 from collections import defaultdict
 from datetime import datetime, timedelta
+from io import StringIO
 from anthropic import Anthropic
 
 # ===== 設定區 =====
@@ -22,7 +26,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
-CBC_FX_URL = "https://cpx.cbc.gov.tw/API/DataAPI/Get?FileName=BP01D01"
+TPEFX_URL_TEMPLATE = "https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
 
 
 # ===== FinMind 通用呼叫 =====
@@ -42,34 +46,65 @@ def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
         return []
 
 
-# ===== 央行匯率 (BP01D01: 銀行間即期 16:00 收盤) =====
-def get_cbc_usdtwd(days: int = 7) -> list:
-    """從中央銀行 API 抓 USD/TWD 銀行間即期匯率
-    回傳: [{date, close}, ...] 由舊到新, 取最近 N 個交易日
-    資料說明: 台灣當日 16:00 各通貨銀行間即期交易的即時匯率"""
-    try:
-        r = requests.get(CBC_FX_URL, timeout=20)
-        r.raise_for_status()
-        data = r.json()
+# ===== 法人類別歸類 =====
+def classify_institution(name: str) -> str:
+    """處理 FinMind 中英文混用; 回傳 'foreign' / 'trust' / 'dealer' / '' """
+    if not name:
+        return ""
+    if "Foreign" in name or "外資" in name:
+        return "foreign"
+    if "Trust" in name or "投信" in name:
+        return "trust"
+    if "Dealer" in name or "自營" in name:
+        return "dealer"
+    return ""
 
-        rows = data.get("data", {}).get("dataSets", [])
-        history = []
-        # 第一欄為日期 (YYYYMMDD), 第二欄為 NTD/USD
-        for row in rows:
-            if len(row) < 2 or row[1] == "-":
+
+# ===== 台北外匯市場發展基金會匯率 (TPEFX) =====
+def _fetch_tpefx_year(year: int) -> list:
+    """抓單一年度的 TPEFX CSV, 解析回傳 list[dict]"""
+    url = TPEFX_URL_TEMPLATE.format(year=year)
+    try:
+        r = requests.get(url, timeout=15)
+        r.raise_for_status()
+        # CSV 開頭可能有 BOM, 用 utf-8-sig 處理
+        text = r.content.decode("utf-8-sig")
+        reader = csv.DictReader(StringIO(text))
+        rows = []
+        for row in reader:
+            date_str = (row.get("DATE") or "").strip()
+            close_str = (row.get("CLOSE") or "").strip()
+            if not date_str or not close_str:
                 continue
             try:
-                rate = float(row[1])
-                date_str = str(row[0])
-                date_iso = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:8]}"
-                history.append({"date": date_iso, "close": rate})
-            except (ValueError, IndexError):
+                rows.append({
+                    "date": date_str,
+                    "open": float(row.get("OPEN") or 0),
+                    "close": float(close_str),
+                    "high": float(row.get("HIGH") or 0),
+                    "low": float(row.get("LOW") or 0),
+                })
+            except ValueError:
                 continue
-
-        return history[-days:] if history else []
+        return rows
     except Exception as e:
-        print(f"  ⚠️ 央行匯率抓取失敗: {e}")
+        print(f"  ⚠️ TPEFX {year} 抓取失敗: {e}")
         return []
+
+
+def get_tpefx_usdtwd(days: int = 7) -> list:
+    """USD/TWD 銀行間即期收盤匯率 (台灣官方收盤定盤值)
+    回傳: [{date, open, close, high, low}, ...] 由舊到新, 最近 N 個交易日
+    年初若今年 CSV 不夠 N 天, 會自動補抓去年 CSV"""
+    year = datetime.now().year
+    history = _fetch_tpefx_year(year)
+
+    # 年初邊界處理: 若今年資料不夠, 補抓去年
+    if len(history) < days:
+        prev_year_data = _fetch_tpefx_year(year - 1)
+        history = prev_year_data + history
+
+    return history[-days:] if history else []
 
 
 # ===== 股票名稱查詢 =====
@@ -121,18 +156,16 @@ def get_news(stock_id: str, max_items: int = 8) -> list:
 
 # ===== 大盤動態抓取 =====
 def get_market_context() -> dict:
-    """大盤背景: 加權指數 + 大盤三大法人 + 央行匯率 + TX 法人 + TMF 法人 + TMF 全市場 + TXO 法人"""
     start = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
     return {
         "taiex": fetch_finmind("TaiwanStockPrice", start, "TAIEX")[-5:],
         "total_institutional": fetch_finmind(
             "TaiwanStockTotalInstitutionalInvestors", start
         ),
-        "fx_usdtwd": get_cbc_usdtwd(7),  # 改用央行
+        "fx_usdtwd": get_tpefx_usdtwd(7),
         "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TX"),
         "fut_TMF_inst": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TMF"),
         "fut_TMF_daily": fetch_finmind("TaiwanFuturesDaily", start, "TMF"),
-        "opt_TXO": fetch_finmind("TaiwanOptionInstitutionalInvestors", start, "TXO"),
     }
 
 
@@ -161,14 +194,10 @@ def calc_signals(data: dict) -> dict:
         daily = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
         for r in inst:
             net = (r.get("buy", 0) - r.get("sell", 0)) // 1000
-            name = r.get("name", "")
+            cat = classify_institution(r.get("name", ""))
             d = r.get("date", "")
-            if "Foreign" in name:
-                daily[d]["foreign"] += net
-            elif "Trust" in name:
-                daily[d]["trust"] += net
-            elif "Dealer" in name:
-                daily[d]["dealer"] += net
+            if cat:
+                daily[d][cat] += net
 
         days = sorted(daily.keys())
         if days:
@@ -233,11 +262,14 @@ def calc_market_signals(market: dict) -> dict:
         except (TypeError, KeyError):
             pass
 
-    # ---- 央行匯率 ----
+    # ---- TPEFX 匯率 ----
     fx = market.get("fx_usdtwd", [])
     if fx:
         latest = fx[-1]
         sig["usdtwd"] = latest.get("close")
+        sig["usdtwd_open"] = latest.get("open")
+        sig["usdtwd_high"] = latest.get("high")
+        sig["usdtwd_low"] = latest.get("low")
         sig["usdtwd_date"] = latest.get("date")
         if len(fx) >= 2:
             first_rate = fx[0].get("close")
@@ -258,15 +290,15 @@ def calc_market_signals(market: dict) -> dict:
         today_rows = [r for r in total_inst if r["date"] == latest_date]
         sig["market_date"] = latest_date
         for r in today_rows:
-            name = r.get("name", "")
+            cat = classify_institution(r.get("name", ""))
             net_billion = round((r.get("buy", 0) - r.get("sell", 0)) / 1e8, 2)
-            if "Foreign" in name:
+            if cat == "foreign":
                 sig["market_foreign_net_billion"] = (
                     sig.get("market_foreign_net_billion", 0) + net_billion
                 )
-            elif "Trust" in name:
+            elif cat == "trust":
                 sig["market_trust_net_billion"] = net_billion
-            elif "Dealer" in name:
+            elif cat == "dealer":
                 sig["market_dealer_net_billion"] = (
                     sig.get("market_dealer_net_billion", 0) + net_billion
                 )
@@ -282,18 +314,18 @@ def calc_market_signals(market: dict) -> dict:
                 if r["date"] != latest_date:
                     continue
                 name = (
-                    r.get("institutional_investors", "")
-                    or r.get("name", "")
+                    r.get("institutional_investors")
+                    or r.get("name")
+                    or r.get("type")
+                    or ""
                 )
+                cat = classify_institution(name)
+                if not cat:
+                    continue
                 long_oi = r.get("long_open_interest_balance_volume", 0) or 0
                 short_oi = r.get("short_open_interest_balance_volume", 0) or 0
                 net = long_oi - short_oi
-                if "Foreign" in name:
-                    tx_inst["foreign"] += net
-                elif "Trust" in name:
-                    tx_inst["trust"] += net
-                elif "Dealer" in name:
-                    tx_inst["dealer"] += net
+                tx_inst[cat] += net
             sig["TX_foreign_net_oi"] = tx_inst["foreign"]
             sig["TX_trust_net_oi"] = tx_inst["trust"]
             sig["TX_dealer_net_oi"] = tx_inst["dealer"]
@@ -341,26 +373,6 @@ def calc_market_signals(market: dict) -> dict:
                 else:
                     sig["TMF_retail_sentiment"] = f"散戶中性 ({ratio:.1f}%)"
 
-    # ---- 選擇權 PUT/CALL 法人未平倉 ----
-    opts = market.get("opt_TXO", [])
-    if opts:
-        latest_date = max(r["date"] for r in opts)
-        today_opts = [r for r in opts if r["date"] == latest_date]
-        call_net, put_net = 0, 0
-        for r in today_opts:
-            cp = str(r.get("call_put", ""))
-            long_oi = r.get("long_open_interest_balance_volume", 0) or 0
-            short_oi = r.get("short_open_interest_balance_volume", 0) or 0
-            net = long_oi - short_oi
-            if "Call" in cp or "call" in cp:
-                call_net += net
-            elif "Put" in cp or "put" in cp:
-                put_net += net
-        sig["txo_call_inst_net_oi"] = call_net
-        sig["txo_put_inst_net_oi"] = put_net
-        if call_net != 0:
-            sig["txo_pc_ratio"] = round(put_net / call_net, 2)
-
     return sig
 
 
@@ -385,11 +397,10 @@ def analyze(
 
 ═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
 加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
-USD/TWD (央行銀行間即期) {market_sig.get('usdtwd')} | {market_sig.get('usdtwd_trend', '')}
+USD/TWD (銀行間即期收盤) {market_sig.get('usdtwd')} | {market_sig.get('usdtwd_trend', '')}
 大盤外資 {market_sig.get('market_foreign_net_billion')} 億 / 投信 {market_sig.get('market_trust_net_billion')} 億
 TX 大台法人淨 OI: 外資 {market_sig.get('TX_foreign_net_oi')} / 投信 {market_sig.get('TX_trust_net_oi')} / 自營商 {market_sig.get('TX_dealer_net_oi')}
 TMF 微台散戶多空比: {market_sig.get('TMF_retail_ratio_pct')}% ({market_sig.get('TMF_retail_sentiment', '')})
-TXO Put/Call 比: {market_sig.get('txo_pc_ratio')}
 
 ═══ 「{display_name}」原始資料 ═══
 近 7 日股價(OHLCV): {data.get('price')}
@@ -477,8 +488,9 @@ def send_market_summary(market_sig: dict):
 📈 *加權指數*
 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
 
-💱 *央行美元銀行間即期 ({market_sig.get('usdtwd_date', '')})*
-{market_sig.get('usdtwd')} (5日 {fx_change_str})
+💱 *USD/TWD 銀行間即期 ({market_sig.get('usdtwd_date', '')})*
+收盤 {market_sig.get('usdtwd')} (5日 {fx_change_str})
+開 {market_sig.get('usdtwd_open')} / 高 {market_sig.get('usdtwd_high')} / 低 {market_sig.get('usdtwd_low')}
 {market_sig.get('usdtwd_trend', '')}
 
 💼 *大盤三大法人 (億)*
@@ -495,9 +507,6 @@ def send_market_summary(market_sig: dict):
 散戶多單: {fmt_oi(market_sig.get('TMF_retail_long'))} 口
 散戶空單: {fmt_oi(market_sig.get('TMF_retail_short'))} 口
 全市場 OI: {fmt_oi(market_sig.get('TMF_total_oi'))} 口
-
-📑 *TXO 選擇權 Put/Call 比*
-{market_sig.get('txo_pc_ratio', 'N/A')}
 """
     send_telegram(msg)
 
@@ -505,7 +514,7 @@ def send_market_summary(market_sig: dict):
 # ===== 主流程 =====
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-    print(f"=== 每日股票分析 v3.5 ({today}) ===")
+    print(f"=== 每日股票分析 v3.7 ({today}) ===")
     print(f"模型: {MODEL}")
 
     stock_ids = [s.strip() for s in STOCKS if s.strip()]
