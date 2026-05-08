@@ -92,6 +92,27 @@ def get_news(stock_id: str, max_items: int = 8) -> list:
         print(f"  ⚠️ 新聞抓取失敗: {e}")
         return []
 
+def get_usdtwd_yahoo(days: int = 7) -> list:
+    """從 Yahoo Finance 抓 USD/TWD 近 N 日匯率"""
+    try:
+        url = "https://query1.finance.yahoo.com/v8/finance/chart/TWD=X"
+        params = {"interval": "1d", "range": f"{days + 5}d"}
+        headers = {"User-Agent": "Mozilla/5.0"}  # Yahoo 會擋沒 UA 的請求
+        r = requests.get(url, params=params, headers=headers, timeout=10)
+        r.raise_for_status()
+        result = r.json()["chart"]["result"][0]
+        timestamps = result["timestamp"]
+        closes = result["indicators"]["quote"][0]["close"]
+        history = []
+        for ts, close in zip(timestamps, closes):
+            if close is not None:
+                date_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
+                history.append({"date": date_str, "close": round(close, 4)})
+        return history[-days:]
+    except Exception as e:
+        print(f"  ⚠️ Yahoo 匯率抓取失敗: {e}")
+        return []
+
 
 # ===== 大盤動態抓取 =====
 def get_market_context() -> dict:
@@ -101,7 +122,7 @@ def get_market_context() -> dict:
         "total_institutional": fetch_finmind(
             "TaiwanStockTotalInstitutionalInvestors", start
         ),
-        "fx_usdtwd": fetch_finmind("TaiwanExchangeRate", start, "USD")[-5:],
+        "fx_usdtwd": get_usdtwd_yahoo(7),
         "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TX"),
         "fut_MTX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "MTX"),
         "fut_TMF": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TMF"),
