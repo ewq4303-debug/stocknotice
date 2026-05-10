@@ -1,9 +1,11 @@
 """
-每日台股分析機器人 v3.8 (雙 AI 切換版)
-v3.8 改動: 用 AI_PROVIDER 環境變數切換 Claude / Gemini
-  - AI_PROVIDER=claude (預設) → Claude API (品質好, 付費)
-  - AI_PROVIDER=gemini → Gemini API (有免費額度, 適合測試或省錢)
-兩家 SDK 都會安裝, 但只會使用一家. 切換不需改程式碼。
+每日台股分析機器人 v3.9 (雙 AI 切換版)
+v3.9 改動: 大盤動態快訊重新設計
+  - 加權指數: 加上簡單技術面分析 (MA / 連續紅黑K)
+  - USD/TWD: 只顯示收盤 + 1日/5日漲跌幅
+  - 三大法人: 加 5日/30日 累積買賣超
+  - 大台法人未平倉: 不變
+  - 微台散戶多空比: 改顯示近 5 個交易日數字
 """
 
 import os
@@ -21,18 +23,11 @@ FINMIND_TOKEN = os.getenv("FINMIND_TOKEN", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
-# AI 供應商切換 (主開關)
 AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
-
-# Claude 設定
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
-
-# Gemini 設定
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-
-# Gemini 免費 tier 有 RPM 限制, 每次呼叫間隔
 GEMINI_CALL_INTERVAL = float(os.getenv("GEMINI_CALL_INTERVAL", "4"))
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
@@ -41,11 +36,8 @@ TPEFX_URL_TEMPLATE = "https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
 
 # ===== AI 統一介面 =====
 def validate_ai_config():
-    """啟動時檢查 AI 設定是否完整"""
     if AI_PROVIDER not in ("claude", "gemini"):
-        raise ValueError(
-            f"AI_PROVIDER={AI_PROVIDER} 無效, 必須是 'claude' 或 'gemini'"
-        )
+        raise ValueError(f"AI_PROVIDER={AI_PROVIDER} 無效, 必須是 'claude' 或 'gemini'")
     if AI_PROVIDER == "claude" and not ANTHROPIC_API_KEY:
         raise ValueError("AI_PROVIDER=claude 但未設定 ANTHROPIC_API_KEY")
     if AI_PROVIDER == "gemini" and not GEMINI_API_KEY:
@@ -53,7 +45,6 @@ def validate_ai_config():
 
 
 def call_ai(prompt: str) -> str:
-    """統一 AI 介面, 依 AI_PROVIDER 環境變數分派"""
     if AI_PROVIDER == "gemini":
         return _call_gemini(prompt)
     return _call_claude(prompt)
@@ -67,8 +58,7 @@ def _call_claude(prompt: str) -> str:
         max_tokens=1500,
         messages=[{"role": "user", "content": prompt}],
     )
-    text = msg.content[0].text
-    return text.replace("**", "*")  # Telegram Markdown 不認雙星號
+    return msg.content[0].text.replace("**", "*")
 
 
 def _call_gemini(prompt: str, max_retries: int = 2) -> str:
@@ -77,17 +67,14 @@ def _call_gemini(prompt: str, max_retries: int = 2) -> str:
     for attempt in range(max_retries + 1):
         try:
             response = client.models.generate_content(
-                model=GEMINI_MODEL,
-                contents=prompt,
+                model=GEMINI_MODEL, contents=prompt
             )
             return response.text.replace("**", "*")
         except Exception as e:
             err = str(e)
-            is_rate_limit = (
-                "429" in err or "RESOURCE_EXHAUSTED" in err
-                or "quota" in err.lower()
-            )
-            if attempt < max_retries and is_rate_limit:
+            if attempt < max_retries and (
+                "429" in err or "RESOURCE_EXHAUSTED" in err or "quota" in err.lower()
+            ):
                 wait = 30 * (attempt + 1)
                 print(f"  ⓘ Gemini rate limit, 等 {wait} 秒重試...")
                 time.sleep(wait)
@@ -95,7 +82,7 @@ def _call_gemini(prompt: str, max_retries: int = 2) -> str:
             raise
 
 
-# ===== FinMind 通用呼叫 =====
+# ===== FinMind =====
 def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
     params = {"dataset": dataset, "start_date": start_date, "token": FINMIND_TOKEN}
     if stock_id:
@@ -112,7 +99,6 @@ def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
         return []
 
 
-# ===== 法人類別歸類 =====
 def classify_institution(name: str) -> str:
     if not name:
         return ""
@@ -125,7 +111,7 @@ def classify_institution(name: str) -> str:
     return ""
 
 
-# ===== 台北外匯市場發展基金會匯率 (TPEFX) =====
+# ===== TPEFX 匯率 =====
 def _fetch_tpefx_year(year: int) -> list:
     url = TPEFX_URL_TEMPLATE.format(year=year)
     try:
@@ -140,13 +126,7 @@ def _fetch_tpefx_year(year: int) -> list:
             if not date_str or not close_str:
                 continue
             try:
-                rows.append({
-                    "date": date_str,
-                    "open": float(row.get("OPEN") or 0),
-                    "close": float(close_str),
-                    "high": float(row.get("HIGH") or 0),
-                    "low": float(row.get("LOW") or 0),
-                })
+                rows.append({"date": date_str, "close": float(close_str)})
             except ValueError:
                 continue
         return rows
@@ -155,13 +135,62 @@ def _fetch_tpefx_year(year: int) -> list:
         return []
 
 
-def get_tpefx_usdtwd(days: int = 7) -> list:
+def get_tpefx_usdtwd(days: int = 10) -> list:
+    """USD/TWD 銀行間即期收盤 (近 N 日, 由舊到新)"""
     year = datetime.now().year
     history = _fetch_tpefx_year(year)
     if len(history) < days:
-        prev_year_data = _fetch_tpefx_year(year - 1)
-        history = prev_year_data + history
+        prev = _fetch_tpefx_year(year - 1)
+        history = prev + history
     return history[-days:] if history else []
+
+
+# ===== 加權指數技術面分析 =====
+def analyze_taiex_ta(taiex_rows: list) -> str:
+    """簡單技術面分析, 30 字內. 包含: MA5 位置 + 均線排列 + 連續紅黑K"""
+    closes = [r.get("close") for r in taiex_rows if r.get("close") is not None]
+    if len(closes) < 5:
+        return "資料不足"
+
+    latest = closes[-1]
+    ma5 = sum(closes[-5:]) / 5
+
+    parts = []
+    parts.append("站上MA5" if latest > ma5 else "跌破MA5")
+
+    # 均線排列
+    if len(closes) >= 20:
+        ma10 = sum(closes[-10:]) / 10
+        ma20 = sum(closes[-20:]) / 20
+        if ma5 > ma10 > ma20:
+            parts.append("多頭排列")
+        elif ma5 < ma10 < ma20:
+            parts.append("空頭排列")
+        else:
+            parts.append("均線糾結")
+    elif len(closes) >= 10:
+        ma10 = sum(closes[-10:]) / 10
+        parts.append("短均偏多" if ma5 > ma10 else "短均偏空")
+
+    # 連續紅黑 K
+    if len(closes) >= 2:
+        last_dir = "up" if closes[-1] > closes[-2] else (
+            "down" if closes[-1] < closes[-2] else None
+        )
+        if last_dir:
+            count = 1
+            for i in range(len(closes) - 2, 0, -1):
+                d = "up" if closes[i] > closes[i - 1] else (
+                    "down" if closes[i] < closes[i - 1] else None
+                )
+                if d == last_dir:
+                    count += 1
+                else:
+                    break
+            if count >= 2:
+                parts.append(f"連{count}{'紅' if last_dir == 'up' else '黑'}")
+
+    return ", ".join(parts)[:30]
 
 
 # ===== 股票名稱查詢 =====
@@ -213,16 +242,20 @@ def get_news(stock_id: str, max_items: int = 8) -> list:
 
 # ===== 大盤動態抓取 =====
 def get_market_context() -> dict:
-    start = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
+    """大盤背景; 加權指數和大盤三大法人需要長期資料 (TA + 30日累積)"""
+    start_short = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
+    start_long = (datetime.now() - timedelta(days=50)).strftime("%Y-%m-%d")
     return {
-        "taiex": fetch_finmind("TaiwanStockPrice", start, "TAIEX")[-5:],
+        # 抓 50 天歷史用於 TA (MA20 + 連紅黑 K)
+        "taiex": fetch_finmind("TaiwanStockPrice", start_long, "TAIEX"),
+        # 抓 50 天用於 30 日累計
         "total_institutional": fetch_finmind(
-            "TaiwanStockTotalInstitutionalInvestors", start
+            "TaiwanStockTotalInstitutionalInvestors", start_long
         ),
-        "fx_usdtwd": get_tpefx_usdtwd(7),
-        "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TX"),
-        "fut_TMF_inst": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start, "TMF"),
-        "fut_TMF_daily": fetch_finmind("TaiwanFuturesDaily", start, "TMF"),
+        "fx_usdtwd": get_tpefx_usdtwd(10),  # 抓 10 天確保有 5+ 日資料
+        "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TX"),
+        "fut_TMF_inst": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TMF"),
+        "fut_TMF_daily": fetch_finmind("TaiwanFuturesDaily", start_short, "TMF"),
     }
 
 
@@ -245,7 +278,6 @@ def streak(values: list) -> int:
 
 def calc_signals(data: dict) -> dict:
     sig = {}
-
     inst = data.get("institutional", [])
     if inst:
         daily = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
@@ -255,7 +287,6 @@ def calc_signals(data: dict) -> dict:
             d = r.get("date", "")
             if cat:
                 daily[d][cat] += net
-
         days = sorted(daily.keys())
         if days:
             sig["foreign_5d_net"] = sum(daily[d]["foreign"] for d in days[-5:])
@@ -273,28 +304,20 @@ def calc_signals(data: dict) -> dict:
         sig["short_balance"] = s_bal
         sig["short_margin_ratio_pct"] = round(s_bal / m_bal * 100, 2) if m_bal else 0
         if len(margin) >= 5:
-            sig["margin_change_5d"] = m_bal - margin[-5].get(
-                "MarginPurchaseTodayBalance", 0
-            )
-            sig["short_change_5d"] = s_bal - margin[-5].get(
-                "ShortSaleTodayBalance", 0
-            )
+            sig["margin_change_5d"] = m_bal - margin[-5].get("MarginPurchaseTodayBalance", 0)
+            sig["short_change_5d"] = s_bal - margin[-5].get("ShortSaleTodayBalance", 0)
 
     sl = data.get("securities_lending", [])
     if sl:
         sig["short_sale_balance"] = (
-            sl[-1].get("Volume")
-            or sl[-1].get("today_balance")
-            or sl[-1].get("balance")
-            or 0
+            sl[-1].get("Volume") or sl[-1].get("today_balance") or sl[-1].get("balance") or 0
         )
 
     sh = data.get("shareholding", [])
     if sh and len(sh) >= 2:
         get_ratio = lambda r: (
             r.get("ForeignInvestmentSharesRatio")
-            or r.get("ForeignInvestmentRemainRatio")
-            or 0
+            or r.get("ForeignInvestmentRemainRatio") or 0
         )
         latest_ratio = get_ratio(sh[-1])
         old_ratio = get_ratio(sh[max(0, len(sh) - 5)])
@@ -307,6 +330,7 @@ def calc_signals(data: dict) -> dict:
 def calc_market_signals(market: dict) -> dict:
     sig = {}
 
+    # ---- 加權指數 (含技術面) ----
     taiex = market.get("taiex", [])
     if taiex and len(taiex) >= 2:
         try:
@@ -315,48 +339,49 @@ def calc_market_signals(market: dict) -> dict:
             chg = latest["close"] - prev["close"]
             sig["taiex_change"] = round(chg, 2)
             sig["taiex_change_pct"] = round(chg / prev["close"] * 100, 2)
+            sig["taiex_ta"] = analyze_taiex_ta(taiex)
         except (TypeError, KeyError):
             pass
 
+    # ---- USD/TWD (1日/5日漲跌幅) ----
     fx = market.get("fx_usdtwd", [])
-    if fx:
+    if fx and len(fx) >= 2:
         latest = fx[-1]
         sig["usdtwd"] = latest.get("close")
-        sig["usdtwd_open"] = latest.get("open")
-        sig["usdtwd_high"] = latest.get("high")
-        sig["usdtwd_low"] = latest.get("low")
         sig["usdtwd_date"] = latest.get("date")
-        if len(fx) >= 2:
-            first_rate = fx[0].get("close")
-            latest_rate = latest.get("close")
-            if first_rate and latest_rate:
-                sig["usdtwd_change_5d"] = round(latest_rate - first_rate, 4)
-                if latest_rate < first_rate:
-                    sig["usdtwd_trend"] = "台幣升值 (利多外資匯入)"
-                elif latest_rate > first_rate:
-                    sig["usdtwd_trend"] = "台幣貶值 (留意外資匯出)"
-                else:
-                    sig["usdtwd_trend"] = "持平"
+        try:
+            close = latest["close"]
+            close_1d_ago = fx[-2]["close"]
+            sig["usdtwd_change_1d_pct"] = round((close - close_1d_ago) / close_1d_ago * 100, 2)
+            if len(fx) >= 6:
+                close_5d_ago = fx[-6]["close"]
+                sig["usdtwd_change_5d_pct"] = round((close - close_5d_ago) / close_5d_ago * 100, 2)
+        except (TypeError, KeyError, ZeroDivisionError):
+            pass
 
+    # ---- 三大法人 (今日 / 5日 / 30日) ----
     total_inst = market.get("total_institutional", [])
     if total_inst:
-        latest_date = max(r["date"] for r in total_inst)
-        today_rows = [r for r in total_inst if r["date"] == latest_date]
-        sig["market_date"] = latest_date
-        for r in today_rows:
+        daily_nets = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
+        for r in total_inst:
             cat = classify_institution(r.get("name", ""))
-            net_billion = round((r.get("buy", 0) - r.get("sell", 0)) / 1e8, 2)
-            if cat == "foreign":
-                sig["market_foreign_net_billion"] = (
-                    sig.get("market_foreign_net_billion", 0) + net_billion
-                )
-            elif cat == "trust":
-                sig["market_trust_net_billion"] = net_billion
-            elif cat == "dealer":
-                sig["market_dealer_net_billion"] = (
-                    sig.get("market_dealer_net_billion", 0) + net_billion
-                )
+            if not cat:
+                continue
+            net_billion = (r.get("buy", 0) - r.get("sell", 0)) / 1e8
+            daily_nets[r["date"]][cat] += net_billion
 
+        dates_sorted = sorted(daily_nets.keys())
+        if dates_sorted:
+            today_date = dates_sorted[-1]
+            sig["market_date"] = today_date
+            last_5 = dates_sorted[-5:]
+            last_30 = dates_sorted[-30:]
+            for cat in ("foreign", "trust", "dealer"):
+                sig[f"market_{cat}_today"] = round(daily_nets[today_date][cat], 2)
+                sig[f"market_{cat}_5d"] = round(sum(daily_nets[d][cat] for d in last_5), 2)
+                sig[f"market_{cat}_30d"] = round(sum(daily_nets[d][cat] for d in last_30), 2)
+
+    # ---- TX 大台 三大法人 (不變) ----
     tx_rows = market.get("fut_TX", [])
     if tx_rows:
         dates = sorted(set(r["date"] for r in tx_rows))
@@ -366,12 +391,8 @@ def calc_market_signals(market: dict) -> dict:
             for r in tx_rows:
                 if r["date"] != latest_date:
                     continue
-                name = (
-                    r.get("institutional_investors")
-                    or r.get("name")
-                    or r.get("type")
-                    or ""
-                )
+                name = (r.get("institutional_investors") or r.get("name")
+                        or r.get("type") or "")
                 cat = classify_institution(name)
                 if not cat:
                     continue
@@ -383,58 +404,36 @@ def calc_market_signals(market: dict) -> dict:
             sig["TX_dealer_net_oi"] = tx_inst["dealer"]
             sig["TX_total_net_oi"] = sum(tx_inst.values())
 
+    # ---- TMF 微台 散戶多空比 (近 5 個交易日) ----
     tmf_inst = market.get("fut_TMF_inst", [])
     tmf_daily = market.get("fut_TMF_daily", [])
     if tmf_inst and tmf_daily:
         inst_dates = set(r["date"] for r in tmf_inst)
         daily_dates = set(r["date"] for r in tmf_daily)
         common = sorted(inst_dates & daily_dates)
-        if common:
-            latest_date = common[-1]
-            inst_long = sum(
-                (r.get("long_open_interest_balance_volume") or 0)
-                for r in tmf_inst if r["date"] == latest_date
-            )
-            inst_short = sum(
-                (r.get("short_open_interest_balance_volume") or 0)
-                for r in tmf_inst if r["date"] == latest_date
-            )
-            total_oi = sum(
-                (r.get("open_interest") or 0)
-                for r in tmf_daily if r["date"] == latest_date
-            )
-
-            if total_oi > 0:
-                retail_long = total_oi - inst_long
-                retail_short = total_oi - inst_short
-                ratio = (retail_long - retail_short) / total_oi * 100
-                sig["TMF_total_oi"] = total_oi
-                sig["TMF_inst_long_oi"] = inst_long
-                sig["TMF_inst_short_oi"] = inst_short
-                sig["TMF_retail_long"] = retail_long
-                sig["TMF_retail_short"] = retail_short
-                sig["TMF_retail_ratio_pct"] = round(ratio, 2)
-                if ratio > 5:
-                    sig["TMF_retail_sentiment"] = f"散戶偏多 ({ratio:.1f}%)"
-                elif ratio < -5:
-                    sig["TMF_retail_sentiment"] = f"散戶偏空 ({ratio:.1f}%)"
-                else:
-                    sig["TMF_retail_sentiment"] = f"散戶中性 ({ratio:.1f}%)"
+        ratios = []
+        for d in common[-5:]:
+            il = sum((r.get("long_open_interest_balance_volume") or 0)
+                     for r in tmf_inst if r["date"] == d)
+            ish = sum((r.get("short_open_interest_balance_volume") or 0)
+                      for r in tmf_inst if r["date"] == d)
+            toi = sum((r.get("open_interest") or 0)
+                      for r in tmf_daily if r["date"] == d)
+            if toi > 0:
+                ratio = (ish - il) / toi * 100  # = 散戶多空比
+                ratios.append({"date": d, "ratio": round(ratio, 2)})
+        sig["TMF_retail_ratios_5d"] = ratios
 
     return sig
 
 
 # ===== AI 分析 =====
-def analyze(
-    stock_id: str,
-    stock_name: str,
-    data: dict,
-    market: dict,
-    market_sig: dict,
-    news: list,
-    signals: dict,
-) -> str:
+def analyze(stock_id, stock_name, data, market, market_sig, news, signals):
     display_name = stock_name if stock_name and stock_name != stock_id else stock_id
+
+    # 取最近 1 筆 TMF 散戶多空比給 AI 參考
+    tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
+    tmf_latest_ratio = tmf_ratios[-1]["ratio"] if tmf_ratios else None
 
     prompt = f"""你是專業台股分析師。請依據以下資料給出「{display_name}」({stock_id}) 的客觀分析。
 
@@ -444,11 +443,12 @@ def analyze(
 - 重要詞彙用單個星號*粗體*標示, 不要用雙星號**
 
 ═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
-加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
-USD/TWD (銀行間即期收盤) {market_sig.get('usdtwd')} | {market_sig.get('usdtwd_trend', '')}
-大盤外資 {market_sig.get('market_foreign_net_billion')} 億 / 投信 {market_sig.get('market_trust_net_billion')} 億
+加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 技術面: {market_sig.get('taiex_ta', '')}
+USD/TWD {market_sig.get('usdtwd')} | 1日 {market_sig.get('usdtwd_change_1d_pct')}% | 5日 {market_sig.get('usdtwd_change_5d_pct')}%
+大盤三大法人 (億): 外資今 {market_sig.get('market_foreign_today')} / 5日 {market_sig.get('market_foreign_5d')} / 30日 {market_sig.get('market_foreign_30d')}
+                    投信今 {market_sig.get('market_trust_today')} / 5日 {market_sig.get('market_trust_5d')} / 30日 {market_sig.get('market_trust_30d')}
 TX 大台法人淨 OI: 外資 {market_sig.get('TX_foreign_net_oi')} / 投信 {market_sig.get('TX_trust_net_oi')} / 自營商 {market_sig.get('TX_dealer_net_oi')}
-TMF 微台散戶多空比: {market_sig.get('TMF_retail_ratio_pct')}% ({market_sig.get('TMF_retail_sentiment', '')})
+TMF 微台散戶多空比 (最新): {tmf_latest_ratio}%
 
 ═══ 「{display_name}」原始資料 ═══
 近 7 日股價(OHLCV): {data.get('price')}
@@ -488,7 +488,6 @@ TMF 微台散戶多空比: {market_sig.get('TMF_retail_ratio_pct')}% ({market_si
 ⚠️ *風險提示*
 - 1-2 點具體風險
 """
-
     return call_ai(prompt)
 
 
@@ -498,18 +497,12 @@ def send_telegram(text: str):
     try:
         r = requests.post(
             url,
-            data={
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": text[:4000],
-                "parse_mode": "Markdown",
-            },
+            data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000], "parse_mode": "Markdown"},
             timeout=10,
         )
         if r.status_code == 400:
             r = requests.post(
-                url,
-                data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000]},
-                timeout=10,
+                url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000]}, timeout=10
             )
         r.raise_for_status()
     except Exception as e:
@@ -522,22 +515,42 @@ def fmt_oi(value):
     return f"{int(value):+,}"
 
 
+def fmt_pct(value):
+    if value is None:
+        return "N/A"
+    return f"{value:+.2f}%"
+
+
+def fmt_billion(value):
+    if value is None:
+        return "N/A"
+    return f"{value:+.2f}"
+
+
 def send_market_summary(market_sig: dict):
-    fx_change = market_sig.get('usdtwd_change_5d')
-    fx_change_str = f"{fx_change:+.4f}" if fx_change is not None else "N/A"
+    # TMF 5 日散戶多空比格式化
+    tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
+    if tmf_ratios:
+        tmf_lines = "\n".join(
+            f"{r['date']}: {r['ratio']:+.2f}%" for r in tmf_ratios
+        )
+    else:
+        tmf_lines = "資料不足"
 
     msg = f"""*🌐 大盤動態快訊* `{market_sig.get('market_date', '')}`
 
 📈 *加權指數*
 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
+技術面: {market_sig.get('taiex_ta', 'N/A')}
 
 💱 *USD/TWD 銀行間即期 ({market_sig.get('usdtwd_date', '')})*
-收盤 {market_sig.get('usdtwd')} (5日 {fx_change_str})
-開 {market_sig.get('usdtwd_open')} / 高 {market_sig.get('usdtwd_high')} / 低 {market_sig.get('usdtwd_low')}
-{market_sig.get('usdtwd_trend', '')}
+收盤 {market_sig.get('usdtwd')}
+1日 {fmt_pct(market_sig.get('usdtwd_change_1d_pct'))} | 5日 {fmt_pct(market_sig.get('usdtwd_change_5d_pct'))}
 
-💼 *大盤三大法人 (億)*
-外資 {market_sig.get('market_foreign_net_billion')} | 投信 {market_sig.get('market_trust_net_billion')} | 自營 {market_sig.get('market_dealer_net_billion')}
+💼 *三大法人買賣超 (億)*
+外資   今 {fmt_billion(market_sig.get('market_foreign_today'))} / 5日 {fmt_billion(market_sig.get('market_foreign_5d'))} / 30日 {fmt_billion(market_sig.get('market_foreign_30d'))}
+投信   今 {fmt_billion(market_sig.get('market_trust_today'))} / 5日 {fmt_billion(market_sig.get('market_trust_5d'))} / 30日 {fmt_billion(market_sig.get('market_trust_30d'))}
+自營商 今 {fmt_billion(market_sig.get('market_dealer_today'))} / 5日 {fmt_billion(market_sig.get('market_dealer_5d'))} / 30日 {fmt_billion(market_sig.get('market_dealer_30d'))}
 
 🎯 *TX 大台 法人未平倉淨口數*
 外資: {fmt_oi(market_sig.get('TX_foreign_net_oi'))}
@@ -545,11 +558,8 @@ def send_market_summary(market_sig: dict):
 自營商: {fmt_oi(market_sig.get('TX_dealer_net_oi'))}
 合計: {fmt_oi(market_sig.get('TX_total_net_oi'))}
 
-📊 *TMF 微台 散戶多空比*
-{market_sig.get('TMF_retail_ratio_pct')}% ({market_sig.get('TMF_retail_sentiment', 'N/A')})
-散戶多單: {fmt_oi(market_sig.get('TMF_retail_long'))} 口
-散戶空單: {fmt_oi(market_sig.get('TMF_retail_short'))} 口
-全市場 OI: {fmt_oi(market_sig.get('TMF_total_oi'))} 口
+📊 *TMF 微台 散戶多空比近5日*
+{tmf_lines}
 """
     send_telegram(msg)
 
@@ -557,12 +567,9 @@ def send_market_summary(market_sig: dict):
 # ===== 主流程 =====
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-
-    # 啟動驗證 + 顯示 AI 設定
     validate_ai_config()
     current_model = CLAUDE_MODEL if AI_PROVIDER == "claude" else GEMINI_MODEL
-
-    print(f"=== 每日股票分析 v3.8 ({today}) ===")
+    print(f"=== 每日股票分析 v3.9 ({today}) ===")
     print(f"AI 供應商: {AI_PROVIDER.upper()} | 模型: {current_model}")
 
     stock_ids = [s.strip() for s in STOCKS if s.strip()]
@@ -613,7 +620,6 @@ def main():
         except Exception as e:
             print(f"  ⚠️ 分析失敗: {e}")
 
-        # Gemini 免費 tier 有 RPM 限制, 加間隔
         if AI_PROVIDER == "gemini" and i < len(stock_ids) - 1:
             time.sleep(GEMINI_CALL_INTERVAL)
 
