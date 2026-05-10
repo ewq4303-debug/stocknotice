@@ -23,8 +23,11 @@ jobs:
         run: python stock_analyzer.py
         env:
           STOCKS: ${{ vars.STOCKS }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER }}
           CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
