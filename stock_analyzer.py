@@ -1,11 +1,11 @@
 """
-每日台股分析機器人 v3.9 (雙 AI 切換版)
-v3.9 改動: 大盤動態快訊重新設計
-  - 加權指數: 加上簡單技術面分析 (MA / 連續紅黑K)
-  - USD/TWD: 只顯示收盤 + 1日/5日漲跌幅
-  - 三大法人: 加 5日/30日 累積買賣超
-  - 大台法人未平倉: 不變
-  - 微台散戶多空比: 改顯示近 5 個交易日數字
+每日台股分析機器人 v3.10 (雙 AI 切換版)
+v3.10 改動: 大盤動態快訊微調
+  - 加權指數: 加 20MA 乖離率
+  - USD/TWD: 1日/5日 同時顯示金額 + 漲跌幅
+  - 三大法人: 移除 30日累積; 數字四捨五入到個位
+  - 大台法人未平倉: 加上 (增減口數)
+  - 微台散戶多空比: 日期改用「頭~尾」格式 + 數值串
 """
 
 import os
@@ -136,7 +136,6 @@ def _fetch_tpefx_year(year: int) -> list:
 
 
 def get_tpefx_usdtwd(days: int = 10) -> list:
-    """USD/TWD 銀行間即期收盤 (近 N 日, 由舊到新)"""
     year = datetime.now().year
     history = _fetch_tpefx_year(year)
     if len(history) < days:
@@ -147,18 +146,15 @@ def get_tpefx_usdtwd(days: int = 10) -> list:
 
 # ===== 加權指數技術面分析 =====
 def analyze_taiex_ta(taiex_rows: list) -> str:
-    """簡單技術面分析, 30 字內. 包含: MA5 位置 + 均線排列 + 連續紅黑K"""
+    """技術面文字描述, 30 字內"""
     closes = [r.get("close") for r in taiex_rows if r.get("close") is not None]
     if len(closes) < 5:
         return "資料不足"
 
     latest = closes[-1]
     ma5 = sum(closes[-5:]) / 5
+    parts = ["站上MA5" if latest > ma5 else "跌破MA5"]
 
-    parts = []
-    parts.append("站上MA5" if latest > ma5 else "跌破MA5")
-
-    # 均線排列
     if len(closes) >= 20:
         ma10 = sum(closes[-10:]) / 10
         ma20 = sum(closes[-20:]) / 20
@@ -172,7 +168,6 @@ def analyze_taiex_ta(taiex_rows: list) -> str:
         ma10 = sum(closes[-10:]) / 10
         parts.append("短均偏多" if ma5 > ma10 else "短均偏空")
 
-    # 連續紅黑 K
     if len(closes) >= 2:
         last_dir = "up" if closes[-1] > closes[-2] else (
             "down" if closes[-1] < closes[-2] else None
@@ -191,6 +186,15 @@ def analyze_taiex_ta(taiex_rows: list) -> str:
                 parts.append(f"連{count}{'紅' if last_dir == 'up' else '黑'}")
 
     return ", ".join(parts)[:30]
+
+
+def calc_taiex_bias_20(taiex_rows: list):
+    """20 MA 乖離率 = (收盤 - MA20) / MA20 * 100%"""
+    closes = [r.get("close") for r in taiex_rows if r.get("close") is not None]
+    if len(closes) < 20:
+        return None
+    ma20 = sum(closes[-20:]) / 20
+    return round((closes[-1] - ma20) / ma20 * 100, 2)
 
 
 # ===== 股票名稱查詢 =====
@@ -242,17 +246,14 @@ def get_news(stock_id: str, max_items: int = 8) -> list:
 
 # ===== 大盤動態抓取 =====
 def get_market_context() -> dict:
-    """大盤背景; 加權指數和大盤三大法人需要長期資料 (TA + 30日累積)"""
     start_short = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
     start_long = (datetime.now() - timedelta(days=50)).strftime("%Y-%m-%d")
     return {
-        # 抓 50 天歷史用於 TA (MA20 + 連紅黑 K)
         "taiex": fetch_finmind("TaiwanStockPrice", start_long, "TAIEX"),
-        # 抓 50 天用於 30 日累計
         "total_institutional": fetch_finmind(
             "TaiwanStockTotalInstitutionalInvestors", start_long
         ),
-        "fx_usdtwd": get_tpefx_usdtwd(10),  # 抓 10 天確保有 5+ 日資料
+        "fx_usdtwd": get_tpefx_usdtwd(10),
         "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TX"),
         "fut_TMF_inst": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TMF"),
         "fut_TMF_daily": fetch_finmind("TaiwanFuturesDaily", start_short, "TMF"),
@@ -327,10 +328,27 @@ def calc_signals(data: dict) -> dict:
     return sig
 
 
+def _tx_oi_by_date(tx_rows: list, target_date: str) -> dict:
+    """加總某日 TX 三大法人淨 OI"""
+    inst = {"foreign": 0, "trust": 0, "dealer": 0}
+    for r in tx_rows:
+        if r["date"] != target_date:
+            continue
+        name = (r.get("institutional_investors") or r.get("name")
+                or r.get("type") or "")
+        cat = classify_institution(name)
+        if not cat:
+            continue
+        long_oi = r.get("long_open_interest_balance_volume", 0) or 0
+        short_oi = r.get("short_open_interest_balance_volume", 0) or 0
+        inst[cat] += long_oi - short_oi
+    return inst
+
+
 def calc_market_signals(market: dict) -> dict:
     sig = {}
 
-    # ---- 加權指數 (含技術面) ----
+    # ---- 加權指數 (含 TA + 20MA 乖離率) ----
     taiex = market.get("taiex", [])
     if taiex and len(taiex) >= 2:
         try:
@@ -340,10 +358,11 @@ def calc_market_signals(market: dict) -> dict:
             sig["taiex_change"] = round(chg, 2)
             sig["taiex_change_pct"] = round(chg / prev["close"] * 100, 2)
             sig["taiex_ta"] = analyze_taiex_ta(taiex)
+            sig["taiex_bias_20"] = calc_taiex_bias_20(taiex)
         except (TypeError, KeyError):
             pass
 
-    # ---- USD/TWD (1日/5日漲跌幅) ----
+    # ---- USD/TWD (金額 + 漲跌幅 雙顯示) ----
     fx = market.get("fx_usdtwd", [])
     if fx and len(fx) >= 2:
         latest = fx[-1]
@@ -351,15 +370,17 @@ def calc_market_signals(market: dict) -> dict:
         sig["usdtwd_date"] = latest.get("date")
         try:
             close = latest["close"]
-            close_1d_ago = fx[-2]["close"]
-            sig["usdtwd_change_1d_pct"] = round((close - close_1d_ago) / close_1d_ago * 100, 2)
+            close_1d = fx[-2]["close"]
+            sig["usdtwd_change_1d"] = round(close - close_1d, 4)
+            sig["usdtwd_change_1d_pct"] = round((close - close_1d) / close_1d * 100, 2)
             if len(fx) >= 6:
-                close_5d_ago = fx[-6]["close"]
-                sig["usdtwd_change_5d_pct"] = round((close - close_5d_ago) / close_5d_ago * 100, 2)
+                close_5d = fx[-6]["close"]
+                sig["usdtwd_change_5d"] = round(close - close_5d, 4)
+                sig["usdtwd_change_5d_pct"] = round((close - close_5d) / close_5d * 100, 2)
         except (TypeError, KeyError, ZeroDivisionError):
             pass
 
-    # ---- 三大法人 (今日 / 5日 / 30日) ----
+    # ---- 三大法人 (今日 / 5日, 已移除 30日) ----
     total_inst = market.get("total_institutional", [])
     if total_inst:
         daily_nets = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
@@ -375,36 +396,29 @@ def calc_market_signals(market: dict) -> dict:
             today_date = dates_sorted[-1]
             sig["market_date"] = today_date
             last_5 = dates_sorted[-5:]
-            last_30 = dates_sorted[-30:]
             for cat in ("foreign", "trust", "dealer"):
-                sig[f"market_{cat}_today"] = round(daily_nets[today_date][cat], 2)
-                sig[f"market_{cat}_5d"] = round(sum(daily_nets[d][cat] for d in last_5), 2)
-                sig[f"market_{cat}_30d"] = round(sum(daily_nets[d][cat] for d in last_30), 2)
+                sig[f"market_{cat}_today"] = daily_nets[today_date][cat]
+                sig[f"market_{cat}_5d"] = sum(daily_nets[d][cat] for d in last_5)
 
-    # ---- TX 大台 三大法人 (不變) ----
+    # ---- TX 大台 三大法人 + 增減口數 ----
     tx_rows = market.get("fut_TX", [])
     if tx_rows:
         dates = sorted(set(r["date"] for r in tx_rows))
         if dates:
-            latest_date = dates[-1]
-            tx_inst = {"foreign": 0, "trust": 0, "dealer": 0}
-            for r in tx_rows:
-                if r["date"] != latest_date:
-                    continue
-                name = (r.get("institutional_investors") or r.get("name")
-                        or r.get("type") or "")
-                cat = classify_institution(name)
-                if not cat:
-                    continue
-                long_oi = r.get("long_open_interest_balance_volume", 0) or 0
-                short_oi = r.get("short_open_interest_balance_volume", 0) or 0
-                tx_inst[cat] += long_oi - short_oi
-            sig["TX_foreign_net_oi"] = tx_inst["foreign"]
-            sig["TX_trust_net_oi"] = tx_inst["trust"]
-            sig["TX_dealer_net_oi"] = tx_inst["dealer"]
-            sig["TX_total_net_oi"] = sum(tx_inst.values())
+            today_inst = _tx_oi_by_date(tx_rows, dates[-1])
+            sig["TX_foreign_net_oi"] = today_inst["foreign"]
+            sig["TX_trust_net_oi"] = today_inst["trust"]
+            sig["TX_dealer_net_oi"] = today_inst["dealer"]
+            sig["TX_total_net_oi"] = sum(today_inst.values())
 
-    # ---- TMF 微台 散戶多空比 (近 5 個交易日) ----
+            if len(dates) >= 2:
+                prev_inst = _tx_oi_by_date(tx_rows, dates[-2])
+                sig["TX_foreign_change"] = today_inst["foreign"] - prev_inst["foreign"]
+                sig["TX_trust_change"] = today_inst["trust"] - prev_inst["trust"]
+                sig["TX_dealer_change"] = today_inst["dealer"] - prev_inst["dealer"]
+                sig["TX_total_change"] = sig["TX_total_net_oi"] - sum(prev_inst.values())
+
+    # ---- TMF 微台 散戶多空比近 5 日 ----
     tmf_inst = market.get("fut_TMF_inst", [])
     tmf_daily = market.get("fut_TMF_daily", [])
     if tmf_inst and tmf_daily:
@@ -420,7 +434,7 @@ def calc_market_signals(market: dict) -> dict:
             toi = sum((r.get("open_interest") or 0)
                       for r in tmf_daily if r["date"] == d)
             if toi > 0:
-                ratio = (ish - il) / toi * 100  # = 散戶多空比
+                ratio = (ish - il) / toi * 100
                 ratios.append({"date": d, "ratio": round(ratio, 2)})
         sig["TMF_retail_ratios_5d"] = ratios
 
@@ -430,10 +444,8 @@ def calc_market_signals(market: dict) -> dict:
 # ===== AI 分析 =====
 def analyze(stock_id, stock_name, data, market, market_sig, news, signals):
     display_name = stock_name if stock_name and stock_name != stock_id else stock_id
-
-    # 取最近 1 筆 TMF 散戶多空比給 AI 參考
     tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
-    tmf_latest_ratio = tmf_ratios[-1]["ratio"] if tmf_ratios else None
+    tmf_latest = tmf_ratios[-1]["ratio"] if tmf_ratios else None
 
     prompt = f"""你是專業台股分析師。請依據以下資料給出「{display_name}」({stock_id}) 的客觀分析。
 
@@ -443,12 +455,12 @@ def analyze(stock_id, stock_name, data, market, market_sig, news, signals):
 - 重要詞彙用單個星號*粗體*標示, 不要用雙星號**
 
 ═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
-加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 技術面: {market_sig.get('taiex_ta', '')}
+加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 20MA乖離 {market_sig.get('taiex_bias_20')}% | {market_sig.get('taiex_ta', '')}
 USD/TWD {market_sig.get('usdtwd')} | 1日 {market_sig.get('usdtwd_change_1d_pct')}% | 5日 {market_sig.get('usdtwd_change_5d_pct')}%
-大盤三大法人 (億): 外資今 {market_sig.get('market_foreign_today')} / 5日 {market_sig.get('market_foreign_5d')} / 30日 {market_sig.get('market_foreign_30d')}
-                    投信今 {market_sig.get('market_trust_today')} / 5日 {market_sig.get('market_trust_5d')} / 30日 {market_sig.get('market_trust_30d')}
+大盤三大法人 (億): 外資今 {round(market_sig.get('market_foreign_today') or 0)} / 5日 {round(market_sig.get('market_foreign_5d') or 0)}
+                    投信今 {round(market_sig.get('market_trust_today') or 0)} / 5日 {round(market_sig.get('market_trust_5d') or 0)}
 TX 大台法人淨 OI: 外資 {market_sig.get('TX_foreign_net_oi')} / 投信 {market_sig.get('TX_trust_net_oi')} / 自營商 {market_sig.get('TX_dealer_net_oi')}
-TMF 微台散戶多空比 (最新): {tmf_latest_ratio}%
+TMF 微台散戶多空比 (最新): {tmf_latest}%
 
 ═══ 「{display_name}」原始資料 ═══
 近 7 日股價(OHLCV): {data.get('price')}
@@ -509,10 +521,21 @@ def send_telegram(text: str):
         print(f"  ⚠️ Telegram 推播失敗: {e}")
 
 
-def fmt_oi(value):
+def fmt_int(value):
+    """整數格式: 帶正負號, 千分位"""
     if value is None:
         return "N/A"
-    return f"{int(value):+,}"
+    return f"{round(value):+,d}"
+
+
+def fmt_oi_with_change(value, change):
+    """大台 OI 格式: -3,245 (-50)"""
+    if value is None:
+        return "N/A"
+    base = f"{int(value):+,}"
+    if change is None:
+        return base
+    return f"{base} ({int(change):+,})"
 
 
 def fmt_pct(value):
@@ -521,45 +544,56 @@ def fmt_pct(value):
     return f"{value:+.2f}%"
 
 
-def fmt_billion(value):
+def fmt_amount4(value):
+    """匯率金額: 4 位小數帶正負號, 例如 -0.0210"""
     if value is None:
         return "N/A"
-    return f"{value:+.2f}"
+    return f"{value:+.4f}"
+
+
+def fmt_md(date_str: str) -> str:
+    """YYYY-MM-DD → M/D"""
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        return f"{dt.month}/{dt.day}"
+    except Exception:
+        return date_str
 
 
 def send_market_summary(market_sig: dict):
-    # TMF 5 日散戶多空比格式化
+    # ----- TMF 5 日散戶多空比 (頭~尾日期 + 數值串) -----
     tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
     if tmf_ratios:
-        tmf_lines = "\n".join(
-            f"{r['date']}: {r['ratio']:+.2f}%" for r in tmf_ratios
-        )
+        date_range = f"{fmt_md(tmf_ratios[0]['date'])}~{fmt_md(tmf_ratios[-1]['date'])}"
+        values = " / ".join(f"{r['ratio']:+.2f}%" for r in tmf_ratios)
+        tmf_block = f"({date_range})\n{values}"
     else:
-        tmf_lines = "資料不足"
+        tmf_block = "資料不足"
 
     msg = f"""*🌐 大盤動態快訊* `{market_sig.get('market_date', '')}`
 
 📈 *加權指數*
-{market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
+{market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 20MA 乖離 {fmt_pct(market_sig.get('taiex_bias_20'))}
 技術面: {market_sig.get('taiex_ta', 'N/A')}
 
 💱 *USD/TWD 銀行間即期 ({market_sig.get('usdtwd_date', '')})*
 收盤 {market_sig.get('usdtwd')}
-1日 {fmt_pct(market_sig.get('usdtwd_change_1d_pct'))} | 5日 {fmt_pct(market_sig.get('usdtwd_change_5d_pct'))}
+1日 {fmt_amount4(market_sig.get('usdtwd_change_1d'))} ({fmt_pct(market_sig.get('usdtwd_change_1d_pct'))})
+5日 {fmt_amount4(market_sig.get('usdtwd_change_5d'))} ({fmt_pct(market_sig.get('usdtwd_change_5d_pct'))})
 
 💼 *三大法人買賣超 (億)*
-外資   今 {fmt_billion(market_sig.get('market_foreign_today'))} / 5日 {fmt_billion(market_sig.get('market_foreign_5d'))} / 30日 {fmt_billion(market_sig.get('market_foreign_30d'))}
-投信   今 {fmt_billion(market_sig.get('market_trust_today'))} / 5日 {fmt_billion(market_sig.get('market_trust_5d'))} / 30日 {fmt_billion(market_sig.get('market_trust_30d'))}
-自營商 今 {fmt_billion(market_sig.get('market_dealer_today'))} / 5日 {fmt_billion(market_sig.get('market_dealer_5d'))} / 30日 {fmt_billion(market_sig.get('market_dealer_30d'))}
+外資   今 {fmt_int(market_sig.get('market_foreign_today'))} / 5日 {fmt_int(market_sig.get('market_foreign_5d'))}
+投信   今 {fmt_int(market_sig.get('market_trust_today'))} / 5日 {fmt_int(market_sig.get('market_trust_5d'))}
+自營商 今 {fmt_int(market_sig.get('market_dealer_today'))} / 5日 {fmt_int(market_sig.get('market_dealer_5d'))}
 
-🎯 *TX 大台 法人未平倉淨口數*
-外資: {fmt_oi(market_sig.get('TX_foreign_net_oi'))}
-投信: {fmt_oi(market_sig.get('TX_trust_net_oi'))}
-自營商: {fmt_oi(market_sig.get('TX_dealer_net_oi'))}
-合計: {fmt_oi(market_sig.get('TX_total_net_oi'))}
+🎯 *TX 大台 法人未平倉淨口數 (增減)*
+外資: {fmt_oi_with_change(market_sig.get('TX_foreign_net_oi'), market_sig.get('TX_foreign_change'))}
+投信: {fmt_oi_with_change(market_sig.get('TX_trust_net_oi'), market_sig.get('TX_trust_change'))}
+自營商: {fmt_oi_with_change(market_sig.get('TX_dealer_net_oi'), market_sig.get('TX_dealer_change'))}
+合計: {fmt_oi_with_change(market_sig.get('TX_total_net_oi'), market_sig.get('TX_total_change'))}
 
 📊 *TMF 微台 散戶多空比近5日*
-{tmf_lines}
+{tmf_block}
 """
     send_telegram(msg)
 
@@ -569,7 +603,7 @@ def main():
     today = datetime.now().strftime("%Y-%m-%d")
     validate_ai_config()
     current_model = CLAUDE_MODEL if AI_PROVIDER == "claude" else GEMINI_MODEL
-    print(f"=== 每日股票分析 v3.9 ({today}) ===")
+    print(f"=== 每日股票分析 v3.10 ({today}) ===")
     print(f"AI 供應商: {AI_PROVIDER.upper()} | 模型: {current_model}")
 
     stock_ids = [s.strip() for s in STOCKS if s.strip()]
