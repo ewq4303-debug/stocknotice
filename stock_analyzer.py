@@ -1,32 +1,98 @@
 """
-每日台股分析機器人 v3.7 (Claude API)
-v3.7 改動:
-  - 匯率改用台北外匯市場發展基金會 (TPEFX) CSV
-    這是台灣美元/新台幣每日成交收盤的官方來源 (新聞所報「今日收盤匯率」即此值)
-  - URL 隨年份變化, 自動依當前年份組裝 (年初邊界會自動 fallback 到去年 CSV)
-  - 移除 BeautifulSoup 依賴 (CSV 比 HTML 解析穩)
+每日台股分析機器人 v3.8 (雙 AI 切換版)
+v3.8 改動: 用 AI_PROVIDER 環境變數切換 Claude / Gemini
+  - AI_PROVIDER=claude (預設) → Claude API (品質好, 付費)
+  - AI_PROVIDER=gemini → Gemini API (有免費額度, 適合測試或省錢)
+兩家 SDK 都會安裝, 但只會使用一家. 切換不需改程式碼。
 """
 
 import os
 import csv
+import time
 import requests
 import feedparser
 from collections import defaultdict
 from datetime import datetime, timedelta
 from io import StringIO
-from anthropic import Anthropic
 
 # ===== 設定區 =====
 STOCKS = os.getenv("STOCKS", "2330,2454,2317").split(",")
 FINMIND_TOKEN = os.getenv("FINMIND_TOKEN", "")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
-MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+# AI 供應商切換 (主開關)
+AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
+
+# Claude 設定
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+
+# Gemini 設定
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+
+# Gemini 免費 tier 有 RPM 限制, 每次呼叫間隔
+GEMINI_CALL_INTERVAL = float(os.getenv("GEMINI_CALL_INTERVAL", "4"))
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 TPEFX_URL_TEMPLATE = "https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
+
+
+# ===== AI 統一介面 =====
+def validate_ai_config():
+    """啟動時檢查 AI 設定是否完整"""
+    if AI_PROVIDER not in ("claude", "gemini"):
+        raise ValueError(
+            f"AI_PROVIDER={AI_PROVIDER} 無效, 必須是 'claude' 或 'gemini'"
+        )
+    if AI_PROVIDER == "claude" and not ANTHROPIC_API_KEY:
+        raise ValueError("AI_PROVIDER=claude 但未設定 ANTHROPIC_API_KEY")
+    if AI_PROVIDER == "gemini" and not GEMINI_API_KEY:
+        raise ValueError("AI_PROVIDER=gemini 但未設定 GEMINI_API_KEY")
+
+
+def call_ai(prompt: str) -> str:
+    """統一 AI 介面, 依 AI_PROVIDER 環境變數分派"""
+    if AI_PROVIDER == "gemini":
+        return _call_gemini(prompt)
+    return _call_claude(prompt)
+
+
+def _call_claude(prompt: str) -> str:
+    from anthropic import Anthropic
+    client = Anthropic(api_key=ANTHROPIC_API_KEY)
+    msg = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=1500,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    text = msg.content[0].text
+    return text.replace("**", "*")  # Telegram Markdown 不認雙星號
+
+
+def _call_gemini(prompt: str, max_retries: int = 2) -> str:
+    from google import genai
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    for attempt in range(max_retries + 1):
+        try:
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=prompt,
+            )
+            return response.text.replace("**", "*")
+        except Exception as e:
+            err = str(e)
+            is_rate_limit = (
+                "429" in err or "RESOURCE_EXHAUSTED" in err
+                or "quota" in err.lower()
+            )
+            if attempt < max_retries and is_rate_limit:
+                wait = 30 * (attempt + 1)
+                print(f"  ⓘ Gemini rate limit, 等 {wait} 秒重試...")
+                time.sleep(wait)
+                continue
+            raise
 
 
 # ===== FinMind 通用呼叫 =====
@@ -48,7 +114,6 @@ def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
 
 # ===== 法人類別歸類 =====
 def classify_institution(name: str) -> str:
-    """處理 FinMind 中英文混用; 回傳 'foreign' / 'trust' / 'dealer' / '' """
     if not name:
         return ""
     if "Foreign" in name or "外資" in name:
@@ -62,12 +127,10 @@ def classify_institution(name: str) -> str:
 
 # ===== 台北外匯市場發展基金會匯率 (TPEFX) =====
 def _fetch_tpefx_year(year: int) -> list:
-    """抓單一年度的 TPEFX CSV, 解析回傳 list[dict]"""
     url = TPEFX_URL_TEMPLATE.format(year=year)
     try:
         r = requests.get(url, timeout=15)
         r.raise_for_status()
-        # CSV 開頭可能有 BOM, 用 utf-8-sig 處理
         text = r.content.decode("utf-8-sig")
         reader = csv.DictReader(StringIO(text))
         rows = []
@@ -93,17 +156,11 @@ def _fetch_tpefx_year(year: int) -> list:
 
 
 def get_tpefx_usdtwd(days: int = 7) -> list:
-    """USD/TWD 銀行間即期收盤匯率 (台灣官方收盤定盤值)
-    回傳: [{date, open, close, high, low}, ...] 由舊到新, 最近 N 個交易日
-    年初若今年 CSV 不夠 N 天, 會自動補抓去年 CSV"""
     year = datetime.now().year
     history = _fetch_tpefx_year(year)
-
-    # 年初邊界處理: 若今年資料不夠, 補抓去年
     if len(history) < days:
         prev_year_data = _fetch_tpefx_year(year - 1)
         history = prev_year_data + history
-
     return history[-days:] if history else []
 
 
@@ -250,7 +307,6 @@ def calc_signals(data: dict) -> dict:
 def calc_market_signals(market: dict) -> dict:
     sig = {}
 
-    # ---- 加權指數 ----
     taiex = market.get("taiex", [])
     if taiex and len(taiex) >= 2:
         try:
@@ -262,7 +318,6 @@ def calc_market_signals(market: dict) -> dict:
         except (TypeError, KeyError):
             pass
 
-    # ---- TPEFX 匯率 ----
     fx = market.get("fx_usdtwd", [])
     if fx:
         latest = fx[-1]
@@ -283,7 +338,6 @@ def calc_market_signals(market: dict) -> dict:
                 else:
                     sig["usdtwd_trend"] = "持平"
 
-    # ---- 大盤三大法人 ----
     total_inst = market.get("total_institutional", [])
     if total_inst:
         latest_date = max(r["date"] for r in total_inst)
@@ -303,7 +357,6 @@ def calc_market_signals(market: dict) -> dict:
                     sig.get("market_dealer_net_billion", 0) + net_billion
                 )
 
-    # ---- TX 大台 三大法人分開 ----
     tx_rows = market.get("fut_TX", [])
     if tx_rows:
         dates = sorted(set(r["date"] for r in tx_rows))
@@ -324,14 +377,12 @@ def calc_market_signals(market: dict) -> dict:
                     continue
                 long_oi = r.get("long_open_interest_balance_volume", 0) or 0
                 short_oi = r.get("short_open_interest_balance_volume", 0) or 0
-                net = long_oi - short_oi
-                tx_inst[cat] += net
+                tx_inst[cat] += long_oi - short_oi
             sig["TX_foreign_net_oi"] = tx_inst["foreign"]
             sig["TX_trust_net_oi"] = tx_inst["trust"]
             sig["TX_dealer_net_oi"] = tx_inst["dealer"]
             sig["TX_total_net_oi"] = sum(tx_inst.values())
 
-    # ---- TMF 微台 散戶多空比 ----
     tmf_inst = market.get("fut_TMF_inst", [])
     tmf_daily = market.get("fut_TMF_daily", [])
     if tmf_inst and tmf_daily:
@@ -340,7 +391,6 @@ def calc_market_signals(market: dict) -> dict:
         common = sorted(inst_dates & daily_dates)
         if common:
             latest_date = common[-1]
-
             inst_long = sum(
                 (r.get("long_open_interest_balance_volume") or 0)
                 for r in tmf_inst if r["date"] == latest_date
@@ -358,14 +408,12 @@ def calc_market_signals(market: dict) -> dict:
                 retail_long = total_oi - inst_long
                 retail_short = total_oi - inst_short
                 ratio = (retail_long - retail_short) / total_oi * 100
-
                 sig["TMF_total_oi"] = total_oi
                 sig["TMF_inst_long_oi"] = inst_long
                 sig["TMF_inst_short_oi"] = inst_short
                 sig["TMF_retail_long"] = retail_long
                 sig["TMF_retail_short"] = retail_short
                 sig["TMF_retail_ratio_pct"] = round(ratio, 2)
-
                 if ratio > 5:
                     sig["TMF_retail_sentiment"] = f"散戶偏多 ({ratio:.1f}%)"
                 elif ratio < -5:
@@ -376,7 +424,7 @@ def calc_market_signals(market: dict) -> dict:
     return sig
 
 
-# ===== AI 分析 (Claude) =====
+# ===== AI 分析 =====
 def analyze(
     stock_id: str,
     stock_name: str,
@@ -386,7 +434,6 @@ def analyze(
     news: list,
     signals: dict,
 ) -> str:
-    client = Anthropic(api_key=ANTHROPIC_API_KEY)
     display_name = stock_name if stock_name and stock_name != stock_id else stock_id
 
     prompt = f"""你是專業台股分析師。請依據以下資料給出「{display_name}」({stock_id}) 的客觀分析。
@@ -394,6 +441,7 @@ def analyze(
 【重要寫作要求】
 - 內文中提及這檔股票時, 請使用「{display_name}」這個名稱, 不要使用代號 {stock_id}
 - 不要在輸出中重述大盤摘要也不要寫個股 vs 大盤段落 (大盤背景僅供你內部分析參考)
+- 重要詞彙用單個星號*粗體*標示, 不要用雙星號**
 
 ═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
 加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%)
@@ -441,12 +489,7 @@ TMF 微台散戶多空比: {market_sig.get('TMF_retail_ratio_pct')}% ({market_si
 - 1-2 點具體風險
 """
 
-    msg = client.messages.create(
-        model=MODEL,
-        max_tokens=1500,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return msg.content[0].text
+    return call_ai(prompt)
 
 
 # ===== Telegram 推播 =====
@@ -514,8 +557,13 @@ def send_market_summary(market_sig: dict):
 # ===== 主流程 =====
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-    print(f"=== 每日股票分析 v3.7 ({today}) ===")
-    print(f"模型: {MODEL}")
+
+    # 啟動驗證 + 顯示 AI 設定
+    validate_ai_config()
+    current_model = CLAUDE_MODEL if AI_PROVIDER == "claude" else GEMINI_MODEL
+
+    print(f"=== 每日股票分析 v3.8 ({today}) ===")
+    print(f"AI 供應商: {AI_PROVIDER.upper()} | 模型: {current_model}")
 
     stock_ids = [s.strip() for s in STOCKS if s.strip()]
 
@@ -537,7 +585,7 @@ def main():
         print(f"  ⚠️ 失敗: {e}")
 
     print(f"\n[4/4] 處理 {len(stock_ids)} 檔股票...")
-    for stock_id in stock_ids:
+    for i, stock_id in enumerate(stock_ids):
         stock_name = stock_names.get(stock_id, stock_id)
         display = f"{stock_id} {stock_name}" if stock_name != stock_id else stock_id
         print(f"\n--- {display} ---")
@@ -564,6 +612,10 @@ def main():
             print(f"  ✓ 完成並已推播")
         except Exception as e:
             print(f"  ⚠️ 分析失敗: {e}")
+
+        # Gemini 免費 tier 有 RPM 限制, 加間隔
+        if AI_PROVIDER == "gemini" and i < len(stock_ids) - 1:
+            time.sleep(GEMINI_CALL_INTERVAL)
 
 
 if __name__ == "__main__":
