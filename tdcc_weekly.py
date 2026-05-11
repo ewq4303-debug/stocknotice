@@ -197,7 +197,7 @@ def find_concentration_break(levels: dict, multiplier: float = CONCENTRATION_MUL
         avg_pcts[lvl] = pct / people if people > 0 else 0
 
     # 由低往高找第一個明顯斷層
-    for lvl in range(2, 16):
+    for lvl in range(5, 16):
         prev = avg_pcts.get(lvl - 1, 0)
         curr = avg_pcts.get(lvl, 0)
         if prev > 0 and curr >= prev * multiplier:
