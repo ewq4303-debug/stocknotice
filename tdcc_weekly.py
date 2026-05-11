@@ -1,8 +1,10 @@
 """
-集保戶股權分散表週報機器人
-每週六下午抓集保 OpenData CSV, 比對上週快照, 推播追蹤股票大戶/散戶變化
-資料來源: https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5
-歷史累積方式: 每週快照存到 tdcc_history/{date}.json 並 commit 回 Repo
+集保戶股權分散表週報機器人 v1.1
+v1.1 修正:
+  - URL 改為 opendata.tdcc.com.tw (官方新位置)
+  - 用 utf-8-sig 處理 CSV BOM (原本 r.text 解析失敗)
+  - 兩個 URL 都試, fallback 機制
+  - 加強除錯訊息, 失敗時印出實際內容協助診斷
 """
 
 import os
@@ -20,64 +22,92 @@ STOCKS = os.getenv("STOCKS", "2330,2454,2317").split(",")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
-TDCC_URL = "https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5"
+# 集保 OpenData URLs (按優先序試)
+TDCC_URLS = [
+    "https://opendata.tdcc.com.tw/getOD.ashx?id=1-5",
+    "https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
+]
 HISTORY_DIR = Path("tdcc_history")
 
 
 # ===== 抓資料 =====
 def fetch_tdcc() -> tuple:
-    """抓集保 CSV 並依股票代號歸類.
-    回傳 (data_date, {stock_id: {level: {people, shares, pct}}})"""
-    r = requests.get(TDCC_URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
-    r.raise_for_status()
+    """抓集保 CSV. 嘗試多個 URL, 處理 BOM, 失敗時印出診斷資訊"""
+    last_error = None
 
-    reader = csv.DictReader(StringIO(r.text))
-    by_stock = defaultdict(dict)
-    data_date = None
-
-    for row in reader:
+    for url in TDCC_URLS:
         try:
-            stock_id = (row.get("證券代號") or "").strip()
-            level = int(row.get("持股分級") or 0)
-            # 等級 1-15 才是真實資料 (16=不歸戶, 17=合計)
-            if not stock_id or level < 1 or level > 15:
+            print(f"  嘗試 URL: {url}")
+            r = requests.get(
+                url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30
+            )
+            print(f"    HTTP {r.status_code} | size={len(r.content):,} bytes")
+            r.raise_for_status()
+
+            # 用 utf-8-sig 自動移除 BOM, errors='replace' 處理偶發異常字元
+            text = r.content.decode("utf-8-sig", errors="replace")
+
+            # 驗證確實是預期的 CSV
+            if "證券代號" not in text or "持股分級" not in text:
+                preview = text[:300].replace("\n", " ")
+                print(f"    ⓘ 內容不像 CSV (前 300 字): {preview}")
+                last_error = "content mismatch"
                 continue
 
-            by_stock[stock_id][level] = {
-                "people": int(row.get("人數") or 0),
-                "shares": int(row.get("股數") or 0),
-                "pct": float(
-                    row.get("占集保庫存數比例%")
-                    or row.get("佔集保庫存數比例%")
-                    or 0
-                ),
-            }
-            if not data_date:
-                data_date = (row.get("資料日期") or "").strip()
-        except (ValueError, TypeError):
+            print("    ✓ 取得 CSV")
+            reader = csv.DictReader(StringIO(text))
+            print(f"    欄位: {reader.fieldnames}")
+
+            by_stock = defaultdict(dict)
+            data_date = None
+            rows_parsed = 0
+
+            for row in reader:
+                try:
+                    stock_id = (row.get("證券代號") or "").strip()
+                    level = int(row.get("持股分級") or 0)
+                    if not stock_id or level < 1 or level > 15:
+                        continue
+                    by_stock[stock_id][level] = {
+                        "people": int(row.get("人數") or 0),
+                        "shares": int(row.get("股數") or 0),
+                        "pct": float(
+                            row.get("占集保庫存數比例%")
+                            or row.get("佔集保庫存數比例%")
+                            or 0
+                        ),
+                    }
+                    if not data_date:
+                        data_date = (row.get("資料日期") or "").strip()
+                    rows_parsed += 1
+                except (ValueError, TypeError):
+                    continue
+
+            print(f"    成功解析 {rows_parsed:,} 筆 / {len(by_stock):,} 檔股票")
+            return data_date, dict(by_stock)
+
+        except requests.exceptions.RequestException as e:
+            print(f"    ⚠️ {e}")
+            last_error = str(e)
             continue
 
-    return data_date, dict(by_stock)
+    print(f"  ⚠️ 所有 URL 都失敗 (最後錯誤: {last_error})")
+    return None, {}
 
 
 # ===== 衍生指標 =====
 def calc_metrics(levels: dict) -> dict:
-    """從持股分級資料算出大戶/散戶占比"""
     if not levels:
         return {}
     return {
-        # 千張大戶 (level 15: 1,000,001 股以上)
         "level15_pct": round(levels.get(15, {}).get("pct", 0), 3),
         "level15_people": levels.get(15, {}).get("people", 0),
-        # 400 張以上 (level 12-15: 40 萬股以上)
         "big_holder_pct": round(
             sum(levels.get(i, {}).get("pct", 0) for i in range(12, 16)), 3
         ),
-        # 散戶 (level 1-8: 5 萬股以下)
         "retail_pct": round(
             sum(levels.get(i, {}).get("pct", 0) for i in range(1, 9)), 3
         ),
-        # 總股東人數
         "total_holders": sum(
             levels.get(i, {}).get("people", 0) for i in range(1, 16)
         ),
@@ -86,7 +116,6 @@ def calc_metrics(levels: dict) -> dict:
 
 # ===== 快照管理 =====
 def load_latest_snapshot():
-    """讀取 tdcc_history/ 裡最新的快照 (排除本次要存的)"""
     if not HISTORY_DIR.exists():
         return None, None
     files = sorted(HISTORY_DIR.glob("*.json"))
@@ -107,15 +136,16 @@ def save_snapshot(data_date: str, metrics: dict) -> Path:
 
 
 def git_commit_push(file_path: Path):
-    """commit + push 新快照. 失敗也不中斷流程"""
     try:
         subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
         subprocess.run(
-            ["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"],
+            [
+                "git", "config", "user.email",
+                "41898282+github-actions[bot]@users.noreply.github.com",
+            ],
             check=True,
         )
         subprocess.run(["git", "add", str(file_path)], check=True)
-        # 若沒變動就 skip
         result = subprocess.run(["git", "diff", "--staged", "--quiet"])
         if result.returncode == 0:
             print("  ⓘ 無新變動, 不需 commit")
@@ -136,12 +166,18 @@ def send_telegram(text: str):
     try:
         r = requests.post(
             url,
-            data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000], "parse_mode": "Markdown"},
+            data={
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": text[:4000],
+                "parse_mode": "Markdown",
+            },
             timeout=10,
         )
         if r.status_code == 400:
             r = requests.post(
-                url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000]}, timeout=10
+                url,
+                data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000]},
+                timeout=10,
             )
         r.raise_for_status()
     except Exception as e:
@@ -157,10 +193,10 @@ def main():
     print("\n[1/4] 抓取集保 OpenData CSV...")
     data_date, all_stocks = fetch_tdcc()
     if not data_date:
-        print("  ⚠️ 抓取失敗或資料格式有變, 結束")
+        print("  ⚠️ 抓取失敗, 結束")
         return
-    print(f"  集保資料日期: {data_date}")
-    print(f"  全市場股票數: {len(all_stocks)}")
+    print(f"  資料日期: {data_date}")
+    print(f"  全市場股票數: {len(all_stocks):,}")
 
     print(f"\n[2/4] 計算 {len(stock_ids)} 檔追蹤股票指標...")
     current_metrics = {}
@@ -171,13 +207,15 @@ def main():
             continue
         current_metrics[sid] = calc_metrics(levels)
         m = current_metrics[sid]
-        print(f"  {sid}: 千張大戶 {m['level15_pct']}% / 400張以上 {m['big_holder_pct']}% / 散戶 {m['retail_pct']}%")
+        print(
+            f"  {sid}: 千張大戶 {m['level15_pct']}% / "
+            f"400張以上 {m['big_holder_pct']}% / 散戶 {m['retail_pct']}%"
+        )
 
     print("\n[3/4] 載入上週快照比對...")
     prev_date, prev_metrics = load_latest_snapshot()
     if prev_date and prev_date == data_date:
-        print(f"  ⓘ 集保資料日期未變 ({data_date}), 上週快照才是本週資料")
-        # 視為「沒有上週」, 不做差異
+        print(f"  ⓘ 集保資料日期未變 ({data_date}), 視為無上週比較基準")
         prev_date, prev_metrics = None, None
     elif prev_date:
         print(f"  上週快照: {prev_date}")
@@ -196,7 +234,6 @@ def main():
         if not m:
             lines.append(f"\n*{sid}* — 集保無資料")
             continue
-
         lines.append(f"\n*{sid}*")
         prev_m = (prev_metrics or {}).get(sid) if prev_metrics else None
 
@@ -205,7 +242,6 @@ def main():
             ppl_diff = m["level15_people"] - prev_m["level15_people"]
             big_diff = m["big_holder_pct"] - prev_m["big_holder_pct"]
             retail_diff = m["retail_pct"] - prev_m["retail_pct"]
-
             lines.append(f"千張大戶占比: {m['level15_pct']}% ({l15_diff:+.3f})")
             lines.append(f"千張大戶人數: {m['level15_people']:,} ({ppl_diff:+,})")
             lines.append(f"400 張以上占比: {m['big_holder_pct']}% ({big_diff:+.3f})")
