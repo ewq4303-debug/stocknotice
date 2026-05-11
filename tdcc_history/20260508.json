@@ -12,9 +12,9 @@
       "cap_retail_pct": 0.94,
       "cap_mid_pct": 5.64,
       "cap_big_pct": 93.33,
-      "break_level": 2,
-      "break_big_pct": 98.97,
-      "break_retail_pct": 0.94
+      "break_level": 15,
+      "break_big_pct": 85.58,
+      "break_retail_pct": 14.33
     },
     "2454": {
       "total_holders": 332632,
@@ -27,9 +27,9 @@
       "cap_retail_pct": 1.44,
       "cap_mid_pct": 4.93,
       "cap_big_pct": 93.54,
-      "break_level": 2,
-      "break_big_pct": 98.47,
-      "break_retail_pct": 1.44
+      "break_level": 15,
+      "break_big_pct": 67.25,
+      "break_retail_pct": 32.66
     },
     "2408": {
       "total_holders": 305410,
@@ -42,9 +42,9 @@
       "cap_retail_pct": 10.73,
       "cap_mid_pct": 4.34,
       "cap_big_pct": 84.85,
-      "break_level": 2,
-      "break_big_pct": 99.2,
-      "break_retail_pct": 0.72
+      "break_level": 15,
+      "break_big_pct": 80.23,
+      "break_retail_pct": 19.69
     },
     "3711": {
       "total_holders": 245762,
@@ -57,9 +57,9 @@
       "cap_retail_pct": 3.4,
       "cap_mid_pct": 3.5,
       "cap_big_pct": 93.03,
-      "break_level": 2,
-      "break_big_pct": 99.43,
-      "break_retail_pct": 0.5
+      "break_level": 15,
+      "break_big_pct": 82.98,
+      "break_retail_pct": 16.95
     },
     "2383": {
       "total_holders": 82937,
@@ -72,9 +72,9 @@
       "cap_retail_pct": 1.15,
       "cap_mid_pct": 4.6,
       "cap_big_pct": 94.18,
-      "break_level": 2,
-      "break_big_pct": 98.78,
-      "break_retail_pct": 1.15
+      "break_level": 15,
+      "break_big_pct": 56.6,
+      "break_retail_pct": 43.33
     },
     "3037": {
       "total_holders": 288153,
@@ -87,9 +87,9 @@
       "cap_retail_pct": 8.65,
       "cap_mid_pct": 6.61,
       "cap_big_pct": 84.67,
-      "break_level": 2,
-      "break_big_pct": 98.59,
-      "break_retail_pct": 1.34
+      "break_level": 15,
+      "break_big_pct": 68.92,
+      "break_retail_pct": 31.01
     },
     "3665": {
       "total_holders": 29711,
@@ -102,9 +102,9 @@
       "cap_retail_pct": 0.87,
       "cap_mid_pct": 6.48,
       "cap_big_pct": 92.56,
-      "break_level": 2,
-      "break_big_pct": 99.04,
-      "break_retail_pct": 0.87
+      "break_level": 12,
+      "break_big_pct": 61.61,
+      "break_retail_pct": 38.3
     },
     "6223": {
       "total_holders": 49889,
@@ -117,9 +117,9 @@
       "cap_retail_pct": 1.69,
       "cap_mid_pct": 8.4,
       "cap_big_pct": 89.84,
-      "break_level": 2,
-      "break_big_pct": 98.24,
-      "break_retail_pct": 1.69
+      "break_level": 12,
+      "break_big_pct": 53.28,
+      "break_retail_pct": 46.65
     },
     "6274": {
       "total_holders": 72109,
@@ -132,9 +132,9 @@
       "cap_retail_pct": 1.5,
       "cap_mid_pct": 15.92,
       "cap_big_pct": 82.51,
-      "break_level": 2,
-      "break_big_pct": 98.43,
-      "break_retail_pct": 1.5
+      "break_level": 15,
+      "break_big_pct": 56.93,
+      "break_retail_pct": 43.0
     }
   }
 }
