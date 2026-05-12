@@ -69,9 +69,9 @@ def fetch_finlab_multiweek(stock_ids: list, week_offsets: list) -> dict:
     finlab.login(api_token=FINLAB_API_KEY)
 
     print("  抓取 FinLab 三個資料集...")
-    pct_df = data.get('集保戶股權分散表:佔集保庫存數比例(%)')
-    people_df = data.get('集保戶股權分散表:人數')
-    shares_df = data.get('集保戶股權分散表:持有股數')
+    pct_df = data.get('inventory:占集保庫存數比例')
+    people_df = data.get('inventory:人數')
+    shares_df = data.get('inventory:持有股數')
     print(f"    資料 shape: {pct_df.shape} (rows × cols)")
     print(f"    最新一週: {pct_df.index[-1].strftime('%Y-%m-%d')}")
 
