@@ -2,4 +2,3 @@ anthropic>=0.40.0
 google-genai>=1.0.0
 requests>=2.31.0
 feedparser>=6.0.10
-finlab>=1.2.0

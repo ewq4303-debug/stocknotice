@@ -1,0 +1,33 @@
+name: TDCC Weekly Shareholding Report
+
+on:
+  schedule:
+    - cron: '23 7 * * 6'  # 台灣時間每週六 15:23 (UTC+8)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tdcc_weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run TDCC weekly bot
+        env:
+          STOCKS: ${{ vars.STOCKS }}
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python tdcc_weekly.py
