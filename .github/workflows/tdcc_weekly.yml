@@ -1,35 +1,33 @@
-name: TDCC Weekly Shareholding
+name: TDCC Weekly Shareholding Report
 
 on:
   schedule:
-    # 台灣每週六 15:23 (UTC 07:23) - 避開整點/半點熱門時段
-    # 集保 OpenData CSV 通常週六早上更新, 下午抓最穩
-    - cron: '23 7 * * 6'
-  workflow_dispatch:  # 也可以手動觸發
+    - cron: '23 7 * * 6'  # 台灣時間每週六 15:23 (UTC+8)
+  workflow_dispatch:
 
 permissions:
-  contents: write  # 允許 commit + push 歷史快照
+  contents: write
 
 jobs:
-  weekly:
+  tdcc_weekly:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 完整 history, 才能 git push
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run TDCC weekly snapshot
-        run: python tdcc_weekly.py
+      - name: Run TDCC weekly bot
         env:
           STOCKS: ${{ vars.STOCKS }}
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-          FINLAB_API_KEY: ${{ secrets.FINLAB_API_KEY }}
+        run: python tdcc_weekly.py
