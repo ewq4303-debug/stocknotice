@@ -242,16 +242,12 @@ def get_market_overview():
                            data_id="TX", start_date=start, end_date=end)
     futures = sorted(futures, key=lambda x: x.get("date", ""))[-30:] if futures else []
     
-    # 匯率（添加 end_date 參數）
-    fx = fetch_finmind("TaiwanExchangeRate", 
-                      start_date=start, end_date=end)
-    usd_twd = [d for d in fx if d.get("currency") == "USD"]
-    usd_twd = sorted(usd_twd, key=lambda x: x.get("date", ""))[-30:] if usd_twd else []
+    # 匯率 - 台北外匯發展基金會
+    usd_twd = get_usd_twd_rate(days=35)
+    usd_twd = usd_twd[-30:]
     
-    # 散戶多空比（確保參數正確）
-    retail = fetch_finmind("TaiwanFuturesRetailPosition", 
-                          data_id="MXF", start_date=start, end_date=end)
-    retail = sorted(retail, key=lambda x: x.get("date", ""))[-30:] if retail else []
+    # 散戶多空比 - 期交所微台指 (TMF)，逐日 POST 計算
+    retail = get_tmf_retail_ratio(days=30)
     
     # 台指期未平倉
     futures_oi = fetch_finmind("TaiwanFuturesDaily", 
@@ -274,11 +270,284 @@ def get_market_overview():
     }
 
 
+def get_usd_twd_rate(days: int = 35):
+    """從台北外匯發展基金會抓取 USD/TWD 匯率
+    URL: https://www.tpefx.com.tw/uploads/service/tw/{YYYY}nt.csv
+    """
+    result = []
+    
+    # 計算需要的年份（30天前可能跨年）
+    today = datetime.now()
+    cutoff = today - timedelta(days=days)
+    years_needed = list({cutoff.year, today.year})  # 去重後的年份列表
+    
+    for year in sorted(years_needed):
+        url = f"https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
+        try:
+            r = requests.get(url, timeout=15)
+            r.raise_for_status()
+            
+            # 解析 CSV（嘗試不同編碼）
+            content = None
+            for enc in ("utf-8", "big5", "cp950", "utf-8-sig"):
+                try:
+                    content = r.content.decode(enc)
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if not content:
+                print(f"  ⚠️ 匯率 CSV 編碼解析失敗 ({year})")
+                continue
+            
+            # 逐行解析
+            lines = [l.strip() for l in content.splitlines() if l.strip()]
+            if not lines:
+                continue
+            
+            # 找標頭行（含 Close 或 close 或 CLOSE）
+            header = None
+            data_start = 0
+            for i, line in enumerate(lines):
+                cols = [c.strip().lower() for c in line.split(",")]
+                if any("close" in c for c in cols):
+                    header = [c.strip() for c in line.split(",")]
+                    data_start = i + 1
+                    break
+            
+            if not header:
+                print(f"  ⚠️ 匯率 CSV 找不到 Close 欄位標頭 ({year}), 嘗試直接解析")
+                # 嘗試直接用第一行當標頭
+                header = [c.strip() for c in lines[0].split(",")]
+                data_start = 1
+            
+            # 找 Close 欄位索引
+            close_idx = None
+            date_idx = 0  # 通常第一欄是日期
+            for i, h in enumerate(header):
+                if h.lower() in ("close", "收盤", "收盤價"):
+                    close_idx = i
+                if h.lower() in ("date", "日期", "交易日"):
+                    date_idx = i
+            
+            if close_idx is None:
+                print(f"  ⚠️ 找不到 Close 欄位，標頭: {header}")
+                # 假設最後一欄是 Close
+                close_idx = len(header) - 1
+            
+            # 解析資料行
+            for line in lines[data_start:]:
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) <= close_idx:
+                    continue
+                
+                raw_date = parts[date_idx]
+                raw_close = parts[close_idx]
+                
+                if not raw_close or raw_close in ("-", "N/A", ""):
+                    continue
+                
+                # 統一日期格式 → YYYY-MM-DD
+                try:
+                    # 嘗試 YYYY/MM/DD 或 YYYY-MM-DD 或 MM/DD/YYYY 等格式
+                    for fmt in ("%Y/%m/%d", "%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y"):
+                        try:
+                            dt = datetime.strptime(raw_date, fmt)
+                            date_str = dt.strftime("%Y-%m-%d")
+                            break
+                        except ValueError:
+                            continue
+                    else:
+                        continue  # 無法解析日期，跳過
+                    
+                    # 只保留最近 days 天
+                    if dt < cutoff:
+                        continue
+                    
+                    close_val = float(raw_close.replace(",", ""))
+                    result.append({"date": date_str, "close": close_val})
+                    
+                except (ValueError, IndexError):
+                    continue
+            
+            print(f"  ✓ 台北外匯 {year} 年: {len([d for d in result if d['date'].startswith(str(year))])} 筆")
+            
+        except Exception as e:
+            print(f"  ⚠️ 台北外匯 {year} 年抓取失敗: {e}")
+    
+    # 排序、去重、取最近 days 天
+    seen = set()
+    unique = []
+    for d in sorted(result, key=lambda x: x["date"]):
+        if d["date"] not in seen:
+            seen.add(d["date"])
+            unique.append(d)
+    
+    return unique[-days:]
+
+
+def get_tmf_retail_ratio(days: int = 30):
+    """
+    計算微台指 (TMF) 散戶多空比（近 N 個交易日）
+    
+    來源 A: taifex futDailyMarketReportDown  → 全市場 Total_OI
+    來源 B: taifex futContractsDateDown      → 三大法人 Inst_Net_OI
+    
+    公式:
+      Retail_Net_OI  = -Inst_Net_OI
+      Retail_Ratio % = (Retail_Net_OI / Total_OI) * 100
+    """
+    URL_MARKET   = "https://www.taifex.com.tw/cht/3/futDailyMarketReportDown"
+    URL_CONTRACT = "https://www.taifex.com.tw/cht/3/futContractsDateDown"
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://www.taifex.com.tw/",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    def clean_num(s):
+        try:
+            return int(str(s).replace(",", "").replace(" ", ""))
+        except (ValueError, TypeError):
+            return 0
+
+    def parse_big5_csv(raw_bytes):
+        try:
+            text = raw_bytes.decode("big5", errors="replace")
+        except Exception:
+            text = raw_bytes.decode("utf-8", errors="replace")
+        return [l.strip() for l in text.splitlines() if l.strip()]
+
+    results = []
+    date_cursor = datetime.now()
+    checked = 0
+    max_check = days + 25
+
+    while len(results) < days and checked < max_check:
+        date_str = date_cursor.strftime("%Y/%m/%d")
+        date_key = date_cursor.strftime("%Y-%m-%d")
+        date_cursor -= timedelta(days=1)
+        checked += 1
+
+        # 跳過週六(6)、週日(7)
+        if date_cursor.isoweekday() in (6, 7):
+            continue
+
+        # ── 來源 A：全市場 Total_OI ──────────────────────────
+        try:
+            resp_a = requests.post(
+                URL_MARKET,
+                data={"queryDate": date_str, "commodity_id": "TMF"},
+                headers=HEADERS,
+                timeout=15,
+            )
+            resp_a.raise_for_status()
+            lines_a = parse_big5_csv(resp_a.content)
+        except Exception as e:
+            print(f"  ⚠️ TMF 全市場行情 {date_str} 失敗: {e}")
+            continue
+
+        if len(lines_a) < 2:
+            continue  # 非交易日無資料
+
+        # 找「未平倉口數」欄位
+        header_a = None
+        oi_col = None
+        data_a_start = 0
+        for i, line in enumerate(lines_a):
+            cols = [c.strip() for c in line.split(",")]
+            for j, c in enumerate(cols):
+                if "未平倉口數" in c:
+                    header_a = cols
+                    oi_col = j
+                    data_a_start = i + 1
+                    break
+            if header_a:
+                break
+
+        if oi_col is None:
+            continue
+
+        total_oi = 0
+        for line in lines_a[data_a_start:]:
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) > oi_col:
+                total_oi += clean_num(parts[oi_col])
+
+        if total_oi == 0:
+            continue  # 非交易日
+
+        # ── 來源 B：三大法人 Inst_Net_OI ────────────────────
+        try:
+            resp_b = requests.post(
+                URL_CONTRACT,
+                data={
+                    "queryStartDate": date_str,
+                    "queryEndDate":   date_str,
+                    "commodityId":    "TMF",
+                },
+                headers=HEADERS,
+                timeout=15,
+            )
+            resp_b.raise_for_status()
+            lines_b = parse_big5_csv(resp_b.content)
+        except Exception as e:
+            print(f"  ⚠️ TMF 法人未平倉 {date_str} 失敗: {e}")
+            continue
+
+        if len(lines_b) < 2:
+            continue
+
+        # 找「身份別」與含「淨額口數」的欄位
+        id_col = None
+        net_oi_col = None
+        data_b_start = 0
+        for i, line in enumerate(lines_b):
+            cols = [c.strip() for c in line.split(",")]
+            has_id  = any("身份別" in c for c in cols)
+            has_net = any("淨額口數" in c for c in cols)
+            if has_id and has_net:
+                data_b_start = i + 1
+                for j, c in enumerate(cols):
+                    if "身份別" in c:
+                        id_col = j
+                    if "淨額口數" in c:
+                        net_oi_col = j
+                break
+
+        if id_col is None or net_oi_col is None:
+            continue
+
+        INST_NAMES = {"外資及陸資", "投信", "自營商"}
+        inst_net_oi = 0
+        for line in lines_b[data_b_start:]:
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) <= max(id_col, net_oi_col):
+                continue
+            if parts[id_col] in INST_NAMES:
+                inst_net_oi += clean_num(parts[net_oi_col])
+
+        # ── 計算散戶比例 ──────────────────────────────────────
+        retail_net_oi = -inst_net_oi
+        retail_ratio  = round((retail_net_oi / total_oi) * 100, 2) if total_oi else 0.0
+
+        results.append({
+            "date":          date_key,
+            "total_oi":      total_oi,
+            "inst_net_oi":   inst_net_oi,
+            "retail_net_oi": retail_net_oi,
+            "retail_ratio":  retail_ratio,
+        })
+
+    results = sorted(results, key=lambda x: x["date"])
+    print(f"  ✓ TMF 散戶多空比: {len(results)} 筆")
+    return results
+
+
 def get_news(stock_id: str, limit: int = 5):
     """取得股票新聞"""
     start = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
     news = fetch_finmind("TaiwanStockNews", data_id=stock_id, start_date=start)
-    
     news = sorted(news, key=lambda x: x.get("date", ""), reverse=True)[:limit]
     return news
 
@@ -572,19 +841,9 @@ new Chart(document.getElementById('taiex'),{{
     # 散戶多空比
     retail = market_data["retail"]
     if retail and len(retail) > 0:
-        # 調試：打印第一筆看欄位名稱
-        print(f"  [debug] 散戶欄位: {list(retail[0].keys())}")
-        
-        retail_dates = [d.get("date", "")[-5:] for d in retail]
-        retail_ratio = []
-        for d in retail:
-            # 嘗試不同可能的欄位名稱
-            long_vol  = float(d.get("long_volume",  d.get("LongVolume",  d.get("retail_long",  0))))
-            short_vol = float(d.get("short_volume", d.get("ShortVolume", d.get("retail_short", 1))))
-            total = long_vol + short_vol
-            ratio = (long_vol / total * 100) if total > 0 else 50.0
-            retail_ratio.append(round(ratio, 2))
-        
+        retail_dates = [d["date"][-5:] for d in retail]
+        retail_ratio = [d["retail_ratio"] for d in retail]
+
         scripts.append(f"""
 new Chart(document.getElementById('retail'),{{
   type:'line',
@@ -595,22 +854,30 @@ new Chart(document.getElementById('retail'),{{
       data:{json.dumps(retail_ratio)},
       borderColor:'#EF5350',
       backgroundColor:'rgba(239,83,80,0.1)',
-      borderWidth:2,fill:true,tension:0.3,pointRadius:2
+      borderWidth:2,fill:true,tension:0.3,pointRadius:3,
+      pointBackgroundColor:'#EF5350'
     }}]
   }},
   options:{{
     responsive:true,maintainAspectRatio:false,
-    plugins:{{legend:{{display:false}}}},
+    plugins:{{
+      legend:{{display:false}},
+      tooltip:{{callbacks:{{label:function(ctx){{return '散戶多單: '+ctx.parsed.y.toFixed(1)+'%'}}}}}}
+    }},
     scales:{{
-      y:{{ticks:{{callback:function(v){{return v+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      y:{{
+        ticks:{{callback:function(v){{return v.toFixed(0)+'%'}},font:{{size:11}}}},
+        grid:{{color:'rgba(0,0,0,0.05)'}}
+      }},
       x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
     }}
   }}
 }});""")
     else:
-        print("  ⚠️ 散戶多空比無數據 - 可能 FinMind API 無此資料或需要付費方案")
+        print("  ⚠️ 散戶多空比無數據")
         scripts.append("""
-document.getElementById('retail').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">散戶多空比數據暫時無法取得</div>';
+document.getElementById('retail').parentElement.innerHTML =
+  '<div style="padding:20px;text-align:center;color:#999;">散戶多空比暫無資料</div>';
 """)
     
     # 匯率
