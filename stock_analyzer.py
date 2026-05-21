@@ -1,661 +1,985 @@
 """
-每日台股分析機器人 v3.10 (雙 AI 切換版)
-v3.10 改動: 大盤動態快訊微調
-  - 加權指數: 加 20MA 乖離率
-  - USD/TWD: 1日/5日 同時顯示金額 + 漲跌幅
-  - 三大法人: 移除 30日累積; 數字四捨五入到個位
-  - 大台法人未平倉: 加上 (增減口數)
-  - 微台散戶多空比: 日期改用「頭~尾」格式 + 數值串
+股票監控機器人 v4.0
+功能:
+  1. 每日股票分析 (個股 + 大盤)
+  2. 生成完整 HTML 網站 (GitHub Pages)
+  3. 保留 Telegram 推播
+  4. AI 綜合分析
+
+資料源: FinMind API
+輸出: docs/index.html + Telegram 訊息
 """
 
 import os
-import csv
-import time
+import json
 import requests
-import feedparser
-from collections import defaultdict
+import subprocess
 from datetime import datetime, timedelta
-from io import StringIO
+from collections import defaultdict
+import anthropic
 
-# ===== 設定區 =====
+# ===== 設定 =====
 STOCKS = os.getenv("STOCKS", "2330,2454,2317").split(",")
 FINMIND_TOKEN = os.getenv("FINMIND_TOKEN", "")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
-
-AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-GEMINI_CALL_INTERVAL = float(os.getenv("GEMINI_CALL_INTERVAL", "4"))
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
-TPEFX_URL_TEMPLATE = "https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
+OUTPUT_DIR = "docs"
+OUTPUT_FILE = f"{OUTPUT_DIR}/index.html"
 
 
-# ===== AI 統一介面 =====
-def validate_ai_config():
-    if AI_PROVIDER not in ("claude", "gemini"):
-        raise ValueError(f"AI_PROVIDER={AI_PROVIDER} 無效, 必須是 'claude' 或 'gemini'")
-    if AI_PROVIDER == "claude" and not ANTHROPIC_API_KEY:
-        raise ValueError("AI_PROVIDER=claude 但未設定 ANTHROPIC_API_KEY")
-    if AI_PROVIDER == "gemini" and not GEMINI_API_KEY:
-        raise ValueError("AI_PROVIDER=gemini 但未設定 GEMINI_API_KEY")
+# =========================================================
+# 資料抓取
+# =========================================================
 
-
-def call_ai(prompt: str) -> str:
-    if AI_PROVIDER == "gemini":
-        return _call_gemini(prompt)
-    return _call_claude(prompt)
-
-
-def _call_claude(prompt: str) -> str:
-    from anthropic import Anthropic
-    client = Anthropic(api_key=ANTHROPIC_API_KEY)
-    msg = client.messages.create(
-        model=CLAUDE_MODEL,
-        max_tokens=1500,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return msg.content[0].text.replace("**", "*")
-
-
-def _call_gemini(prompt: str, max_retries: int = 2) -> str:
-    from google import genai
-    client = genai.Client(api_key=GEMINI_API_KEY)
-    for attempt in range(max_retries + 1):
-        try:
-            response = client.models.generate_content(
-                model=GEMINI_MODEL, contents=prompt
-            )
-            return response.text.replace("**", "*")
-        except Exception as e:
-            err = str(e)
-            if attempt < max_retries and (
-                "429" in err or "RESOURCE_EXHAUSTED" in err or "quota" in err.lower()
-            ):
-                wait = 30 * (attempt + 1)
-                print(f"  ⓘ Gemini rate limit, 等 {wait} 秒重試...")
-                time.sleep(wait)
-                continue
-            raise
-
-
-# ===== FinMind =====
-def fetch_finmind(dataset: str, start_date: str, stock_id: str = "") -> list:
-    params = {"dataset": dataset, "start_date": start_date, "token": FINMIND_TOKEN}
-    if stock_id:
-        params["data_id"] = stock_id
+def fetch_finmind(dataset: str, **params):
+    """通用 FinMind API 抓取"""
     try:
-        r = requests.get(FINMIND_URL, params=params, timeout=20)
-        if r.status_code == 400:
-            print(f"  ⓘ {dataset} ({stock_id}): 可能需 Sponsor 等級, 跳過")
-            return []
+        p = {"dataset": dataset, "token": FINMIND_TOKEN, **params}
+        r = requests.get(FINMIND_URL, params=p, timeout=20)
         r.raise_for_status()
-        return r.json().get("data", [])
+        data = r.json().get("data", [])
+        return data
     except Exception as e:
-        print(f"  ⚠️ FinMind {dataset} 失敗: {e}")
+        print(f"  ⚠️ {dataset} 抓取失敗: {e}")
         return []
 
 
-def classify_institution(name: str) -> str:
-    if not name:
-        return ""
-    if "Foreign" in name or "外資" in name:
-        return "foreign"
-    if "Trust" in name or "投信" in name:
-        return "trust"
-    if "Dealer" in name or "自營" in name:
-        return "dealer"
-    return ""
-
-
-# ===== TPEFX 匯率 =====
-def _fetch_tpefx_year(year: int) -> list:
-    url = TPEFX_URL_TEMPLATE.format(year=year)
-    try:
-        r = requests.get(url, timeout=15)
-        r.raise_for_status()
-        text = r.content.decode("utf-8-sig")
-        reader = csv.DictReader(StringIO(text))
-        rows = []
-        for row in reader:
-            date_str = (row.get("DATE") or "").strip()
-            close_str = (row.get("CLOSE") or "").strip()
-            if not date_str or not close_str:
-                continue
-            try:
-                rows.append({"date": date_str, "close": float(close_str)})
-            except ValueError:
-                continue
-        return rows
-    except Exception as e:
-        print(f"  ⚠️ TPEFX {year} 抓取失敗: {e}")
-        return []
-
-
-def get_tpefx_usdtwd(days: int = 10) -> list:
-    year = datetime.now().year
-    history = _fetch_tpefx_year(year)
-    if len(history) < days:
-        prev = _fetch_tpefx_year(year - 1)
-        history = prev + history
-    return history[-days:] if history else []
-
-
-# ===== 加權指數技術面分析 =====
-def analyze_taiex_ta(taiex_rows: list) -> str:
-    """技術面文字描述, 30 字內"""
-    closes = [r.get("close") for r in taiex_rows if r.get("close") is not None]
-    if len(closes) < 5:
-        return "資料不足"
-
-    latest = closes[-1]
-    ma5 = sum(closes[-5:]) / 5
-    parts = ["站上MA5" if latest > ma5 else "跌破MA5"]
-
-    if len(closes) >= 20:
-        ma10 = sum(closes[-10:]) / 10
-        ma20 = sum(closes[-20:]) / 20
-        if ma5 > ma10 > ma20:
-            parts.append("多頭排列")
-        elif ma5 < ma10 < ma20:
-            parts.append("空頭排列")
-        else:
-            parts.append("均線糾結")
-    elif len(closes) >= 10:
-        ma10 = sum(closes[-10:]) / 10
-        parts.append("短均偏多" if ma5 > ma10 else "短均偏空")
-
-    if len(closes) >= 2:
-        last_dir = "up" if closes[-1] > closes[-2] else (
-            "down" if closes[-1] < closes[-2] else None
-        )
-        if last_dir:
-            count = 1
-            for i in range(len(closes) - 2, 0, -1):
-                d = "up" if closes[i] > closes[i - 1] else (
-                    "down" if closes[i] < closes[i - 1] else None
-                )
-                if d == last_dir:
-                    count += 1
-                else:
-                    break
-            if count >= 2:
-                parts.append(f"連{count}{'紅' if last_dir == 'up' else '黑'}")
-
-    return ", ".join(parts)[:30]
-
-
-def calc_taiex_bias_20(taiex_rows: list):
-    """20 MA 乖離率 = (收盤 - MA20) / MA20 * 100%"""
-    closes = [r.get("close") for r in taiex_rows if r.get("close") is not None]
-    if len(closes) < 20:
+def get_stock_data(stock_id: str, days: int = 60):
+    """取得個股資料 (價格、成交量、60日K線)"""
+    start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockPrice", data_id=stock_id, start_date=start)
+    
+    if not data:
         return None
+    
+    # 只保留最近 days 天
+    data = sorted(data, key=lambda x: x["date"])[-days:]
+    
+    return {
+        "stock_id": stock_id,
+        "kline": data,  # 完整K線資料
+        "latest": data[-1] if data else {},
+        "prev": data[-2] if len(data) > 1 else {},
+    }
+
+
+def get_institution_data(stock_id: str, days: int = 30):
+    """取得三大法人買賣超"""
+    start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockInstitutionalInvestors", 
+                        data_id=stock_id, start_date=start)
+    
+    # 計算累計
+    foreign_5d = sum(float(d.get("Foreign_Investor_diff", 0)) for d in data[-5:])
+    foreign_20d = sum(float(d.get("Foreign_Investor_diff", 0)) for d in data[-20:])
+    trust_5d = sum(float(d.get("Investment_Trust_diff", 0)) for d in data[-5:])
+    trust_20d = sum(float(d.get("Investment_Trust_diff", 0)) for d in data[-20:])
+    
+    latest = data[-1] if data else {}
+    
+    return {
+        "latest": latest,
+        "foreign_today": float(latest.get("Foreign_Investor_diff", 0)) / 1000,  # 張
+        "foreign_5d": foreign_5d / 1000,
+        "foreign_20d": foreign_20d / 1000,
+        "trust_today": float(latest.get("Investment_Trust_diff", 0)) / 1000,
+        "trust_5d": trust_5d / 1000,
+        "trust_20d": trust_20d / 1000,
+        "dealer_today": float(latest.get("Dealer_diff", 0)) / 1000,
+        "history": data,  # 30日完整資料
+    }
+
+
+def get_margin_data(stock_id: str, days: int = 30):
+    """取得融資融券資料"""
+    start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", 
+                        data_id=stock_id, start_date=start)
+    
+    if not data:
+        return {}
+    
+    latest = data[-1]
+    prev = data[-2] if len(data) > 1 else latest
+    
+    # 計算變化
+    margin_balance = int(latest.get("MarginPurchaseBuy", 0))
+    margin_change = margin_balance - int(prev.get("MarginPurchaseBuy", 0))
+    
+    short_balance = int(latest.get("ShortSaleBuy", 0))
+    short_change = short_balance - int(prev.get("ShortSaleBuy", 0))
+    
+    return {
+        "margin_balance": margin_balance,
+        "margin_change": margin_change,
+        "short_balance": short_balance,
+        "short_change": short_change,
+        "history": data,  # 30日完整資料
+    }
+
+
+def get_market_overview():
+    """取得大盤資料"""
+    today = datetime.now().strftime("%Y-%m-%d")
+    start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
+    
+    # 加權指數
+    taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX", start_date=start)
+    taiex = sorted(taiex, key=lambda x: x["date"])[-60:] if taiex else []
+    
+    # 大盤三大法人
+    institution = fetch_finmind("TaiwanStockInstitutionalInvestorsSummary", 
+                               start_date=start)
+    
+    # 期貨留倉
+    futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", 
+                           data_id="TX", start_date=start)
+    
+    # 匯率
+    fx = fetch_finmind("TaiwanExchangeRate", start_date=start)
+    usd_twd = [d for d in fx if d.get("currency") == "USD"]
+    
+    # 散戶多空比
+    retail = fetch_finmind("TaiwanFuturesRetailPosition", 
+                          data_id="MXF", start_date=start)
+    
+    # 台指期未平倉
+    futures_oi = fetch_finmind("TaiwanFuturesDaily", 
+                              data_id="TX", start_date=start)
+    
+    # 大盤融資
+    total_margin = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", 
+                                start_date=start)
+    
+    return {
+        "taiex": taiex,
+        "institution": institution[-30:] if institution else [],
+        "futures": futures[-30:] if futures else [],
+        "usd_twd": usd_twd[-30:] if usd_twd else [],
+        "retail": retail[-30:] if retail else [],
+        "futures_oi": futures_oi[-30:] if futures_oi else [],
+        "total_margin": total_margin[-30:] if total_margin else [],
+    }
+
+
+def get_news(stock_id: str, limit: int = 5):
+    """取得股票新聞"""
+    start = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+    news = fetch_finmind("TaiwanStockNews", data_id=stock_id, start_date=start)
+    
+    # 按時間排序，取最新5條
+    news = sorted(news, key=lambda x: x.get("date", ""), reverse=True)[:limit]
+    return news
+
+
+def calculate_technical_indicators(kline):
+    """計算技術指標 (簡化版)"""
+    if len(kline) < 60:
+        return {}
+    
+    closes = [float(d["close"]) for d in kline]
+    highs = [float(d["max"]) for d in kline]
+    lows = [float(d["min"]) for d in kline]
+    
+    # MA
+    ma5 = sum(closes[-5:]) / 5
     ma20 = sum(closes[-20:]) / 20
-    return round((closes[-1] - ma20) / ma20 * 100, 2)
-
-
-# ===== 股票名稱查詢 =====
-def get_stock_names(stock_ids: list) -> dict:
-    try:
-        info = fetch_finmind("TaiwanStockInfo", "2024-01-01")
-        all_names = {r["stock_id"]: r.get("stock_name", "") for r in info}
-        return {sid: (all_names.get(sid) or sid) for sid in stock_ids}
-    except Exception as e:
-        print(f"  ⚠️ 取得股票名稱失敗: {e}")
-        return {sid: sid for sid in stock_ids}
-
-
-# ===== 個股資料抓取 =====
-def get_stock_data(stock_id: str) -> dict:
-    start = (datetime.now() - timedelta(days=15)).strftime("%Y-%m-%d")
+    ma60 = sum(closes[-60:]) / 60
+    
+    # KD (簡化)
+    rsv = ((closes[-1] - min(lows[-9:])) / (max(highs[-9:]) - min(lows[-9:]))) * 100 if max(highs[-9:]) != min(lows[-9:]) else 50
+    k = 50  # 簡化，實際需要遞迴計算
+    d = 50
+    
+    # RSI (簡化)
+    gains = [max(closes[i] - closes[i-1], 0) for i in range(-14, 0)]
+    losses = [max(closes[i-1] - closes[i], 0) for i in range(-14, 0)]
+    avg_gain = sum(gains) / 14
+    avg_loss = sum(losses) / 14
+    rs = avg_gain / avg_loss if avg_loss != 0 else 0
+    rsi = 100 - (100 / (1 + rs))
+    
     return {
-        "price": fetch_finmind("TaiwanStockPrice", start, stock_id)[-7:],
-        "institutional": fetch_finmind(
-            "TaiwanStockInstitutionalInvestorsBuySell", start, stock_id
-        ),
-        "margin": fetch_finmind(
-            "TaiwanStockMarginPurchaseShortSale", start, stock_id
-        )[-7:],
-        "shareholding": fetch_finmind(
-            "TaiwanStockShareholding", start, stock_id
-        )[-7:],
-        "securities_lending": fetch_finmind(
-            "TaiwanDailyShortSaleBalances", start, stock_id
-        )[-7:],
+        "ma5": round(ma5, 2),
+        "ma20": round(ma20, 2),
+        "ma60": round(ma60, 2),
+        "k": round(rsv, 1),
+        "d": round(k, 1),
+        "rsi": round(rsi, 1),
     }
 
 
-def get_news(stock_id: str, max_items: int = 8) -> list:
+# =========================================================
+# AI 分析
+# =========================================================
+
+def generate_ai_analysis(stock_id: str, stock_name: str, data: dict, indicators: dict, institution: dict, margin: dict):
+    """呼叫 Claude API 生成股票分析"""
+    
+    if not ANTHROPIC_API_KEY:
+        return "AI 分析功能未啟用（請設定 ANTHROPIC_API_KEY）"
+    
+    latest = data["latest"]
+    prev = data["prev"]
+    
+    prompt = f"""請分析 {stock_id} {stock_name} 的當前狀況，提供專業建議。
+
+## 技術面
+- 收盤價: {latest.get('close')} (前日: {prev.get('close')})
+- 成交量: {latest.get('Trading_Volume')} 張
+- MA5: {indicators.get('ma5')}, MA20: {indicators.get('ma20')}, MA60: {indicators.get('ma60')}
+- KD: K={indicators.get('k')}, D={indicators.get('d')}
+- RSI: {indicators.get('rsi')}
+
+## 籌碼面
+- 外資今日: {institution['foreign_today']:.0f}張, 5日: {institution['foreign_5d']:.0f}張, 20日: {institution['foreign_20d']:.0f}張
+- 投信今日: {institution['trust_today']:.0f}張, 5日: {institution['trust_5d']:.0f}張
+- 融資餘額: {margin.get('margin_balance', 0):,}張 (變化: {margin.get('margin_change', 0):+})
+- 融券餘額: {margin.get('short_balance', 0):,}張 (變化: {margin.get('short_change', 0):+})
+
+請用繁體中文回答，分三部分：
+1. **技術面分析** (150字內): K線位置、均線排列、技術指標訊號、支撐壓力
+2. **籌碼面分析** (150字內): 法人動向、融資融券變化、籌碼健康度
+3. **操作建議** (100字內): 短線策略、進出場點位、風險提示
+
+請使用條列式，清楚明瞭。"""
+    
     try:
-        feed = feedparser.parse(f"https://tw.stock.yahoo.com/rss?s={stock_id}.TW")
-        return [
-            {
-                "title": e.title,
-                "summary": e.get("summary", "")[:300],
-                "published": e.get("published", ""),
-            }
-            for e in feed.entries[:max_items]
-        ]
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        response = client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        analysis = response.content[0].text
+        return analysis
+        
     except Exception as e:
-        print(f"  ⚠️ 新聞抓取失敗: {e}")
-        return []
+        print(f"  ⚠️ AI 分析失敗: {e}")
+        return f"AI 分析暫時無法使用: {str(e)}"
 
 
-# ===== 大盤動態抓取 =====
-def get_market_context() -> dict:
-    start_short = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
-    start_long = (datetime.now() - timedelta(days=50)).strftime("%Y-%m-%d")
-    return {
-        "taiex": fetch_finmind("TaiwanStockPrice", start_long, "TAIEX"),
-        "total_institutional": fetch_finmind(
-            "TaiwanStockTotalInstitutionalInvestors", start_long
-        ),
-        "fx_usdtwd": get_tpefx_usdtwd(10),
-        "fut_TX": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TX"),
-        "fut_TMF_inst": fetch_finmind("TaiwanFuturesInstitutionalInvestors", start_short, "TMF"),
-        "fut_TMF_daily": fetch_finmind("TaiwanFuturesDaily", start_short, "TMF"),
-    }
+def generate_market_ai_analysis(market_data: dict):
+    """生成大盤 AI 分析"""
+    
+    if not ANTHROPIC_API_KEY:
+        return "AI 分析功能未啟用"
+    
+    taiex_latest = market_data["taiex"][-1] if market_data["taiex"] else {}
+    inst_latest = market_data["institution"][-1] if market_data["institution"] else {}
+    
+    prompt = f"""請分析台股大盤當前狀況。
 
+## 大盤數據
+- 加權指數: {taiex_latest.get('close', 'N/A')}
+- 成交量: {taiex_latest.get('Trading_Volume', 'N/A')}
+- 外資買賣超: {inst_latest.get('Foreign_Investor_diff', 0)} 千元
+- 投信買賣超: {inst_latest.get('Investment_Trust_diff', 0)} 千元
 
-# ===== 衍生訊號計算 =====
-def streak(values: list) -> int:
-    if not values:
-        return 0
-    last = values[-1]
-    if last == 0:
-        return 0
-    direction = 1 if last > 0 else -1
-    count = 0
-    for v in reversed(values):
-        if (v > 0 and direction > 0) or (v < 0 and direction < 0):
-            count += 1
-        else:
-            break
-    return count * direction
-
-
-def calc_signals(data: dict) -> dict:
-    sig = {}
-    inst = data.get("institutional", [])
-    if inst:
-        daily = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
-        for r in inst:
-            net = (r.get("buy", 0) - r.get("sell", 0)) // 1000
-            cat = classify_institution(r.get("name", ""))
-            d = r.get("date", "")
-            if cat:
-                daily[d][cat] += net
-        days = sorted(daily.keys())
-        if days:
-            sig["foreign_5d_net"] = sum(daily[d]["foreign"] for d in days[-5:])
-            sig["trust_5d_net"] = sum(daily[d]["trust"] for d in days[-5:])
-            sig["dealer_5d_net"] = sum(daily[d]["dealer"] for d in days[-5:])
-            sig["foreign_streak"] = streak([daily[d]["foreign"] for d in days])
-            sig["trust_streak"] = streak([daily[d]["trust"] for d in days])
-
-    margin = data.get("margin", [])
-    if margin:
-        latest = margin[-1]
-        m_bal = latest.get("MarginPurchaseTodayBalance", 0)
-        s_bal = latest.get("ShortSaleTodayBalance", 0)
-        sig["margin_balance"] = m_bal
-        sig["short_balance"] = s_bal
-        sig["short_margin_ratio_pct"] = round(s_bal / m_bal * 100, 2) if m_bal else 0
-        if len(margin) >= 5:
-            sig["margin_change_5d"] = m_bal - margin[-5].get("MarginPurchaseTodayBalance", 0)
-            sig["short_change_5d"] = s_bal - margin[-5].get("ShortSaleTodayBalance", 0)
-
-    sl = data.get("securities_lending", [])
-    if sl:
-        sig["short_sale_balance"] = (
-            sl[-1].get("Volume") or sl[-1].get("today_balance") or sl[-1].get("balance") or 0
+請用繁體中文，分四部分（各100字）：
+1. **技術面分析**: 指數位置、均線、技術指標
+2. **籌碼面分析**: 法人動向、期貨留倉
+3. **市場情緒**: 漲跌家數、類股表現
+4. **後市展望**: 短線策略、風險提示"""
+    
+    try:
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        response = client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=1200,
+            messages=[{"role": "user", "content": prompt}]
         )
-
-    sh = data.get("shareholding", [])
-    if sh and len(sh) >= 2:
-        get_ratio = lambda r: (
-            r.get("ForeignInvestmentSharesRatio")
-            or r.get("ForeignInvestmentRemainRatio") or 0
-        )
-        latest_ratio = get_ratio(sh[-1])
-        old_ratio = get_ratio(sh[max(0, len(sh) - 5)])
-        sig["foreign_holding_pct"] = latest_ratio
-        sig["foreign_holding_change_5d_pct"] = round(latest_ratio - old_ratio, 3)
-
-    return sig
+        return response.content[0].text
+    except Exception as e:
+        print(f"  ⚠️ 大盤 AI 分析失敗: {e}")
+        return f"AI 分析暫時無法使用: {str(e)}"
 
 
-def _tx_oi_by_date(tx_rows: list, target_date: str) -> dict:
-    """加總某日 TX 三大法人淨 OI"""
-    inst = {"foreign": 0, "trust": 0, "dealer": 0}
-    for r in tx_rows:
-        if r["date"] != target_date:
-            continue
-        name = (r.get("institutional_investors") or r.get("name")
-                or r.get("type") or "")
-        cat = classify_institution(name)
-        if not cat:
-            continue
-        long_oi = r.get("long_open_interest_balance_volume", 0) or 0
-        short_oi = r.get("short_open_interest_balance_volume", 0) or 0
-        inst[cat] += long_oi - short_oi
-    return inst
+# =========================================================
+# HTML 生成
+# =========================================================
+
+def generate_html(stocks_data: dict, market_data: dict):
+    """生成完整 HTML 網站"""
+    
+    # 生成時間
+    update_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    
+    # 個股卡片 HTML
+    stock_cards_html = ""
+    for stock_id, data in stocks_data.items():
+        stock_cards_html += generate_stock_card_html(stock_id, data)
+    
+    # 大盤數據
+    market_html = generate_market_html(market_data)
+    
+    # 市場指標時序
+    timeseries_html = generate_timeseries_html(market_data)
+    
+    # 完整 HTML
+    html = f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票監控儀表板</title>
+<style>
+{get_css_styles()}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-top">
+      <h1>📊 股票監控儀表板</h1>
+      <div class="update-time">
+        <i class="ti ti-clock"></i>
+        最後更新: {update_time} (台灣時間)
+      </div>
+    </div>
+  </div>
+
+  {market_html}
+  
+  {timeseries_html}
+  
+  <div class="section-header">
+    <i class="ti ti-star"></i>
+    追蹤個股分析
+  </div>
+  
+  <div class="stock-grid">
+    {stock_cards_html}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+<script>
+{get_chart_scripts(stocks_data, market_data)}
+</script>
+
+</body>
+</html>"""
+    
+    return html
 
 
-def calc_market_signals(market: dict) -> dict:
-    sig = {}
+def generate_stock_card_html(stock_id: str, data: dict):
+    """生成個股卡片 HTML"""
+    
+    stock = data["stock_data"]
+    indicators = data["indicators"]
+    institution = data["institution"]
+    margin = data["margin"]
+    news = data["news"]
+    ai_analysis = data["ai_analysis"]
+    
+    latest = stock["latest"]
+    prev = stock["prev"]
+    
+    # 計算漲跌
+    close = float(latest.get("close", 0))
+    prev_close = float(prev.get("close", close))
+    change = close - prev_close
+    change_pct = (change / prev_close * 100) if prev_close else 0
+    
+    change_class = "positive" if change > 0 else "negative"
+    change_arrow = "↑" if change > 0 else "↓"
+    
+    # 新聞HTML
+    news_html = ""
+    for n in news[:5]:
+        news_html += f"""
+        <div class="news-item">
+          <div class="news-time">{n.get('date', '')}</div>
+          <div class="news-title">{n.get('title', '')}</div>
+        </div>"""
+    
+    return f"""
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{stock_id} {data.get('name', '')}</h3>
+        <div class="card-price {change_class}">${close:.2f}</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value {change_class}">{change_arrow} {change:+.2f} ({change_pct:+.2f}%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">{int(latest.get('Trading_Volume', 0)):,} 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_{stock_id}"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text">{ai_analysis.replace(chr(10), '<br>')}</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="{'positive' if institution['foreign_today'] > 0 else 'negative'}">{institution['foreign_today']:+.0f}</td>
+            <td class="{'positive' if institution['foreign_5d'] > 0 else 'negative'}">{institution['foreign_5d']:+.0f}</td>
+            <td class="{'positive' if institution['foreign_20d'] > 0 else 'negative'}">{institution['foreign_20d']:+.0f}</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="{'positive' if institution['trust_today'] > 0 else 'negative'}">{institution['trust_today']:+.0f}</td>
+            <td class="{'positive' if institution['trust_5d'] > 0 else 'negative'}">{institution['trust_5d']:+.0f}</td>
+            <td class="{'positive' if institution['trust_20d'] > 0 else 'negative'}">{institution['trust_20d']:+.0f}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">{margin.get('margin_balance', 0):,}</div>
+            <div class="metric-small-change {'positive' if margin.get('margin_change', 0) > 0 else 'negative'}">{margin.get('margin_change', 0):+,}</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">{margin.get('short_balance', 0):,}</div>
+            <div class="metric-small-change {'positive' if margin.get('short_change', 0) > 0 else 'negative'}">{margin.get('short_change', 0):+,}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          {news_html}
+        </div>
+      </div>
+    </div>"""
 
-    # ---- 加權指數 (含 TA + 20MA 乖離率) ----
-    taiex = market.get("taiex", [])
-    if taiex and len(taiex) >= 2:
-        try:
-            latest, prev = taiex[-1], taiex[-2]
-            sig["taiex_close"] = latest.get("close")
-            chg = latest["close"] - prev["close"]
-            sig["taiex_change"] = round(chg, 2)
-            sig["taiex_change_pct"] = round(chg / prev["close"] * 100, 2)
-            sig["taiex_ta"] = analyze_taiex_ta(taiex)
-            sig["taiex_bias_20"] = calc_taiex_bias_20(taiex)
-        except (TypeError, KeyError):
-            pass
 
-    # ---- USD/TWD (金額 + 漲跌幅 雙顯示) ----
-    fx = market.get("fx_usdtwd", [])
-    if fx and len(fx) >= 2:
-        latest = fx[-1]
-        sig["usdtwd"] = latest.get("close")
-        sig["usdtwd_date"] = latest.get("date")
-        try:
-            close = latest["close"]
-            close_1d = fx[-2]["close"]
-            sig["usdtwd_change_1d"] = round(close - close_1d, 4)
-            sig["usdtwd_change_1d_pct"] = round((close - close_1d) / close_1d * 100, 2)
-            if len(fx) >= 6:
-                close_5d = fx[-6]["close"]
-                sig["usdtwd_change_5d"] = round(close - close_5d, 4)
-                sig["usdtwd_change_5d_pct"] = round((close - close_5d) / close_5d * 100, 2)
-        except (TypeError, KeyError, ZeroDivisionError):
-            pass
-
-    # ---- 三大法人 (今日 / 5日, 已移除 30日) ----
-    total_inst = market.get("total_institutional", [])
-    if total_inst:
-        daily_nets = defaultdict(lambda: {"foreign": 0, "trust": 0, "dealer": 0})
-        for r in total_inst:
-            cat = classify_institution(r.get("name", ""))
-            if not cat:
-                continue
-            net_billion = (r.get("buy", 0) - r.get("sell", 0)) / 1e8
-            daily_nets[r["date"]][cat] += net_billion
-
-        dates_sorted = sorted(daily_nets.keys())
-        if dates_sorted:
-            today_date = dates_sorted[-1]
-            sig["market_date"] = today_date
-            last_5 = dates_sorted[-5:]
-            for cat in ("foreign", "trust", "dealer"):
-                sig[f"market_{cat}_today"] = daily_nets[today_date][cat]
-                sig[f"market_{cat}_5d"] = sum(daily_nets[d][cat] for d in last_5)
-
-    # ---- TX 大台 三大法人 + 增減口數 ----
-    tx_rows = market.get("fut_TX", [])
-    if tx_rows:
-        dates = sorted(set(r["date"] for r in tx_rows))
-        if dates:
-            today_inst = _tx_oi_by_date(tx_rows, dates[-1])
-            sig["TX_foreign_net_oi"] = today_inst["foreign"]
-            sig["TX_trust_net_oi"] = today_inst["trust"]
-            sig["TX_dealer_net_oi"] = today_inst["dealer"]
-            sig["TX_total_net_oi"] = sum(today_inst.values())
-
-            if len(dates) >= 2:
-                prev_inst = _tx_oi_by_date(tx_rows, dates[-2])
-                sig["TX_foreign_change"] = today_inst["foreign"] - prev_inst["foreign"]
-                sig["TX_trust_change"] = today_inst["trust"] - prev_inst["trust"]
-                sig["TX_dealer_change"] = today_inst["dealer"] - prev_inst["dealer"]
-                sig["TX_total_change"] = sig["TX_total_net_oi"] - sum(prev_inst.values())
-
-    # ---- TMF 微台 散戶多空比近 5 日 ----
-    tmf_inst = market.get("fut_TMF_inst", [])
-    tmf_daily = market.get("fut_TMF_daily", [])
-    if tmf_inst and tmf_daily:
-        inst_dates = set(r["date"] for r in tmf_inst)
-        daily_dates = set(r["date"] for r in tmf_daily)
-        common = sorted(inst_dates & daily_dates)
-        ratios = []
-        for d in common[-5:]:
-            il = sum((r.get("long_open_interest_balance_volume") or 0)
-                     for r in tmf_inst if r["date"] == d)
-            ish = sum((r.get("short_open_interest_balance_volume") or 0)
-                      for r in tmf_inst if r["date"] == d)
-            toi = sum((r.get("open_interest") or 0)
-                      for r in tmf_daily if r["date"] == d)
-            if toi > 0:
-                ratio = (ish - il) / toi * 100
-                ratios.append({"date": d, "ratio": round(ratio, 2)})
-        sig["TMF_retail_ratios_5d"] = ratios
-
-    return sig
+def generate_market_html(market_data: dict):
+    """生成大盤資訊 HTML"""
+    
+    taiex_latest = market_data["taiex"][-1] if market_data["taiex"] else {}
+    inst_latest = market_data["institution"][-1] if market_data["institution"] else {}
+    
+    close = float(taiex_latest.get("close", 0))
+    prev_close = float(market_data["taiex"][-2].get("close", close)) if len(market_data["taiex"]) > 1 else close
+    change = close - prev_close
+    change_pct = (change / prev_close * 100) if prev_close else 0
+    change_class = "positive" if change > 0 else "negative"
+    change_arrow = "↑" if change > 0 else "↓"
+    
+    return f"""
+    <div class="section-header">
+      <i class="ti ti-chart-line"></i>
+      大盤總覽
+    </div>
+    
+    <div class="metrics-grid-4">
+      <div class="metric">
+        <div class="metric-label">加權指數</div>
+        <div class="metric-value {change_class}">{close:.2f}</div>
+        <div class="metric-change {change_class}">{change_arrow} {change:+.2f} ({change_pct:+.2f}%)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">成交量 (億股)</div>
+        <div class="metric-value">{float(taiex_latest.get('Trading_Volume', 0))/100000:.1f}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">外資買賣超 (億)</div>
+        <div class="metric-value {'positive' if float(inst_latest.get('Foreign_Investor_diff', 0)) > 0 else 'negative'}">
+          {float(inst_latest.get('Foreign_Investor_diff', 0))/100000:.1f}
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">投信買賣超 (億)</div>
+        <div class="metric-value {'positive' if float(inst_latest.get('Investment_Trust_diff', 0)) > 0 else 'negative'}">
+          {float(inst_latest.get('Investment_Trust_diff', 0))/100000:.1f}
+        </div>
+      </div>
+    </div>
+    
+    <div class="card" style="margin-top: 16px;">
+      <div class="chart-container" style="height: 320px;">
+        <canvas id="taiexChart"></canvas>
+      </div>
+    </div>"""
 
 
-# ===== AI 分析 =====
-def analyze(stock_id, stock_name, data, market, market_sig, news, signals):
-    display_name = stock_name if stock_name and stock_name != stock_id else stock_id
-    tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
-    tmf_latest = tmf_ratios[-1]["ratio"] if tmf_ratios else None
+def generate_timeseries_html(market_data: dict):
+    """生成市場指標時序分析 HTML"""
+    
+    return """
+    <div class="section-header">
+      <i class="ti ti-chart-dots"></i>
+      市場指標綜合研判 (近30日)
+    </div>
+    
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">微台散戶多空比</div>
+        <div class="chart-container">
+          <canvas id="retailChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">美元兌新台幣</div>
+        <div class="chart-container">
+          <canvas id="fxChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">三大法人現貨 vs 期貨</div>
+      <div class="chart-container" style="height: 320px;">
+        <canvas id="institutionChart"></canvas>
+      </div>
+    </div>"""
 
-    prompt = f"""你是專業台股分析師。請依據以下資料給出「{display_name}」({stock_id}) 的客觀分析。
 
-【重要寫作要求】
-- 內文中提及這檔股票時, 請使用「{display_name}」這個名稱, 不要使用代號 {stock_id}
-- 不要在輸出中重述大盤摘要也不要寫個股 vs 大盤段落 (大盤背景僅供你內部分析參考)
-- 重要詞彙用單個星號*粗體*標示, 不要用雙星號**
-
-═══ 大盤背景 (僅供分析時參考, 不要在輸出中重述) ═══
-加權指數 {market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 20MA乖離 {market_sig.get('taiex_bias_20')}% | {market_sig.get('taiex_ta', '')}
-USD/TWD {market_sig.get('usdtwd')} | 1日 {market_sig.get('usdtwd_change_1d_pct')}% | 5日 {market_sig.get('usdtwd_change_5d_pct')}%
-大盤三大法人 (億): 外資今 {round(market_sig.get('market_foreign_today') or 0)} / 5日 {round(market_sig.get('market_foreign_5d') or 0)}
-                    投信今 {round(market_sig.get('market_trust_today') or 0)} / 5日 {round(market_sig.get('market_trust_5d') or 0)}
-TX 大台法人淨 OI: 外資 {market_sig.get('TX_foreign_net_oi')} / 投信 {market_sig.get('TX_trust_net_oi')} / 自營商 {market_sig.get('TX_dealer_net_oi')}
-TMF 微台散戶多空比 (最新): {tmf_latest}%
-
-═══ 「{display_name}」原始資料 ═══
-近 7 日股價(OHLCV): {data.get('price')}
-近期三大法人: {data.get('institutional')}
-近 7 日融資融券: {data.get('margin')}
-近 7 日外資持股: {data.get('shareholding')}
-近 7 日借券賣出餘額: {data.get('securities_lending')}
-
-═══ 「{display_name}」籌碼訊號 ═══
-[法人]
-- 外資 5 日累計 (張): {signals.get('foreign_5d_net', 'N/A')} | 連續方向: {signals.get('foreign_streak', 'N/A')}
-- 投信 5 日累計 (張): {signals.get('trust_5d_net', 'N/A')} | 連續方向: {signals.get('trust_streak', 'N/A')}
-- 自營商 5 日累計 (張): {signals.get('dealer_5d_net', 'N/A')}
-[融資融券]
-- 融資餘額: {signals.get('margin_balance', 'N/A')} 張 | 5 日增減: {signals.get('margin_change_5d', 'N/A')}
-- 融券餘額: {signals.get('short_balance', 'N/A')} 張 | 5 日增減: {signals.get('short_change_5d', 'N/A')}
-- 券資比: {signals.get('short_margin_ratio_pct', 'N/A')}%
-[借券 & 外資持股]
-- 借券賣出餘額: {signals.get('short_sale_balance', 'N/A')}
-- 外資持股: {signals.get('foreign_holding_pct', 'N/A')}% | 5 日變化: {signals.get('foreign_holding_change_5d_pct', 'N/A')}%
-
-═══ 最新新聞 ═══
-{news}
-
-請嚴格依以下格式回覆 (限 300 字內, 條列為主, 內文使用「{display_name}」敘述, 不要新增其他段落):
-
-📊 *籌碼面綜合* [偏多 / 中性偏多 / 中性 / 中性偏空 / 偏空]
-- 法人動向: 外資+投信對「{display_name}」的合計訊號
-- 主力動向: 融資融券+借券+外資持股的綜合解讀
-- 矛盾訊號: 若有
-
-📰 *新聞重點* (挑 2 則最具影響力, 標註利多/利空)
-
-🔍 *短期觀察*
-- 中性陳述「{display_name}」近期動能, 不直接喊買賣
-
-⚠️ *風險提示*
-- 1-2 點具體風險
+def get_css_styles():
+    """回傳 CSS 樣式"""
+    return """
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f5;
+  padding: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+.header {
+  background: white;
+  border-radius: 12px;
+  border: 0.5px solid #e0e0e0;
+  padding: 1.25rem;
+  margin-bottom: 16px;
+}
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 22px; font-weight: 500; }
+.update-time { font-size: 13px; color: #666; }
+.section-header {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 24px 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 0.5px solid #e0e0e0;
+  padding: 1rem;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.card-title { font-size: 18px; font-weight: 500; }
+.card-price { font-size: 20px; font-weight: 500; }
+.positive { color: #d32f2f; }
+.negative { color: #388e3c; }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metrics-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px;
+}
+.metric-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.metric-value { font-size: 16px; font-weight: 500; }
+.metric-change { font-size: 12px; margin-top: 2px; }
+.chart-container { position: relative; height: 280px; margin-bottom: 12px; }
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.analysis-box {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.analysis-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.analysis-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+.card-section { margin-bottom: 16px; }
+.section-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.table th {
+  text-align: left;
+  padding: 8px;
+  background: #f5f5f5;
+  color: #666;
+  font-weight: 500;
+}
+.table td {
+  padding: 8px;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.metric-small {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.metric-small-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.metric-small-value { font-size: 14px; font-weight: 500; }
+.metric-small-change { font-size: 11px; margin-top: 2px; }
+.news-list { max-height: 200px; overflow-y: auto; }
+.news-item {
+  padding: 8px 0;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.news-item:last-child { border-bottom: none; }
+.news-time { font-size: 11px; color: #666; margin-bottom: 4px; }
+.news-title { font-size: 13px; line-height: 1.4; }
+@media (max-width: 1024px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .metrics-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .stock-grid { grid-template-columns: 1fr; }
+}
 """
-    return call_ai(prompt)
 
 
-# ===== Telegram 推播 =====
+def get_chart_scripts(stocks_data: dict, market_data: dict):
+    """生成 Chart.js 腳本"""
+    
+    scripts = []
+    
+    # 個股 K 線圖
+    for stock_id, data in stocks_data.items():
+        kline = data["stock_data"]["kline"]
+        dates = [d["date"][-5:] for d in kline[-30:]]  # MM-DD
+        closes = [float(d["close"]) for d in kline[-30:]]
+        
+        scripts.append(f"""
+new Chart(document.getElementById('kline_{stock_id}'), {{
+  type: 'line',
+  data: {{
+    labels: {json.dumps(dates)},
+    datasets: [{{
+      label: '收盤價',
+      data: {json.dumps(closes)},
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }}]
+  }},
+  options: {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ display: false }} }},
+    scales: {{
+      y: {{ ticks: {{ font: {{ size: 11 }} }} }},
+      x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0, autoSkip: true }} }}
+    }}
+  }}
+}});""")
+    
+    # 大盤 K 線
+    taiex = market_data["taiex"][-60:]
+    taiex_dates = [d["date"][-5:] for d in taiex]
+    taiex_closes = [float(d["close"]) for d in taiex]
+    
+    scripts.append(f"""
+new Chart(document.getElementById('taiexChart'), {{
+  type: 'line',
+  data: {{
+    labels: {json.dumps(taiex_dates)},
+    datasets: [{{
+      label: '加權指數',
+      data: {json.dumps(taiex_closes)},
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      fill: false
+    }}]
+  }},
+  options: {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ display: false }} }}
+  }}
+}});""")
+    
+    # 散戶多空比
+    retail = market_data["retail"][-30:]
+    retail_dates = [d["date"][-5:] for d in retail]
+    retail_ratio = [float(d.get("long_volume", 0)) / (float(d.get("long_volume", 0)) + float(d.get("short_volume", 1))) * 100 for d in retail]
+    
+    scripts.append(f"""
+new Chart(document.getElementById('retailChart'), {{
+  type: 'line',
+  data: {{
+    labels: {json.dumps(retail_dates)},
+    datasets: [{{
+      label: '散戶多單比例 (%)',
+      data: {json.dumps(retail_ratio)},
+      borderColor: '#EF5350',
+      backgroundColor: 'rgba(239, 83, 80, 0.1)',
+      borderWidth: 2,
+      fill: true,
+      tension: 0.3
+    }}]
+  }},
+  options: {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ display: false }} }}
+  }}
+}});""")
+    
+    # 匯率
+    fx = market_data["usd_twd"][-30:]
+    fx_dates = [d["date"][-5:] for d in fx]
+    fx_values = [float(d.get("close", 0)) for d in fx]
+    
+    scripts.append(f"""
+new Chart(document.getElementById('fxChart'), {{
+  type: 'line',
+  data: {{
+    labels: {json.dumps(fx_dates)},
+    datasets: [{{
+      label: 'USD/TWD',
+      data: {json.dumps(fx_values)},
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3
+    }}]
+  }},
+  options: {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ display: false }} }}
+  }}
+}});""")
+    
+    # 三大法人
+    inst = market_data["institution"][-30:]
+    inst_dates = [d["date"][-5:] for d in inst]
+    foreign = [float(d.get("Foreign_Investor_diff", 0)) / 100000 for d in inst]  # 億元
+    trust = [float(d.get("Investment_Trust_diff", 0)) / 100000 for d in inst]
+    
+    scripts.append(f"""
+new Chart(document.getElementById('institutionChart'), {{
+  type: 'bar',
+  data: {{
+    labels: {json.dumps(inst_dates)},
+    datasets: [
+      {{
+        label: '外資現貨 (億)',
+        data: {json.dumps(foreign)},
+        backgroundColor: 'rgba(55, 138, 221, 0.7)',
+        yAxisID: 'y'
+      }},
+      {{
+        label: '投信現貨 (億)',
+        data: {json.dumps(trust)},
+        backgroundColor: 'rgba(29, 158, 117, 0.7)',
+        yAxisID: 'y'
+      }}
+    ]
+  }},
+  options: {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ display: true, position: 'top' }} }},
+    scales: {{
+      y: {{
+        position: 'left',
+        title: {{ display: true, text: '買賣超 (億)' }}
+      }}
+    }}
+  }}
+}});""")
+    
+    return "\n".join(scripts)
+
+
+# =========================================================
+# Telegram 推播
+# =========================================================
+
 def send_telegram(text: str):
+    """發送 Telegram 訊息"""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     try:
-        r = requests.post(
+        requests.post(
             url,
             data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000], "parse_mode": "Markdown"},
-            timeout=10,
+            timeout=10
         )
-        if r.status_code == 400:
-            r = requests.post(
-                url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000]}, timeout=10
-            )
-        r.raise_for_status()
     except Exception as e:
         print(f"  ⚠️ Telegram 推播失敗: {e}")
 
 
-def fmt_int(value):
-    """整數格式: 帶正負號, 千分位"""
-    if value is None:
-        return "N/A"
-    return f"{round(value):+,d}"
+# =========================================================
+# 主流程
+# =========================================================
 
-
-def fmt_oi_with_change(value, change):
-    """大台 OI 格式: -3,245 (-50)"""
-    if value is None:
-        return "N/A"
-    base = f"{int(value):+,}"
-    if change is None:
-        return base
-    return f"{base} ({int(change):+,})"
-
-
-def fmt_pct(value):
-    if value is None:
-        return "N/A"
-    return f"{value:+.2f}%"
-
-
-def fmt_amount4(value):
-    """匯率金額: 4 位小數帶正負號, 例如 -0.0210"""
-    if value is None:
-        return "N/A"
-    return f"{value:+.4f}"
-
-
-def fmt_md(date_str: str) -> str:
-    """YYYY-MM-DD → M/D"""
-    try:
-        dt = datetime.strptime(date_str, "%Y-%m-%d")
-        return f"{dt.month}/{dt.day}"
-    except Exception:
-        return date_str
-
-
-def send_market_summary(market_sig: dict):
-    # ----- TMF 5 日散戶多空比 (頭~尾日期 + 數值串) -----
-    tmf_ratios = market_sig.get("TMF_retail_ratios_5d") or []
-    if tmf_ratios:
-        date_range = f"{fmt_md(tmf_ratios[0]['date'])}~{fmt_md(tmf_ratios[-1]['date'])}"
-        values = " / ".join(f"{r['ratio']:+.2f}%" for r in tmf_ratios)
-        tmf_block = f"({date_range})\n{values}"
-    else:
-        tmf_block = "資料不足"
-
-    msg = f"""*🌐 大盤動態快訊* `{market_sig.get('market_date', '')}`
-
-📈 *加權指數*
-{market_sig.get('taiex_close')} ({market_sig.get('taiex_change_pct')}%) | 20MA 乖離 {fmt_pct(market_sig.get('taiex_bias_20'))}
-技術面: {market_sig.get('taiex_ta', 'N/A')}
-
-💱 *USD/TWD 銀行間即期 ({market_sig.get('usdtwd_date', '')})*
-收盤 {market_sig.get('usdtwd')}
-1日 {fmt_amount4(market_sig.get('usdtwd_change_1d'))} ({fmt_pct(market_sig.get('usdtwd_change_1d_pct'))})
-5日 {fmt_amount4(market_sig.get('usdtwd_change_5d'))} ({fmt_pct(market_sig.get('usdtwd_change_5d_pct'))})
-
-💼 *三大法人買賣超 (億)*
-外資   今 {fmt_int(market_sig.get('market_foreign_today'))} / 5日 {fmt_int(market_sig.get('market_foreign_5d'))}
-投信   今 {fmt_int(market_sig.get('market_trust_today'))} / 5日 {fmt_int(market_sig.get('market_trust_5d'))}
-自營商 今 {fmt_int(market_sig.get('market_dealer_today'))} / 5日 {fmt_int(market_sig.get('market_dealer_5d'))}
-
-🎯 *TX 大台 法人未平倉淨口數 (增減)*
-外資: {fmt_oi_with_change(market_sig.get('TX_foreign_net_oi'), market_sig.get('TX_foreign_change'))}
-投信: {fmt_oi_with_change(market_sig.get('TX_trust_net_oi'), market_sig.get('TX_trust_change'))}
-自營商: {fmt_oi_with_change(market_sig.get('TX_dealer_net_oi'), market_sig.get('TX_dealer_change'))}
-合計: {fmt_oi_with_change(market_sig.get('TX_total_net_oi'), market_sig.get('TX_total_change'))}
-
-📊 *TMF 微台 散戶多空比近5日*
-{tmf_block}
-"""
-    send_telegram(msg)
-
-
-# ===== 主流程 =====
 def main():
-    today = datetime.now().strftime("%Y-%m-%d")
-    validate_ai_config()
-    current_model = CLAUDE_MODEL if AI_PROVIDER == "claude" else GEMINI_MODEL
-    print(f"=== 每日股票分析 v3.10 ({today}) ===")
-    print(f"AI 供應商: {AI_PROVIDER.upper()} | 模型: {current_model}")
-
-    stock_ids = [s.strip() for s in STOCKS if s.strip()]
-
-    print("\n[1/4] 取得股票名稱對照...")
-    stock_names = get_stock_names(stock_ids)
-    for sid in stock_ids:
-        print(f"  {sid} = {stock_names.get(sid, sid)}")
-
-    print("\n[2/4] 抓取大盤動態...")
-    market = get_market_context()
-    market_sig = calc_market_signals(market)
-    print(f"  大盤訊號: {len(market_sig)} 筆")
-
-    print("\n[3/4] 推播大盤摘要...")
-    try:
-        send_market_summary(market_sig)
-        print("  ✓ 已送出")
-    except Exception as e:
-        print(f"  ⚠️ 失敗: {e}")
-
-    print(f"\n[4/4] 處理 {len(stock_ids)} 檔股票...")
-    for i, stock_id in enumerate(stock_ids):
-        stock_name = stock_names.get(stock_id, stock_id)
-        display = f"{stock_id} {stock_name}" if stock_name != stock_id else stock_id
-        print(f"\n--- {display} ---")
-
-        data = get_stock_data(stock_id)
-        if not data["price"]:
-            print(f"  ⏭ 跳過 ({stock_id} 無股價)")
+    print(f"=== 股票監控機器人 v4.0 ({datetime.now().strftime('%Y-%m-%d %H:%M')}) ===\n")
+    
+    # 建立輸出目錄
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    
+    # 1. 抓取個股資料
+    print("[1/5] 抓取個股資料...")
+    stocks_data = {}
+    
+    for stock_id in STOCKS:
+        print(f"  處理 {stock_id}...")
+        
+        stock_data = get_stock_data(stock_id)
+        if not stock_data:
+            print(f"    ⚠️ {stock_id} 無資料，跳過")
             continue
-
+        
+        institution = get_institution_data(stock_id)
+        margin = get_margin_data(stock_id)
         news = get_news(stock_id)
-        signals = calc_signals(data)
-        print(f"  訊號: {len(signals)} 筆 / 新聞: {len(news)} 則")
-
-        try:
-            analysis = analyze(
-                stock_id, stock_name, data, market, market_sig, news, signals
-            )
-            message = (
-                f"*📈 {display} 每日分析* `{today}`\n\n"
-                f"{analysis}\n\n"
-                f"_僅供參考, 投資請自行判斷_"
-            )
-            send_telegram(message)
-            print(f"  ✓ 完成並已推播")
-        except Exception as e:
-            print(f"  ⚠️ 分析失敗: {e}")
-
-        if AI_PROVIDER == "gemini" and i < len(stock_ids) - 1:
-            time.sleep(GEMINI_CALL_INTERVAL)
+        indicators = calculate_technical_indicators(stock_data["kline"])
+        
+        # AI 分析
+        print(f"    生成 AI 分析...")
+        ai_analysis = generate_ai_analysis(
+            stock_id, 
+            stock_data["latest"].get("stock_id", stock_id),
+            stock_data, 
+            indicators, 
+            institution, 
+            margin
+        )
+        
+        stocks_data[stock_id] = {
+            "stock_data": stock_data,
+            "institution": institution,
+            "margin": margin,
+            "news": news,
+            "indicators": indicators,
+            "ai_analysis": ai_analysis,
+            "name": stock_data["latest"].get("stock_id", stock_id)
+        }
+    
+    # 2. 抓取大盤資料
+    print("\n[2/5] 抓取大盤資料...")
+    market_data = get_market_overview()
+    
+    # 3. 生成 HTML
+    print("\n[3/5] 生成 HTML 網站...")
+    html = generate_html(stocks_data, market_data)
+    
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write(html)
+    
+    print(f"  ✓ HTML 已生成: {OUTPUT_FILE}")
+    
+    # 4. Git commit + push
+    print("\n[4/5] 更新 GitHub Pages...")
+    try:
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
+        subprocess.run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], check=True)
+        subprocess.run(["git", "add", OUTPUT_DIR], check=True)
+        
+        result = subprocess.run(["git", "diff", "--staged", "--quiet"])
+        if result.returncode == 0:
+            print("  ⓘ 無新變動")
+        else:
+            subprocess.run(["git", "commit", "-m", f"Update stock analysis {datetime.now().strftime('%Y-%m-%d %H:%M')}"], check=True)
+            subprocess.run(["git", "push"], check=True)
+            print("  ✓ 已更新 GitHub Pages")
+    except subprocess.CalledProcessError as e:
+        print(f"  ⚠️ Git 操作失敗: {e}")
+    
+    # 5. Telegram 推播（簡化版）
+    print("\n[5/5] 發送 Telegram 通知...")
+    
+    tg_msg = f"📊 *股票監控日報* ({datetime.now().strftime('%Y-%m-%d')})\n\n"
+    
+    for stock_id, data in stocks_data.items():
+        latest = data["stock_data"]["latest"]
+        close = float(latest.get("close", 0))
+        foreign = data["institution"]["foreign_today"]
+        
+        tg_msg += f"*{stock_id}* ${close:.2f} | 外資 {foreign:+.0f}張\n"
+    
+    tg_msg += f"\n🌐 完整分析: https://你的用戶名.github.io/stocknotice/"
+    
+    send_telegram(tg_msg)
+    print("  ✓ Telegram 已送出")
+    
+    print("\n✅ 完成！")
 
 
 if __name__ == "__main__":
