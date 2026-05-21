@@ -549,7 +549,7 @@ new Chart(document.getElementById('k{stock_id}'),{{
     
     # 大盤K線
     taiex = market_data["taiex"]
-    if taiex:
+    if taiex and len(taiex) > 0:
         taiex_dates = [d["date"][-5:] for d in taiex]
         taiex_closes = [d["close"] for d in taiex]
         
@@ -559,11 +559,13 @@ new Chart(document.getElementById('taiex'),{{
   data:{{labels:{json.dumps(taiex_dates)},datasets:[{{label:'加權指數',data:{json.dumps(taiex_closes)},borderColor:'#378ADD',borderWidth:2,tension:0.3,fill:false}}]}},
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
 }});""")
+    else:
+        print("  ⚠️ 大盤K線無數據")
     
     # 散戶多空比
     retail = market_data["retail"]
-    if retail:
-        retail_dates = [d["date"][-5:] for d in retail]
+    if retail and len(retail) > 0:
+        retail_dates = [d.get("date", "")[-5:] for d in retail]
         retail_ratio = []
         for d in retail:
             long_vol = float(d.get("long_volume", 0))
@@ -571,39 +573,64 @@ new Chart(document.getElementById('taiex'),{{
             ratio = (long_vol / (long_vol + short_vol) * 100) if (long_vol + short_vol) > 0 else 50
             retail_ratio.append(ratio)
         
-        scripts.append(f"""
+        if len(retail_ratio) > 0:
+            scripts.append(f"""
 new Chart(document.getElementById('retail'),{{
   type:'line',
   data:{{labels:{json.dumps(retail_dates)},datasets:[{{label:'散戶多單%',data:{json.dumps(retail_ratio)},borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',borderWidth:2,fill:true,tension:0.3}}]}},
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
 }});""")
+        else:
+            print("  ⚠️ 散戶多空比計算失敗")
+    else:
+        print("  ⚠️ 散戶多空比無數據 - 可能 FinMind API 無此資料或需要付費方案")
+        # 顯示提示訊息
+        scripts.append(f"""
+document.getElementById('retail').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">散戶多空比數據暫時無法取得<br><small>可能需要 FinMind 付費方案</small></div>';
+""")
     
     # 匯率
     fx = market_data["usd_twd"]
-    if fx:
-        fx_dates = [d["date"][-5:] for d in fx]
-        fx_values = [float(d.get("close", 0)) for d in fx]
+    if fx and len(fx) > 0:
+        fx_dates = [d.get("date", "")[-5:] for d in fx]
+        fx_values = [float(d.get("close", 0)) for d in fx if d.get("close")]
         
-        scripts.append(f"""
+        if len(fx_values) > 0:
+            scripts.append(f"""
 new Chart(document.getElementById('fx'),{{
   type:'line',
   data:{{labels:{json.dumps(fx_dates)},datasets:[{{label:'USD/TWD',data:{json.dumps(fx_values)},borderColor:'#378ADD',borderWidth:2,tension:0.3}}]}},
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
 }});""")
+        else:
+            print("  ⚠️ 匯率數據格式錯誤")
+    else:
+        print("  ⚠️ 匯率無數據")
+        scripts.append(f"""
+document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">匯率數據暫時無法取得</div>';
+""")
     
     # 三大法人
     inst = market_data["institution"]
-    if inst:
-        inst_dates = [d["date"][-5:] for d in inst]
+    if inst and len(inst) > 0:
+        inst_dates = [d.get("date", "")[-5:] for d in inst]
         foreign = [float(d.get("Foreign_Investor_diff", 0))/100000 for d in inst]
         trust = [float(d.get("Investment_Trust_diff", 0))/100000 for d in inst]
         
-        scripts.append(f"""
+        if len(foreign) > 0 and len(trust) > 0:
+            scripts.append(f"""
 new Chart(document.getElementById('inst'),{{
   type:'bar',
   data:{{labels:{json.dumps(inst_dates)},datasets:[{{label:'外資(億)',data:{json.dumps(foreign)},backgroundColor:'rgba(55,138,221,0.7)'}},{{label:'投信(億)',data:{json.dumps(trust)},backgroundColor:'rgba(29,158,117,0.7)'}}]}},
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:true,position:'top'}}}}}}
 }});""")
+        else:
+            print("  ⚠️ 法人數據計算失敗")
+    else:
+        print("  ⚠️ 三大法人無數據")
+        scripts.append(f"""
+document.getElementById('inst').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">法人數據暫時無法取得</div>';
+""")
     
     return "\n".join(scripts)
 
@@ -676,7 +703,7 @@ def send_telegram(text: str):
 # =========================================================
 
 def main():
-    print(f"=== 股票監控機器人 v4.1 ({datetime.now().strftime('%Y-%m-%d %H:%M')}) ===\n")
+    print(f"=== 股票監控機器人 v4.2 ({datetime.now().strftime('%Y-%m-%d %H:%M')}) ===\n")
     
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
@@ -714,6 +741,13 @@ def main():
     # 2. 抓大盤
     print("\n[2/4] 抓取大盤資料...")
     market_data = get_market_overview()
+    
+    # 調試：打印市場數據狀態
+    print(f"  ✓ 大盤指數: {len(market_data['taiex'])} 筆")
+    print(f"  ✓ 三大法人: {len(market_data['institution'])} 筆")
+    print(f"  ✓ 散戶多空: {len(market_data['retail'])} 筆")
+    print(f"  ✓ 美元匯率: {len(market_data['usd_twd'])} 筆")
+    print(f"  ✓ 期貨留倉: {len(market_data['futures'])} 筆")
     
     # 3. 生成 HTML
     print("\n[3/4] 生成 HTML...")
