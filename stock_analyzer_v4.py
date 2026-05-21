@@ -1,8 +1,8 @@
 """
-股票監控機器人 v4.1 - 修正版
+股票監控機器人 v4.2 - 穩定版
 改進:
   - 使用 yfinance 抓股價（更穩定）
-  - 使用 pandas-ta 計算技術指標（更準確）
+  - 自己計算技術指標（不依賴 pandas-ta）
   - 修正所有圖表數據生成
   - 完善錯誤處理
 """
@@ -14,7 +14,6 @@ import subprocess
 from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
-import pandas_ta as ta
 import anthropic
 
 # ===== 設定 =====
@@ -28,6 +27,41 @@ CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 OUTPUT_DIR = "docs"
 OUTPUT_FILE = f"{OUTPUT_DIR}/index.html"
+
+
+# =========================================================
+# 技術指標計算（純 pandas，不依賴外部套件）
+# =========================================================
+
+def calculate_sma(series, period):
+    """計算簡單移動平均"""
+    return series.rolling(window=period).mean()
+
+def calculate_rsi(series, period=14):
+    """計算 RSI 指標"""
+    delta = series.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+def calculate_macd(series, fast=12, slow=26, signal=9):
+    """計算 MACD 指標"""
+    ema_fast = series.ewm(span=fast, adjust=False).mean()
+    ema_slow = series.ewm(span=slow, adjust=False).mean()
+    macd_line = ema_fast - ema_slow
+    signal_line = macd_line.ewm(span=signal, adjust=False).mean()
+    return macd_line, signal_line
+
+def calculate_stochastic(high, low, close, period=14, smooth_k=3, smooth_d=3):
+    """計算 KD 指標"""
+    lowest_low = low.rolling(window=period).min()
+    highest_high = high.rolling(window=period).max()
+    k = 100 * ((close - lowest_low) / (highest_high - lowest_low))
+    k = k.rolling(window=smooth_k).mean()
+    d = k.rolling(window=smooth_d).mean()
+    return k, d
 
 
 # =========================================================
@@ -53,14 +87,13 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         # 只保留最近 days 天
         df = df.tail(days)
         
-        # 計算技術指標
-        df.ta.sma(length=5, append=True)
-        df.ta.sma(length=20, append=True)
-        df.ta.sma(length=60, append=True)
-        df.ta.rsi(length=14, append=True)
-        df.ta.macd(append=True)
-        df.ta.stoch(append=True)
-        df.ta.bbands(append=True)
+        # 計算技術指標（使用自己的函數）
+        df['SMA_5'] = calculate_sma(df['Close'], 5)
+        df['SMA_20'] = calculate_sma(df['Close'], 20)
+        df['SMA_60'] = calculate_sma(df['Close'], 60)
+        df['RSI_14'] = calculate_rsi(df['Close'], 14)
+        df['MACD'], df['MACD_Signal'] = calculate_macd(df['Close'])
+        df['K'], df['D'] = calculate_stochastic(df['High'], df['Low'], df['Close'])
         
         latest = df.iloc[-1]
         prev = df.iloc[-2] if len(df) > 1 else latest
@@ -83,10 +116,10 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
                 "ma20": float(latest.get("SMA_20", 0)) if pd.notna(latest.get("SMA_20")) else 0,
                 "ma60": float(latest.get("SMA_60", 0)) if pd.notna(latest.get("SMA_60")) else 0,
                 "rsi": float(latest.get("RSI_14", 50)) if pd.notna(latest.get("RSI_14")) else 50,
-                "k": float(latest.get("STOCHk_14_3_3", 50)) if pd.notna(latest.get("STOCHk_14_3_3")) else 50,
-                "d": float(latest.get("STOCHd_14_3_3", 50)) if pd.notna(latest.get("STOCHd_14_3_3")) else 50,
-                "macd": float(latest.get("MACD_12_26_9", 0)) if pd.notna(latest.get("MACD_12_26_9")) else 0,
-                "macd_signal": float(latest.get("MACDs_12_26_9", 0)) if pd.notna(latest.get("MACDs_12_26_9")) else 0,
+                "k": float(latest.get("K", 50)) if pd.notna(latest.get("K")) else 50,
+                "d": float(latest.get("D", 50)) if pd.notna(latest.get("D")) else 50,
+                "macd": float(latest.get("MACD", 0)) if pd.notna(latest.get("MACD")) else 0,
+                "macd_signal": float(latest.get("MACD_Signal", 0)) if pd.notna(latest.get("MACD_Signal")) else 0,
             }
         }
         
