@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票監控儀表板</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f5;
+  padding: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+.header {
+  background: white;
+  border-radius: 12px;
+  border: 0.5px solid #e0e0e0;
+  padding: 1.25rem;
+  margin-bottom: 16px;
+}
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 22px; font-weight: 500; }
+.update-time { font-size: 13px; color: #666; }
+.section-header {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 24px 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 0.5px solid #e0e0e0;
+  padding: 1rem;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.card-title { font-size: 18px; font-weight: 500; }
+.card-price { font-size: 20px; font-weight: 500; }
+.positive { color: #d32f2f; }
+.negative { color: #388e3c; }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metrics-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px;
+}
+.metric-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.metric-value { font-size: 16px; font-weight: 500; }
+.metric-change { font-size: 12px; margin-top: 2px; }
+.chart-container { position: relative; height: 280px; margin-bottom: 12px; }
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.analysis-box {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.analysis-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.analysis-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+.card-section { margin-bottom: 16px; }
+.section-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.table th {
+  text-align: left;
+  padding: 8px;
+  background: #f5f5f5;
+  color: #666;
+  font-weight: 500;
+}
+.table td {
+  padding: 8px;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.metric-small {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.metric-small-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.metric-small-value { font-size: 14px; font-weight: 500; }
+.metric-small-change { font-size: 11px; margin-top: 2px; }
+.news-list { max-height: 200px; overflow-y: auto; }
+.news-item {
+  padding: 8px 0;
+  border-bottom: 0.5px solid #e0e0e0;
+}
+.news-item:last-child { border-bottom: none; }
+.news-time { font-size: 11px; color: #666; margin-bottom: 4px; }
+.news-title { font-size: 13px; line-height: 1.4; }
+@media (max-width: 1024px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .metrics-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .stock-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-top">
+      <h1>📊 股票監控儀表板</h1>
+      <div class="update-time">
+        <i class="ti ti-clock"></i>
+        最後更新: 2026-05-21 05:46 (台灣時間)
+      </div>
+    </div>
+  </div>
+
+  
+    <div class="section-header">
+      <i class="ti ti-chart-line"></i>
+      大盤總覽
+    </div>
+    
+    <div class="metrics-grid-4">
+      <div class="metric">
+        <div class="metric-label">加權指數</div>
+        <div class="metric-value negative">40020.82</div>
+        <div class="metric-change negative">↓ -154.74 (-0.39%)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">成交量 (億股)</div>
+        <div class="metric-value">118253.2</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">外資買賣超 (億)</div>
+        <div class="metric-value negative">
+          0.0
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">投信買賣超 (億)</div>
+        <div class="metric-value negative">
+          0.0
+        </div>
+      </div>
+    </div>
+    
+    <div class="card" style="margin-top: 16px;">
+      <div class="chart-container" style="height: 320px;">
+        <canvas id="taiexChart"></canvas>
+      </div>
+    </div>
+  
+  
+    <div class="section-header">
+      <i class="ti ti-chart-dots"></i>
+      市場指標綜合研判 (近30日)
+    </div>
+    
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">微台散戶多空比</div>
+        <div class="chart-container">
+          <canvas id="retailChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">美元兌新台幣</div>
+        <div class="chart-container">
+          <canvas id="fxChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">三大法人現貨 vs 期貨</div>
+      <div class="chart-container" style="height: 320px;">
+        <canvas id="institutionChart"></canvas>
+      </div>
+    </div>
+  
+  <div class="section-header">
+    <i class="ti ti-star"></i>
+    追蹤個股分析
+  </div>
+  
+  <div class="stock-grid">
+    
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">2330 2330</h3>
+        <div class="card-price negative">$2185.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value negative">↓ -20.00 (-0.91%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">38,332,945 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_2330"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 台積電 (2330) 技術與籌碼分析<br><br>---<br><br>## 1. 📊 技術面分析<br><br>- **價格變動**：收盤價 2185，較前日 2205 下跌 **20元（-0.91%）**，呈現短線回落<br>- **均線指標**：MA5/MA20/MA60 數據暫無，**無法判斷均線多空排列**，建議參考日線圖確認趨勢<br>- **技術指標**：KD、RSI 數據缺失，**技術指標訊號不明確**<br>- **支撐與壓力**：<br>  - 短期支撐參考：**2150 ~ 2160** 區間（整數關卡）<br>  - 短期壓力參考：**2205 ~ 2220**（前日收盤與近期高點）<br><br>---<br><br>## 2. 🏦 籌碼面分析<br><br>- **法人動向**：外資、投信今日及近期買賣數據均為 **0**，法人動向**資料異常或無異動**，需進一步確認<br>- **融資餘額**：632張，單日**減少 330張（-34.3%）**，融資大幅降低，**賣壓減輕或短多出場**<br>- **融券餘額**：20張，單日**增加 11張**，融券略為增加，顯示有少量**空方布局**<br>- **籌碼健康度**：融資大幅下降為**偏正面訊號**，但法人數據缺失，整體籌碼健康度**尚可但資訊不完整**<br><br>---<br><br>## 3. 💡 操作建議<br><br>- **短線策略**：目前偏**觀望為宜**，等待均線與指標數據確認方向<br>- **進場點**：跌至 **2150 附近**可小量試單，需搭配量能確認<br>- **出場點**：反彈至 **2200 ~ 2220** 可考慮減碼<br>- ⚠️ **風險提示**：技術指標數據不完整，建議**勿重倉操作**；留意外資動向恢復後的方向指引<br><br>---<br>> 📌 *以上分析僅供參考，不構成投資建議，投資人應自行評估風險。*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">632</div>
+            <div class="metric-small-change negative">-330</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">20</div>
+            <div class="metric-small-change positive">+11</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:49:53</div>
+          <div class="news-title">輝達新晶片出貨！台積電與伺服器供應鏈全面升級-財經焦點情報站 - CMoney投資網誌</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:40:47</div>
+          <div class="news-title">2330 台積電 - 台灣這十年，不只是換了一個政府。而是試著換了一種命運-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:56:53</div>
+          <div class="news-title">2330 台積電 - 美股早盤開高 台積電ADR揚升1.12％ 美股20日開盤走...-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:37:43</div>
+          <div class="news-title">2330 台積電 - 0520台股盤前-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:37:25</div>
+          <div class="news-title">2330 台積電 - 520行情失靈、外資卻喊5萬？ 00403A轉強觀察指標-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">2454 2454</h3>
+        <div class="card-price positive">$3230.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value positive">↑ +75.00 (+2.38%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">9,296,108 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_2454"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 聯發科 (2454) 專業分析報告<br><br>---<br><br>## 1. 📊 技術面分析<br><br>- **價格表現**：收盤價 3,230，單日上漲 **+75元 (+2.38%)**，短線動能偏強<br>- **均線狀況**：MA5/MA20/MA60 數據暫無法取得，**無法判斷均線多空排列**<br>- **技術指標**：KD、RSI 均無數據，**技術訊號不完整，需謹慎解讀**<br>- **支撐/壓力**：<br>  - 短線支撐參考：前日收盤 **3,155**<br>  - 短線壓力參考：需觀察 **3,300** 整數關卡<br><br>---<br><br>## 2. 🏦 籌碼面分析<br><br>- **法人動向**：外資、投信買賣超均為 **0張**，法人今日**未積極介入**，動向中性<br>- **融資餘額**：1,400張，單日增加 **+253張**，融資買盤增溫，**需留意追高風險**<br>- **融券餘額**：10張，減少 **-11張**，空頭回補，**短線賣壓略為減輕**<br>- **籌碼健康度**：法人缺席、散戶融資擴張，籌碼健康度 **偏中性至偏弱**<br><br>---<br><br>## 3. 💡 操作建議<br><br>- **短線策略**：今日大漲但法人未跟進，宜觀望為主，**不建議追高**<br>- **進場點位**：若回測 **3,155附近獲得支撐**，可考慮小量布局<br>- **出場點位**：持有者可參考 **3,300** 附近逢高分批減碼<br>- ⚠️ **風險提示**：技術指標資料不足、法人未進場，操作風險較高，**建議嚴設停損 (-5%)**<br><br>---<br>> 📌 *本分析僅供參考，不構成投資建議，請依個人風險承受能力審慎決策。*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">1,400</div>
+            <div class="metric-small-change positive">+253</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">10</div>
+            <div class="metric-small-change negative">-11</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:51:18</div>
+          <div class="news-title">聯發科再奪ATD國際人才大獎 高階主管培育計畫助AI世代策略布局 - 壹蘋新聞網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 18:08:36</div>
+          <div class="news-title">聯發科(2454)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 16:42:00</div>
+          <div class="news-title">聯發科再奪ATD國際人才大獎 高階主管培育計畫助AI世代策略布局 - 壹蘋新聞網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 16:23:09</div>
+          <div class="news-title">2454 聯發科 - 今晚NVDA季報還重要嗎？-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 13:45:41</div>
+          <div class="news-title">2454 聯發科 - 讓工具幫你節省時間-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">2408 2408</h3>
+        <div class="card-price positive">$275.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value positive">↑ +0.50 (+0.18%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">123,868,197 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_2408"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 2408 股票分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>- **K線位置**：收盤價 275.0，較前日 274.5 微幅上漲 **+0.18%**，呈現小紅K，動能偏弱<br>- **均線排列**：MA5/MA20/MA60 **數據缺失**，無法判斷均線多空排列<br>- **技術指標**：KD、RSI 均無數據，技術訊號**無法有效研判**<br>- **支撐壓力**：<br>  - 短期壓力參考：**280附近**（整數關卡）<br>  - 短期支撐參考：**270附近**（整數關卡）<br>- ⚠️ 技術指標資料不完整，判斷可信度受限<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信買賣超**均為0**，法人今日態度觀望，無明確方向<br>- **融資餘額**：10,279張，單日大增 **+1,140張**，散戶積極做多，需留意追高風險<br>- **融券餘額**：826張，單日增加 **+302張（+57.7%）**，空方力道明顯增強<br>- **籌碼健康度**：<br>  - 融資快速增加 + 融券同步大增 → 多空分歧加劇<br>  - 法人缺席，**籌碼健康度偏差**，短期波動風險上升<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：宜**觀望為主**，不宜追高<br>- **進場點位**：等待回測 **270-272** 支撐區，確認撐穩再考慮布局<br>- **出場點位**：短線獲利目標參考 **280**，停損設於 **268以下**<br>- ⚠️ **風險提示**：融資融券同步大增顯示市場分歧，均線指標缺失情況下，**建議降低部位，嚴設停損**<br><br>---<br>> 📌 *本分析僅供參考，不構成投資建議，請自行評估風險。*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">10,279</div>
+            <div class="metric-small-change positive">+1,140</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">826</div>
+            <div class="metric-small-change positive">+302</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:15:44</div>
+          <div class="news-title">2408 南亞科- 4月4千點獲利😇月月千點入袋💕五月避險修正買超跌股🌟-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:02:00</div>
+          <div class="news-title">個股：中環(2323)5/18～5/19取得南亞科(2408)股票1,426張，每股均價289.58元 - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 15:23:52</div>
+          <div class="news-title">2408 南亞科- 台股記憶體你被嚇到了嗎？-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 13:30:00</div>
+          <div class="news-title">記憶體虛累累！三大法人出貨「這4檔」10.2萬張 連斬南亞科3次爽拿180億元 - FTNN 新聞網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 12:26:38</div>
+          <div class="news-title">2408 南亞科 - 今早開盤前跟同學說的落底區差不多。😊-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">3711 3711</h3>
+        <div class="card-price positive">$476.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value positive">↑ +4.00 (+0.85%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">25,742,575 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_3711"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 3711 日月光投控 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>- **價格動能**：收盤價 476.0，較前日 472.0 **上漲 4 元（+0.85%）**，短線呈正向動能<br>- **均線狀況**：MA5/MA20/MA60 數據缺失，**無法判斷均線多空排列**，需參考盤面圖形<br>- **技術指標**：KD、RSI 均無數據，**技術指標訊號無從判讀**<br>- **支撐與壓力**：<br>  - 支撐參考：前日收盤 **472 元**<br>  - 壓力參考：需觀察 **480 元整數關卡**<br><br>> ⚠️ 因技術指標數據缺失，技術面判斷依據有限，建議搭配K線圖輔助。<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信買賣超**均為零**，法人態度觀望，未有明顯方向性操作<br>- **融資餘額**：426 張，**大幅減少 625 張**，融資戶降低槓桿，籌碼有所沉澱（偏正面）<br>- **融券餘額**：262 張，**大增 236 張**，空方明顯加碼放空，顯示市場存在分歧<br>- **籌碼健康度**：<br>  - 融資下降 ✅（賣壓減輕）<br>  - 融券驟增 ⚠️（空方佈局，後續需注意軋空或續跌風險）<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：觀望為主，待方向明確再行動<br>- **進場點位**：站穩 **476 元以上且量能配合**，可小量試多<br>- **出場點位**：跌破 **472 元**應考慮停損出場<br>- **風險提示**：<br>  - ⚠️ 融券大增，若股價續漲可能出現**軋空行情**<br>  - ⚠️ 法人籌碼全面缺席，**主力意圖不明**，不宜重倉操作<br><br>---<br>*本分析僅供參考，不構成投資建議，投資人請自行評估風險。*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">426</div>
+            <div class="metric-small-change negative">-625</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">262</div>
+            <div class="metric-small-change positive">+236</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:20:00</div>
+          <div class="news-title">封測巨擘的王者歸來：日月光投控，下一座半導體千元神山的起跑點 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 10:17:41</div>
+          <div class="news-title">討論牆 | 盤中速報 - 日月光投控(3711)大跌7.31%，報507元 - LINE TODAY</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 09:18:00</div>
+          <div class="news-title">《半導體》日月光投控子公司 矽品斥資5.35億元向聖暉取得廠務工程 - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 08:42:32</div>
+          <div class="news-title">3711 日月光投控 - 漲成這樣，該稍微休息一下了？-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 04:49:04</div>
+          <div class="news-title">3711 日月光投控- 看來最近在整盤我要用薛丁格的開盤只要我兩三個禮拜不看就...-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">2383 2383</h3>
+        <div class="card-price negative">$4395.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value negative">↓ -140.00 (-3.09%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">1,950,325 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_2383"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 2383 技術面與籌碼面分析<br><br>## 1. 技術面分析<br><br>- **今日走勢**：收盤價 4,395，較前日 4,535 下跌 **140點（-3.09%）**，單日跌幅顯著<br>- **均線狀況**：MA5/MA20/MA60 數據缺失，無法判斷均線排列與多空結構<br>- **技術指標**：KD、RSI 均無數據，技術訊號無法量化評估<br>- **支撐壓力**：<br>  - 短期壓力參考前日收盤 **4,535**<br>  - 支撐位需觀察 **4,300\~4,350** 區間是否有買盤承接<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信近期買賣超**均為零**，法人態度觀望，缺乏主力推升動能<br>- **融資餘額**：58張，今日減少 **4張**，融資輕微減碼，但整體水位極低<br>- **融券餘額**：0張，無空方佈局壓力<br>- **籌碼健康度**：⚠️ 籌碼面過於冷清，法人完全缺席，市場關注度低，流動性風險需注意<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：目前缺乏法人支撐，技術指標數據不完整，**建議觀望為主**<br>- **進場參考**：待確認 **4,300** 支撐有效後，可小量試單<br>- **出場參考**：反彈至 **4,500\~4,535** 前高附近可考慮減碼<br>- ⚠️ **風險提示**：單日跌幅逾3%，法人零介入，流動性偏低，**嚴控部位，勿重倉操作**</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">58</div>
+            <div class="metric-small-change negative">-4</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">0</div>
+            <div class="metric-small-change negative">+0</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:52:00</div>
+          <div class="news-title">《電零組》注意股：台光電 近5日跌7.45% - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 12:40:37</div>
+          <div class="news-title">台光電(2383)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 10:50:08</div>
+          <div class="news-title">【05/19券商評等報告彙整】台光電(2383) 今日僅1家券商發布績效評等報告，評價為看多，目標價為6,000元。 - CMoney投資網誌</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">3037 3037</h3>
+        <div class="card-price positive">$823.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value positive">↑ +5.00 (+0.61%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">21,306,136 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_3037"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 3037 欣興 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>- **K線訊號**：收盤價 823.0，較前日 818.0 上漲 **+0.61%**，短線呈小幅反彈<br>- **均線狀況**：MA5/MA20/MA60 數據缺失，**無法判斷均線多空排列**，需另行查閱<br>- **技術指標**：KD、RSI 均無數據，**技術指標訊號無從評估**<br>- **支撐/壓力參考**：<br>  - 支撐參考前日低點 **818 附近**<br>  - 壓力關注整數關卡 **850、900**<br>- ⚠️ 技術面資料不完整，判斷準確性受限<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信今日及近期買賣超**均為零**，法人態度觀望，籌碼缺乏主力推動<br>- **融資餘額**：603 張，**大幅減少 304 張**（約 33%），融資大量撤出，槓桿買盤退潮<br>- **融券餘額**：80 張，**增加 53 張**，空方部位明顯增加，市場存在看空預期<br>- **籌碼健康度**：融資下降為正面去化，但融券同步增加，**多空交戰訊號偏空**<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：現階段法人缺席、融券增加，**建議觀望為主**，不宜追高<br>- **進場點位**：若回測 **818 支撐守穩**，可考慮小量試單<br>- **出場點位**：短線目標 **850**，停損設 **810 以下**<br>- ⚠️ **風險提示**：技術指標資料缺失、法人未進場，波動風險較高，**嚴控部位**<br><br>---<br>> 📌 以上分析僅供參考，實際操作請結合完整技術數據與個人風險承受能力。</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">603</div>
+            <div class="metric-small-change negative">-304</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">80</div>
+            <div class="metric-small-change positive">+53</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:34:01</div>
+          <div class="news-title">欣興(3037) 個股概覽 | 個股 - 股市 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 14:53:08</div>
+          <div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 12:23:27</div>
+          <div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 11:51:51</div>
+          <div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 09:54:01</div>
+          <div class="news-title">【即時新聞】欣興目標價上修至1225元，AI需求推升ABF載板供需缺口 - CMoney投資網誌</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">3665 3665</h3>
+        <div class="card-price negative">$1965.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value negative">↓ -25.00 (-1.26%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">2,215,075 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_3665"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 3665 貿聯-KY 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>- **價格變動**：收盤價 1,965 元，較前日 1,990 元下跌 **25 元（-1.26%）**，短線出現回落壓力<br>- **均線系統**：MA5/MA20/MA60 數據缺失，無法判斷均線多空排列，建議參考日線圖確認趨勢<br>- **技術指標**：KD、RSI 數據均缺失，無法判斷超買超賣狀態<br>- **支撐壓力**：<br>  - 壓力位：前日收盤 **1,990 元** 為近期壓力<br>  - 支撐位：整數關卡 **1,950 元** 為短線重要支撐<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信今日及近期買賣超均為 **0 張**，法人態度觀望，無明顯方向性操作<br>- **融資餘額**：253 張，單日 **+3 張**，融資小幅增加，散戶仍有少量做多意願，但整體融資水位偏低<br>- **融券餘額**：5 張，單日 **+2 張**，融券略增但絕對量極小，軋空效應有限<br>- **籌碼健康度**：⚠️ 法人缺席、籌碼鬆散，主要由散戶主導，籌碼穩定性偏弱<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：目前法人無明顯介入，建議**觀望為主**<br>- **進場點**：待價格守穩 **1,950 元支撐**，並有量能配合再考慮布局<br>- **出場點**：若反彈至 **1,990～2,000 元** 壓力區，可考慮減碼<br>- ⚠️ **風險提示**：技術指標數據不完整，判斷準確性受限；法人未進場前，避免重倉操作<br><br>---<br>> 📌 *以上分析僅供參考，不構成投資建議，操作請自行評估風險。*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">253</div>
+            <div class="metric-small-change positive">+3</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">5</div>
+            <div class="metric-small-change positive">+2</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:53:31</div>
+          <div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-1) - 上市櫃 - 旺得富理財網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:52:00</div>
+          <div class="news-title">《其他電》注意股：貿聯-KY 近5日跌28.29% - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:44:00</div>
+          <div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-1) - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:44:00</div>
+          <div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-2) - 富聯網</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 12:33:00</div>
+          <div class="news-title">股民注意！大立光、貿聯-KY等6檔股明起「抓去關」 - Yahoo新聞</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">6223 6223</h3>
+        <div class="card-price negative">$5680.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value negative">↓ -50.00 (-0.87%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">1,033,607 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_6223"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 6223 技術面與籌碼面分析<br><br>---<br><br>## 1. 技術面分析<br><br>- **當日走勢**：收盤價 5,680 元，較前日 5,730 元下跌 **50元（-0.87%）**，呈現短線回落<br>- **均線狀況**：MA5/MA20/MA60 數據缺失，無法判斷均線多空排列，需補充完整資料<br>- **技術指標**：KD、RSI 均無數據，技術指標訊號**無法有效研判**<br>- **支撐壓力**：<br>  - 短線壓力參考前日高點 **5,730 元**<br>  - 支撐區間暫估 **5,600～5,650 元**附近整數關卡<br><br>> ⚠️ 由於均線與技術指標資料缺失，技術面分析可靠度受限<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資與投信近期買賣超**均為零**，法人對此股態度冷淡，無明顯介入意願<br>- **融資餘額**：32張，單日減少 **39張（大幅下降）**，顯示散戶多頭降低槓桿，籌碼鬆動<br>- **融券餘額**：0張，融券減少11張，空方已無部位，**軋空動能不存在**<br>- **籌碼健康度**：<br>  - 融資急速減少為**去槓桿訊號**，可能為停損出場<br>  - 整體籌碼稀薄，流動性偏低，**波動風險較高**<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：目前技術指標缺乏，建議**觀望為主**，避免盲目追多或放空<br>- **進場點位**：待股價穩守 **5,650 元**支撐且出現量縮止跌訊號再考慮進場<br>- **出場點位**：若跌破 **5,600 元**應嚴格停損<br>- ⚠️ **風險提示**：成交量龐大（逾百萬張）但法人零持倉，流動性異常，**留意異常波動風險**，小股本個股慎防主力操控<br><br>---<br>*本分析僅供參考，不構成投資建議，投資人須自行承擔風險*</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">32</div>
+            <div class="metric-small-change negative">-39</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">0</div>
+            <div class="metric-small-change negative">-11</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 20:09:03</div>
+          <div class="news-title">旺矽(6223)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 13:50:02</div>
+          <div class="news-title">6223 旺矽 - 萬一在5/29前進處置的話會不會被MSCI撤銷成分股啊？？有...-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 10:14:50</div>
+          <div class="news-title">討論牆 | 盤中速報 - 旺矽(6223)大跌7.01%，報5705元 - LINE TODAY</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 09:20:08</div>
+          <div class="news-title">【26Q1財報公告】旺矽(6223) Q1 營收39.3307億元，創歷史新高，季增2.53%、年成長39.04%-CMoney 小編 - CMoney投資網誌</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 09:06:10</div>
+          <div class="news-title">6223 旺矽 - 跌破2200，跳水了。-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">6274 6274</h3>
+        <div class="card-price negative">$1205.00</div>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">漲跌</div>
+          <div class="metric-value negative">↓ -20.00 (-1.63%)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">成交量</div>
+          <div class="metric-value">1,637,014 張</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="kline_6274"></canvas>
+      </div>
+      
+      <div class="analysis-box">
+        <div class="analysis-title"><i class="ti ti-sparkles"></i> AI 分析</div>
+        <div class="analysis-text"># 6274 台燿 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>- **價格變動**：收盤價 1205.0，單日下跌 **20元（-1.63%）**，短線出現回落壓力<br>- **均線狀況**：MA5/MA20/MA60 數據缺失，無法判斷均線多空排列<br>- **技術指標**：KD、RSI 均無數據，技術指標訊號不完整<br>- **支撐壓力**：<br>  - 壓力參考：前日收盤 **1225** 為近期壓力<br>  - 支撐參考：需關注 **1200** 整數關卡是否守穩<br>- **成交量**：163萬張量能尚可，需觀察是否為恐慌性賣壓或正常回調<br><br>---<br><br>## 2. 籌碼面分析<br><br>- **法人動向**：外資、投信今日及近期買賣均為 **0張**，法人態度觀望，無明確方向<br>- **融資餘額**：108張，單日暴增 **+60張（+125%）**，散戶積極進場，⚠️融資急增需警惕<br>- **融券餘額**：7張，減少8張，空方回補，軋空力道有限<br>- **籌碼健康度**：<br>  - 法人缺席 + 融資大幅增加，籌碼結構偏弱<br>  - 散戶主導，穩定性較差<br><br>---<br><br>## 3. 操作建議<br><br>- **短線策略**：中性偏謹慎觀望<br>- **進場點**：待 **1200** 支撐確認守穩後，可小量試單<br>- **出場點**：反彈至 **1225** 壓力區可考慮減碼<br>- ⚠️ **風險提示**：融資單日激增為警示訊號，法人未介入且技術數據不足，**建議降低部位，嚴設停損於1180以下**<br><br>---<br>> 📌 本分析僅供參考，不構成投資建議，請自行評估風險</div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">三大法人 (張)</div>
+        <table class="table">
+          <tr>
+            <th>法人</th><th>今日</th><th>5日</th><th>20日</th>
+          </tr>
+          <tr>
+            <td>外資</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+          <tr>
+            <td>投信</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+            <td class="negative">+0</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">融資融券</div>
+        <div class="metrics-row">
+          <div class="metric-small">
+            <div class="metric-small-label">融資餘額</div>
+            <div class="metric-small-value">108</div>
+            <div class="metric-small-change positive">+60</div>
+          </div>
+          <div class="metric-small">
+            <div class="metric-small-label">融券餘額</div>
+            <div class="metric-small-value">7</div>
+            <div class="metric-small-change negative">-8</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-section">
+        <div class="section-title">相關新聞</div>
+        <div class="news-list">
+          
+        <div class="news-item">
+          <div class="news-time">2026-05-19 23:10:41</div>
+          <div class="news-title">【即時新聞】台燿公告4月自結淨利6.84億元 EPS達2.35元並推進泰國廠擴充 - CMoney投資網誌</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 22:46:12</div>
+          <div class="news-title">台燿4月 EPS 2.35元 擴充泰國廠 - UDN</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 20:48:29</div>
+          <div class="news-title">台燿(6274)主力進出、主力買賣超張數與買賣家數差-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 19:59:14</div>
+          <div class="news-title">台燿(6274)董監事與大股東持股申報轉讓查詢-股市爆料同學會 - CMoney</div>
+        </div>
+        <div class="news-item">
+          <div class="news-time">2026-05-19 19:12:28</div>
+          <div class="news-title">台燿(6274)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+<script>
+
+new Chart(document.getElementById('kline_2330'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [1950.0, 1955.0, 2000.0, 1990.0, 2055.0, 2080.0, 2085.0, 2030.0, 2025.0, 2050.0, 2050.0, 2080.0, 2185.0, 2265.0, 2215.0, 2180.0, 2135.0, 2275.0, 2250.0, 2250.0, 2310.0, 2290.0, 2235.0, 2255.0, 2220.0, 2270.0, 2265.0, 2240.0, 2205.0, 2185.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_2454'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [1580.0, 1575.0, 1575.0, 1620.0, 1720.0, 1790.0, 1895.0, 1925.0, 1900.0, 2090.0, 2295.0, 2215.0, 2435.0, 2435.0, 2615.0, 2575.0, 2610.0, 2870.0, 3155.0, 3430.0, 3420.0, 3630.0, 3880.0, 3700.0, 3495.0, 3405.0, 3260.0, 3400.0, 3155.0, 3230.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_2408'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [223.0, 205.0, 215.0, 225.5, 220.0, 211.5, 213.5, 210.0, 207.0, 220.0, 219.0, 208.0, 206.0, 226.5, 237.5, 235.0, 215.5, 237.0, 256.5, 282.0, 287.0, 274.0, 301.0, 321.0, 321.0, 341.0, 311.5, 305.0, 274.5, 275.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_3711'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [383.0, 392.0, 393.0, 417.5, 424.0, 446.5, 450.5, 442.0, 461.5, 472.0, 465.0, 464.5, 496.0, 495.5, 495.5, 488.5, 478.0, 525.0, 520.0, 524.0, 540.0, 516.0, 537.0, 555.0, 548.0, 548.0, 547.0, 510.0, 472.0, 476.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_2383'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [3170.0, 3220.0, 3420.0, 3325.0, 3605.0, 3810.0, 3835.0, 3800.0, 3850.0, 3950.0, 4065.0, 4100.0, 4475.0, 4730.0, 4375.0, 4440.0, 4545.0, 4755.0, 4730.0, 4950.0, 4960.0, 4750.0, 4850.0, 4900.0, 4930.0, 4920.0, 4615.0, 4545.0, 4535.0, 4395.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_3037'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [620.0, 625.0, 638.0, 626.0, 597.0, 618.0, 645.0, 643.0, 678.0, 710.0, 716.0, 728.0, 790.0, 839.0, 825.0, 803.0, 883.0, 911.0, 903.0, 858.0, 896.0, 818.0, 861.0, 875.0, 892.0, 881.0, 821.0, 816.0, 818.0, 823.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_3665'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [2015.0, 2130.0, 2200.0, 2225.0, 2295.0, 2350.0, 2395.0, 2365.0, 2460.0, 2425.0, 2555.0, 2755.0, 2765.0, 2630.0, 2630.0, 2780.0, 2770.0, 2940.0, 2875.0, 2745.0, 2780.0, 2750.0, 2905.0, 2775.0, 2500.0, 2250.0, 2095.0, 2025.0, 1990.0, 1965.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_6223'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [4310.0, 4470.0, 4620.0, 4545.0, 4560.0, 4605.0, 4915.0, 5195.0, 5135.0, 4940.0, 4825.0, 4790.0, 4650.0, 4880.0, 4880.0, 4945.0, 4925.0, 5165.0, 5000.0, 4950.0, 5030.0, 5025.0, 4985.0, 5480.0, 5720.0, 6290.0, 5895.0, 6135.0, 5730.0, 5680.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('kline_6274'), {
+  type: 'line',
+  data: {
+    labels: ["04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '收盤價',
+      data: [725.0, 797.0, 808.0, 801.0, 860.0, 946.0, 960.0, 946.0, 950.0, 963.0, 973.0, 950.0, 1045.0, 990.0, 966.0, 975.0, 1010.0, 1110.0, 1220.0, 1315.0, 1445.0, 1370.0, 1455.0, 1450.0, 1450.0, 1450.0, 1305.0, 1260.0, 1225.0, 1205.0],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 2,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { font: { size: 11 } } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true } }
+    }
+  }
+});
+
+new Chart(document.getElementById('taiexChart'), {
+  type: 'line',
+  data: {
+    labels: ["03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20"],
+    datasets: [{
+      label: '加權指數',
+      data: [33581.86, 33400.32, 33342.51, 33836.57, 34348.58, 33689.68, 33543.88, 32722.5, 32612.24, 33439.11, 33337.62, 33112.59, 32518.16, 31722.99, 33174.82, 32572.43, 33229.82, 34761.38, 34861.16, 35417.83, 35457.29, 36296.12, 36722.14, 37132.02, 36804.34, 36958.8, 37605.11, 37878.47, 37714.15, 38932.4, 39616.63, 39521.73, 39303.5, 38926.63, 40705.14, 40769.29, 41138.85, 41933.78, 41603.94, 41790.06, 41898.32, 41374.5, 41751.75, 41172.36, 40891.82, 40175.56, 40020.82],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+new Chart(document.getElementById('retailChart'), {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: '散戶多單比例 (%)',
+      data: [],
+      borderColor: '#EF5350',
+      backgroundColor: 'rgba(239, 83, 80, 0.1)',
+      borderWidth: 2,
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+new Chart(document.getElementById('fxChart'), {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'USD/TWD',
+      data: [],
+      borderColor: '#378ADD',
+      borderWidth: 2,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+new Chart(document.getElementById('institutionChart'), {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: '外資現貨 (億)',
+        data: [],
+        backgroundColor: 'rgba(55, 138, 221, 0.7)',
+        yAxisID: 'y'
+      },
+      {
+        label: '投信現貨 (億)',
+        data: [],
+        backgroundColor: 'rgba(29, 158, 117, 0.7)',
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: true, position: 'top' } },
+    scales: {
+      y: {
+        position: 'left',
+        title: { display: true, text: '買賣超 (億)' }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
