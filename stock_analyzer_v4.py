@@ -259,43 +259,80 @@ def get_market_overview():
     start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     
-    # 加權指數 (使用 yfinance)
+    # 加權指數 OHLCV (yfinance ^TWII 取 OHLC，FinMind 補成交量)
+    taiex_data = []
     try:
         taiex_ticker = yf.Ticker("^TWII")
-        taiex_df = taiex_ticker.history(period="3mo")
-        taiex = taiex_df.tail(60).reset_index()
-        taiex_data = []
-        for _, row in taiex.iterrows():
+        taiex_df = taiex_ticker.history(period="3mo").tail(60).reset_index()
+        
+        # 同時抓 FinMind TAIEX 取成交量
+        fm_taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX",
+                                 start_date=start, end_date=end)
+        vol_by_date = {}
+        if fm_taiex:
+            print(f"  [debug] TAIEX FinMind 欄位: {list(fm_taiex[0].keys())}")
+            for r in fm_taiex:
+                d = r.get("date", "")
+                # 嘗試多種欄位名稱
+                vol = (r.get("Trading_Volume") or r.get("trading_volume")
+                       or r.get("TradeVolume") or 0)
+                vol_by_date[d] = float(vol)
+        
+        for _, row in taiex_df.iterrows():
+            date_str = row["Date"].strftime("%Y-%m-%d")
+            # FinMind 的 volume 為股，yfinance 的 Volume 也是股
+            yf_vol = int(row["Volume"]) if row["Volume"] else 0
+            fm_vol = int(vol_by_date.get(date_str, 0))
+            volume = fm_vol if fm_vol > 0 else yf_vol
+            
             taiex_data.append({
-                "date": row["Date"].strftime("%Y-%m-%d"),
-                "close": float(row["Close"]),
-                "volume": int(row["Volume"]),
+                "date":   date_str,
+                "open":   float(row["Open"]),
+                "high":   float(row["High"]),
+                "low":    float(row["Low"]),
+                "close":  float(row["Close"]),
+                "volume": volume,
             })
+        print(f"  ✓ TAIEX OHLCV: {len(taiex_data)} 筆，最新 vol={taiex_data[-1]['volume'] if taiex_data else 0:,}")
     except Exception as e:
         print(f"  ⚠️ 大盤指數抓取失敗: {e}")
-        taiex_data = []
     
     # 大盤三大法人（FinMind 回 [{date,name,buy,sell}, ...]，需 pivot）
     inst_raw = fetch_finmind("TaiwanStockTotalInstitutionalInvestors",
                             start_date=start, end_date=end)
     
-    # Pivot：每天一筆
+    # Debug: 看實際 name 值
+    if inst_raw:
+        unique_names = sorted(set(d.get("name", "") for d in inst_raw))
+        print(f"  [debug] 大盤法人名稱: {unique_names}")
+        print(f"  [debug] 大盤法人首筆: {inst_raw[0]}")
+    
+    # Pivot：每天一筆，名稱用「寬鬆」匹配
     inst_by_date = {}
     for d in inst_raw:
         date = d.get("date", "")
         name = d.get("name", "")
         diff = float(d.get("buy", 0)) - float(d.get("sell", 0))  # 元
         if date not in inst_by_date:
-            inst_by_date[date] = {"date": date, "Foreign_Investor_diff": 0,
-                                  "Investment_Trust_diff": 0, "Dealer_diff": 0}
-        if "外資" in name:
+            inst_by_date[date] = {"date": date,
+                                  "Foreign_Investor_diff": 0,
+                                  "Investment_Trust_diff": 0,
+                                  "Dealer_diff": 0}
+        name_low = name.lower()
+        # 寬鬆匹配：含「外」「foreign」歸外資
+        if "外" in name or "foreign" in name_low:
             inst_by_date[date]["Foreign_Investor_diff"] += diff
-        elif "投信" in name:
+        elif "投信" in name or "trust" in name_low:
             inst_by_date[date]["Investment_Trust_diff"] += diff
-        elif "自營商" in name or "自營" in name:
+        elif "自營" in name or "dealer" in name_low:
             inst_by_date[date]["Dealer_diff"] += diff
+    
     institution = sorted(inst_by_date.values(), key=lambda x: x["date"])[-30:]
-    print(f"  ✓ 大盤三大法人 pivot 後: {len(institution)} 筆")
+    if institution:
+        last = institution[-1]
+        print(f"  ✓ 大盤三大法人 pivot 後: {len(institution)} 筆，"
+              f"最新外資={last['Foreign_Investor_diff']/1e8:+.2f}億 "
+              f"投信={last['Investment_Trust_diff']/1e8:+.2f}億")
     
     # 期貨留倉（TX 大台指）
     futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", 
@@ -822,6 +859,7 @@ def generate_html(stocks_data: dict, market_data: dict):
   <div class="stock-grid">{stock_cards}</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>{chart_scripts}</script>
 </body>
 </html>"""
@@ -967,9 +1005,8 @@ def generate_market_section(market_data: dict):
   </div>
 </div>
 <div class="card">
-  <div class="chart-container" style="height:300px;">
-    <canvas id="taiex"></canvas>
-  </div>
+  <div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div>
+  <div id="taiex_kline" style="width:100%;height:400px;"></div>
 </div>"""
 
 
@@ -1012,20 +1049,82 @@ new Chart(document.getElementById('k{stock_id}'),{{
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{font:{{size:11}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true}}}}}}}}
 }});""")
     
-    # 大盤K線
+    # 大盤 K 線 + 成交量 (ECharts)
     taiex = market_data["taiex"]
     if taiex and len(taiex) > 0:
-        taiex_dates = [d["date"][-5:] for d in taiex]
-        taiex_closes = [d["close"] for d in taiex]
+        taiex_dates  = [d["date"][-5:] for d in taiex]
+        # ECharts candlestick 順序: [open, close, low, high]
+        taiex_ohlc   = [[d["open"], d["close"], d["low"], d["high"]] for d in taiex]
+        # 成交量轉億股
+        taiex_vol    = [round(d["volume"] / 1e9, 2) for d in taiex]
+        # 漲跌顏色（紅漲綠跌）
+        taiex_vol_color = []
+        for i, d in enumerate(taiex):
+            if d["close"] >= d["open"]:
+                taiex_vol_color.append("#ef5350")
+            else:
+                taiex_vol_color.append("#26a69a")
         
         scripts.append(f"""
-new Chart(document.getElementById('taiex'),{{
-  type:'line',
-  data:{{labels:{json.dumps(taiex_dates)},datasets:[{{label:'加權指數',data:{json.dumps(taiex_closes)},borderColor:'#378ADD',borderWidth:2,tension:0.3,fill:false}}]}},
-  options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
-}});""")
+(function() {{
+  var chart = echarts.init(document.getElementById('taiex_kline'));
+  var dates = {json.dumps(taiex_dates)};
+  var ohlc  = {json.dumps(taiex_ohlc)};
+  var vols  = {json.dumps(taiex_vol)};
+  var volColors = {json.dumps(taiex_vol_color)};
+  
+  chart.setOption({{
+    animation: false,
+    tooltip: {{
+      trigger: 'axis',
+      axisPointer: {{ type: 'cross' }},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {{ color: '#333' }}
+    }},
+    axisPointer: {{ link: [{{xAxisIndex: 'all'}}] }},
+    grid: [
+      {{ left: '8%', right: '4%', top: '5%',  height: '60%' }},
+      {{ left: '8%', right: '4%', top: '72%', height: '20%' }}
+    ],
+    xAxis: [
+      {{ type: 'category', data: dates, gridIndex: 0,
+         axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}} }},
+      {{ type: 'category', data: dates, gridIndex: 1,
+         axisLabel: {{font: 10, color: '#666'}} }}
+    ],
+    yAxis: [
+      {{ scale: true, gridIndex: 0, splitNumber: 5,
+         axisLabel: {{color: '#666'}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ scale: true, gridIndex: 1, splitNumber: 2, name: '成交量(億股)',
+         nameTextStyle: {{color: '#999', fontSize: 10}},
+         axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }}
+    ],
+    dataZoom: [{{type: 'inside', xAxisIndex: [0, 1], start: 50, end: 100}}],
+    series: [
+      {{
+        name: '加權指數', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: ohlc,
+        itemStyle: {{
+          color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'
+        }}
+      }},
+      {{
+        name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: vols.map(function(v, i) {{
+          return {{value: v, itemStyle: {{color: volColors[i]}}}};
+        }})
+      }}
+    ]
+  }});
+  
+  window.addEventListener('resize', function() {{ chart.resize(); }});
+}})();""")
     else:
-        print("  ⚠️ 大盤K線無數據")
+        print("  ⚠️ TAIEX 無資料")
     
     # 散戶多空比
     retail = market_data["retail"]
