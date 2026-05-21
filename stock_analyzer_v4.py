@@ -69,21 +69,33 @@ def calculate_stochastic(high, low, close, period=14, smooth_k=3, smooth_d=3):
 # =========================================================
 
 def get_stock_data_yf(stock_id: str, days: int = 60):
-    """使用 yfinance 取得台股股價資料"""
+    """使用 yfinance 取得台股股價資料；自動嘗試上市(.TW)與上櫃(.TWO)"""
+    df = None
+    suffix_used = None
+    
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days+20)
+    
+    # 先試上市 (.TW)，失敗再試上櫃 (.TWO)
+    for suffix in (".TW", ".TWO"):
+        try:
+            ticker = yf.Ticker(f"{stock_id}{suffix}")
+            temp_df = ticker.history(start=start_date, end=end_date)
+            if not temp_df.empty:
+                df = temp_df
+                suffix_used = suffix
+                break
+        except Exception as e:
+            continue
+    
+    if df is None or df.empty:
+        print(f"    ⚠️ {stock_id} yfinance 無資料 (.TW 與 .TWO 都試過)")
+        return None
+    
+    if suffix_used == ".TWO":
+        print(f"    ⓘ {stock_id} 為上櫃股票，使用 {stock_id}{suffix_used}")
+    
     try:
-        # 台股代號需要加 .TW
-        ticker = yf.Ticker(f"{stock_id}.TW")
-        
-        # 抓取歷史資料
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=days+20)
-        
-        df = ticker.history(start=start_date, end=end_date)
-        
-        if df.empty:
-            print(f"    ⚠️ {stock_id} yfinance 無資料")
-            return None
-        
         # 只保留最近 days 天
         df = df.tail(days)
         
@@ -100,7 +112,7 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         
         return {
             "stock_id": stock_id,
-            "df": df,  # 完整 DataFrame
+            "df": df,
             "latest": {
                 "close": float(latest["Close"]),
                 "volume": int(latest["Volume"]),
@@ -124,7 +136,7 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         }
         
     except Exception as e:
-        print(f"    ⚠️ {stock_id} yfinance 錯誤: {e}")
+        print(f"    ⚠️ {stock_id} 指標計算錯誤: {e}")
         return None
 
 
@@ -150,36 +162,67 @@ def fetch_finmind(dataset: str, **params):
 
 
 def get_institution_data(stock_id: str, days: int = 30):
-    """取得三大法人買賣超"""
+    """取得個股三大法人買賣超
+    FinMind 回傳格式: 每筆 = 一個法人的當日資料 {date, name, buy, sell}
+    需要 pivot 成每天一筆 {date, foreign_diff, trust_diff, dealer_diff}
+    """
     start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
-    data = fetch_finmind("TaiwanStockInstitutionalInvestors", 
-                        data_id=stock_id, start_date=start)
+    end = datetime.now().strftime("%Y-%m-%d")
     
-    if not data:
+    # 正確的 API 名稱
+    raw = fetch_finmind("TaiwanStockInstitutionalInvestorsBuySell",
+                       data_id=stock_id, start_date=start, end_date=end)
+    
+    if not raw:
         return {"latest": {}, "foreign_today": 0, "foreign_5d": 0, "foreign_20d": 0,
                 "trust_today": 0, "trust_5d": 0, "trust_20d": 0, "dealer_today": 0, "history": []}
     
-    # 排序並取最近 days 天
-    data = sorted(data, key=lambda x: x.get("date", ""))[-days:]
+    # Pivot：把每筆 {date, name, buy, sell} 整理成每天一筆
+    # name 可能是「外資自營商」「外資不含外資自營商」「投信」「自營商_自行買賣」「自營商_避險」等
+    by_date = {}
+    for d in raw:
+        date = d.get("date", "")
+        name = d.get("name", "")
+        buy  = float(d.get("buy", 0))
+        sell = float(d.get("sell", 0))
+        diff = buy - sell  # 股
+        
+        if date not in by_date:
+            by_date[date] = {"date": date, "foreign": 0, "trust": 0, "dealer": 0}
+        
+        # 分類加總
+        if "外資" in name:
+            by_date[date]["foreign"] += diff
+        elif "投信" in name:
+            by_date[date]["trust"] += diff
+        elif "自營商" in name or "自營" in name:
+            by_date[date]["dealer"] += diff
     
-    # 計算累計
-    foreign_5d = sum(float(d.get("Foreign_Investor_diff", 0)) for d in data[-5:])
-    foreign_20d = sum(float(d.get("Foreign_Investor_diff", 0)) for d in data[-20:])
-    trust_5d = sum(float(d.get("Investment_Trust_diff", 0)) for d in data[-5:])
-    trust_20d = sum(float(d.get("Investment_Trust_diff", 0)) for d in data[-20:])
+    # 排序，取最近 days 天
+    history = sorted(by_date.values(), key=lambda x: x["date"])[-days:]
     
-    latest = data[-1] if data else {}
+    if not history:
+        return {"latest": {}, "foreign_today": 0, "foreign_5d": 0, "foreign_20d": 0,
+                "trust_today": 0, "trust_5d": 0, "trust_20d": 0, "dealer_today": 0, "history": []}
+    
+    # 累計（除以 1000 → 張）
+    foreign_5d  = sum(h["foreign"] for h in history[-5:])  / 1000
+    foreign_20d = sum(h["foreign"] for h in history[-20:]) / 1000
+    trust_5d    = sum(h["trust"]   for h in history[-5:])  / 1000
+    trust_20d   = sum(h["trust"]   for h in history[-20:]) / 1000
+    
+    latest = history[-1]
     
     return {
         "latest": latest,
-        "foreign_today": float(latest.get("Foreign_Investor_diff", 0)) / 1000,  # 張
-        "foreign_5d": foreign_5d / 1000,
-        "foreign_20d": foreign_20d / 1000,
-        "trust_today": float(latest.get("Investment_Trust_diff", 0)) / 1000,
-        "trust_5d": trust_5d / 1000,
-        "trust_20d": trust_20d / 1000,
-        "dealer_today": float(latest.get("Dealer_diff", 0)) / 1000,
-        "history": data,
+        "foreign_today": latest["foreign"] / 1000,  # 張
+        "foreign_5d":    foreign_5d,
+        "foreign_20d":   foreign_20d,
+        "trust_today":   latest["trust"] / 1000,
+        "trust_5d":      trust_5d,
+        "trust_20d":     trust_20d,
+        "dealer_today":  latest["dealer"] / 1000,
+        "history": history,
     }
 
 
@@ -232,12 +275,29 @@ def get_market_overview():
         print(f"  ⚠️ 大盤指數抓取失敗: {e}")
         taiex_data = []
     
-    # 大盤三大法人（正確 API）
-    institution = fetch_finmind("TaiwanStockTotalInstitutionalInvestors",
-                               start_date=start, end_date=end)
-    institution = sorted(institution, key=lambda x: x.get("date", ""))[-30:] if institution else []
+    # 大盤三大法人（FinMind 回 [{date,name,buy,sell}, ...]，需 pivot）
+    inst_raw = fetch_finmind("TaiwanStockTotalInstitutionalInvestors",
+                            start_date=start, end_date=end)
     
-    # 期貨留倉
+    # Pivot：每天一筆
+    inst_by_date = {}
+    for d in inst_raw:
+        date = d.get("date", "")
+        name = d.get("name", "")
+        diff = float(d.get("buy", 0)) - float(d.get("sell", 0))  # 元
+        if date not in inst_by_date:
+            inst_by_date[date] = {"date": date, "Foreign_Investor_diff": 0,
+                                  "Investment_Trust_diff": 0, "Dealer_diff": 0}
+        if "外資" in name:
+            inst_by_date[date]["Foreign_Investor_diff"] += diff
+        elif "投信" in name:
+            inst_by_date[date]["Investment_Trust_diff"] += diff
+        elif "自營商" in name or "自營" in name:
+            inst_by_date[date]["Dealer_diff"] += diff
+    institution = sorted(inst_by_date.values(), key=lambda x: x["date"])[-30:]
+    print(f"  ✓ 大盤三大法人 pivot 後: {len(institution)} 筆")
+    
+    # 期貨留倉（TX 大台指）
     futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", 
                            data_id="TX", start_date=start, end_date=end)
     futures = sorted(futures, key=lambda x: x.get("date", ""))[-30:] if futures else []
@@ -246,38 +306,64 @@ def get_market_overview():
     usd_twd = get_usd_twd_rate(days=35)
     usd_twd = usd_twd[-30:]
     
-    # 散戶多空比 - 改用 FinMind TaiwanFuturesRetailPosition
-    retail_raw = fetch_finmind("TaiwanFuturesRetailPosition",
-                               data_id="TMF", start_date=start, end_date=end)
-    # 若 TMF 無資料，fallback 到 MXF
-    if not retail_raw:
-        print("  ⓘ TMF 無資料，嘗試 MXF...")
-        retail_raw = fetch_finmind("TaiwanFuturesRetailPosition",
-                                   data_id="MXF", start_date=start, end_date=end)
-    if retail_raw:
-        print(f"  [debug] 散戶欄位: {list(retail_raw[0].keys())}")
-    retail_raw = sorted(retail_raw, key=lambda x: x.get("date", ""))[-30:] if retail_raw else []
+    # ── TMF 散戶多空比（自行計算）────────────────────────
+    # 散戶淨未平倉 = -法人淨未平倉
+    # 散戶多空比 % = (散戶淨未平倉 / 全市場未平倉) * 100
     
-    # 計算散戶多空比
+    # A. 抓 TMF 法人未平倉
+    tmf_inst = fetch_finmind("TaiwanFuturesInstitutionalInvestors",
+                             data_id="TMF", start_date=start, end_date=end)
+    # B. 抓 TMF 全市場每日（含未平倉量）
+    tmf_daily = fetch_finmind("TaiwanFuturesDaily",
+                              data_id="TMF", start_date=start, end_date=end)
+    
+    if tmf_inst:
+        print(f"  [debug] TMF 法人欄位: {list(tmf_inst[0].keys())}")
+    if tmf_daily:
+        print(f"  [debug] TMF 全市場欄位: {list(tmf_daily[0].keys())}")
+    
+    # 計算每日法人淨未平倉 (3 家法人加總)
+    INST_KEYS = {"外資及陸資", "外資", "投信", "自營商"}
+    inst_net_by_date = {}
+    for r in tmf_inst:
+        date = r.get("date", "")
+        identity = r.get("institutional_investors", r.get("name", ""))
+        if not any(k in identity for k in INST_KEYS):
+            continue
+        long_oi  = float(r.get("long_open_interest_balance_volume", 0))
+        short_oi = float(r.get("short_open_interest_balance_volume", 0))
+        net = long_oi - short_oi
+        inst_net_by_date[date] = inst_net_by_date.get(date, 0) + net
+    
+    # 計算每日全市場未平倉 (所有契約月份加總)
+    total_oi_by_date = {}
+    for r in tmf_daily:
+        date = r.get("date", "")
+        # 全市場未平倉量欄位嘗試多種
+        oi = float(r.get("open_interest",
+              r.get("open_interest_balance",
+              r.get("close_open_interest", 0))))
+        total_oi_by_date[date] = total_oi_by_date.get(date, 0) + oi
+    
+    # 合併計算
     retail = []
-    for d in retail_raw:
-        # FinMind 欄位：retail_investor_long / retail_investor_short
-        # 或：long_open_interest / short_open_interest
-        long_v  = float(d.get("retail_investor_long",
-                   d.get("long_open_interest",
-                   d.get("long_volume", 0))))
-        short_v = float(d.get("retail_investor_short",
-                    d.get("short_open_interest",
-                    d.get("short_volume", 1))))
-        total   = long_v + short_v
-        ratio   = round((long_v / total * 100), 2) if total > 0 else 0.0
+    for date in sorted(total_oi_by_date.keys()):
+        total_oi = total_oi_by_date[date]
+        if total_oi == 0:
+            continue
+        inst_net = inst_net_by_date.get(date, 0)
+        retail_net = -inst_net
+        ratio = round((retail_net / total_oi) * 100, 2)
         retail.append({
-            "date":          d.get("date", ""),
+            "date":          date,
             "retail_ratio":  ratio,
-            "retail_net_oi": long_v - short_v,
-            "total_oi":      total,
+            "retail_net_oi": retail_net,
+            "total_oi":      total_oi,
+            "inst_net_oi":   inst_net,
         })
-    print(f"  ✓ 散戶多空比: {len(retail)} 筆")
+    retail = retail[-30:]
+    print(f"  ✓ TMF 散戶多空比: {len(retail)} 筆"
+          f"{'，最新=' + str(retail[-1]['retail_ratio']) + '%' if retail else ''}")
     
     # 台指期未平倉
     futures_oi = fetch_finmind("TaiwanFuturesDaily", 
@@ -848,17 +934,14 @@ def generate_market_section(market_data: dict):
     if inst_latest:
         print(f"  [debug] 大盤法人欄位: {list(inst_latest.keys())}")
 
-    # 嘗試多種欄位名稱（FinMind 版本差異）
-    # 單位可能是「元」(TaiwanStockTotalInstitutionalInvestors) 或「千元」
+    # 嘗試多種欄位名稱（已 pivot，單位為「元」）
     foreign_raw = _get(inst_latest,
-                       "Foreign_Investor_diff", "foreign_investor_diff",
-                       "Foreigninvestors", "foreignInvestor")
+                       "Foreign_Investor_diff", "foreign_investor_diff")
     trust_raw   = _get(inst_latest,
-                       "Investment_Trust_diff", "investment_trust_diff",
-                       "Investmenttrust", "investmentTrust")
-
-    # 猜測單位：若絕對值 > 1_000_000 代表是「元」，否則是「千元」
-    divisor = 100_000_000 if abs(foreign_raw) > 1_000_000 else 100_000
+                       "Investment_Trust_diff", "investment_trust_diff")
+    
+    # 單位是「元」，除以 1 億
+    divisor = 100_000_000
     foreign = foreign_raw / divisor
     trust   = trust_raw   / divisor
 
@@ -1047,30 +1130,30 @@ document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20p
 
         inst_dates = [d.get("date", "")[-5:] for d in inst]
 
-        # 猜單位
-        sample_val = _get(inst[0], "Foreign_Investor_diff", "foreign_investor_diff", default=0)
-        divisor = 100_000_000 if abs(sample_val) > 1_000_000 else 100_000
+        # pivot 後的欄位單位是「元」，除以 100,000,000 = 億
+        divisor = 100_000_000
 
-        foreign = [_get(d, "Foreign_Investor_diff", "foreign_investor_diff") / divisor for d in inst]
-        trust   = [_get(d, "Investment_Trust_diff", "investment_trust_diff") / divisor for d in inst]
-        dealer  = [_get(d, "Dealer_diff", "dealer_diff") / divisor for d in inst]
+        foreign = [_get(d, "Foreign_Investor_diff") / divisor for d in inst]
+        trust   = [_get(d, "Investment_Trust_diff") / divisor for d in inst]
+        dealer  = [_get(d, "Dealer_diff") / divisor for d in inst]
 
-        # 期貨留倉（右軸）：外資台指期淨部位
+        # 期貨留倉（右軸）：外資 TX 多空淨部位
         fut = market_data["futures"]
         if fut:
             print(f"  [debug] 期貨欄位: {list(fut[0].keys())}")
-        fut_by_date = {d.get("date", ""): d for d in fut}
-        fut_foreign = []
-        for d in inst:
-            date_key = d.get("date", "")
-            f = fut_by_date.get(date_key, {})
-            net = _get(f,
-                       "Foreign_Trader_Net_Volume",
-                       "foreign_trader_net_volume",
-                       "net_open_interest_balance",
-                       "long_open_interest_balance",
-                       default=0)
-            fut_foreign.append(net)
+        
+        # 按日期+法人聚合：只取外資及陸資
+        fut_foreign_by_date = {}
+        for f in fut:
+            identity = f.get("institutional_investors", "")
+            if "外資" not in identity:
+                continue
+            date_key = f.get("date", "")
+            long_oi  = float(f.get("long_open_interest_balance_volume", 0))
+            short_oi = float(f.get("short_open_interest_balance_volume", 0))
+            fut_foreign_by_date[date_key] = long_oi - short_oi
+        
+        fut_foreign = [fut_foreign_by_date.get(d["date"], 0) for d in inst]
 
         scripts.append(f"""
 new Chart(document.getElementById('inst'),{{
@@ -1084,7 +1167,7 @@ new Chart(document.getElementById('inst'),{{
         backgroundColor:'rgba(29,158,117,0.7)',yAxisID:'y'}},
       {{label:'自營現貨(億)',data:{json.dumps(dealer)},
         backgroundColor:'rgba(255,152,0,0.7)',yAxisID:'y'}},
-      {{label:'外資期貨(口)',data:{json.dumps(fut_foreign)},
+      {{label:'外資期貨淨部位(口)',data:{json.dumps(fut_foreign)},
         type:'line',borderColor:'#EF5350',borderWidth:2,
         pointRadius:0,tension:0.3,fill:false,yAxisID:'y1'}}
     ]
