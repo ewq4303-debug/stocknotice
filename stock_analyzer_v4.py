@@ -389,148 +389,193 @@ def get_usd_twd_rate(days: int = 35):
 def get_tmf_retail_ratio(days: int = 30):
     """
     計算微台指 (TMF) 散戶多空比（近 N 個交易日）
-    
-    來源 A: taifex futDailyMarketReportDown  → 全市場 Total_OI
-    來源 B: taifex futContractsDateDown      → 三大法人 Inst_Net_OI
-    
+
+    來源 A: futDataDown          → 全市場每日 Total_OI（批量）
+    來源 B: futContractsDateDown → 三大法人 Inst_Net_OI（批量）
+
     公式:
       Retail_Net_OI  = -Inst_Net_OI
       Retail_Ratio % = (Retail_Net_OI / Total_OI) * 100
     """
-    URL_MARKET   = "https://www.taifex.com.tw/cht/3/futDailyMarketReportDown"
-    URL_CONTRACT = "https://www.taifex.com.tw/cht/3/futContractsDateDown"
+    URL_A = "https://www.taifex.com.tw/cht/3/futDataDown"
+    URL_B = "https://www.taifex.com.tw/cht/3/futContractsDateDown"
     HEADERS = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://www.taifex.com.tw/",
-        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        )
     }
 
+    end_dt   = datetime.now()
+    start_dt = end_dt - timedelta(days=days + 15)   # 多抓幾天補假日
+    start_str = start_dt.strftime("%Y/%m/%d")
+    end_str   = end_dt.strftime("%Y/%m/%d")
+
+    # ── 工具函式 ───────────────────────────────────────────
     def clean_num(s):
+        """去千分位逗號，轉整數；失敗回傳 0"""
         try:
-            return int(str(s).replace(",", "").replace(" ", ""))
+            return int(str(s).replace(",", "").replace(" ", "").strip())
         except (ValueError, TypeError):
             return 0
 
-    def parse_big5_csv(raw_bytes):
-        try:
-            text = raw_bytes.decode("big5", errors="replace")
-        except Exception:
-            text = raw_bytes.decode("utf-8", errors="replace")
+    def parse_big5(raw_bytes):
+        """Big5 解碼，回傳非空 lines list"""
+        for enc in ("big5", "cp950", "utf-8-sig", "utf-8"):
+            try:
+                text = raw_bytes.decode(enc)
+                return [l.strip() for l in text.splitlines() if l.strip()]
+            except UnicodeDecodeError:
+                continue
+        text = raw_bytes.decode("big5", errors="replace")
         return [l.strip() for l in text.splitlines() if l.strip()]
 
-    results = []
-    date_cursor = datetime.now()
-    checked = 0
-    max_check = days + 25
+    def find_col(cols, keywords):
+        """在 cols 中尋找包含任一 keyword 的欄位索引（回傳最後一個 match）"""
+        found = [j for j, c in enumerate(cols) if any(k in c for k in keywords)]
+        return found[-1] if found else None
 
-    while len(results) < days and checked < max_check:
-        date_str = date_cursor.strftime("%Y/%m/%d")
-        date_key = date_cursor.strftime("%Y-%m-%d")
-        date_cursor -= timedelta(days=1)
-        checked += 1
+    # ── 來源 A：全市場 TMF 每日 Total_OI ──────────────────
+    print(f"  [TMF-A] 抓取 {start_str} ~ {end_str}...")
+    try:
+        resp_a = requests.post(
+            URL_A,
+            headers=HEADERS,
+            data={
+                "down_type":      "1",
+                "commodity_id":   "TMF",       # 底線
+                "queryStartDate": start_str,
+                "queryEndDate":   end_str,
+            },
+            timeout=30,
+        )
+        resp_a.raise_for_status()
+        lines_a = parse_big5(resp_a.content)
+    except Exception as e:
+        print(f"  ⚠️ [TMF-A] 請求失敗: {e}")
+        return []
 
-        # 跳過週六(6)、週日(7)
-        if date_cursor.isoweekday() in (6, 7):
+    print(f"  [TMF-A] 共 {len(lines_a)} 行")
+    if len(lines_a) < 2:
+        print("  ⚠️ [TMF-A] 無資料")
+        return []
+
+    # 找標頭行
+    header_a = None
+    date_col_a = oi_col_a = data_a_start = None
+    for i, line in enumerate(lines_a):
+        cols = [c.strip() for c in line.split(",")]
+        oi_idx = find_col(cols, ["未平倉口數", "未平倉合約數"])
+        dt_idx = find_col(cols, ["日期", "交易日期", "Date"])
+        if oi_idx is not None:
+            header_a    = cols
+            oi_col_a    = oi_idx
+            date_col_a  = dt_idx if dt_idx is not None else 0
+            data_a_start = i + 1
+            print(f"  [TMF-A] 標頭[{i}]: {cols[:6]}... date_col={date_col_a} oi_col={oi_col_a}")
+            break
+
+    if oi_col_a is None:
+        print(f"  ⚠️ [TMF-A] 找不到 OI 欄位，前3行: {lines_a[:3]}")
+        return []
+
+    # 按日期累加 Total_OI（同一天可能有多個到期月份）
+    total_oi_by_date = {}
+    for line in lines_a[data_a_start:]:
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) <= max(date_col_a, oi_col_a):
             continue
-
-        # ── 來源 A：全市場 Total_OI ──────────────────────────
-        try:
-            resp_a = requests.post(
-                URL_MARKET,
-                data={"queryDate": date_str, "commodity_id": "TMF"},
-                headers=HEADERS,
-                timeout=15,
-            )
-            resp_a.raise_for_status()
-            lines_a = parse_big5_csv(resp_a.content)
-        except Exception as e:
-            print(f"  ⚠️ TMF 全市場行情 {date_str} 失敗: {e}")
-            continue
-
-        if len(lines_a) < 2:
-            continue  # 非交易日無資料
-
-        # 找「未平倉口數」欄位
-        header_a = None
-        oi_col = None
-        data_a_start = 0
-        for i, line in enumerate(lines_a):
-            cols = [c.strip() for c in line.split(",")]
-            for j, c in enumerate(cols):
-                if "未平倉口數" in c:
-                    header_a = cols
-                    oi_col = j
-                    data_a_start = i + 1
-                    break
-            if header_a:
+        raw_date = parts[date_col_a]
+        # 統一日期格式
+        for fmt in ("%Y/%m/%d", "%Y-%m-%d", "%m/%d/%Y"):
+            try:
+                dt = datetime.strptime(raw_date, fmt)
+                date_key = dt.strftime("%Y-%m-%d")
                 break
-
-        if oi_col is None:
-            continue
-
-        total_oi = 0
-        for line in lines_a[data_a_start:]:
-            parts = [p.strip() for p in line.split(",")]
-            if len(parts) > oi_col:
-                total_oi += clean_num(parts[oi_col])
-
-        if total_oi == 0:
-            continue  # 非交易日
-
-        # ── 來源 B：三大法人 Inst_Net_OI ────────────────────
-        try:
-            resp_b = requests.post(
-                URL_CONTRACT,
-                data={
-                    "queryStartDate": date_str,
-                    "queryEndDate":   date_str,
-                    "commodityId":    "TMF",
-                },
-                headers=HEADERS,
-                timeout=15,
-            )
-            resp_b.raise_for_status()
-            lines_b = parse_big5_csv(resp_b.content)
-        except Exception as e:
-            print(f"  ⚠️ TMF 法人未平倉 {date_str} 失敗: {e}")
-            continue
-
-        if len(lines_b) < 2:
-            continue
-
-        # 找「身份別」與含「淨額口數」的欄位
-        id_col = None
-        net_oi_col = None
-        data_b_start = 0
-        for i, line in enumerate(lines_b):
-            cols = [c.strip() for c in line.split(",")]
-            has_id  = any("身份別" in c for c in cols)
-            has_net = any("淨額口數" in c for c in cols)
-            if has_id and has_net:
-                data_b_start = i + 1
-                for j, c in enumerate(cols):
-                    if "身份別" in c:
-                        id_col = j
-                    if "淨額口數" in c:
-                        net_oi_col = j
-                break
-
-        if id_col is None or net_oi_col is None:
-            continue
-
-        INST_NAMES = {"外資及陸資", "投信", "自營商"}
-        inst_net_oi = 0
-        for line in lines_b[data_b_start:]:
-            parts = [p.strip() for p in line.split(",")]
-            if len(parts) <= max(id_col, net_oi_col):
+            except ValueError:
                 continue
-            if parts[id_col] in INST_NAMES:
-                inst_net_oi += clean_num(parts[net_oi_col])
+        else:
+            continue
+        total_oi_by_date[date_key] = total_oi_by_date.get(date_key, 0) + clean_num(parts[oi_col_a])
 
-        # ── 計算散戶比例 ──────────────────────────────────────
+    print(f"  [TMF-A] 解析出 {len(total_oi_by_date)} 個交易日")
+
+    # ── 來源 B：三大法人 Inst_Net_OI ──────────────────────
+    print(f"  [TMF-B] 抓取 {start_str} ~ {end_str}...")
+    try:
+        resp_b = requests.post(
+            URL_B,
+            headers=HEADERS,
+            data={
+                "queryStartDate": start_str,
+                "queryEndDate":   end_str,
+                "commodityId":    "TMF",       # 駝峰式
+            },
+            timeout=30,
+        )
+        resp_b.raise_for_status()
+        lines_b = parse_big5(resp_b.content)
+    except Exception as e:
+        print(f"  ⚠️ [TMF-B] 請求失敗: {e}")
+        return []
+
+    print(f"  [TMF-B] 共 {len(lines_b)} 行")
+    if len(lines_b) < 2:
+        print("  ⚠️ [TMF-B] 無資料")
+        return []
+
+    # 找標頭行
+    date_col_b = id_col_b = net_oi_col_b = data_b_start = None
+    for i, line in enumerate(lines_b):
+        cols = [c.strip() for c in line.split(",")]
+        id_idx  = find_col(cols, ["身份別"])
+        net_idx = find_col(cols, ["未平倉多空淨額口數", "淨額口數"])
+        dt_idx  = find_col(cols, ["日期", "交易日期", "Date"])
+        if id_idx is not None and net_idx is not None:
+            date_col_b  = dt_idx if dt_idx is not None else 0
+            id_col_b    = id_idx
+            net_oi_col_b = net_idx
+            data_b_start = i + 1
+            print(f"  [TMF-B] 標頭[{i}]: {cols[:8]}... date={date_col_b} id={id_col_b} net={net_oi_col_b}")
+            break
+
+    if id_col_b is None:
+        print(f"  ⚠️ [TMF-B] 找不到欄位，前3行: {lines_b[:3]}")
+        return []
+
+    # 按日期累加法人淨部位
+    INST_NAMES = {"外資及陸資", "投信", "自營商"}
+    inst_net_by_date = {}
+    for line in lines_b[data_b_start:]:
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) <= max(date_col_b, id_col_b, net_oi_col_b):
+            continue
+        raw_date = parts[date_col_b]
+        for fmt in ("%Y/%m/%d", "%Y-%m-%d", "%m/%d/%Y"):
+            try:
+                dt = datetime.strptime(raw_date, fmt)
+                date_key = dt.strftime("%Y-%m-%d")
+                break
+            except ValueError:
+                continue
+        else:
+            continue
+        identity = parts[id_col_b]
+        if identity in INST_NAMES:
+            inst_net_by_date[date_key] = inst_net_by_date.get(date_key, 0) + clean_num(parts[net_oi_col_b])
+
+    print(f"  [TMF-B] 解析出 {len(inst_net_by_date)} 個交易日的法人資料")
+
+    # ── 合併計算 ──────────────────────────────────────────
+    results = []
+    for date_key in sorted(total_oi_by_date.keys()):
+        total_oi    = total_oi_by_date[date_key]
+        inst_net_oi = inst_net_by_date.get(date_key, 0)
+        if total_oi == 0:
+            continue
         retail_net_oi = -inst_net_oi
-        retail_ratio  = round((retail_net_oi / total_oi) * 100, 2) if total_oi else 0.0
-
+        retail_ratio  = round((retail_net_oi / total_oi) * 100, 2)
         results.append({
             "date":          date_key,
             "total_oi":      total_oi,
@@ -539,8 +584,11 @@ def get_tmf_retail_ratio(days: int = 30):
             "retail_ratio":  retail_ratio,
         })
 
-    results = sorted(results, key=lambda x: x["date"])
-    print(f"  ✓ TMF 散戶多空比: {len(results)} 筆")
+    # 只取最近 days 筆
+    results = results[-days:]
+    print(f"  ✓ TMF 散戶多空比: {len(results)} 筆，"
+          f"最新={results[-1]['date'] if results else 'N/A'} "
+          f"Ratio={results[-1]['retail_ratio'] if results else 'N/A'}%")
     return results
 
 
