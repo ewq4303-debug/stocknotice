@@ -214,6 +214,7 @@ def get_margin_data(stock_id: str, days: int = 30):
 def get_market_overview():
     """取得大盤資料"""
     start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
     
     # 加權指數 (使用 yfinance)
     try:
@@ -231,29 +232,35 @@ def get_market_overview():
         print(f"  ⚠️ 大盤指數抓取失敗: {e}")
         taiex_data = []
     
-    # 大盤三大法人
-    institution = fetch_finmind("TaiwanStockInstitutionalInvestorsSummary", start_date=start)
+    # 大盤三大法人（正確 API）
+    institution = fetch_finmind("TaiwanStockTotalInstitutionalInvestors",
+                               start_date=start, end_date=end)
     institution = sorted(institution, key=lambda x: x.get("date", ""))[-30:] if institution else []
     
     # 期貨留倉
-    futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", data_id="TX", start_date=start)
+    futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", 
+                           data_id="TX", start_date=start, end_date=end)
     futures = sorted(futures, key=lambda x: x.get("date", ""))[-30:] if futures else []
     
-    # 匯率
-    fx = fetch_finmind("TaiwanExchangeRate", start_date=start)
+    # 匯率（添加 end_date 參數）
+    fx = fetch_finmind("TaiwanExchangeRate", 
+                      start_date=start, end_date=end)
     usd_twd = [d for d in fx if d.get("currency") == "USD"]
     usd_twd = sorted(usd_twd, key=lambda x: x.get("date", ""))[-30:] if usd_twd else []
     
-    # 散戶多空比
-    retail = fetch_finmind("TaiwanFuturesRetailPosition", data_id="MXF", start_date=start)
+    # 散戶多空比（確保參數正確）
+    retail = fetch_finmind("TaiwanFuturesRetailPosition", 
+                          data_id="MXF", start_date=start, end_date=end)
     retail = sorted(retail, key=lambda x: x.get("date", ""))[-30:] if retail else []
     
     # 台指期未平倉
-    futures_oi = fetch_finmind("TaiwanFuturesDaily", data_id="TX", start_date=start)
+    futures_oi = fetch_finmind("TaiwanFuturesDaily", 
+                              data_id="TX", start_date=start, end_date=end)
     futures_oi = sorted(futures_oi, key=lambda x: x.get("date", ""))[-30:] if futures_oi else []
     
     # 大盤融資
-    total_margin = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", start_date=start)
+    total_margin = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", 
+                                start_date=start, end_date=end)
     total_margin = sorted(total_margin, key=lambda x: x.get("date", ""))[-30:] if total_margin else []
     
     return {
@@ -565,70 +572,163 @@ new Chart(document.getElementById('taiex'),{{
     # 散戶多空比
     retail = market_data["retail"]
     if retail and len(retail) > 0:
+        # 調試：打印第一筆看欄位名稱
+        print(f"  [debug] 散戶欄位: {list(retail[0].keys())}")
+        
         retail_dates = [d.get("date", "")[-5:] for d in retail]
         retail_ratio = []
         for d in retail:
-            long_vol = float(d.get("long_volume", 0))
-            short_vol = float(d.get("short_volume", 1))
-            ratio = (long_vol / (long_vol + short_vol) * 100) if (long_vol + short_vol) > 0 else 50
-            retail_ratio.append(ratio)
+            # 嘗試不同可能的欄位名稱
+            long_vol  = float(d.get("long_volume",  d.get("LongVolume",  d.get("retail_long",  0))))
+            short_vol = float(d.get("short_volume", d.get("ShortVolume", d.get("retail_short", 1))))
+            total = long_vol + short_vol
+            ratio = (long_vol / total * 100) if total > 0 else 50.0
+            retail_ratio.append(round(ratio, 2))
         
-        if len(retail_ratio) > 0:
-            scripts.append(f"""
+        scripts.append(f"""
 new Chart(document.getElementById('retail'),{{
   type:'line',
-  data:{{labels:{json.dumps(retail_dates)},datasets:[{{label:'散戶多單%',data:{json.dumps(retail_ratio)},borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',borderWidth:2,fill:true,tension:0.3}}]}},
-  options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
+  data:{{
+    labels:{json.dumps(retail_dates)},
+    datasets:[{{
+      label:'散戶多單%',
+      data:{json.dumps(retail_ratio)},
+      borderColor:'#EF5350',
+      backgroundColor:'rgba(239,83,80,0.1)',
+      borderWidth:2,fill:true,tension:0.3,pointRadius:2
+    }}]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{legend:{{display:false}}}},
+    scales:{{
+      y:{{ticks:{{callback:function(v){{return v+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
+    }}
+  }}
 }});""")
-        else:
-            print("  ⚠️ 散戶多空比計算失敗")
     else:
         print("  ⚠️ 散戶多空比無數據 - 可能 FinMind API 無此資料或需要付費方案")
-        # 顯示提示訊息
-        scripts.append(f"""
-document.getElementById('retail').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">散戶多空比數據暫時無法取得<br><small>可能需要 FinMind 付費方案</small></div>';
+        scripts.append("""
+document.getElementById('retail').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">散戶多空比數據暫時無法取得</div>';
 """)
     
     # 匯率
     fx = market_data["usd_twd"]
     if fx and len(fx) > 0:
-        fx_dates = [d.get("date", "")[-5:] for d in fx]
-        fx_values = [float(d.get("close", 0)) for d in fx if d.get("close")]
+        # 調試：打印第一筆看欄位名稱
+        print(f"  [debug] 匯率欄位: {list(fx[0].keys())}")
         
-        if len(fx_values) > 0:
+        fx_dates = [d.get("date", "")[-5:] for d in fx]
+        # 嘗試不同欄位名稱
+        fx_values = []
+        for d in fx:
+            val = d.get("close", d.get("Close", d.get("rate", d.get("exchange_rate", 0))))
+            if val:
+                fx_values.append(float(val))
+            else:
+                fx_values.append(None)
+        
+        # 移除 None 值
+        valid_pairs = [(date, val) for date, val in zip(fx_dates, fx_values) if val]
+        if valid_pairs:
+            fx_dates_clean, fx_values_clean = zip(*valid_pairs)
+            
             scripts.append(f"""
 new Chart(document.getElementById('fx'),{{
   type:'line',
-  data:{{labels:{json.dumps(fx_dates)},datasets:[{{label:'USD/TWD',data:{json.dumps(fx_values)},borderColor:'#378ADD',borderWidth:2,tension:0.3}}]}},
-  options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}}}}
+  data:{{
+    labels:{json.dumps(list(fx_dates_clean))},
+    datasets:[{{
+      label:'USD/TWD',
+      data:{json.dumps(list(fx_values_clean))},
+      borderColor:'#378ADD',
+      backgroundColor:'rgba(55,138,221,0.1)',
+      borderWidth:2,tension:0.3,fill:true,pointRadius:2
+    }}]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{legend:{{display:false}}}},
+    scales:{{
+      y:{{ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
+    }}
+  }}
 }});""")
         else:
-            print("  ⚠️ 匯率數據格式錯誤")
+            print("  ⚠️ 匯率數據值為空")
+            scripts.append("""
+document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">匯率數據暫時無法取得</div>';
+""")
     else:
         print("  ⚠️ 匯率無數據")
-        scripts.append(f"""
+        scripts.append("""
 document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">匯率數據暫時無法取得</div>';
 """)
     
     # 三大法人
     inst = market_data["institution"]
     if inst and len(inst) > 0:
-        inst_dates = [d.get("date", "")[-5:] for d in inst]
-        foreign = [float(d.get("Foreign_Investor_diff", 0))/100000 for d in inst]
-        trust = [float(d.get("Investment_Trust_diff", 0))/100000 for d in inst]
+        # 調試：打印第一筆看欄位名稱
+        print(f"  [debug] 法人欄位: {list(inst[0].keys())}")
         
-        if len(foreign) > 0 and len(trust) > 0:
-            scripts.append(f"""
+        inst_dates = [d.get("date", "")[-5:] for d in inst]
+        
+        # TaiwanStockTotalInstitutionalInvestors 欄位為千元，除以 100000 得億
+        # 嘗試不同的欄位名稱
+        def get_val(d, keys, divisor=100000):
+            for k in keys:
+                if k in d and d[k] is not None:
+                    return float(d[k]) / divisor
+            return 0.0
+        
+        foreign = [get_val(d, ["Foreign_Investor_diff", "foreign_investor_diff", "ForeignInvestorDiff"]) for d in inst]
+        trust   = [get_val(d, ["Investment_Trust_diff", "investment_trust_diff", "InvestmentTrustDiff"]) for d in inst]
+        dealer  = [get_val(d, ["Dealer_diff", "dealer_diff", "DealerDiff"]) for d in inst]
+        
+        # 期貨留倉（右軸）
+        fut = market_data["futures"]
+        fut_by_date = {d.get("date", ""): d for d in fut}
+        fut_foreign = []
+        for d in inst:
+            date = d.get("date", "")
+            f = fut_by_date.get(date, {})
+            # 外資期貨淨部位變化（口數）
+            net = float(f.get("Foreign_Trader_Net_Volume", 
+                         f.get("foreign_trader_net_volume", 0)))
+            fut_foreign.append(net)
+        
+        scripts.append(f"""
 new Chart(document.getElementById('inst'),{{
   type:'bar',
-  data:{{labels:{json.dumps(inst_dates)},datasets:[{{label:'外資(億)',data:{json.dumps(foreign)},backgroundColor:'rgba(55,138,221,0.7)'}},{{label:'投信(億)',data:{json.dumps(trust)},backgroundColor:'rgba(29,158,117,0.7)'}}]}},
-  options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:true,position:'top'}}}}}}
+  data:{{
+    labels:{json.dumps(inst_dates)},
+    datasets:[
+      {{label:'外資現貨(億)',data:{json.dumps(foreign)},backgroundColor:'rgba(55,138,221,0.7)',yAxisID:'y'}},
+      {{label:'投信現貨(億)',data:{json.dumps(trust)},backgroundColor:'rgba(29,158,117,0.7)',yAxisID:'y'}},
+      {{label:'自營現貨(億)',data:{json.dumps(dealer)},backgroundColor:'rgba(255,152,0,0.7)',yAxisID:'y'}},
+      {{label:'外資期貨(口)',data:{json.dumps(fut_foreign)},type:'line',borderColor:'#378ADD',
+        borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1'}}
+    ]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}}}},
+    scales:{{
+      y:{{type:'linear',position:'left',
+          title:{{display:true,text:'現貨買賣超(億)'}},
+          ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      y1:{{type:'linear',position:'right',
+           title:{{display:true,text:'期貨口數'}},
+           ticks:{{font:{{size:11}}}},grid:{{display:false}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:10}},grid:{{display:false}}}}
+    }}
+  }}
 }});""")
-        else:
-            print("  ⚠️ 法人數據計算失敗")
     else:
         print("  ⚠️ 三大法人無數據")
-        scripts.append(f"""
+        scripts.append("""
 document.getElementById('inst').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">法人數據暫時無法取得</div>';
 """)
     
