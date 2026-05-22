@@ -258,30 +258,149 @@ def get_institution_data(stock_id: str, days: int = 30):
 
 
 def get_margin_data(stock_id: str, days: int = 30):
-    """取得融資融券資料"""
-    start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
+    """取得融資、融券餘額（含 5日/20日增減）
+    FinMind: MarginPurchaseTodayBalance (融資餘額), ShortSaleTodayBalance (融券餘額)
+    """
+    start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
     data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", 
-                        data_id=stock_id, start_date=start)
+                        data_id=stock_id, start_date=start, end_date=end)
     
     if not data:
-        return {"margin_balance": 0, "margin_change": 0, "short_balance": 0, "short_change": 0, "history": []}
+        return {
+            "margin_balance": 0, "margin_change": 0, "margin_5d": 0, "margin_20d": 0,
+            "short_balance": 0, "short_change": 0, "short_5d": 0, "short_20d": 0,
+            "history": [],
+        }
     
-    data = sorted(data, key=lambda x: x.get("date", ""))[-days:]
+    data = sorted(data, key=lambda x: x.get("date", ""))
+    if stock_id == STOCKS[0] if STOCKS else False:
+        print(f"    [debug] {stock_id} 融資融券欄位: {list(data[0].keys())}")
+    
+    # 嘗試多種欄位名稱（FinMind 版本差異）
+    def get_balance(d, kind):
+        if kind == "margin":
+            return float(d.get("MarginPurchaseTodayBalance",
+                          d.get("margin_purchase_today_balance",
+                          d.get("MarginPurchaseBuy", 0))))
+        else:
+            return float(d.get("ShortSaleTodayBalance",
+                          d.get("short_sale_today_balance",
+                          d.get("ShortSaleBuy", 0))))
+    
     latest = data[-1]
-    prev = data[-2] if len(data) > 1 else latest
+    margin_balance = int(get_balance(latest, "margin"))
+    short_balance  = int(get_balance(latest, "short"))
     
-    margin_balance = int(latest.get("MarginPurchaseBuy", 0))
-    margin_change = margin_balance - int(prev.get("MarginPurchaseBuy", 0))
-    
-    short_balance = int(latest.get("ShortSaleBuy", 0))
-    short_change = short_balance - int(prev.get("ShortSaleBuy", 0))
+    # 計算 N 日前的餘額，得到增減
+    def diff_n_days_ago(n, kind):
+        if len(data) <= n:
+            return 0
+        balance_now = get_balance(data[-1],  kind)
+        balance_past = get_balance(data[-n-1], kind)
+        return int(balance_now - balance_past)
     
     return {
         "margin_balance": margin_balance,
-        "margin_change": margin_change,
-        "short_balance": short_balance,
-        "short_change": short_change,
-        "history": data,
+        "margin_change":  diff_n_days_ago(1,  "margin"),
+        "margin_5d":      diff_n_days_ago(5,  "margin"),
+        "margin_20d":     diff_n_days_ago(20, "margin"),
+        "short_balance":  short_balance,
+        "short_change":   diff_n_days_ago(1,  "short"),
+        "short_5d":       diff_n_days_ago(5,  "short"),
+        "short_20d":      diff_n_days_ago(20, "short"),
+        "history": data[-days:],
+    }
+
+
+def get_borrowing_data(stock_id: str, days: int = 30):
+    """取得借券餘額（5日/20日增減）
+    FinMind: TaiwanStockSecuritiesLending
+    """
+    start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockSecuritiesLending",
+                        data_id=stock_id, start_date=start, end_date=end)
+    
+    if not data:
+        return {"borrow_balance": 0, "borrow_change": 0, "borrow_5d": 0, "borrow_20d": 0, "history": []}
+    
+    data = sorted(data, key=lambda x: x.get("date", ""))
+    if stock_id == STOCKS[0] if STOCKS else False:
+        print(f"    [debug] {stock_id} 借券欄位: {list(data[0].keys())}")
+    
+    def get_balance(d):
+        return float(d.get("today_balance_volume",
+                       d.get("TodayBalanceVolume",
+                       d.get("balance", 0))))
+    
+    latest = data[-1]
+    balance = int(get_balance(latest))
+    
+    def diff_n_days_ago(n):
+        if len(data) <= n:
+            return 0
+        return int(get_balance(data[-1]) - get_balance(data[-n-1]))
+    
+    return {
+        "borrow_balance": balance,
+        "borrow_change":  diff_n_days_ago(1),
+        "borrow_5d":      diff_n_days_ago(5),
+        "borrow_20d":     diff_n_days_ago(20),
+        "history": data[-days:],
+    }
+
+
+def get_tdcc_holding(stock_id: str):
+    """取得集保大戶持股比例變化（主力 = 持股 >1000 張的大戶）
+    FinMind: TaiwanStockHoldingSharesPer
+    回傳：本週 vs 上週的大戶持股比例變化 (%)
+    """
+    start = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockHoldingSharesPer",
+                        data_id=stock_id, start_date=start, end_date=end)
+    
+    if not data:
+        return {"big_holder_change": 0, "big_holder_ratio": 0, "trend": 0}
+    
+    # Debug
+    if stock_id == STOCKS[0] if STOCKS else False:
+        print(f"    [debug] {stock_id} 集保欄位: {list(data[0].keys())}")
+        unique_levels = sorted(set(d.get("HoldingSharesLevel", d.get("hold_level", "")) for d in data))
+        print(f"    [debug] {stock_id} 持股分級: {unique_levels}")
+    
+    # 篩選主力（持股 >1000 張的大戶）
+    # FinMind 的 HoldingSharesLevel 通常為「1,000-5,000」「5,000-10,000」「>10,000」等
+    big_holders = []
+    for d in data:
+        level = str(d.get("HoldingSharesLevel", d.get("hold_level", "")))
+        # 1000 張以上算大戶
+        if any(k in level for k in ["1,000", "5,000", "10,000", ">1,000"]):
+            big_holders.append(d)
+    
+    if not big_holders:
+        return {"big_holder_change": 0, "big_holder_ratio": 0, "trend": 0}
+    
+    # 按日期分組，加總百分比
+    by_date = {}
+    for d in big_holders:
+        date = d.get("date", "")
+        pct = float(d.get("percent", d.get("Percent", 0)))
+        by_date[date] = by_date.get(date, 0) + pct
+    
+    sorted_dates = sorted(by_date.keys())
+    if len(sorted_dates) < 2:
+        return {"big_holder_change": 0, "big_holder_ratio": by_date.get(sorted_dates[0], 0) if sorted_dates else 0, "trend": 0}
+    
+    latest_pct = by_date[sorted_dates[-1]]
+    prev_pct   = by_date[sorted_dates[-2]]
+    change     = latest_pct - prev_pct
+    
+    return {
+        "big_holder_ratio":  round(latest_pct, 2),     # 當前大戶持股比例 %
+        "big_holder_change": round(change, 2),         # 比上週變化 %
+        "trend": 1 if change > 0 else (-1 if change < 0 else 0),
     }
 
 
@@ -814,61 +933,458 @@ def get_stock_name(stock_id: str):
 # AI 分析
 # =========================================================
 
-def generate_ai_analysis(stock_id: str, stock_name: str, data: dict, institution: dict, margin: dict):
-    """呼叫 Claude API 生成股票分析"""
+def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
+                         institution: dict, margin: dict,
+                         borrow: dict = None, tdcc: dict = None):
+    """呼叫 Claude API 生成股票分析，回傳 (技術面, 籌碼面, 操作建議) 三段"""
     
     if not ANTHROPIC_API_KEY:
-        return "AI 分析功能未啟用（請設定 ANTHROPIC_API_KEY）"
+        msg = "AI 分析功能未啟用（請設定 ANTHROPIC_API_KEY）"
+        return msg, msg, msg
     
     latest = data["latest"]
     prev = data["prev"]
     ind = data["indicators"]
+    borrow = borrow or {}
+    tdcc = tdcc or {}
     
-    prompt = f"""請分析 {stock_id} {stock_name} 的當前狀況，提供專業建議。
+    prompt = f"""請分析 {stock_id} {stock_name} 的當前狀況。
 
 ## 技術面
 - 收盤價: {latest['close']:.2f} (前日: {prev['close']:.2f})
-- 成交量: {latest['volume']:,} 股
-- MA5: {ind['ma5']:.2f}, MA20: {ind['ma20']:.2f}, MA60: {ind['ma60']:.2f}
+- MA5/20/60: {ind['ma5']:.2f} / {ind['ma20']:.2f} / {ind['ma60']:.2f}
 - KD: K={ind['k']:.1f}, D={ind['d']:.1f}
 - RSI: {ind['rsi']:.1f}
-- MACD: {ind['macd']:.2f} (訊號線: {ind['macd_signal']:.2f})
+- MACD: {ind['macd']:.2f} (訊號: {ind['macd_signal']:.2f})
 
 ## 籌碼面
-- 外資今日: {institution['foreign_today']:.0f}張, 5日: {institution['foreign_5d']:.0f}張, 20日: {institution['foreign_20d']:.0f}張
-- 投信今日: {institution['trust_today']:.0f}張, 5日: {institution['trust_5d']:.0f}張
-- 融資餘額: {margin['margin_balance']:,}張 (變化: {margin['margin_change']:+,})
-- 融券餘額: {margin['short_balance']:,}張 (變化: {margin['short_change']:+,})
+- 外資 今日/5日/20日: {institution['foreign_today']:+.0f} / {institution['foreign_5d']:+.0f} / {institution['foreign_20d']:+.0f} 張
+- 投信 今日/5日/20日: {institution['trust_today']:+.0f} / {institution['trust_5d']:+.0f} / {institution['trust_20d']:+.0f} 張
+- 融資 餘額/今日/5日/20日: {margin.get('margin_balance',0):,} / {margin.get('margin_change',0):+,} / {margin.get('margin_5d',0):+,} / {margin.get('margin_20d',0):+,} 張
+- 融券 餘額/5日: {margin.get('short_balance',0):,} / {margin.get('short_5d',0):+,} 張
+- 借券 餘額/5日: {borrow.get('borrow_balance',0):,} / {borrow.get('borrow_5d',0):+,} 張
+- 集保大戶持股比例: {tdcc.get('big_holder_ratio',0):.2f}% (變化: {tdcc.get('big_holder_change',0):+.2f}%)
 
-請用繁體中文回答，分三部分（每部分約100字）：
-1. **技術面分析**: K線位置、均線排列、技術指標訊號、支撐壓力
-2. **籌碼面分析**: 法人動向、融資融券變化、籌碼健康度
-3. **操作建議**: 短線策略、進出場點位、風險提示"""
+請用繁體中文，用 === 分隔三段：
+
+=== 技術面 ===
+（約 80 字，K線位置、均線排列、KD/RSI/MACD 訊號、支撐壓力）
+
+=== 籌碼面 ===
+（約 80 字，外資/投信動向、融資融券借券變化、集保主力動向）
+
+=== 操作建議 ===
+（約 60 字，短線策略、進出場價位、停損點、風險提示）"""
     
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         response = client.messages.create(
             model=CLAUDE_MODEL,
-            max_tokens=1000,
+            max_tokens=1200,
             messages=[{"role": "user", "content": prompt}]
         )
+        text = response.content[0].text
         
-        analysis = response.content[0].text
-        return analysis
+        # 解析三段
+        sections = {"技術面": "", "籌碼面": "", "操作建議": ""}
+        current = None
+        for line in text.split("\n"):
+            stripped = line.strip()
+            if "===" in stripped:
+                for key in sections:
+                    if key in stripped:
+                        current = key
+                        break
+            elif current and stripped:
+                sections[current] += line + "\n"
+        
+        ai_tech = sections["技術面"].strip() or text
+        ai_chip = sections["籌碼面"].strip() or ""
+        ai_oper = sections["操作建議"].strip() or ""
+        
+        return ai_tech, ai_chip, ai_oper
         
     except Exception as e:
         print(f"  ⚠️ AI 分析失敗: {e}")
-        return "AI 分析暫時無法使用"
+        err = f"AI 分析暫時無法使用: {e}"
+        return err, err, err
 
 
 # =========================================================
 # HTML 生成（簡化版，包含所有修正）
 # =========================================================
 
+def calculate_stock_rating(data: dict) -> dict:
+    """
+    計算個股操作建議綜合評等
+    
+    技術面評分 (0-10):
+      均線多頭排列    +3   (MA5 > MA20 > MA60)
+      KD 黃金交叉     +2   (K > D 且 K < 80)
+      RSI 強勢未過熱  +2   (50 <= RSI <= 75)
+      MACD 翻紅       +2   (MACD > Signal)
+      突破關鍵壓力    +1   (close > MA20)
+    
+    籌碼面評分 (0-10):
+      外資連續買超    +3   (外資5日 > 0)
+      投信買超        +2   (投信5日 > 0)
+      融資減少        +1   (融資5日 < 0)
+      融券/借券動向   +2   (券資增 +1 / 借券增 +1)
+      合計買超        +1   (法人合計5日 > 0)
+      集保主力增加    +1   (大戶持股比例 ↑)
+    
+    綜合分類 (技 + 籌):
+      ≥ 16  強力加碼
+      11-15 加碼
+      8-10  中性
+      4-7   減碼
+      ≤ 3   強力減碼
+    """
+    ind = data.get("indicators", {})
+    inst = data.get("institution", {})
+    margin = data.get("margin", {})
+    borrow = data.get("borrow", {})
+    tdcc = data.get("tdcc", {})
+    latest = data.get("latest", {})
+    
+    # ── 技術面 (0-10) ────────────────────────────────────
+    tech = 0
+    ma5, ma20, ma60 = ind.get("ma5", 0), ind.get("ma20", 0), ind.get("ma60", 0)
+    close = latest.get("close", 0)
+    rsi = ind.get("rsi", 50)
+    k, d = ind.get("k", 50), ind.get("d", 50)
+    macd, macd_sig = ind.get("macd", 0), ind.get("macd_signal", 0)
+    
+    if ma5 > ma20 > ma60 > 0:
+        tech += 3
+    if k > d and k < 80:
+        tech += 2
+    if 50 <= rsi <= 75:
+        tech += 2
+    if macd > macd_sig:
+        tech += 2
+    if close > ma20 > 0:
+        tech += 1
+    
+    # ── 籌碼面 (0-10) ────────────────────────────────────
+    chip = 0
+    foreign_5d = inst.get("foreign_5d", 0)
+    trust_5d   = inst.get("trust_5d", 0)
+    foreign_today = inst.get("foreign_today", 0)
+    trust_today   = inst.get("trust_today", 0)
+    dealer_today  = inst.get("dealer_today", 0)
+    
+    if foreign_5d > 0:
+        chip += 3
+    if trust_5d > 0:
+        chip += 2
+    if margin.get("margin_5d", 0) < 0:
+        chip += 1
+    if margin.get("short_5d", 0) > 0:
+        chip += 1
+    if borrow.get("borrow_5d", 0) > 0:
+        chip += 1
+    if (foreign_today + trust_today + dealer_today) > 0:
+        chip += 1
+    if tdcc.get("big_holder_change", 0) > 0:
+        chip += 1
+    
+    total = tech + chip
+    
+    # 分類
+    if total >= 16:
+        rating, rating_key = "強力加碼", "strong-buy"
+    elif total >= 11:
+        rating, rating_key = "加碼", "buy"
+    elif total >= 8:
+        rating, rating_key = "中性", "neutral"
+    elif total >= 4:
+        rating, rating_key = "減碼", "sell"
+    else:
+        rating, rating_key = "強力減碼", "strong-sell"
+    
+    return {
+        "tech":   tech,
+        "chip":   chip,
+        "total":  total,
+        "rating": rating,
+        "rating_key": rating_key,
+    }
+
+
+def generate_rating_table(stocks_data: dict) -> str:
+    """生成個股操作建議綜合評等表"""
+    
+    # 依分類分組
+    groups = {
+        "strong-buy":  {"label": "強力加碼", "stocks": [], "icon": "ti-arrow-big-up-filled"},
+        "buy":         {"label": "加碼",     "stocks": [], "icon": "ti-arrow-up"},
+        "neutral":     {"label": "中性",     "stocks": [], "icon": "ti-minus"},
+        "sell":        {"label": "減碼",     "stocks": [], "icon": "ti-arrow-down"},
+        "strong-sell": {"label": "強力減碼", "stocks": [], "icon": "ti-arrow-big-down-filled"},
+    }
+    
+    for stock_id, data in stocks_data.items():
+        rating = data.get("rating", {})
+        key = rating.get("rating_key", "neutral")
+        if key in groups:
+            groups[key]["stocks"].append({
+                "stock_id": stock_id,
+                "name":     data.get("name", ""),
+                "change":   data.get("change_pct", 0),
+                "tech":     rating.get("tech", 0),
+                "chip":     rating.get("chip", 0),
+            })
+    
+    # 生成 HTML
+    cols_html = ""
+    for key, g in groups.items():
+        stocks = g["stocks"]
+        count = len(stocks)
+        
+        if stocks:
+            chips_html = ""
+            for s in stocks:
+                change_class = "up" if s["change"] >= 0 else "down"
+                change_sign  = "+" if s["change"] >= 0 else ""
+                chips_html += f"""
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">{s['stock_id']} {s['name']}</span>
+            <span class="chip-change {change_class}">{change_sign}{s['change']:.2f}%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技{s['tech']}</span>
+            <span class="chip-tag">籌{s['chip']}</span>
+          </div>
+        </div>"""
+        else:
+            chips_html = '<div class="empty-hint">無</div>'
+        
+        cols_html += f"""
+    <div class="rating-col rating-col-{key}">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-{key}">
+          <i class="ti {g['icon']}" aria-hidden="true" style="font-size:11px;"></i>
+          {g['label']}
+        </span>
+        <span class="rating-col-count">{count}</span>
+      </div>
+      {chips_html}
+    </div>"""
+    
+    return f"""
+<div class="rating-section">
+  <div class="rating-header">
+    <div class="rating-title">
+      <i class="ti ti-target-arrow" aria-hidden="true"></i>
+      個股操作建議綜合評等
+    </div>
+    <div class="rating-update">更新於 {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
+  </div>
+  <div class="rating-grid">
+    {cols_html}
+  </div>
+  <details style="background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;margin-top:12px;">
+    <summary style="cursor:pointer;font-size:12px;font-weight:500;list-style:none;">
+      <i class="ti ti-info-circle" aria-hidden="true"></i> 評分邏輯說明
+    </summary>
+    <div class="scoring-key">
+      <div class="key-block">
+        <strong>技術面 (0-10)</strong>
+        均線多頭排列 +3 / KD 金叉 +2 / RSI 強勢 +2 / MACD 翻紅 +2 / 突破壓力 +1
+      </div>
+      <div class="key-block">
+        <strong>籌碼面 (0-10)</strong>
+        外資連買 +3 / 投信買超 +2 / 融資減少 +1 / 融券或借券動向 +2 / 合計買超 +1 / 集保主力增加 +1
+      </div>
+      <div class="key-block">
+        <strong>綜合評等 (技+籌)</strong>
+        強力加碼 ≥16 / 加碼 11-15 / 中性 8-10 / 減碼 4-7 / 強力減碼 ≤3
+      </div>
+    </div>
+  </details>
+</div>"""
+
+
+
+def generate_stock_card(stock_id: str, data: dict):
+    """生成新版個股卡片：K 線 + 成交量、AI 分析摺疊、合計列、融資融券借券單一表格"""
+    latest  = data["latest"]
+    prev    = data["prev"]
+    ind     = data["indicators"]
+    inst    = data["institution"]
+    margin  = data["margin"]
+    borrow  = data.get("borrow", {})
+    news    = data["news"]
+    
+    ai_tech  = data.get("ai_tech",  "")
+    ai_chip  = data.get("ai_chip",  "")
+    ai_oper  = data.get("ai_oper",  "")
+    
+    # 價格與漲跌
+    close = latest["close"]
+    prev_close = prev["close"]
+    change = close - prev_close
+    change_pct = (change / prev_close * 100) if prev_close else 0
+    change_class = "positive" if change >= 0 else "negative"
+    arrow = "↑" if change >= 0 else "↓"
+    
+    # 成交量（張）
+    volume_today  = int(latest.get("volume", 0) / 1000)
+    volume_prev   = data.get("volume_prev", 0)
+    volume_diff   = volume_today - volume_prev
+    volume_pct    = (volume_diff / volume_prev * 100) if volume_prev else 0
+    vol_class     = "positive" if volume_diff >= 0 else "negative"
+    vol_sign      = "+" if volume_diff >= 0 else ""
+    
+    # 籌碼合計（張）
+    total_today = inst["foreign_today"] + inst["trust_today"] + inst["dealer_today"]
+    total_5d    = inst["foreign_5d"]    + inst["trust_5d"]
+    total_20d   = inst["foreign_20d"]   + inst["trust_20d"]
+    
+    # 新聞
+    news_html = ""
+    for n in news[:5]:
+        news_html += f'<div class="news-item"><div class="news-time">{n.get("date","")}</div><div class="news-title">{n.get("title","")}</div></div>'
+    
+    # 評等徽章
+    rating = data.get("rating", {})
+    rating_label = rating.get("rating", "中性")
+    rating_key = rating.get("rating_key", "neutral")
+    
+    return f"""
+<div class="stock-card">
+  
+  <div class="card-header">
+    <div>
+      <h3>{stock_id} {data.get('name','')}</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-{rating_key}">{rating_label}</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技{rating.get('tech',0)} / 籌{rating.get('chip',0)}
+        </span>
+      </div>
+    </div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price {change_class}">${close:,.2f}</div>
+      <div class="card-change {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 {volume_today:,} 張</div>
+        <div class="{vol_class}" style="font-size:11px;">較昨日 {vol_sign}{volume_diff:,} 張 ({vol_sign}{volume_pct:.1f}%)</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
+  </div>
+  <div id="kline_{stock_id}" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
+  </div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">{ind['ma5']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">{ind['ma20']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">{ind['ma60']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">{ind['rsi']:.1f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">{ind['k']:.0f}/{ind['d']:.0f}</div></div>
+  </div>
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">{ai_tech.replace(chr(10),'<br>') if ai_tech else 'AI 分析載入中...'}</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
+    <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+    <tr>
+      <td>外資</td>
+      <td class="{'positive' if inst['foreign_today']>=0 else 'negative'}">{inst['foreign_today']:+,.0f}</td>
+      <td class="{'positive' if inst['foreign_5d']>=0 else 'negative'}">{inst['foreign_5d']:+,.0f}</td>
+      <td class="{'positive' if inst['foreign_20d']>=0 else 'negative'}">{inst['foreign_20d']:+,.0f}</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="{'positive' if inst['trust_today']>=0 else 'negative'}">{inst['trust_today']:+,.0f}</td>
+      <td class="{'positive' if inst['trust_5d']>=0 else 'negative'}">{inst['trust_5d']:+,.0f}</td>
+      <td class="{'positive' if inst['trust_20d']>=0 else 'negative'}">{inst['trust_20d']:+,.0f}</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="{'positive' if inst['dealer_today']>=0 else 'negative'}">{inst['dealer_today']:+,.0f}</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="{'positive' if total_today>=0 else 'negative'}">{total_today:+,.0f}</td>
+      <td class="{'positive' if total_5d>=0 else 'negative'}">{total_5d:+,.0f}</td>
+      <td class="{'positive' if total_20d>=0 else 'negative'}">{total_20d:+,.0f}</td>
+    </tr>
+  </table>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
+  </div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>{margin.get('margin_balance',0):,}</td>
+      <td class="{'positive' if margin.get('margin_change',0)>=0 else 'negative'}">{margin.get('margin_change',0):+,}</td>
+      <td class="{'positive' if margin.get('margin_5d',0)>=0 else 'negative'}">{margin.get('margin_5d',0):+,}</td>
+      <td class="{'positive' if margin.get('margin_20d',0)>=0 else 'negative'}">{margin.get('margin_20d',0):+,}</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>{margin.get('short_balance',0):,}</td>
+      <td class="{'positive' if margin.get('short_change',0)>=0 else 'negative'}">{margin.get('short_change',0):+,}</td>
+      <td class="{'positive' if margin.get('short_5d',0)>=0 else 'negative'}">{margin.get('short_5d',0):+,}</td>
+      <td class="{'positive' if margin.get('short_20d',0)>=0 else 'negative'}">{margin.get('short_20d',0):+,}</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>{borrow.get('borrow_balance',0):,}</td>
+      <td class="{'positive' if borrow.get('borrow_change',0)>=0 else 'negative'}">{borrow.get('borrow_change',0):+,}</td>
+      <td class="{'positive' if borrow.get('borrow_5d',0)>=0 else 'negative'}">{borrow.get('borrow_5d',0):+,}</td>
+      <td class="{'positive' if borrow.get('borrow_20d',0)>=0 else 'negative'}">{borrow.get('borrow_20d',0):+,}</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">{ai_chip.replace(chr(10),'<br>') if ai_chip else 'AI 分析載入中...'}</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">{ai_oper.replace(chr(10),'<br>') if ai_oper else 'AI 分析載入中...'}</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
+  <div class="news-list">{news_html}</div>
+  
+</div>"""
+
+
 def generate_html(stocks_data: dict, market_data: dict):
     """生成完整 HTML"""
     
     update_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    
+    # 生成評等表
+    rating_table = generate_rating_table(stocks_data)
     
     # 生成個股卡片
     stock_cards = ""
@@ -900,6 +1416,7 @@ def generate_html(stocks_data: dict, market_data: dict):
   </div>
   
   {market_section}
+  {rating_table}
   {timeseries_section}
   
   <div class="section-header">追蹤個股分析</div>
@@ -912,74 +1429,6 @@ def generate_html(stocks_data: dict, market_data: dict):
 </html>"""
     
     return html
-
-
-def generate_stock_card(stock_id: str, data: dict):
-    """生成個股卡片"""
-    latest = data["latest"]
-    prev = data["prev"]
-    ind = data["indicators"]
-    inst = data["institution"]
-    margin = data["margin"]
-    news = data["news"]
-    ai = data["ai_analysis"]
-    
-    close = latest["close"]
-    prev_close = prev["close"]
-    change = close - prev_close
-    change_pct = (change / prev_close * 100) if prev_close else 0
-    
-    change_class = "positive" if change > 0 else "negative"
-    arrow = "↑" if change > 0 else "↓"
-    
-    news_html = ""
-    for n in news[:5]:
-        news_html += f'<div class="news-item"><div class="news-time">{n.get("date", "")}</div><div class="news-title">{n.get("title", "")}</div></div>'
-    
-    return f"""
-<div class="card">
-  <div class="card-header">
-    <h3>{stock_id} {data.get('name', '')}</h3>
-    <div class="card-price {change_class}">${close:.2f}</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">{int(latest['volume']/1000):,} 張</div>
-    </div>
-  </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k{stock_id}"></canvas>
-  </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text">{ai.replace(chr(10), '<br>')}</div>
-  </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">{ind['ma5']:.2f}</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">{ind['ma20']:.2f}</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">{ind['rsi']:.1f}</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">{ind['k']:.0f}/{ind['d']:.0f}</div></div>
-  </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
-    <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="{'positive' if inst['foreign_today']>0 else 'negative'}">{inst['foreign_today']:+.0f}</td><td class="{'positive' if inst['foreign_5d']>0 else 'negative'}">{inst['foreign_5d']:+.0f}</td><td class="{'positive' if inst['foreign_20d']>0 else 'negative'}">{inst['foreign_20d']:+.0f}</td></tr>
-    <tr><td>投信</td><td class="{'positive' if inst['trust_today']>0 else 'negative'}">{inst['trust_today']:+.0f}</td><td class="{'positive' if inst['trust_5d']>0 else 'negative'}">{inst['trust_5d']:+.0f}</td><td class="{'positive' if inst['trust_20d']>0 else 'negative'}">{inst['trust_20d']:+.0f}</td></tr>
-  </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">{margin['margin_balance']:,}</div><div class="metric-sm-change {'positive' if margin['margin_change']>0 else 'negative'}">{margin['margin_change']:+,}</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">{margin['short_balance']:,}</div><div class="metric-sm-change {'positive' if margin['short_change']>0 else 'negative'}">{margin['short_change']:+,}</div></div>
-  </div>
-  <div class="section-title">相關新聞</div>
-  <div class="news-list">{news_html}</div>
-</div>"""
 
 
 def _get(d, *keys, default=0.0):
@@ -1083,18 +1532,83 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     """生成所有圖表腳本"""
     scripts = []
     
-    # 個股K線
+    # 個股 K 線 + 成交量 (ECharts)
     for stock_id, data in stocks_data.items():
         df = data["df"]
-        dates = [d.strftime("%m-%d") for d in df.index[-30:]]
-        closes = df["Close"].tail(30).tolist()
+        df_tail = df.tail(60)
+        ind_dates = [d.strftime("%m-%d") for d in df_tail.index]
+        ind_ohlc  = [[float(row["Open"]), float(row["Close"]),
+                      float(row["Low"]),  float(row["High"])]
+                     for _, row in df_tail.iterrows()]
+        ind_vol   = [int(row["Volume"] / 1000) if row["Volume"] else 0
+                     for _, row in df_tail.iterrows()]
+        ind_ma20  = [round(v, 2) if v == v else None for v in df_tail["SMA_20"].tolist()]
+        ind_ma60  = [round(v, 2) if v == v else None for v in df_tail["SMA_60"].tolist()]
+        # 漲跌顏色
+        ind_vol_color = []
+        for _, row in df_tail.iterrows():
+            ind_vol_color.append("#ef5350" if row["Close"] >= row["Open"] else "#26a69a")
         
         scripts.append(f"""
-new Chart(document.getElementById('k{stock_id}'),{{
-  type:'line',
-  data:{{labels:{json.dumps(dates)},datasets:[{{label:'收盤',data:{json.dumps(closes)},borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}}]}},
-  options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{font:{{size:11}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true}}}}}}}}
-}});""")
+(function() {{
+  var chart = echarts.init(document.getElementById('kline_{stock_id}'));
+  chart.setOption({{
+    animation: false,
+    tooltip: {{
+      trigger: 'axis',
+      axisPointer: {{type: 'cross'}},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {{color: '#333'}}
+    }},
+    axisPointer: {{link: [{{xAxisIndex: 'all'}}]}},
+    legend: {{
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {{fontSize: 10}}
+    }},
+    grid: [
+      {{left: '10%', right: '4%', top: '15%', height: '55%'}},
+      {{left: '10%', right: '4%', top: '78%', height: '18%'}}
+    ],
+    xAxis: [
+      {{type: 'category', data: {json.dumps(ind_dates)}, gridIndex: 0,
+        axisLabel: {{show: false}}, axisLine: {{show: false}}}},
+      {{type: 'category', data: {json.dumps(ind_dates)}, gridIndex: 1,
+        axisLabel: {{fontSize: 9, color: '#666'}}}}
+    ],
+    yAxis: [
+      {{scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {{fontSize: 10, color: '#666'}},
+        splitLine: {{lineStyle: {{color: '#eee'}}}}}},
+      {{scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {{fontSize: 9, color: '#666'}},
+        splitLine: {{show: false}}}}
+    ],
+    series: [
+      {{name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: {json.dumps(ind_ohlc)},
+        itemStyle: {{color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}}}},
+      {{name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: {json.dumps(ind_ma20)},
+        smooth: true, showSymbol: false,
+        lineStyle: {{color: '#fb8c00', width: 1}}}},
+      {{name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: {json.dumps(ind_ma60)},
+        smooth: true, showSymbol: false,
+        lineStyle: {{color: '#9c27b0', width: 1}}}},
+      {{name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: {json.dumps(ind_vol)}.map(function(v, i) {{
+          return {{value: v, itemStyle: {{color: {json.dumps(ind_vol_color)}[i]}}}};
+        }})}}
+    ]
+  }});
+  window.addEventListener('resize', function() {{ chart.resize(); }});
+}})();""")
     
     # 大盤 K 線 + 成交金額 (ECharts)
     taiex = market_data["taiex"]
@@ -1385,7 +1899,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .news-item:last-child{border-bottom:none}
 .news-time{font-size:11px;color:#666;margin-bottom:4px}
 .news-title{font-size:13px;line-height:1.4}
-@media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}}
+
+/* ── 新版個股卡片 ─────────────────── */
+.stock-card{background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;margin-bottom:16px}
+.stock-card .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid #e0e0e0}
+.stock-card h3{font-size:18px;font-weight:500;margin:0}
+.card-header-sub{font-size:12px;color:#666;margin-top:4px}
+.card-price{font-size:22px;font-weight:500;line-height:1.1}
+.card-change{font-size:12px;margin-top:2px}
+.card-volume{font-size:12px;color:#666;margin-top:6px;padding-top:6px;border-top:0.5px dashed #e0e0e0}
+.card-volume-main{font-size:13px;color:#333;font-weight:500}
+.indicator-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
+.indicator-cell{background:#f5f5f5;border-radius:8px;padding:8px;text-align:center}
+.indicator-cell-label{font-size:10px;color:#666}
+.indicator-cell-value{font-size:13px;font-weight:500;margin-top:2px}
+.collapsible{background:#f5f5f5;border-radius:8px;margin-bottom:12px;overflow:hidden;border:0.5px solid #e0e0e0}
+.collapsible summary{padding:10px 12px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;list-style:none;user-select:none}
+.collapsible summary::-webkit-details-marker{display:none}
+.collapsible summary::before{content:'▶';font-size:9px;transition:transform 0.2s;color:#666;margin-right:4px}
+.collapsible[open] summary::before{transform:rotate(90deg)}
+.collapsible-content{padding:0 12px 12px 28px;font-size:13px;color:#666;line-height:1.7}
+.collapsible-content p{margin:6px 0}
+.collapsible-icon{color:#378ADD;font-size:14px}
+.data-table{width:100%;font-size:12px;border-collapse:collapse;margin-bottom:8px}
+.data-table th{text-align:right;padding:6px 8px;background:#f5f5f5;color:#666;font-weight:500;font-size:11px}
+.data-table th:first-child{text-align:left}
+.data-table td{padding:6px 8px;border-bottom:0.5px solid #e0e0e0;text-align:right}
+.data-table td:first-child{text-align:left}
+.data-table .row-total{background:#f5f5f5;font-weight:500}
+.data-table .row-total td{border-top:1px solid #ccc;border-bottom:none}
+
+/* ── 個股評等表 ───────────────────── */
+.rating-section{background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;margin-bottom:16px}
+.rating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid #e0e0e0}
+.rating-title{font-size:16px;font-weight:500;display:flex;align-items:center;gap:6px}
+.rating-update{font-size:11px;color:#999}
+.rating-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.rating-col{background:#f5f5f5;border-radius:8px;padding:10px 8px;border-top:3px solid}
+.rating-col-strong-buy{border-top-color:#c62828}
+.rating-col-buy{border-top-color:#ef5350}
+.rating-col-neutral{border-top-color:#888}
+.rating-col-sell{border-top-color:#66bb6a}
+.rating-col-strong-sell{border-top-color:#2e7d32}
+.rating-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid #e0e0e0}
+.rating-col-label{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.rating-label-strong-buy{color:#c62828}
+.rating-label-buy{color:#ef5350}
+.rating-label-neutral{color:#555}
+.rating-label-sell{color:#66bb6a}
+.rating-label-strong-sell{color:#2e7d32}
+.rating-col-count{font-size:11px;color:#999;background:white;border-radius:8px;padding:1px 6px}
+.rating-badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;background:#f5f5f5}
+.stock-chip{background:white;border:0.5px solid #e0e0e0;border-radius:6px;padding:6px 8px;margin-bottom:5px;font-size:12px}
+.chip-top{display:flex;justify-content:space-between;align-items:baseline}
+.chip-name{font-weight:500;font-size:12px}
+.chip-change{font-size:10px}
+.chip-change.up{color:#d32f2f}
+.chip-change.down{color:#388e3c}
+.chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
+.chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
+.empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
+.scoring-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px 12px;font-size:11px;color:#666}
+.key-block{line-height:1.6}
+.key-block strong{display:block;color:#333;margin-bottom:2px;font-weight:500}
+
+@media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}.rating-grid{grid-template-columns:repeat(2,1fr)}.indicator-row{grid-template-columns:repeat(3,1fr)}}
 """
 
 
@@ -1426,24 +2004,50 @@ def main():
             continue
         
         institution = get_institution_data(stock_id)
-        margin = get_margin_data(stock_id)
-        news = get_news(stock_id)
-        name = get_stock_name(stock_id)
+        margin      = get_margin_data(stock_id)
+        borrow      = get_borrowing_data(stock_id)
+        tdcc        = get_tdcc_holding(stock_id)
+        news        = get_news(stock_id)
+        name        = get_stock_name(stock_id)
+        
+        # 前一日成交量（用於顯示「較昨日 +N 張」）
+        df = stock_data["df"]
+        volume_prev = int(df["Volume"].iloc[-2] / 1000) if len(df) > 1 else 0
+        
+        # 漲跌幅
+        close = stock_data["latest"]["close"]
+        prev_close = stock_data["prev"]["close"]
+        change_pct = ((close - prev_close) / prev_close * 100) if prev_close else 0
         
         print(f"    生成 AI 分析...")
-        ai_analysis = generate_ai_analysis(stock_id, name, stock_data, institution, margin)
+        ai_tech, ai_chip, ai_oper = generate_ai_analysis(
+            stock_id, name, stock_data, institution, margin, borrow, tdcc
+        )
         
-        stocks_data[stock_id] = {
-            "latest": stock_data["latest"],
-            "prev": stock_data["prev"],
-            "df": stock_data["df"],
-            "indicators": stock_data["indicators"],
+        record = {
+            "latest":      stock_data["latest"],
+            "prev":        stock_data["prev"],
+            "df":          stock_data["df"],
+            "indicators":  stock_data["indicators"],
             "institution": institution,
-            "margin": margin,
-            "news": news,
-            "ai_analysis": ai_analysis,
-            "name": name,
+            "margin":      margin,
+            "borrow":      borrow,
+            "tdcc":        tdcc,
+            "news":        news,
+            "volume_prev": volume_prev,
+            "change_pct":  change_pct,
+            "ai_tech":     ai_tech,
+            "ai_chip":     ai_chip,
+            "ai_oper":     ai_oper,
+            "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,  # 向下相容
+            "name":        name,
         }
+        
+        # 計算評等
+        record["rating"] = calculate_stock_rating(record)
+        print(f"    ✓ 評等: {record['rating']['rating']} (技{record['rating']['tech']}/籌{record['rating']['chip']})")
+        
+        stocks_data[stock_id] = record
     
     # 2. 抓大盤
     print("\n[2/4] 抓取大盤資料...")
