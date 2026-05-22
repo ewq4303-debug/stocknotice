@@ -290,44 +290,59 @@ def get_market_overview():
     start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     
-    # 加權指數 OHLCV (yfinance ^TWII 取 OHLC，FinMind 補成交金額)
+    # 加權指數 OHLCV
+    # 優先用 FinMind (更新及時 + 完整 OHLCV)，yfinance 為備援
     taiex_data = []
-    try:
-        taiex_ticker = yf.Ticker("^TWII")
-        taiex_df = taiex_ticker.history(period="3mo").tail(60).reset_index()
+    
+    # ── 方法 A: FinMind TAIEX ──
+    fm_taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX",
+                             start_date=start, end_date=end)
+    if fm_taiex:
+        print(f"  [debug] FinMind TAIEX 欄位: {list(fm_taiex[0].keys())}")
+        print(f"  [debug] FinMind TAIEX 範圍: {fm_taiex[0].get('date')} ~ {fm_taiex[-1].get('date')}")
         
-        # 同時抓 FinMind TAIEX 取成交金額
-        fm_taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX",
-                                 start_date=start, end_date=end)
-        money_by_date = {}
-        if fm_taiex:
-            print(f"  [debug] TAIEX FinMind 欄位: {list(fm_taiex[0].keys())}")
-            for r in fm_taiex:
-                d = r.get("date", "")
-                # 成交金額（元）
-                money = (r.get("Trading_money") or r.get("trading_money")
-                         or r.get("TradeMoney") or 0)
-                money_by_date[d] = float(money)
-        
-        for _, row in taiex_df.iterrows():
-            date_str = row["Date"].strftime("%Y-%m-%d")
-            yf_vol  = int(row["Volume"]) if row["Volume"] else 0
-            fm_money = money_by_date.get(date_str, 0)
-            
+        for r in sorted(fm_taiex, key=lambda x: x.get("date", ""))[-60:]:
             taiex_data.append({
-                "date":   date_str,
-                "open":   float(row["Open"]),
-                "high":   float(row["High"]),
-                "low":    float(row["Low"]),
-                "close":  float(row["Close"]),
-                "volume": yf_vol,            # 股數（給 K 線用）
-                "money":  fm_money,           # 成交金額（元）
+                "date":  r.get("date", ""),
+                "open":  float(r.get("open", r.get("Open", 0))),
+                "high":  float(r.get("max",  r.get("High", r.get("high", 0)))),
+                "low":   float(r.get("min",  r.get("Low",  r.get("low", 0)))),
+                "close": float(r.get("close", r.get("Close", 0))),
+                "volume": int(float(r.get("Trading_Volume", r.get("trading_volume", 0)) or 0)),
+                "money":  float(r.get("Trading_money", r.get("trading_money", 0)) or 0),
             })
-        if taiex_data:
-            print(f"  ✓ TAIEX OHLCV: {len(taiex_data)} 筆，"
-                  f"最新成交額={taiex_data[-1]['money']/1e8:.1f}億")
-    except Exception as e:
-        print(f"  ⚠️ 大盤指數抓取失敗: {e}")
+        print(f"  ✓ TAIEX (FinMind): {len(taiex_data)} 筆，最新={taiex_data[-1]['date']}")
+    
+    # ── 方法 B: 如果 FinMind 空或 OHLC 不完整，fallback 到 yfinance ──
+    need_yf = (not taiex_data) or any(d["open"] == 0 for d in taiex_data[-5:])
+    if need_yf:
+        try:
+            taiex_ticker = yf.Ticker("^TWII")
+            taiex_df = taiex_ticker.history(period="3mo").tail(60).reset_index()
+            print(f"  [debug] yfinance TAIEX 範圍: "
+                  f"{taiex_df.iloc[0]['Date'].strftime('%Y-%m-%d')} ~ "
+                  f"{taiex_df.iloc[-1]['Date'].strftime('%Y-%m-%d')}")
+            
+            if not taiex_data:
+                # FinMind 完全沒抓到，用 yfinance
+                # 仍嘗試從 FinMind 取得成交金額
+                money_by_date = {r.get("date", ""): float(r.get("Trading_money", 0) or 0)
+                                for r in (fm_taiex or [])}
+                
+                for _, row in taiex_df.iterrows():
+                    date_str = row["Date"].strftime("%Y-%m-%d")
+                    taiex_data.append({
+                        "date":  date_str,
+                        "open":  float(row["Open"]),
+                        "high":  float(row["High"]),
+                        "low":   float(row["Low"]),
+                        "close": float(row["Close"]),
+                        "volume": int(row["Volume"] or 0),
+                        "money":  money_by_date.get(date_str, 0),
+                    })
+                print(f"  ✓ TAIEX (yfinance): {len(taiex_data)} 筆，最新={taiex_data[-1]['date']}")
+        except Exception as e:
+            print(f"  ⚠️ yfinance 備援失敗: {e}")
     
     # 大盤三大法人（FinMind 回 [{date,name,buy,sell}, ...]，需 pivot）
     inst_raw = fetch_finmind("TaiwanStockTotalInstitutionalInvestors",
