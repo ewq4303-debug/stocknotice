@@ -1129,26 +1129,35 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
 
 def calculate_stock_rating(data: dict) -> dict:
     """
-    計算個股操作建議綜合評等 (技 10 分 + 籌 10 分 = 20 分)
+    個股操作建議綜合評等 (技 10 + 籌 10 = 20)
+    階梯式給分：符合多頭特徵就部分給分，符合強勢特徵再給滿分。
     
-    === 技術面 (滿分 10) ===
-    T1 均線多頭排列 (+3): Close > 5MA > 10MA > 20MA > 60MA
-    T2 帶量突破壓力 (+3): Close >= 近20日最高 AND Volume > 20日均量 * 2
-    T3 MACD 動能轉強 (+2): MACD_Hist > 0 AND 今日柱體 > 昨日柱體
-    T4 量價結構偏多 (+2): 5日均量 > 20日均量
+    === 技術面 (10 分) ===
+    T1 均線趨勢 (+3):
+       Close > 20MA          +1
+       20MA  > 60MA          +1
+       5MA   > 10MA          +1
+    T2 強勢創高 (+3):
+       Close >= 20日最高 x 0.97   +1.5
+       今日量 > 5日均量            +1.5
+    T3 MACD 動能 (+2):
+       MACD 柱體 > 0           +2
+    T4 量價配合 (+2):
+       5日均量 > 20日均量       +2
     
-    === 籌碼面 (滿分 10) ===
-    C1 法人共識買盤 (+4): 任一條件
-        a) 外資與投信同買: 外資今日>0 AND 投信今日>0
-        b) 投信連3買: 投信近3日皆>0
-        c) 外資連3買: 外資近3日皆>0
-    C2 散戶退場/籌碼沉澱 (+3): 任一條件
-        a) 融資連減: 今日<昨日 AND 昨日<前日
-        b) 借券賣出連減: 今日<昨日 AND 昨日<前日
-    C3 大戶持股增加 (+3): 400張以上大戶持股比例 本週 > 上週
+    === 籌碼面 (10 分) ===
+    C1 法人買盤 (+4):
+       外資近 3 日合計 > 0    +1.5
+       投信近 3 日合計 > 0    +1.5
+       外資+投信今日同買      +1
+    C2 散戶退場 (+3):
+       今日融資 < 昨日        +1.5
+       今日借券 < 昨日        +1.5
+    C3 大戶持股 (+3):
+       400 張以上 本週 > 上週  +3
     
-    分級:
-      ≥ 16 強力加碼 / 11-15 加碼 / 8-10 中性 / 4-7 減碼 / ≤ 3 強力減碼
+    分級門檻:
+      ≥ 14 強力加碼 / 10-13 加碼 / 6-9 中性觀望 / 3-5 減碼 / ≤ 2 強力減碼
     """
     ind     = data.get("indicators", {})
     inst    = data.get("institution", {})
@@ -1156,117 +1165,108 @@ def calculate_stock_rating(data: dict) -> dict:
     borrow  = data.get("borrow", {})
     tdcc    = data.get("tdcc", {})
     latest  = data.get("latest", {})
-    df      = data.get("df")
     
-    breakdown = {}     # 記錄每項是否得分
+    breakdown = {}
     
-    # ── 技術面 ───────────────────────────────
-    tech = 0
-    
-    # T1: 均線多頭排列
+    # ── 技術面 ────────────────────────────────────
+    tech = 0.0
     close = latest.get("close", 0)
-    ma5, ma10, ma20, ma60 = ind.get("ma5",0), ind.get("ma10",0), ind.get("ma20",0), ind.get("ma60",0)
-    t1 = (close > ma5 > ma10 > ma20 > ma60 > 0)
-    if t1:
-        tech += 3
-    breakdown["T1"] = (t1, 3, "均線多頭")
+    ma5   = ind.get("ma5",  0)
+    ma10  = ind.get("ma10", 0)
+    ma20  = ind.get("ma20", 0)
+    ma60  = ind.get("ma60", 0)
     
-    # T2: 帶量突破壓力
+    # T1: 均線趨勢
+    t1a = close > ma20 > 0
+    t1b = ma20  > ma60 > 0
+    t1c = ma5   > ma10 > 0
+    t1_score = (1 if t1a else 0) + (1 if t1b else 0) + (1 if t1c else 0)
+    tech += t1_score
+    breakdown["T1"] = (t1_score, 3, "均線趨勢",
+                       f"站月線:{'✓' if t1a else '✗'} 月>季:{'✓' if t1b else '✗'} 5>10:{'✓' if t1c else '✗'}")
+    
+    # T2: 強勢創高
     volume   = latest.get("volume", 0)
-    high_20  = ind.get("high_20", 0)
+    high_20  = ind.get("high_20",  0)
+    vol_ma5  = ind.get("vol_ma5",  0)
+    t2a = (high_20 > 0 and close >= high_20 * 0.97)
+    t2b = (volume > vol_ma5 > 0)
+    t2_score = (1.5 if t2a else 0) + (1.5 if t2b else 0)
+    tech += t2_score
+    breakdown["T2"] = (t2_score, 3, "強勢創高",
+                       f"近高檔:{'✓' if t2a else '✗'} 量>5均:{'✓' if t2b else '✗'}")
+    
+    # T3: MACD 動能
+    macd_hist = ind.get("macd_hist", 0)
+    t3 = macd_hist > 0
+    t3_score = 2 if t3 else 0
+    tech += t3_score
+    breakdown["T3"] = (t3_score, 2, "MACD紅柱", "✓" if t3 else "✗")
+    
+    # T4: 量價配合
     vol_ma20 = ind.get("vol_ma20", 0)
-    t2 = (close >= high_20 > 0 and volume > vol_ma20 * 2 > 0)
-    if t2:
-        tech += 3
-    breakdown["T2"] = (t2, 3, "帶量突破")
+    t4 = vol_ma5 > vol_ma20 > 0
+    t4_score = 2 if t4 else 0
+    tech += t4_score
+    breakdown["T4"] = (t4_score, 2, "5日量>20日量", "✓" if t4 else "✗")
     
-    # T3: MACD 動能轉強
-    macd_hist      = ind.get("macd_hist", 0)
-    macd_hist_prev = ind.get("macd_hist_prev", 0)
-    t3 = (macd_hist > 0 and macd_hist > macd_hist_prev)
-    if t3:
-        tech += 2
-    breakdown["T3"] = (t3, 2, "MACD強勢")
+    # ── 籌碼面 ────────────────────────────────────
+    chip = 0.0
     
-    # T4: 量價結構偏多
-    vol_ma5  = ind.get("vol_ma5", 0)
-    t4 = (vol_ma5 > vol_ma20 > 0)
-    if t4:
-        tech += 2
-    breakdown["T4"] = (t4, 2, "5日量 > 20日量")
-    
-    # ── 籌碼面 ───────────────────────────────
-    chip = 0
-    
-    # 取得法人最近3日歷史（每筆 history 是已 pivot 的 {date, foreign, trust, dealer}）
+    # 取得最近 3 天法人資料
     inst_hist = inst.get("history", [])
     last3 = inst_hist[-3:] if len(inst_hist) >= 3 else []
     
-    # C1: 法人共識買盤
     foreign_today = inst.get("foreign_today", 0)
     trust_today   = inst.get("trust_today", 0)
     
-    c1a = (foreign_today > 0 and trust_today > 0)
-    c1b = (len(last3) == 3 and all(h.get("trust", 0)   > 0 for h in last3))
-    c1c = (len(last3) == 3 and all(h.get("foreign", 0) > 0 for h in last3))
-    c1 = c1a or c1b or c1c
-    if c1:
-        chip += 4
-    breakdown["C1"] = (c1, 4, f"法人共識{'(同買)' if c1a else '(投信連3)' if c1b else '(外資連3)' if c1c else ''}")
+    # C1: 法人買盤
+    foreign_3d_sum = sum(h.get("foreign", 0) for h in last3) if last3 else 0
+    trust_3d_sum   = sum(h.get("trust",   0) for h in last3) if last3 else 0
     
-    # C2: 散戶退場 / 籌碼沉澱
-    margin_hist = margin.get("history", [])
-    borrow_hist = borrow.get("history", [])
+    c1a = foreign_3d_sum > 0
+    c1b = trust_3d_sum   > 0
+    c1c = (foreign_today > 0 and trust_today > 0)
+    c1_score = (1.5 if c1a else 0) + (1.5 if c1b else 0) + (1 if c1c else 0)
+    chip += c1_score
+    breakdown["C1"] = (c1_score, 4, "法人買盤",
+                       f"外資3日:{'✓' if c1a else '✗'} 投信3日:{'✓' if c1b else '✗'} 同買:{'✓' if c1c else '✗'}")
     
-    def is_3day_descending(history, get_balance):
-        if len(history) < 3:
-            return False
-        b_today = get_balance(history[-1])
-        b_yest  = get_balance(history[-2])
-        b_prev  = get_balance(history[-3])
-        return b_today < b_yest < b_prev
+    # C2: 散戶退場 (單日判定)
+    margin_change = margin.get("margin_change", 0)
+    borrow_change = borrow.get("borrow_change", 0)
+    c2a = margin_change < 0
+    c2b = borrow_change < 0
+    c2_score = (1.5 if c2a else 0) + (1.5 if c2b else 0)
+    chip += c2_score
+    breakdown["C2"] = (c2_score, 3, "散戶退場",
+                       f"融資減:{'✓' if c2a else '✗'} 借券減:{'✓' if c2b else '✗'}")
     
-    def margin_balance(d):
-        return float(d.get("MarginPurchaseTodayBalance",
-                       d.get("margin_purchase_today_balance",
-                       d.get("MarginPurchaseBuy", 0))))
-    def borrow_balance(d):
-        return float(d.get("today_balance_volume",
-                       d.get("TodayBalanceVolume",
-                       d.get("balance", 0))))
-    
-    c2a = is_3day_descending(margin_hist, margin_balance)
-    c2b = is_3day_descending(borrow_hist, borrow_balance)
-    c2 = c2a or c2b
-    if c2:
-        chip += 3
-    breakdown["C2"] = (c2, 3, f"散戶退場{'(融資連減)' if c2a else '(借券連減)' if c2b else ''}")
-    
-    # C3: 大戶持股增加（400張以上）
+    # C3: 大戶持股增加
     big_change = tdcc.get("big_holder_change", 0)
-    c3 = (big_change > 0)
-    if c3:
-        chip += 3
-    breakdown["C3"] = (c3, 3, "大戶增持")
+    c3 = big_change > 0
+    c3_score = 3 if c3 else 0
+    chip += c3_score
+    breakdown["C3"] = (c3_score, 3, "大戶增持", "✓" if c3 else "✗")
     
     total = tech + chip
     
-    # 分類
-    if total >= 16:
+    # 校準後分類門檻
+    if total >= 14:
         rating, rating_key = "強力加碼", "strong-buy"
-    elif total >= 11:
+    elif total >= 10:
         rating, rating_key = "加碼", "buy"
-    elif total >= 8:
-        rating, rating_key = "中性", "neutral"
-    elif total >= 4:
+    elif total >= 6:
+        rating, rating_key = "中性觀望", "neutral"
+    elif total >= 3:
         rating, rating_key = "減碼", "sell"
     else:
         rating, rating_key = "強力減碼", "strong-sell"
     
     return {
-        "tech":       tech,
-        "chip":       chip,
-        "total":      total,
+        "tech":       round(tech, 1),
+        "chip":       round(chip, 1),
+        "total":      round(total, 1),
         "rating":     rating,
         "rating_key": rating_key,
         "breakdown":  breakdown,
@@ -1315,8 +1315,8 @@ def generate_rating_table(stocks_data: dict) -> str:
             <span class="chip-change {change_class}">{change_sign}{s['change']:.2f}%</span>
           </div>
           <div class="chip-meta">
-            <span class="chip-tag">技{s['tech']}</span>
-            <span class="chip-tag">籌{s['chip']}</span>
+            <span class="chip-tag">技{s['tech']:g}</span>
+            <span class="chip-tag">籌{s['chip']:g}</span>
           </div>
         </div>"""
         else:
@@ -1348,25 +1348,25 @@ def generate_rating_table(stocks_data: dict) -> str:
   </div>
   <details style="background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;margin-top:12px;">
     <summary style="cursor:pointer;font-size:12px;font-weight:500;list-style:none;">
-      <i class="ti ti-info-circle" aria-hidden="true"></i> 評分邏輯說明
+      <i class="ti ti-info-circle" aria-hidden="true"></i> 評分邏輯說明（階梯式給分）
     </summary>
     <div class="scoring-key">
       <div class="key-block">
         <strong>技術面 (10分)</strong>
-        T1 均線多頭排列 +3 (Close>5MA>10MA>20MA>60MA)<br>
-        T2 帶量突破壓力 +3 (創20日新高+量&gt;均量x2)<br>
-        T3 MACD 動能轉強 +2 (柱體>0且放大)<br>
-        T4 量價結構偏多 +2 (5日量>20日量)
+        T1 均線趨勢 (+3)：站月線+1 / 月>季+1 / 5>10+1<br>
+        T2 強勢創高 (+3)：近20日高檔3%內+1.5 / 量>5均量+1.5<br>
+        T3 MACD 紅柱 (+2)：柱體>0<br>
+        T4 量價配合 (+2)：5日量>20日量
       </div>
       <div class="key-block">
         <strong>籌碼面 (10分)</strong>
-        C1 法人共識買盤 +4 (外+投同買 / 投信連3買 / 外資連3買)<br>
-        C2 散戶退場 +3 (融資連3減 / 借券連3減)<br>
-        C3 大戶持股增加 +3 (400張大戶比例週週增)
+        C1 法人買盤 (+4)：外資3日+1.5 / 投信3日+1.5 / 今日同買+1<br>
+        C2 散戶退場 (+3)：融資減+1.5 / 借券減+1.5<br>
+        C3 大戶持股 (+3)：400張大戶比例週週增
       </div>
       <div class="key-block">
         <strong>綜合評等 (技+籌)</strong>
-        強力加碼 ≥16 / 加碼 11-15 / 中性 8-10 / 減碼 4-7 / 強力減碼 ≤3
+        強力加碼 ≥14 / 加碼 10-13 / 中性觀望 6-9 / 減碼 3-5 / 強力減碼 ≤2
       </div>
     </div>
   </details>
@@ -1428,7 +1428,7 @@ def generate_stock_card(stock_id: str, data: dict):
       <div class="card-header-sub">
         綜合評等 <span class="rating-badge rating-label-{rating_key}">{rating_label}</span>
         <span style="margin-left:8px;font-size:11px;color:#999;">
-          技{rating.get('tech',0)} / 籌{rating.get('chip',0)}
+          技{rating.get('tech',0):g} / 籌{rating.get('chip',0):g} (共{rating.get('total',0):g})
         </span>
       </div>
     </div>
@@ -2243,7 +2243,8 @@ def main():
         
         # 計算評等
         record["rating"] = calculate_stock_rating(record)
-        print(f"    ✓ 評等: {record['rating']['rating']} (技{record['rating']['tech']}/籌{record['rating']['chip']})")
+        r = record["rating"]
+        print(f"    ✓ 評等: {r['rating']} (技{r['tech']:g}/籌{r['chip']:g} = {r['total']:g})")
         
         stocks_data[stock_id] = record
     
