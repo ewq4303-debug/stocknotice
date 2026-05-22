@@ -64,6 +64,85 @@ def calculate_stochastic(high, low, close, period=14, smooth_k=3, smooth_d=3):
     return k, d
 
 
+def calculate_atr(high, low, close, period=7):
+    """計算 ATR (Average True Range)"""
+    hl = high - low
+    hc = (high - close.shift()).abs()
+    lc = (low - close.shift()).abs()
+    tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
+    return tr.rolling(period).mean()
+
+
+def calculate_supertrend(df, period=7, multiplier=3):
+    """
+    Supertrend 指標 (ATR period=7, multiplier=3)
+    回傳: (supertrend_value, direction)
+      direction: 1=上升趨勢(綠色，買進)，-1=下降趨勢(紅色，賣出)
+    """
+    high  = df['High'].astype(float)
+    low   = df['Low'].astype(float)
+    close = df['Close'].astype(float)
+    
+    atr = calculate_atr(high, low, close, period)
+    hl2 = (high + low) / 2
+    basic_upper = hl2 + multiplier * atr
+    basic_lower = hl2 - multiplier * atr
+    
+    # 預先建立陣列（避免 SettingWithCopyWarning）
+    n = len(df)
+    final_upper = [None] * n
+    final_lower = [None] * n
+    supertrend  = [None] * n
+    direction   = [None] * n
+    
+    for i in range(n):
+        bu = basic_upper.iloc[i]
+        bl = basic_lower.iloc[i]
+        c  = close.iloc[i]
+        
+        # ATR 尚未產生（前 period-1 筆）→ 跳過
+        if pd.isna(bu) or pd.isna(bl):
+            continue
+        
+        if i == 0 or final_upper[i-1] is None:
+            final_upper[i] = bu
+            final_lower[i] = bl
+            supertrend[i]  = bu
+            direction[i]   = -1
+            continue
+        
+        # 更新 final upper
+        if bu < final_upper[i-1] or close.iloc[i-1] > final_upper[i-1]:
+            final_upper[i] = bu
+        else:
+            final_upper[i] = final_upper[i-1]
+        
+        # 更新 final lower
+        if bl > final_lower[i-1] or close.iloc[i-1] < final_lower[i-1]:
+            final_lower[i] = bl
+        else:
+            final_lower[i] = final_lower[i-1]
+        
+        # 決定 supertrend 與方向
+        prev_st = supertrend[i-1]
+        if prev_st == final_upper[i-1]:  # 前次下降
+            if c <= final_upper[i]:
+                supertrend[i] = final_upper[i]
+                direction[i]  = -1
+            else:
+                supertrend[i] = final_lower[i]
+                direction[i]  = 1
+        else:  # 前次上升
+            if c >= final_lower[i]:
+                supertrend[i] = final_lower[i]
+                direction[i]  = 1
+            else:
+                supertrend[i] = final_upper[i]
+                direction[i]  = -1
+    
+    return pd.Series(supertrend, index=df.index), pd.Series(direction, index=df.index)
+
+
 # =========================================================
 # 資料抓取 - yfinance (股價、K線)
 # =========================================================
@@ -99,40 +178,60 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         # 只保留最近 days 天
         df = df.tail(days)
         
-        # 計算技術指標（使用自己的函數）
-        df['SMA_5'] = calculate_sma(df['Close'], 5)
+        # 計算技術指標
+        df['SMA_5']  = calculate_sma(df['Close'], 5)
+        df['SMA_10'] = calculate_sma(df['Close'], 10)
         df['SMA_20'] = calculate_sma(df['Close'], 20)
         df['SMA_60'] = calculate_sma(df['Close'], 60)
         df['RSI_14'] = calculate_rsi(df['Close'], 14)
         df['MACD'], df['MACD_Signal'] = calculate_macd(df['Close'])
+        df['MACD_Hist'] = df['MACD'] - df['MACD_Signal']   # 柱狀體
         df['K'], df['D'] = calculate_stochastic(df['High'], df['Low'], df['Close'])
         
+        # Supertrend (ATR=7, Multiplier=3)
+        df['ST'], df['ST_DIR'] = calculate_supertrend(df, period=7, multiplier=3)
+        
+        # 20 日量價統計
+        df['Vol_MA20']    = df['Volume'].rolling(20).mean()
+        df['Vol_MA5']     = df['Volume'].rolling(5).mean()
+        df['High_20']     = df['Close'].rolling(20).max()    # 近 20 日最高收盤
+        
         latest = df.iloc[-1]
-        prev = df.iloc[-2] if len(df) > 1 else latest
+        prev   = df.iloc[-2] if len(df) > 1 else latest
+        prev2  = df.iloc[-3] if len(df) > 2 else prev
+        
+        def _f(v, default=0.0):
+            return float(v) if pd.notna(v) else default
         
         return {
             "stock_id": stock_id,
             "df": df,
             "latest": {
-                "close": float(latest["Close"]),
-                "volume": int(latest["Volume"]),
-                "high": float(latest["High"]),
-                "low": float(latest["Low"]),
-                "open": float(latest["Open"]),
+                "close":  _f(latest["Close"]),
+                "volume": int(latest["Volume"]) if pd.notna(latest["Volume"]) else 0,
+                "high":   _f(latest["High"]),
+                "low":    _f(latest["Low"]),
+                "open":   _f(latest["Open"]),
             },
-            "prev": {
-                "close": float(prev["Close"]),
-            },
+            "prev": {"close": _f(prev["Close"])},
             "indicators": {
-                "ma5": float(latest.get("SMA_5", 0)) if pd.notna(latest.get("SMA_5")) else 0,
-                "ma20": float(latest.get("SMA_20", 0)) if pd.notna(latest.get("SMA_20")) else 0,
-                "ma60": float(latest.get("SMA_60", 0)) if pd.notna(latest.get("SMA_60")) else 0,
-                "rsi": float(latest.get("RSI_14", 50)) if pd.notna(latest.get("RSI_14")) else 50,
-                "k": float(latest.get("K", 50)) if pd.notna(latest.get("K")) else 50,
-                "d": float(latest.get("D", 50)) if pd.notna(latest.get("D")) else 50,
-                "macd": float(latest.get("MACD", 0)) if pd.notna(latest.get("MACD")) else 0,
-                "macd_signal": float(latest.get("MACD_Signal", 0)) if pd.notna(latest.get("MACD_Signal")) else 0,
-            }
+                "ma5":         _f(latest.get("SMA_5")),
+                "ma10":        _f(latest.get("SMA_10")),
+                "ma20":        _f(latest.get("SMA_20")),
+                "ma60":        _f(latest.get("SMA_60")),
+                "rsi":         _f(latest.get("RSI_14"), 50),
+                "k":           _f(latest.get("K"), 50),
+                "d":           _f(latest.get("D"), 50),
+                "macd":        _f(latest.get("MACD")),
+                "macd_signal": _f(latest.get("MACD_Signal")),
+                "macd_hist":       _f(latest.get("MACD_Hist")),
+                "macd_hist_prev":  _f(prev.get("MACD_Hist")),
+                "supertrend":      _f(latest.get("ST")),
+                "supertrend_dir":  int(latest.get("ST_DIR")) if pd.notna(latest.get("ST_DIR")) else 0,
+                "vol_ma5":     _f(latest.get("Vol_MA5")),
+                "vol_ma20":    _f(latest.get("Vol_MA20")),
+                "high_20":     _f(latest.get("High_20")),
+            },
         }
         
     except Exception as e:
@@ -431,6 +530,19 @@ def get_market_overview():
                 "money":  float(r.get("Trading_money", r.get("trading_money", 0)) or 0),
             })
         print(f"  ✓ TAIEX (FinMind): {len(taiex_data)} 筆，最新={taiex_data[-1]['date']}")
+        
+        # 為大盤計算 Supertrend
+        if len(taiex_data) >= 10:
+            taiex_df = pd.DataFrame([
+                {"Open": d["open"], "High": d["high"], "Low": d["low"], "Close": d["close"]}
+                for d in taiex_data
+            ])
+            st_series, st_dir_series = calculate_supertrend(taiex_df, period=7, multiplier=3)
+            for i, d in enumerate(taiex_data):
+                v = st_series.iloc[i]
+                dr = st_dir_series.iloc[i]
+                d["supertrend"]     = float(v) if pd.notna(v) else None
+                d["supertrend_dir"] = int(dr) if pd.notna(dr) else 0
     
     # ── 方法 B: 如果 FinMind 空或 OHLC 不完整，fallback 到 yfinance ──
     need_yf = (not taiex_data) or any(d["open"] == 0 for d in taiex_data[-5:])
@@ -950,28 +1062,29 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
     
     prompt = f"""請分析 {stock_id} {stock_name} 的當前狀況。
 
-## 技術面
-- 收盤價: {latest['close']:.2f} (前日: {prev['close']:.2f})
-- MA5/20/60: {ind['ma5']:.2f} / {ind['ma20']:.2f} / {ind['ma60']:.2f}
-- KD: K={ind['k']:.1f}, D={ind['d']:.1f}
-- RSI: {ind['rsi']:.1f}
-- MACD: {ind['macd']:.2f} (訊號: {ind['macd_signal']:.2f})
+## 技術面 (T1~T4 模組)
+- 收盤: {latest['close']:.2f} (前日: {prev['close']:.2f})
+- 5/10/20/60MA: {ind.get('ma5',0):.2f} / {ind.get('ma10',0):.2f} / {ind.get('ma20',0):.2f} / {ind.get('ma60',0):.2f}
+- Supertrend(7,3): {ind.get('supertrend',0):.2f} ({'↑上升' if ind.get('supertrend_dir')==1 else '↓下降'})
+- MACD 柱體: {ind.get('macd_hist',0):+.3f} (昨日: {ind.get('macd_hist_prev',0):+.3f})
+- 近20日最高收: {ind.get('high_20',0):.2f}
+- 5日均量 vs 20日均量: {ind.get('vol_ma5',0):,.0f} vs {ind.get('vol_ma20',0):,.0f}
+- KD: {ind.get('k',50):.1f}/{ind.get('d',50):.1f}, RSI: {ind.get('rsi',50):.1f}
 
-## 籌碼面
+## 籌碼面 (C1~C3 模組)
 - 外資 今日/5日/20日: {institution['foreign_today']:+.0f} / {institution['foreign_5d']:+.0f} / {institution['foreign_20d']:+.0f} 張
 - 投信 今日/5日/20日: {institution['trust_today']:+.0f} / {institution['trust_5d']:+.0f} / {institution['trust_20d']:+.0f} 張
-- 融資 餘額/今日/5日/20日: {margin.get('margin_balance',0):,} / {margin.get('margin_change',0):+,} / {margin.get('margin_5d',0):+,} / {margin.get('margin_20d',0):+,} 張
-- 融券 餘額/5日: {margin.get('short_balance',0):,} / {margin.get('short_5d',0):+,} 張
+- 融資 餘額/今日/5日: {margin.get('margin_balance',0):,} / {margin.get('margin_change',0):+,} / {margin.get('margin_5d',0):+,} 張
 - 借券 餘額/5日: {borrow.get('borrow_balance',0):,} / {borrow.get('borrow_5d',0):+,} 張
-- 集保大戶持股比例: {tdcc.get('big_holder_ratio',0):.2f}% (變化: {tdcc.get('big_holder_change',0):+.2f}%)
+- 集保 400張以上大戶比例: {tdcc.get('big_holder_ratio',0):.2f}% (週變化: {tdcc.get('big_holder_change',0):+.2f}%)
 
 請用繁體中文，用 === 分隔三段：
 
 === 技術面 ===
-（約 80 字，K線位置、均線排列、KD/RSI/MACD 訊號、支撐壓力）
+（約 80 字，聚焦：均線排列、Supertrend 方向、MACD 動能、是否突破壓力、量價配合）
 
 === 籌碼面 ===
-（約 80 字，外資/投信動向、融資融券借券變化、集保主力動向）
+（約 80 字，聚焦：法人共識、散戶退場、大戶持股動向）
 
 === 操作建議 ===
 （約 60 字，短線策略、進出場價位、停損點、風險提示）"""
@@ -1016,78 +1129,125 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
 
 def calculate_stock_rating(data: dict) -> dict:
     """
-    計算個股操作建議綜合評等
+    計算個股操作建議綜合評等 (技 10 分 + 籌 10 分 = 20 分)
     
-    技術面評分 (0-10):
-      均線多頭排列    +3   (MA5 > MA20 > MA60)
-      KD 黃金交叉     +2   (K > D 且 K < 80)
-      RSI 強勢未過熱  +2   (50 <= RSI <= 75)
-      MACD 翻紅       +2   (MACD > Signal)
-      突破關鍵壓力    +1   (close > MA20)
+    === 技術面 (滿分 10) ===
+    T1 均線多頭排列 (+3): Close > 5MA > 10MA > 20MA > 60MA
+    T2 帶量突破壓力 (+3): Close >= 近20日最高 AND Volume > 20日均量 * 2
+    T3 MACD 動能轉強 (+2): MACD_Hist > 0 AND 今日柱體 > 昨日柱體
+    T4 量價結構偏多 (+2): 5日均量 > 20日均量
     
-    籌碼面評分 (0-10):
-      外資連續買超    +3   (外資5日 > 0)
-      投信買超        +2   (投信5日 > 0)
-      融資減少        +1   (融資5日 < 0)
-      融券/借券動向   +2   (券資增 +1 / 借券增 +1)
-      合計買超        +1   (法人合計5日 > 0)
-      集保主力增加    +1   (大戶持股比例 ↑)
+    === 籌碼面 (滿分 10) ===
+    C1 法人共識買盤 (+4): 任一條件
+        a) 外資與投信同買: 外資今日>0 AND 投信今日>0
+        b) 投信連3買: 投信近3日皆>0
+        c) 外資連3買: 外資近3日皆>0
+    C2 散戶退場/籌碼沉澱 (+3): 任一條件
+        a) 融資連減: 今日<昨日 AND 昨日<前日
+        b) 借券賣出連減: 今日<昨日 AND 昨日<前日
+    C3 大戶持股增加 (+3): 400張以上大戶持股比例 本週 > 上週
     
-    綜合分類 (技 + 籌):
-      ≥ 16  強力加碼
-      11-15 加碼
-      8-10  中性
-      4-7   減碼
-      ≤ 3   強力減碼
+    分級:
+      ≥ 16 強力加碼 / 11-15 加碼 / 8-10 中性 / 4-7 減碼 / ≤ 3 強力減碼
     """
-    ind = data.get("indicators", {})
-    inst = data.get("institution", {})
-    margin = data.get("margin", {})
-    borrow = data.get("borrow", {})
-    tdcc = data.get("tdcc", {})
-    latest = data.get("latest", {})
+    ind     = data.get("indicators", {})
+    inst    = data.get("institution", {})
+    margin  = data.get("margin", {})
+    borrow  = data.get("borrow", {})
+    tdcc    = data.get("tdcc", {})
+    latest  = data.get("latest", {})
+    df      = data.get("df")
     
-    # ── 技術面 (0-10) ────────────────────────────────────
+    breakdown = {}     # 記錄每項是否得分
+    
+    # ── 技術面 ───────────────────────────────
     tech = 0
-    ma5, ma20, ma60 = ind.get("ma5", 0), ind.get("ma20", 0), ind.get("ma60", 0)
+    
+    # T1: 均線多頭排列
     close = latest.get("close", 0)
-    rsi = ind.get("rsi", 50)
-    k, d = ind.get("k", 50), ind.get("d", 50)
-    macd, macd_sig = ind.get("macd", 0), ind.get("macd_signal", 0)
-    
-    if ma5 > ma20 > ma60 > 0:
+    ma5, ma10, ma20, ma60 = ind.get("ma5",0), ind.get("ma10",0), ind.get("ma20",0), ind.get("ma60",0)
+    t1 = (close > ma5 > ma10 > ma20 > ma60 > 0)
+    if t1:
         tech += 3
-    if k > d and k < 80:
-        tech += 2
-    if 50 <= rsi <= 75:
-        tech += 2
-    if macd > macd_sig:
-        tech += 2
-    if close > ma20 > 0:
-        tech += 1
+    breakdown["T1"] = (t1, 3, "均線多頭")
     
-    # ── 籌碼面 (0-10) ────────────────────────────────────
+    # T2: 帶量突破壓力
+    volume   = latest.get("volume", 0)
+    high_20  = ind.get("high_20", 0)
+    vol_ma20 = ind.get("vol_ma20", 0)
+    t2 = (close >= high_20 > 0 and volume > vol_ma20 * 2 > 0)
+    if t2:
+        tech += 3
+    breakdown["T2"] = (t2, 3, "帶量突破")
+    
+    # T3: MACD 動能轉強
+    macd_hist      = ind.get("macd_hist", 0)
+    macd_hist_prev = ind.get("macd_hist_prev", 0)
+    t3 = (macd_hist > 0 and macd_hist > macd_hist_prev)
+    if t3:
+        tech += 2
+    breakdown["T3"] = (t3, 2, "MACD強勢")
+    
+    # T4: 量價結構偏多
+    vol_ma5  = ind.get("vol_ma5", 0)
+    t4 = (vol_ma5 > vol_ma20 > 0)
+    if t4:
+        tech += 2
+    breakdown["T4"] = (t4, 2, "5日量 > 20日量")
+    
+    # ── 籌碼面 ───────────────────────────────
     chip = 0
-    foreign_5d = inst.get("foreign_5d", 0)
-    trust_5d   = inst.get("trust_5d", 0)
+    
+    # 取得法人最近3日歷史（每筆 history 是已 pivot 的 {date, foreign, trust, dealer}）
+    inst_hist = inst.get("history", [])
+    last3 = inst_hist[-3:] if len(inst_hist) >= 3 else []
+    
+    # C1: 法人共識買盤
     foreign_today = inst.get("foreign_today", 0)
     trust_today   = inst.get("trust_today", 0)
-    dealer_today  = inst.get("dealer_today", 0)
     
-    if foreign_5d > 0:
+    c1a = (foreign_today > 0 and trust_today > 0)
+    c1b = (len(last3) == 3 and all(h.get("trust", 0)   > 0 for h in last3))
+    c1c = (len(last3) == 3 and all(h.get("foreign", 0) > 0 for h in last3))
+    c1 = c1a or c1b or c1c
+    if c1:
+        chip += 4
+    breakdown["C1"] = (c1, 4, f"法人共識{'(同買)' if c1a else '(投信連3)' if c1b else '(外資連3)' if c1c else ''}")
+    
+    # C2: 散戶退場 / 籌碼沉澱
+    margin_hist = margin.get("history", [])
+    borrow_hist = borrow.get("history", [])
+    
+    def is_3day_descending(history, get_balance):
+        if len(history) < 3:
+            return False
+        b_today = get_balance(history[-1])
+        b_yest  = get_balance(history[-2])
+        b_prev  = get_balance(history[-3])
+        return b_today < b_yest < b_prev
+    
+    def margin_balance(d):
+        return float(d.get("MarginPurchaseTodayBalance",
+                       d.get("margin_purchase_today_balance",
+                       d.get("MarginPurchaseBuy", 0))))
+    def borrow_balance(d):
+        return float(d.get("today_balance_volume",
+                       d.get("TodayBalanceVolume",
+                       d.get("balance", 0))))
+    
+    c2a = is_3day_descending(margin_hist, margin_balance)
+    c2b = is_3day_descending(borrow_hist, borrow_balance)
+    c2 = c2a or c2b
+    if c2:
         chip += 3
-    if trust_5d > 0:
-        chip += 2
-    if margin.get("margin_5d", 0) < 0:
-        chip += 1
-    if margin.get("short_5d", 0) > 0:
-        chip += 1
-    if borrow.get("borrow_5d", 0) > 0:
-        chip += 1
-    if (foreign_today + trust_today + dealer_today) > 0:
-        chip += 1
-    if tdcc.get("big_holder_change", 0) > 0:
-        chip += 1
+    breakdown["C2"] = (c2, 3, f"散戶退場{'(融資連減)' if c2a else '(借券連減)' if c2b else ''}")
+    
+    # C3: 大戶持股增加（400張以上）
+    big_change = tdcc.get("big_holder_change", 0)
+    c3 = (big_change > 0)
+    if c3:
+        chip += 3
+    breakdown["C3"] = (c3, 3, "大戶增持")
     
     total = tech + chip
     
@@ -1104,11 +1264,12 @@ def calculate_stock_rating(data: dict) -> dict:
         rating, rating_key = "強力減碼", "strong-sell"
     
     return {
-        "tech":   tech,
-        "chip":   chip,
-        "total":  total,
-        "rating": rating,
+        "tech":       tech,
+        "chip":       chip,
+        "total":      total,
+        "rating":     rating,
         "rating_key": rating_key,
+        "breakdown":  breakdown,
     }
 
 
@@ -1191,12 +1352,17 @@ def generate_rating_table(stocks_data: dict) -> str:
     </summary>
     <div class="scoring-key">
       <div class="key-block">
-        <strong>技術面 (0-10)</strong>
-        均線多頭排列 +3 / KD 金叉 +2 / RSI 強勢 +2 / MACD 翻紅 +2 / 突破壓力 +1
+        <strong>技術面 (10分)</strong>
+        T1 均線多頭排列 +3 (Close>5MA>10MA>20MA>60MA)<br>
+        T2 帶量突破壓力 +3 (創20日新高+量&gt;均量x2)<br>
+        T3 MACD 動能轉強 +2 (柱體>0且放大)<br>
+        T4 量價結構偏多 +2 (5日量>20日量)
       </div>
       <div class="key-block">
-        <strong>籌碼面 (0-10)</strong>
-        外資連買 +3 / 投信買超 +2 / 融資減少 +1 / 融券或借券動向 +2 / 合計買超 +1 / 集保主力增加 +1
+        <strong>籌碼面 (10分)</strong>
+        C1 法人共識買盤 +4 (外+投同買 / 投信連3買 / 外資連3買)<br>
+        C2 散戶退場 +3 (融資連3減 / 借券連3減)<br>
+        C3 大戶持股增加 +3 (400張大戶比例週週增)
       </div>
       <div class="key-block">
         <strong>綜合評等 (技+籌)</strong>
@@ -1290,8 +1456,13 @@ def generate_stock_card(stock_id: str, data: dict):
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">{ind['ma5']:.2f}</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">{ind['ma20']:.2f}</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">{ind['ma60']:.2f}</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">{ind['rsi']:.1f}</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">{ind['k']:.0f}/{ind['d']:.0f}</div></div>
+    <div class="indicator-cell">
+      <div class="indicator-cell-label">Supertrend</div>
+      <div class="indicator-cell-value {'positive' if ind.get('supertrend_dir')==1 else 'negative'}">
+        {('↑ ' if ind.get('supertrend_dir')==1 else '↓ ') + f"{ind.get('supertrend', 0):.2f}"}
+      </div>
+    </div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MACD柱</div><div class="indicator-cell-value {'positive' if ind.get('macd_hist',0)>=0 else 'negative'}">{ind.get('macd_hist',0):+.2f}</div></div>
   </div>
   
   <details class="collapsible">
@@ -1532,7 +1703,7 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     """生成所有圖表腳本"""
     scripts = []
     
-    # 個股 K 線 + 成交量 (ECharts)
+    # 個股 K 線 + Supertrend + 成交量 (ECharts)
     for stock_id, data in stocks_data.items():
         df = data["df"]
         df_tail = df.tail(60)
@@ -1544,6 +1715,13 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
                      for _, row in df_tail.iterrows()]
         ind_ma20  = [round(v, 2) if v == v else None for v in df_tail["SMA_20"].tolist()]
         ind_ma60  = [round(v, 2) if v == v else None for v in df_tail["SMA_60"].tolist()]
+        
+        # Supertrend：依方向拆兩條線（上升綠、下降紅）
+        st_vals = df_tail["ST"].tolist()
+        st_dirs = df_tail["ST_DIR"].tolist()
+        st_up   = [v if (d == 1  and v == v) else None for v, d in zip(st_vals, st_dirs)]
+        st_down = [v if (d == -1 and v == v) else None for v, d in zip(st_vals, st_dirs)]
+        
         # 漲跌顏色
         ind_vol_color = []
         for _, row in df_tail.iterrows():
@@ -1563,7 +1741,7 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     }},
     axisPointer: {{link: [{{xAxisIndex: 'all'}}]}},
     legend: {{
-      data: ['K線', 'MA20', 'MA60'],
+      data: ['K線', 'MA20', 'MA60', 'Supertrend↑', 'Supertrend↓'],
       top: 0, textStyle: {{fontSize: 10}}
     }},
     grid: [
@@ -1600,6 +1778,16 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         data: {json.dumps(ind_ma60)},
         smooth: true, showSymbol: false,
         lineStyle: {{color: '#9c27b0', width: 1}}}},
+      {{name: 'Supertrend↑', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: {json.dumps(st_up)},
+        showSymbol: false, connectNulls: false,
+        lineStyle: {{color: '#26a69a', width: 2}}}},
+      {{name: 'Supertrend↓', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: {json.dumps(st_down)},
+        showSymbol: false, connectNulls: false,
+        lineStyle: {{color: '#ef5350', width: 2}}}},
       {{name: '成交量', type: 'bar',
         xAxisIndex: 1, yAxisIndex: 1,
         data: {json.dumps(ind_vol)}.map(function(v, i) {{
@@ -1618,6 +1806,9 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         taiex_ohlc   = [[d["open"], d["close"], d["low"], d["high"]] for d in taiex]
         # 成交金額（億元）
         taiex_money  = [round(d.get("money", 0) / 1e8, 1) for d in taiex]
+        # Supertrend 拆兩條
+        taiex_st_up   = [d.get("supertrend") if d.get("supertrend_dir") == 1  else None for d in taiex]
+        taiex_st_down = [d.get("supertrend") if d.get("supertrend_dir") == -1 else None for d in taiex]
         # 漲跌顏色（紅漲綠跌）
         taiex_vol_color = []
         for d in taiex:
@@ -1632,6 +1823,8 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
   var dates = {json.dumps(taiex_dates)};
   var ohlc  = {json.dumps(taiex_ohlc)};
   var money = {json.dumps(taiex_money)};
+  var stUp   = {json.dumps(taiex_st_up)};
+  var stDown = {json.dumps(taiex_st_down)};
   var volColors = {json.dumps(taiex_vol_color)};
   
   chart.setOption({{
@@ -1644,8 +1837,12 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
       textStyle: {{ color: '#333' }}
     }},
     axisPointer: {{ link: [{{xAxisIndex: 'all'}}] }},
+    legend: {{
+      data: ['加權指數', 'Supertrend↑', 'Supertrend↓', '成交金額(億)'],
+      top: 0, textStyle: {{fontSize: 10}}
+    }},
     grid: [
-      {{ left: '8%', right: '4%', top: '5%',  height: '60%' }},
+      {{ left: '8%', right: '4%', top: '8%',  height: '57%' }},
       {{ left: '8%', right: '4%', top: '72%', height: '20%' }}
     ],
     xAxis: [
@@ -1663,22 +1860,23 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     ],
     dataZoom: [{{type: 'inside', xAxisIndex: [0, 1], start: 50, end: 100}}],
     series: [
-      {{
-        name: '加權指數', type: 'candlestick',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: ohlc,
-        itemStyle: {{
-          color: '#ef5350', color0: '#26a69a',
-          borderColor: '#ef5350', borderColor0: '#26a69a'
-        }}
-      }},
-      {{
-        name: '成交金額(億)', type: 'bar',
+      {{name: '加權指數', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0, data: ohlc,
+        itemStyle: {{color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}}}},
+      {{name: 'Supertrend↑', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0, data: stUp,
+        showSymbol: false, connectNulls: false,
+        lineStyle: {{color: '#26a69a', width: 2}}}},
+      {{name: 'Supertrend↓', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0, data: stDown,
+        showSymbol: false, connectNulls: false,
+        lineStyle: {{color: '#ef5350', width: 2}}}},
+      {{name: '成交金額(億)', type: 'bar',
         xAxisIndex: 1, yAxisIndex: 1,
         data: money.map(function(v, i) {{
           return {{value: v, itemStyle: {{color: volColors[i]}}}};
-        }})
-      }}
+        }})}}
     ]
   }});
   
