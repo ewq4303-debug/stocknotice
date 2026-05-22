@@ -163,42 +163,68 @@ def fetch_finmind(dataset: str, **params):
 
 def get_institution_data(stock_id: str, days: int = 30):
     """取得個股三大法人買賣超
-    FinMind 回傳格式: 每筆 = 一個法人的當日資料 {date, name, buy, sell}
-    需要 pivot 成每天一筆 {date, foreign_diff, trust_diff, dealer_diff}
+    FinMind 回傳格式可能為：
+      {date, stock_id, name, buy, sell}  ← BuySell 系列
+      或 {date, stock_id, Foreign_Investor_diff, ...} ← 舊格式
     """
     start = (datetime.now() - timedelta(days=days+10)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     
-    # 正確的 API 名稱
-    raw = fetch_finmind("TaiwanStockInstitutionalInvestorsBuySell",
-                       data_id=stock_id, start_date=start, end_date=end)
+    # 嘗試多個 API 名稱
+    raw = []
+    api_used = None
+    for api_name in ["TaiwanStockInstitutionalInvestorsBuySell",
+                     "TaiwanStockInstitutionalInvestors"]:
+        raw = fetch_finmind(api_name, data_id=stock_id,
+                           start_date=start, end_date=end)
+        if raw:
+            api_used = api_name
+            break
     
     if not raw:
+        print(f"    ⚠️ {stock_id} 個股法人 API 全部失敗")
         return {"latest": {}, "foreign_today": 0, "foreign_5d": 0, "foreign_20d": 0,
                 "trust_today": 0, "trust_5d": 0, "trust_20d": 0, "dealer_today": 0, "history": []}
     
-    # Pivot：把每筆 {date, name, buy, sell} 整理成每天一筆
-    # name 可能是「外資自營商」「外資不含外資自營商」「投信」「自營商_自行買賣」「自營商_避險」等
+    # Debug：只在第一支股票印
+    if stock_id == STOCKS[0] if STOCKS else False:
+        print(f"    [debug] {stock_id} API={api_used}, 首筆={raw[0]}, 欄位={list(raw[0].keys())}")
+        unique_names = sorted(set(d.get("name", "") for d in raw))
+        if unique_names and unique_names != [""]:
+            print(f"    [debug] {stock_id} name 集合: {unique_names}")
+    
+    # Pivot：把每筆整理成每天一筆
     by_date = {}
     for d in raw:
         date = d.get("date", "")
-        name = d.get("name", "")
-        buy  = float(d.get("buy", 0))
-        sell = float(d.get("sell", 0))
-        diff = buy - sell  # 股
-        
+        if not date:
+            continue
         if date not in by_date:
             by_date[date] = {"date": date, "foreign": 0, "trust": 0, "dealer": 0}
         
-        # 分類加總
-        if "外資" in name:
-            by_date[date]["foreign"] += diff
-        elif "投信" in name:
-            by_date[date]["trust"] += diff
-        elif "自營商" in name or "自營" in name:
-            by_date[date]["dealer"] += diff
+        # 情境 A: 有 name/buy/sell 欄位 (新版 BuySell API)
+        name = d.get("name", "")
+        if name:
+            buy  = float(d.get("buy", 0))
+            sell = float(d.get("sell", 0))
+            diff = buy - sell  # 股
+            
+            name_low = name.lower()
+            if "外" in name or "foreign" in name_low:
+                by_date[date]["foreign"] += diff
+            elif "投信" in name or "trust" in name_low:
+                by_date[date]["trust"] += diff
+            elif "自營" in name or "dealer" in name_low:
+                by_date[date]["dealer"] += diff
+        else:
+            # 情境 B: 直接有 *_diff 欄位（舊版）
+            by_date[date]["foreign"] += float(d.get("Foreign_Investor_diff",
+                                              d.get("foreign_investor_diff", 0)))
+            by_date[date]["trust"]   += float(d.get("Investment_Trust_diff",
+                                              d.get("investment_trust_diff", 0)))
+            by_date[date]["dealer"]  += float(d.get("Dealer_diff",
+                                              d.get("dealer_diff", 0)))
     
-    # 排序，取最近 days 天
     history = sorted(by_date.values(), key=lambda x: x["date"])[-days:]
     
     if not history:
@@ -212,6 +238,11 @@ def get_institution_data(stock_id: str, days: int = 30):
     trust_20d   = sum(h["trust"]   for h in history[-20:]) / 1000
     
     latest = history[-1]
+    
+    # Debug：印最新一筆的計算結果
+    if stock_id == STOCKS[0] if STOCKS else False:
+        print(f"    [debug] {stock_id} 最新外資={latest['foreign']/1000:+.0f}張, "
+              f"投信={latest['trust']/1000:+.0f}張, 5日累計外資={foreign_5d:+.0f}張")
     
     return {
         "latest": latest,
@@ -259,31 +290,29 @@ def get_market_overview():
     start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     
-    # 加權指數 OHLCV (yfinance ^TWII 取 OHLC，FinMind 補成交量)
+    # 加權指數 OHLCV (yfinance ^TWII 取 OHLC，FinMind 補成交金額)
     taiex_data = []
     try:
         taiex_ticker = yf.Ticker("^TWII")
         taiex_df = taiex_ticker.history(period="3mo").tail(60).reset_index()
         
-        # 同時抓 FinMind TAIEX 取成交量
+        # 同時抓 FinMind TAIEX 取成交金額
         fm_taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX",
                                  start_date=start, end_date=end)
-        vol_by_date = {}
+        money_by_date = {}
         if fm_taiex:
             print(f"  [debug] TAIEX FinMind 欄位: {list(fm_taiex[0].keys())}")
             for r in fm_taiex:
                 d = r.get("date", "")
-                # 嘗試多種欄位名稱
-                vol = (r.get("Trading_Volume") or r.get("trading_volume")
-                       or r.get("TradeVolume") or 0)
-                vol_by_date[d] = float(vol)
+                # 成交金額（元）
+                money = (r.get("Trading_money") or r.get("trading_money")
+                         or r.get("TradeMoney") or 0)
+                money_by_date[d] = float(money)
         
         for _, row in taiex_df.iterrows():
             date_str = row["Date"].strftime("%Y-%m-%d")
-            # FinMind 的 volume 為股，yfinance 的 Volume 也是股
-            yf_vol = int(row["Volume"]) if row["Volume"] else 0
-            fm_vol = int(vol_by_date.get(date_str, 0))
-            volume = fm_vol if fm_vol > 0 else yf_vol
+            yf_vol  = int(row["Volume"]) if row["Volume"] else 0
+            fm_money = money_by_date.get(date_str, 0)
             
             taiex_data.append({
                 "date":   date_str,
@@ -291,9 +320,12 @@ def get_market_overview():
                 "high":   float(row["High"]),
                 "low":    float(row["Low"]),
                 "close":  float(row["Close"]),
-                "volume": volume,
+                "volume": yf_vol,            # 股數（給 K 線用）
+                "money":  fm_money,           # 成交金額（元）
             })
-        print(f"  ✓ TAIEX OHLCV: {len(taiex_data)} 筆，最新 vol={taiex_data[-1]['volume'] if taiex_data else 0:,}")
+        if taiex_data:
+            print(f"  ✓ TAIEX OHLCV: {len(taiex_data)} 筆，"
+                  f"最新成交額={taiex_data[-1]['money']/1e8:.1f}億")
     except Exception as e:
         print(f"  ⚠️ 大盤指數抓取失敗: {e}")
     
@@ -962,9 +994,9 @@ def generate_market_section(market_data: dict):
     change_class = "positive" if change > 0 else "negative"
     arrow     = "↑" if change > 0 else "↓"
 
-    # 成交量：yfinance 回傳「股數」，台股一張=1000股
-    volume_shares = latest.get("volume", 0)
-    volume_b      = volume_shares / 1_000_000_000   # 轉成「億股」
+    # 成交金額：FinMind 回傳「元」→ 換算「億元」
+    money_amount = latest.get("money", 0)
+    money_b      = money_amount / 100_000_000
 
     inst     = market_data["institution"]
     inst_latest = inst[-1] if inst else {}
@@ -992,8 +1024,8 @@ def generate_market_section(market_data: dict):
     <div class="metric-change {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div>
   </div>
   <div class="metric">
-    <div class="metric-label">成交量(億股)</div>
-    <div class="metric-value">{volume_b:.1f}</div>
+    <div class="metric-label">成交金額(億)</div>
+    <div class="metric-value">{money_b:,.0f}</div>
   </div>
   <div class="metric">
     <div class="metric-label">外資(億)</div>
@@ -1049,17 +1081,17 @@ new Chart(document.getElementById('k{stock_id}'),{{
   options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{font:{{size:11}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true}}}}}}}}
 }});""")
     
-    # 大盤 K 線 + 成交量 (ECharts)
+    # 大盤 K 線 + 成交金額 (ECharts)
     taiex = market_data["taiex"]
     if taiex and len(taiex) > 0:
         taiex_dates  = [d["date"][-5:] for d in taiex]
         # ECharts candlestick 順序: [open, close, low, high]
         taiex_ohlc   = [[d["open"], d["close"], d["low"], d["high"]] for d in taiex]
-        # 成交量轉億股
-        taiex_vol    = [round(d["volume"] / 1e9, 2) for d in taiex]
+        # 成交金額（億元）
+        taiex_money  = [round(d.get("money", 0) / 1e8, 1) for d in taiex]
         # 漲跌顏色（紅漲綠跌）
         taiex_vol_color = []
-        for i, d in enumerate(taiex):
+        for d in taiex:
             if d["close"] >= d["open"]:
                 taiex_vol_color.append("#ef5350")
             else:
@@ -1070,7 +1102,7 @@ new Chart(document.getElementById('k{stock_id}'),{{
   var chart = echarts.init(document.getElementById('taiex_kline'));
   var dates = {json.dumps(taiex_dates)};
   var ohlc  = {json.dumps(taiex_ohlc)};
-  var vols  = {json.dumps(taiex_vol)};
+  var money = {json.dumps(taiex_money)};
   var volColors = {json.dumps(taiex_vol_color)};
   
   chart.setOption({{
@@ -1091,12 +1123,12 @@ new Chart(document.getElementById('k{stock_id}'),{{
       {{ type: 'category', data: dates, gridIndex: 0,
          axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}} }},
       {{ type: 'category', data: dates, gridIndex: 1,
-         axisLabel: {{font: 10, color: '#666'}} }}
+         axisLabel: {{fontSize: 10, color: '#666'}} }}
     ],
     yAxis: [
       {{ scale: true, gridIndex: 0, splitNumber: 5,
          axisLabel: {{color: '#666'}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-      {{ scale: true, gridIndex: 1, splitNumber: 2, name: '成交量(億股)',
+      {{ scale: true, gridIndex: 1, splitNumber: 2, name: '成交金額(億)',
          nameTextStyle: {{color: '#999', fontSize: 10}},
          axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }}
     ],
@@ -1112,9 +1144,9 @@ new Chart(document.getElementById('k{stock_id}'),{{
         }}
       }},
       {{
-        name: '成交量', type: 'bar',
+        name: '成交金額(億)', type: 'bar',
         xAxisIndex: 1, yAxisIndex: 1,
-        data: vols.map(function(v, i) {{
+        data: money.map(function(v, i) {{
           return {{value: v, itemStyle: {{color: volColors[i]}}}};
         }})
       }}
