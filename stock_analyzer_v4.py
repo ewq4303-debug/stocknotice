@@ -451,55 +451,91 @@ def get_borrowing_data(stock_id: str, days: int = 30):
 
 
 def get_tdcc_holding(stock_id: str):
-    """取得集保大戶持股比例變化（主力 = 持股 >1000 張的大戶）
-    FinMind: TaiwanStockHoldingSharesPer
-    回傳：本週 vs 上週的大戶持股比例變化 (%)
     """
-    start = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
-    end = datetime.now().strftime("%Y-%m-%d")
-    data = fetch_finmind("TaiwanStockHoldingSharesPer",
-                        data_id=stock_id, start_date=start, end_date=end)
+    從 GitHub repo 取得集保大戶持股比例變化
+    URL: https://raw.githubusercontent.com/ewq4303-debug/stocknotice/main/tdcc_history/YYYYMMDD.csv
     
-    if not data:
-        return {"big_holder_change": 0, "big_holder_ratio": 0, "trend": 0}
+    CSV 格式: 資料日期,證券代號,持股分級,人數,股數,占集保庫存數比例%
+    分級 12-15 = 400張以上大戶 (12: 400K-600K, 13: 600K-800K, 14: 800K-1M, 15: >1M 股)
     
-    # Debug
-    if stock_id == STOCKS[0] if STOCKS else False:
-        print(f"    [debug] {stock_id} 集保欄位: {list(data[0].keys())}")
-        unique_levels = sorted(set(d.get("HoldingSharesLevel", d.get("hold_level", "")) for d in data))
-        print(f"    [debug] {stock_id} 持股分級: {unique_levels}")
+    回傳本週 vs 上週的大戶持股比例變化
+    """
+    GITHUB_BASE = "https://raw.githubusercontent.com/ewq4303-debug/stocknotice/main/tdcc_history"
+    BIG_LEVELS  = {"12", "13", "14", "15"}   # 400 張 (400,000股) 以上
     
-    # 篩選主力（持股 >1000 張的大戶）
-    # FinMind 的 HoldingSharesLevel 通常為「1,000-5,000」「5,000-10,000」「>10,000」等
-    big_holders = []
-    for d in data:
-        level = str(d.get("HoldingSharesLevel", d.get("hold_level", "")))
-        # 1000 張以上算大戶
-        if any(k in level for k in ["1,000", "5,000", "10,000", ">1,000"]):
-            big_holders.append(d)
+    def fetch_csv(date_str):
+        """下載並解析某天的 CSV，回傳該股票大戶持股比例%"""
+        url = f"{GITHUB_BASE}/{date_str}.csv"
+        try:
+            r = requests.get(url, timeout=15)
+            if r.status_code != 200 or len(r.content) < 1000:
+                return None
+            
+            # UTF-8 with BOM
+            text = r.content.decode("utf-8-sig", errors="replace")
+            big_ratio = 0.0
+            found = False
+            
+            for line in text.splitlines()[1:]:   # 跳過標頭
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) < 6:
+                    continue
+                # 股票代號可能有空格補齊 (例 "2330  ")
+                code  = parts[1].strip()
+                if code != stock_id:
+                    continue
+                level = parts[2]
+                if level not in BIG_LEVELS:
+                    continue
+                try:
+                    ratio = float(parts[5])
+                    big_ratio += ratio
+                    found = True
+                except ValueError:
+                    continue
+            
+            return big_ratio if found else None
+        except Exception as e:
+            print(f"    ⚠️ TDCC {date_str} 下載失敗: {e}")
+            return None
     
-    if not big_holders:
-        return {"big_holder_change": 0, "big_holder_ratio": 0, "trend": 0}
+    # 從本週最近的週五往前找最近 2 個有資料的週五
+    today = datetime.now()
+    cursor = today
+    # 先找到本週最近的週五（含今天）
+    while cursor.weekday() != 4:
+        cursor -= timedelta(days=1)
     
-    # 按日期分組，加總百分比
-    by_date = {}
-    for d in big_holders:
-        date = d.get("date", "")
-        pct = float(d.get("percent", d.get("Percent", 0)))
-        by_date[date] = by_date.get(date, 0) + pct
+    results = []
+    for _ in range(8):   # 最多往前找 8 個週五（約 2 個月）
+        date_str = cursor.strftime("%Y%m%d")
+        ratio = fetch_csv(date_str)
+        if ratio is not None and ratio > 0:
+            results.append({"date": cursor.strftime("%Y-%m-%d"), "big_ratio": ratio})
+            if len(results) >= 2:
+                break
+        cursor -= timedelta(days=7)   # 回到上一個週五
     
-    sorted_dates = sorted(by_date.keys())
-    if len(sorted_dates) < 2:
-        return {"big_holder_change": 0, "big_holder_ratio": by_date.get(sorted_dates[0], 0) if sorted_dates else 0, "trend": 0}
+    if not results:
+        return {"big_holder_ratio": 0, "big_holder_change": 0, "trend": 0}
     
-    latest_pct = by_date[sorted_dates[-1]]
-    prev_pct   = by_date[sorted_dates[-2]]
-    change     = latest_pct - prev_pct
+    latest_ratio = results[0]["big_ratio"]
+    
+    if len(results) >= 2:
+        prev_ratio = results[1]["big_ratio"]
+        change = round(latest_ratio - prev_ratio, 2)
+    else:
+        change = 0
+    
+    # Debug 第一支股票印出來
+    if STOCKS and stock_id == STOCKS[0]:
+        debug_info = ", ".join(f"{r['date']}={r['big_ratio']:.2f}%" for r in results)
+        print(f"    [debug] {stock_id} 大戶資料: {debug_info}")
     
     return {
-        "big_holder_ratio":  round(latest_pct, 2),     # 當前大戶持股比例 %
-        "big_holder_change": round(change, 2),         # 比上週變化 %
-        "trend": 1 if change > 0 else (-1 if change < 0 else 0),
+        "big_holder_ratio":  round(latest_ratio, 2),
+        "big_holder_change": change,
+        "trend":             1 if change > 0 else (-1 if change < 0 else 0),
     }
 
 
@@ -1540,11 +1576,13 @@ def generate_stock_card(stock_id: str, data: dict):
     <div class="collapsible-content">{ai_oper.replace(chr(10),'<br>') if ai_oper else 'AI 分析載入中...'}</div>
   </details>
   
-  <!-- 新聞 -->
-  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
-    📰 相關新聞
-  </div>
-  <div class="news-list">{news_html}</div>
+  <!-- 新聞（可摺疊） -->
+  <details class="collapsible" style="margin-top:8px;">
+    <summary>📰 相關新聞 ({len(news[:5])})</summary>
+    <div class="collapsible-content" style="padding:0 12px 8px 12px;">
+      <div class="news-list" style="max-height:none;">{news_html}</div>
+    </div>
+  </details>
   
 </div>"""
 
