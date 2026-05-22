@@ -45,14 +45,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .news-item:last-child{border-bottom:none}
 .news-time{font-size:11px;color:#666;margin-bottom:4px}
 .news-title{font-size:13px;line-height:1.4}
-@media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}}
+
+/* ── 新版個股卡片 ─────────────────── */
+.stock-card{background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;margin-bottom:16px}
+.stock-card .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid #e0e0e0}
+.stock-card h3{font-size:18px;font-weight:500;margin:0}
+.card-header-sub{font-size:12px;color:#666;margin-top:4px}
+.card-price{font-size:22px;font-weight:500;line-height:1.1}
+.card-change{font-size:12px;margin-top:2px}
+.card-volume{font-size:12px;color:#666;margin-top:6px;padding-top:6px;border-top:0.5px dashed #e0e0e0}
+.card-volume-main{font-size:13px;color:#333;font-weight:500}
+.indicator-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
+.indicator-cell{background:#f5f5f5;border-radius:8px;padding:8px;text-align:center}
+.indicator-cell-label{font-size:10px;color:#666}
+.indicator-cell-value{font-size:13px;font-weight:500;margin-top:2px}
+.collapsible{background:#f5f5f5;border-radius:8px;margin-bottom:12px;overflow:hidden;border:0.5px solid #e0e0e0}
+.collapsible summary{padding:10px 12px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;list-style:none;user-select:none}
+.collapsible summary::-webkit-details-marker{display:none}
+.collapsible summary::before{content:'▶';font-size:9px;transition:transform 0.2s;color:#666;margin-right:4px}
+.collapsible[open] summary::before{transform:rotate(90deg)}
+.collapsible-content{padding:0 12px 12px 28px;font-size:13px;color:#666;line-height:1.7}
+.collapsible-content p{margin:6px 0}
+.collapsible-icon{color:#378ADD;font-size:14px}
+.data-table{width:100%;font-size:12px;border-collapse:collapse;margin-bottom:8px}
+.data-table th{text-align:right;padding:6px 8px;background:#f5f5f5;color:#666;font-weight:500;font-size:11px}
+.data-table th:first-child{text-align:left}
+.data-table td{padding:6px 8px;border-bottom:0.5px solid #e0e0e0;text-align:right}
+.data-table td:first-child{text-align:left}
+.data-table .row-total{background:#f5f5f5;font-weight:500}
+.data-table .row-total td{border-top:1px solid #ccc;border-bottom:none}
+
+/* ── 個股評等表 ───────────────────── */
+.rating-section{background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;margin-bottom:16px}
+.rating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid #e0e0e0}
+.rating-title{font-size:16px;font-weight:500;display:flex;align-items:center;gap:6px}
+.rating-update{font-size:11px;color:#999}
+.rating-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.rating-col{background:#f5f5f5;border-radius:8px;padding:10px 8px;border-top:3px solid}
+.rating-col-strong-buy{border-top-color:#c62828}
+.rating-col-buy{border-top-color:#ef5350}
+.rating-col-neutral{border-top-color:#888}
+.rating-col-sell{border-top-color:#66bb6a}
+.rating-col-strong-sell{border-top-color:#2e7d32}
+.rating-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid #e0e0e0}
+.rating-col-label{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.rating-label-strong-buy{color:#c62828}
+.rating-label-buy{color:#ef5350}
+.rating-label-neutral{color:#555}
+.rating-label-sell{color:#66bb6a}
+.rating-label-strong-sell{color:#2e7d32}
+.rating-col-count{font-size:11px;color:#999;background:white;border-radius:8px;padding:1px 6px}
+.rating-badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;background:#f5f5f5}
+.stock-chip{background:white;border:0.5px solid #e0e0e0;border-radius:6px;padding:6px 8px;margin-bottom:5px;font-size:12px}
+.chip-top{display:flex;justify-content:space-between;align-items:baseline}
+.chip-name{font-weight:500;font-size:12px}
+.chip-change{font-size:10px}
+.chip-change.up{color:#d32f2f}
+.chip-change.down{color:#388e3c}
+.chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
+.chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
+.empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
+.scoring-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px 12px;font-size:11px;color:#666}
+.key-block{line-height:1.6}
+.key-block strong{display:block;color:#333;margin-bottom:2px;font-weight:500}
+
+@media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}.rating-grid{grid-template-columns:repeat(2,1fr)}.indicator-row{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <h1>📊 股票監控儀表板</h1>
-    <div class="update-time">最後更新: 2026-05-22 01:47</div>
+    <div class="update-time">最後更新: 2026-05-22 05:58</div>
   </div>
   
   
@@ -81,6 +145,178 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div id="taiex_kline" style="width:100%;height:400px;"></div>
 </div>
   
+<div class="rating-section">
+  <div class="rating-header">
+    <div class="rating-title">
+      <i class="ti ti-target-arrow" aria-hidden="true"></i>
+      個股操作建議綜合評等
+    </div>
+    <div class="rating-update">更新於 2026-05-22 05:58</div>
+  </div>
+  <div class="rating-grid">
+    
+    <div class="rating-col rating-col-strong-buy">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-strong-buy">
+          <i class="ti ti-arrow-big-up-filled" aria-hidden="true" style="font-size:11px;"></i>
+          強力加碼
+        </span>
+        <span class="rating-col-count">0</span>
+      </div>
+      <div class="empty-hint">無</div>
+    </div>
+    <div class="rating-col rating-col-buy">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-buy">
+          <i class="ti ti-arrow-up" aria-hidden="true" style="font-size:11px;"></i>
+          加碼
+        </span>
+        <span class="rating-col-count">2</span>
+      </div>
+      
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">3037 Unimicron Technology Corp.</span>
+            <span class="chip-change up">+9.96%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技5</span>
+            <span class="chip-tag">籌6</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">6223 6223</span>
+            <span class="chip-change down">-0.53%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技5</span>
+            <span class="chip-tag">籌6</span>
+          </div>
+        </div>
+    </div>
+    <div class="rating-col rating-col-neutral">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-neutral">
+          <i class="ti ti-minus" aria-hidden="true" style="font-size:11px;"></i>
+          中性
+        </span>
+        <span class="rating-col-count">2</span>
+      </div>
+      
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">2383 Elite Material Co., Ltd.</span>
+            <span class="chip-change up">+6.71%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技3</span>
+            <span class="chip-tag">籌5</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">6274 6274</span>
+            <span class="chip-change up">+9.96%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技3</span>
+            <span class="chip-tag">籌5</span>
+          </div>
+        </div>
+    </div>
+    <div class="rating-col rating-col-sell">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-sell">
+          <i class="ti ti-arrow-down" aria-hidden="true" style="font-size:11px;"></i>
+          減碼
+        </span>
+        <span class="rating-col-count">4</span>
+      </div>
+      
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">2330 Taiwan Semiconductor Manufacturing Company Limited</span>
+            <span class="chip-change up">+2.06%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技3</span>
+            <span class="chip-tag">籌3</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">2408 Nanya Technology Corporation</span>
+            <span class="chip-change up">+6.55%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技3</span>
+            <span class="chip-tag">籌1</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">3711 ASE Technology Holding Co., Ltd.</span>
+            <span class="chip-change up">+7.14%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技2</span>
+            <span class="chip-tag">籌3</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">3665 BizLink Holding Inc.</span>
+            <span class="chip-change up">+9.67%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技2</span>
+            <span class="chip-tag">籌4</span>
+          </div>
+        </div>
+    </div>
+    <div class="rating-col rating-col-strong-sell">
+      <div class="rating-col-header">
+        <span class="rating-col-label rating-label-strong-sell">
+          <i class="ti ti-arrow-big-down-filled" aria-hidden="true" style="font-size:11px;"></i>
+          強力減碼
+        </span>
+        <span class="rating-col-count">1</span>
+      </div>
+      
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">2454 MediaTek Inc.</span>
+            <span class="chip-change up">+9.91%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技3</span>
+            <span class="chip-tag">籌0</span>
+          </div>
+        </div>
+    </div>
+  </div>
+  <details style="background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;margin-top:12px;">
+    <summary style="cursor:pointer;font-size:12px;font-weight:500;list-style:none;">
+      <i class="ti ti-info-circle" aria-hidden="true"></i> 評分邏輯說明
+    </summary>
+    <div class="scoring-key">
+      <div class="key-block">
+        <strong>技術面 (0-10)</strong>
+        均線多頭排列 +3 / KD 金叉 +2 / RSI 強勢 +2 / MACD 翻紅 +2 / 突破壓力 +1
+      </div>
+      <div class="key-block">
+        <strong>籌碼面 (0-10)</strong>
+        外資連買 +3 / 投信買超 +2 / 融資減少 +1 / 融券或借券動向 +2 / 合計買超 +1 / 集保主力增加 +1
+      </div>
+      <div class="key-block">
+        <strong>綜合評等 (技+籌)</strong>
+        強力加碼 ≥16 / 加碼 11-15 / 中性 8-10 / 減碼 4-7 / 強力減碼 ≤3
+      </div>
+    </div>
+  </details>
+</div>
+  
 <div class="section-header">市場指標綜合研判 (近30日)</div>
 <div class="grid-2">
   <div class="card">
@@ -101,450 +337,1647 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <div class="section-header">追蹤個股分析</div>
   <div class="stock-grid">
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>2330 Taiwan Semiconductor Manufacturing Company Limited</h3>
-    <div class="card-price positive">$2230.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +45.00 (+2.06%)</div>
+    <div>
+      <h3>2330 Taiwan Semiconductor Manufacturing Company Limited</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-sell">減碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技3 / 籌3
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">22,964 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$2,230.00</div>
+      <div class="card-change positive">↑ +45.00 (+2.06%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 22,964 張</div>
+        <div class="negative" style="font-size:11px;">較昨日 -6,356 張 (-21.7%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k2330"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 台積電 (2330) 專業分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>當日收盤2230元，單日上漲45元（+2.06%），顯示短線動能回升。股價站上MA5（2225）與MA20（2227），均線呈現多頭初步整理架構，但MA60數據缺失，長期趨勢需留意。KD值K=28.4、D=37.5處於相對低位，有向上交叉黃金交叉的機會；RSI=58.9偏中性偏多，未達超買區。MACD（51.14）仍低於訊號線（67.16），顯示動能尚未完全轉強。**支撐位**約2185～2200元，**壓力位**約2250～2270元。<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資今日小幅買超1,014張，但5日累計賣超40,184張、20日累計賣超高達141,828張，顯示中長期外資持續調節，籌碼壓力仍重。投信今日買超167張，5日買超16,315張，呈現積極承接態勢，形成一定支撐力道。融資餘額僅655張（+23），佔比極低，顯示散戶槓桿介入有限，**籌碼結構相對健康**；融券餘額僅2張，軋空效應微乎其微，整體籌碼面呈「外資賣、投信撐」的分歧格局。<br><br>---<br><br>## 3. 操作建議<br><br>**短線策略**：可採取**區間偏多操作**，觀察能否有效突破2250元壓力區。<br>- 🟢 **進場點**：回測2200～2210元附近，KD出現黃金交叉確認後可布局<br>- 🔴 **出場/停損點**：跌破2185元（前日收盤）視為多方失守，應執行停損<br>- ⚠️ **風險提示**：外資20日大幅賣超為最大隱憂，若美債殖利率走升或地緣政治風險升溫，外資可能持續調節；建議**控制倉位在30%以內**，避免重倉追高。<br><br>---<br>> 📌 *以上分析僅供參考，投資人應依據自身風險承受度審慎決策，股市存在風險，投資須謹慎。*</div>
+  <div id="kline_2330" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">2225.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">2227.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">58.9</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">28/38</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">2225.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">2227.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">58.9</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">28/38</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">股價自2185跳升至2230，單日強勢反彈，站上MA5（2225）與MA20（2227），短均線趨於收斂。KD值K=28.4低於D=37.5，仍處超賣回升階段，RSI=58.9偏多但未過熱。MACD（51.14）低於訊號線（67.16），動能仍偏弱，需觀察能否形成金叉。支撐參考2200，壓力區看2260～2300。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+1014</td><td class="negative">-40184</td><td class="negative">-141828</td></tr>
-    <tr><td>投信</td><td class="positive">+167</td><td class="positive">+16315</td><td class="positive">+53080</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+1,014</td>
+      <td class="negative">-40,184</td>
+      <td class="negative">-141,828</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="positive">+167</td>
+      <td class="positive">+16,315</td>
+      <td class="positive">+53,080</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+423</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+1,605</td>
+      <td class="negative">-23,869</td>
+      <td class="negative">-88,748</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">655</div><div class="metric-sm-change positive">+23</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">2</div><div class="metric-sm-change negative">-18</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>26,952</td>
+      <td class="negative">-82</td>
+      <td class="positive">+405</td>
+      <td class="positive">+1,697</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>100</td>
+      <td class="positive">+11</td>
+      <td class="negative">-17</td>
+      <td class="positive">+22</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日單日買超1,014張，但5日與20日分別累積賣超逾4萬及14萬張，中期籌碼仍在流出。投信則持續買進，20日累積買超逾5萬張，態度積極偏多。融資餘額26,952張，近日小幅減少，槓桿壓力不大。融券與借券餘額極低，空方力道有限，主要觀察外資是否持續回補。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線可留意2230站穩後試多，目標上看2280～2300。建議進場區間2220～2235，停損設於2185（前日低點）以下。惟外資中期仍賣超，建議輕倉操作，避免重押，待外資明確轉買超再加碼。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:49:53</div><div class="news-title">輝達新晶片出貨！台積電與伺服器供應鏈全面升級-財經焦點情報站 - CMoney投資網誌</div></div><div class="news-item"><div class="news-time">2026-05-19 23:40:47</div><div class="news-title">2330 台積電 - 台灣這十年，不只是換了一個政府。而是試著換了一種命運-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 22:56:53</div><div class="news-title">2330 台積電 - 美股早盤開高 台積電ADR揚升1.12％ 美股20日開盤走...-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 22:37:43</div><div class="news-title">2330 台積電 - 0520台股盤前-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 22:37:25</div><div class="news-title">2330 台積電 - 520行情失靈、外資卻喊5萬？ 00403A轉強觀察指標-股市爆料同學會 - CMoney</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>2454 MediaTek Inc.</h3>
-    <div class="card-price positive">$3550.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +320.00 (+9.91%)</div>
+    <div>
+      <h3>2454 MediaTek Inc.</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-strong-sell">強力減碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技3 / 籌0
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">5,636 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$3,550.00</div>
+      <div class="card-change positive">↑ +320.00 (+9.91%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 5,636 張</div>
+        <div class="negative" style="font-size:11px;">較昨日 -2,475 張 (-30.5%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k2454"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 聯發科 (2454) 專業分析報告<br><br>---<br><br>## 1. 📊 技術面分析<br><br>收盤價3,550元**單日大漲320元（約+9.9%）**，強勢突破MA5（3,319）及MA20（3,123），均線呈多頭排列。RSI達67.5，接近超買區間（70）但尚未觸頂，仍有上行空間。MACD柱狀體雖為負值（351.11低於訊號線389.86），顯示動能略有分歧需留意。**支撐位**參考MA5約3,319元，**壓力位**關注前高及整數關卡3,600∼3,700元區間。<br><br>---<br><br>## 2. 🏦 籌碼面分析<br><br>外資今日賣超431張、5日累計賣超3,350張，**主力法人態度偏保守**，與股價大漲形成背離，需警惕是否為短線散戶追價行為。投信亦同步賣超，機構信心不足訊號明顯。正面消息是**融資餘額大幅減少488張**（降至912張），代表槓桿買盤退場、籌碼趨於乾淨，有助於減輕後市賣壓，籌碼結構健康度中性偏正。<br><br>---<br><br>## 3. 💡 操作建議<br><br>**短線策略：** 股價單日暴漲近10%，建議**追高需謹慎**，可等待回測MA5（3,319）或3,400元整數關卡支撐確認後再擇機佈局。<br>- 🟢 **進場參考**：3,350∼3,420元回檔支撐區<br>- 🔴 **停損設定**：跌破MA20（3,123）以下出場<br>- ⚠️ **風險提示**：外資連續賣超背離股價上漲，須防範**假突破後回測**風險，控制單筆倉位不超過總資金15%。<br><br>---<br>> 📌 *以上分析僅供參考，不構成投資建議，投資人需自行評估風險。*</div>
+  <div id="kline_2454" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">3319.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">3123.25</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">67.5</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">51/51</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">3319.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">3123.25</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">67.5</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">51/51</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日大漲逾9%，突破MA5與MA20且站上3500關卡，短線強勢明顯。MA5已上穿MA20，均線多頭排列初步成形。KD值約50附近鈍化後回升，RSI達67.5接近超買區。MACD指標仍為負值（351 vs 訊號389），柱狀體尚未翻正，動能確認需進一步觀察。支撐參考3319（MA5），壓力關注3600–3700區間。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="negative">-431</td><td class="negative">-3350</td><td class="negative">-9</td></tr>
-    <tr><td>投信</td><td class="negative">-400</td><td class="negative">-1387</td><td class="positive">+4482</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="negative">-431</td>
+      <td class="negative">-3,350</td>
+      <td class="negative">-9</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-400</td>
+      <td class="negative">-1,387</td>
+      <td class="positive">+4,482</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+282</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="negative">-549</td>
+      <td class="negative">-4,738</td>
+      <td class="positive">+4,472</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">912</div><div class="metric-sm-change negative">-488</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">2</div><div class="metric-sm-change negative">-8</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>10,430</td>
+      <td class="positive">+133</td>
+      <td class="positive">+1,949</td>
+      <td class="positive">+1,098</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>106</td>
+      <td class="positive">+10</td>
+      <td class="negative">-10</td>
+      <td class="negative">-108</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日賣超431張，近5日累計賣超3350張，中期態度偏保守；投信今日同步賣超400張，近5日賣超1387張，但20日仍累積買超4482張，中線布局未全數撤退。融資餘額近5日增加1949張，顯示散戶追漲積極，需留意槓桿風險。融券餘額106張偏低，空方壓力有限。集保大戶資料缺失，難以判斷主力意圖。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線可順勢追多，但需注意單日大漲後拉回風險。建議待回測3400–3450獲支撐後再介入，停損設於3319（MA5）下方。RSI接近超買，切忌追高，控制部位，謹防外資持續賣壓導致回檔修正。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 22:51:18</div><div class="news-title">聯發科再奪ATD國際人才大獎 高階主管培育計畫助AI世代策略布局 - 壹蘋新聞網</div></div><div class="news-item"><div class="news-time">2026-05-19 18:08:36</div><div class="news-title">聯發科(2454)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 16:42:00</div><div class="news-title">聯發科再奪ATD國際人才大獎 高階主管培育計畫助AI世代策略布局 - 壹蘋新聞網</div></div><div class="news-item"><div class="news-time">2026-05-19 16:23:09</div><div class="news-title">2454 聯發科 - 今晚NVDA季報還重要嗎？-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 13:45:41</div><div class="news-title">2454 聯發科 - 讓工具幫你節省時間-股市爆料同學會 - CMoney</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>2408 Nanya Technology Corporation</h3>
-    <div class="card-price positive">$293.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +18.00 (+6.55%)</div>
+    <div>
+      <h3>2408 Nanya Technology Corporation</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-sell">減碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技3 / 籌1
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">148,145 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$293.00</div>
+      <div class="card-change positive">↑ +18.00 (+6.55%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 148,145 張</div>
+        <div class="positive" style="font-size:11px;">較昨日 +26,084 張 (+21.4%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k2408"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 南亞科技 (2408) 專業分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>當前收盤價293元，單日大漲18元（+6.5%），顯示強勢突破。股價站穩MA5（291.80）與MA20（270.40）之上，短中期均線呈多頭排列。RSI為66.4，接近超買區但尚有空間。MACD（18.25）略低於訊號線（18.83），出現輕微死叉疑慮，需觀察後續能否重新黃金交叉確認動能。**支撐位**參考MA5約291元，**壓力位**關注300元整數關卡。<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資今日賣超1,219張，近5日大幅賣超44,237張，**籌碼壓力明顯**；但20日累計仍買超38,855張，顯示中期佈局仍在。投信近5日賣超14,438張，法人短線呈現獲利了結態勢。融資餘額減少469張，融券大幅減少709張（軋空效應明顯），今日急漲部分動力來自空單回補。整體籌碼短線偏鬆，需警惕法人持續出貨壓力。<br><br>---<br><br>## 3. 操作建議<br><br>| 策略 | 點位 |<br>|------|------|<br>| 短線追漲需謹慎 | 建議等待拉回 |<br>| 理想買進區間 | 285～290元 |<br>| 停損參考 | 跌破MA5（291元）以下收盤 |<br>| 短線目標 | 300～310元 |<br><br>> ⚠️ **風險提示**：今日急漲伴隨外資與投信雙賣超，軋空後動能恐減弱；300元為重要心理關卡，建議**分批操作、嚴守停損**，避免追高套牢。半導體景氣能見度仍需持續觀察。</div>
+  <div id="kline_2408" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">291.80</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">270.40</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">66.4</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">48/53</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">291.80</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">270.40</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">66.4</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">48/53</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日大漲至293元，突破MA5（291.80）與MA20（270.40），均線呈多頭排列。RSI達66.4，接近超買區但尚有空間；KD中K值低於D值（47.6/52.7），出現小幅背離。MACD略低於訊號線，動能稍顯疲弱。近期支撐在MA5約292元，壓力區看300元整數關卡。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="negative">-1219</td><td class="negative">-44237</td><td class="positive">+38855</td></tr>
-    <tr><td>投信</td><td class="negative">-216</td><td class="negative">-14438</td><td class="positive">+28014</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="negative">-1,219</td>
+      <td class="negative">-44,237</td>
+      <td class="positive">+38,855</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-216</td>
+      <td class="negative">-14,438</td>
+      <td class="positive">+28,014</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+919</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="negative">-516</td>
+      <td class="negative">-58,675</td>
+      <td class="positive">+66,869</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">9,810</div><div class="metric-sm-change negative">-469</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">117</div><div class="metric-sm-change negative">-709</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>108,337</td>
+      <td class="positive">+1,977</td>
+      <td class="negative">-4,390</td>
+      <td class="negative">-4,366</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>1,403</td>
+      <td class="positive">+382</td>
+      <td class="negative">-762</td>
+      <td class="positive">+409</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日賣超1,219張，近5日累計大幅賣超44,237張，但20日累計仍呈買超，顯示中期仍有布局痕跡。投信同樣短線轉賣，近5日賣超14,438張。融資餘額雖偏高（108,337張），但5日與20日均呈減少，籌碼略有清洗跡象。融券5日減少762張，空方回補有限。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線急漲後宜觀望，待量縮整理後確認支撐再進場。若守穩292元MA5可小量追多，目標看300～305元；跌破290元視為止損訊號。外資近期持續賣超為主要風險，建議控制部位，勿重押。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:15:44</div><div class="news-title">2408 南亞科- 4月4千點獲利😇月月千點入袋💕五月避險修正買超跌股🌟-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 23:02:00</div><div class="news-title">個股：中環(2323)5/18～5/19取得南亞科(2408)股票1,426張，每股均價289.58元 - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 15:23:52</div><div class="news-title">2408 南亞科- 台股記憶體你被嚇到了嗎？-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 13:30:00</div><div class="news-title">記憶體虛累累！三大法人出貨「這4檔」10.2萬張 連斬南亞科3次爽拿180億元 - FTNN 新聞網</div></div><div class="news-item"><div class="news-time">2026-05-19 12:26:38</div><div class="news-title">2408 南亞科 - 今早開盤前跟同學說的落底區差不多。😊-股市爆料同學會 - CMoney</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>3711 ASE Technology Holding Co., Ltd.</h3>
-    <div class="card-price positive">$510.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +34.00 (+7.14%)</div>
+    <div>
+      <h3>3711 ASE Technology Holding Co., Ltd.</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-sell">減碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技2 / 籌3
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">17,919 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$510.00</div>
+      <div class="card-change positive">↑ +34.00 (+7.14%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 17,919 張</div>
+        <div class="negative" style="font-size:11px;">較昨日 -7,244 張 (-28.8%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k3711"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># ASE Technology (3711) 專業分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>當前收盤價510元，單日大漲**7.1%**（+34元），顯示強勢突破。然而價格位於**MA20（512.3元）下方**，MA5（503元）呈上彎，短期均線尚未完全整齊排列。**KD值偏低（K=16.4, D=22.1）**處於超賣區，存在技術性反彈動能；RSI=56.2回升至中性偏多區間。MACD值雖為正（20.02），但低於訊號線（29.61），顯示動能仍在修復中。**關鍵壓力：512~520元；支撐：503元（MA5）**。<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資**今日買超2,528張**，但5日累計賣超7,585張、20日大量賣超38,928張，顯示**中長期外資持續出脫**，今日回補可能屬短線操作而非趨勢轉向。投信5日買超1,364張，態度略偏積極。融資餘額增加210張，散戶槓桿參與度提升，需留意追高風險；融券大幅減少251張（回補），**軋空效應**是今日急漲的部分原因，籌碼健康度**中性偏疑慮**。<br><br>---<br><br>## 3. 操作建議<br><br>| 策略 | 建議 |<br>|------|------|<br>| 短線操作 | 觀望為主，待回測確認支撐 |<br>| 進場點位 | 503~507元（MA5附近）逢低布局 |<br>| 目標價位 | 520~530元（突破MA20後） |<br>| 停損設定 | 跌破498元嚴格停損 |<br><br>> ⚠️ **風險提示**：今日漲幅過大且含軋空成分，追高風險極高。外資20日持續賣超近4萬張為最大隱憂，建議**等待回測不破支撐後再介入**，切勿追漲，控制部位在整體資金的20%以內。</div>
+  <div id="kline_3711" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">503.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">512.30</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">56.2</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">16/22</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">503.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">512.30</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">56.2</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">16/22</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日收盤510元，大漲34元（7.1%）突破MA5（503），但仍在MA20（512.3）下方，形成壓力。KD值K=16.4、D=22.1處於超賣區且有黃金交叉跡象，RSI=56.2偏中性偏強。MACD（20.02）低於訊號線（29.61），柱狀圖仍為負值，趨勢尚未完全翻多。支撐參考503元，壓力在512~515元區間。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+2528</td><td class="negative">-7585</td><td class="negative">-38928</td></tr>
-    <tr><td>投信</td><td class="negative">-23</td><td class="positive">+1364</td><td class="positive">+22970</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+2,528</td>
+      <td class="negative">-7,585</td>
+      <td class="negative">-38,928</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-23</td>
+      <td class="positive">+1,364</td>
+      <td class="positive">+22,970</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="negative">-134</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+2,371</td>
+      <td class="negative">-6,222</td>
+      <td class="negative">-15,958</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">636</div><div class="metric-sm-change positive">+210</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">11</div><div class="metric-sm-change negative">-251</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>7,941</td>
+      <td class="negative">-192</td>
+      <td class="positive">+483</td>
+      <td class="positive">+3,269</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>84</td>
+      <td class="positive">+0</td>
+      <td class="negative">-27</td>
+      <td class="positive">+84</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日單日大買2,528張，但5日及20日累計分別賣超7,585張與38,928張，中期仍呈明顯賣壓。投信今日小賣23張，但20日累積買超22,970張，態度偏多。融資餘額7,941張，今日減少192張，顯示短線散戶降槓桿。融券餘額僅84張且持續減少，空方力道有限。集保大戶資料暫無變動。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線可觀察能否站穩並突破MA20（512元）確認多方信號，突破可輕倉追多，目標525~530元。建議停損設於503元（MA5）下方。風險提示：外資中期持續賣超，反彈力道需驗證，宜控制部位，避免重倉追高。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:20:00</div><div class="news-title">封測巨擘的王者歸來：日月光投控，下一座半導體千元神山的起跑點 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 10:17:41</div><div class="news-title">討論牆 | 盤中速報 - 日月光投控(3711)大跌7.31%，報507元 - LINE TODAY</div></div><div class="news-item"><div class="news-time">2026-05-19 09:18:00</div><div class="news-title">《半導體》日月光投控子公司 矽品斥資5.35億元向聖暉取得廠務工程 - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 08:42:32</div><div class="news-title">3711 日月光投控 - 漲成這樣，該稍微休息一下了？-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 04:49:04</div><div class="news-title">3711 日月光投控- 看來最近在整盤我要用薛丁格的開盤只要我兩三個禮拜不看就...-股市爆料同學會 - CMoney</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>2383 Elite Material Co., Ltd.</h3>
-    <div class="card-price positive">$4690.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +295.00 (+6.71%)</div>
+    <div>
+      <h3>2383 Elite Material Co., Ltd.</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-neutral">中性</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技3 / 籌5
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">2,329 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$4,690.00</div>
+      <div class="card-change positive">↑ +295.00 (+6.71%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 2,329 張</div>
+        <div class="positive" style="font-size:11px;">較昨日 +514 張 (+28.3%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k2383"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 2383 宏和精密材料 (Elite Material Co.) 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>今日收盤價4,690元，**單日大漲295元（+6.71%）**，強勢突破MA20（4,659元），顯示多頭動能明顯回升。MA5（4,556）< MA20（4,659）< 收盤價，短期均線正在向上翻揚。KD值（K=29.5, D=31.8）位於低檔區域，有**黃金交叉**形成跡象，具反彈動能。RSI=54.3處於中性偏多區間。MACD雖仍為負背離（255 < 訊號線349），顯示中期趨勢尚待確認。**支撐參考4,556（MA5），壓力關注4,800～5,000元整數關卡。**<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資呈現**持續買超**態勢，今日買超560張，近5日累計1,394張、近20日累計2,045張，為主要支撐力道。然而投信**明顯賣超**，今日賣出115張，近5日累計賣超658張，法人方向出現分歧，需留意投信持續出脫的壓力。融資餘額僅100張（+42），絕對水位極低，**籌碼相對乾淨**，散戶槓桿風險不高。融券僅1張，軋空題材可忽略。整體籌碼結構尚屬健康，外資態度為關鍵觀察指標。<br><br>---<br><br>## 3. 操作建議<br><br>**短線策略（積極型）**：今日大漲後可觀察**隔日是否維持4,650以上**，確認站穩後可考慮分批介入，目標看4,900～5,000元區間。**進場參考點**：回測4,600～4,650元整理不破可低接；**停損設定**：跌破MA5（4,556元）以下應減碼出場。<br><br>> ⚠️ **風險提示**：MACD尚未黃金交叉、投信持續賣超，單日暴漲後需防**隔日獲利了結賣壓**，建議控制部位，切勿重壓追高。</div>
+  <div id="kline_2383" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">4556.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">4659.50</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">54.3</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">30/32</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">4556.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">4659.50</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">54.3</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">30/32</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日收盤4690，大幅跳升295點，突破MA5（4556）與MA20（4659.50）雙均線壓力，短線強勢。KD值K=29.5、D=31.8雖偏低但有向上交叉跡象，RSI=54.3居中偏強。MACD指標（255.28）仍低於訊號線（349.77），背離待收斂。支撐參考MA20約4660，壓力關注前高區域。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+560</td><td class="positive">+1394</td><td class="positive">+2045</td></tr>
-    <tr><td>投信</td><td class="negative">-115</td><td class="negative">-658</td><td class="positive">+1350</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+560</td>
+      <td class="positive">+1,394</td>
+      <td class="positive">+2,045</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-115</td>
+      <td class="negative">-658</td>
+      <td class="positive">+1,350</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+45</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+490</td>
+      <td class="positive">+736</td>
+      <td class="positive">+3,395</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">100</div><div class="metric-sm-change positive">+42</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">1</div><div class="metric-sm-change positive">+1</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>1,941</td>
+      <td class="negative">-2</td>
+      <td class="negative">-10</td>
+      <td class="positive">+31</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>52</td>
+      <td class="positive">+2</td>
+      <td class="positive">+0</td>
+      <td class="positive">+6</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日買超560張，近5日累計+1394張、20日達+2045張，持續積極布局，籌碼動向偏多。投信今日賣超115張，短期轉為賣壓，近5日累計-658張，與外資方向分歧需留意。融資餘額1941張，近期變動極小，散戶槓桿意願低。融券與借券餘額皆近乎零，空方壓力幾乎不存在。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線可於4660（MA20）附近逢拉回承接，目標看4800～4900區間。停損設於4600以下，跌破MA20視為短線轉弱訊號。MACD尚未黃金交叉，建議輕倉介入，注意量能是否持續放大確認突破有效性。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:52:00</div><div class="news-title">《電零組》注意股：台光電 近5日跌7.45% - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 12:40:37</div><div class="news-title">台光電(2383)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 10:50:08</div><div class="news-title">【05/19券商評等報告彙整】台光電(2383) 今日僅1家券商發布績效評等報告，評價為看多，目標價為6,000元。 - CMoney投資網誌</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>3037 Unimicron Technology Corp.</h3>
-    <div class="card-price positive">$905.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +82.00 (+9.96%)</div>
+    <div>
+      <h3>3037 Unimicron Technology Corp.</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-buy">加碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技5 / 籌6
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">29,979 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$905.00</div>
+      <div class="card-change positive">↑ +82.00 (+9.96%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 29,979 張</div>
+        <div class="positive" style="font-size:11px;">較昨日 +9,361 張 (+45.4%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k3037"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 3037 欣興電子 當前分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>當日股價大幅跳漲至905元，單日漲幅約**+9.96%**，明顯突破MA5（836.6）及MA20（847.3），形成強勢突破型態。成交量近3千萬股，量價配合良好，顯示市場積極追價。KD值（K=42.2, D=30.3）尚未過熱，仍有上升空間。RSI 52.5處於中性偏多區間。MACD雖低於訊號線（50.68 vs 62.36），存在短期背離隱憂。**近期支撐參考MA20約847元，壓力區留意前高測試。**<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資今日大舉買超**6,820張**，為強烈買盤訊號，惟20日累計仍賣超17,328張，顯示中期籌碼尚未完全回補。投信今日買超410張，5日小幅賣超，態度略為保守。**融資單日暴增+1,709張**，融資餘額急速擴張至2,312張，散戶追價跡象明顯，需警惕籌碼浮動風險。融券減少46張，空方回補助攻漲勢。整體籌碼健康度**偏中性，外資動向為關鍵觀察指標。**<br><br>---<br><br>## 3. 操作建議<br><br>| 操作項目 | 建議區間 |<br>|----------|----------|<br>| 短線追價區 | 895–910元（量縮回測確認） |<br>| 支撐止損點 | 跌破 **847元（MA20）** 宜減碼 |<br>| 短線目標 | 第一目標 **950–960元** |<br>| 風險控制 | 單筆風險建議控制在 **3–5%** 以內 |<br><br>> ⚠️ **風險提示**：融資單日急增為重要警訊，若後續無外資持續進駐支撐，易形成籌碼鬆動賣壓。MA60數值異常（顯示為0），建議補充完整資料後再做長線判斷。追高需設妥停損，避免追高套牢風險。</div>
+  <div id="kline_3037" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">836.60</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">847.30</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">52.5</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">42/30</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">836.60</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">847.30</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">52.5</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">42/30</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日股價大漲至905元，單日急漲近10%，突破MA5（836.6）與MA20（847.3）壓力，短線強勢訊號明確。KD（42/30）自低檔回升、RSI52.5中性偏強，惟MACD（50.68）仍低於訊號線（62.36），動能背離需留意。支撐區間在847～837元，上方壓力約920～950元。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+6820</td><td class="positive">+738</td><td class="negative">-17328</td></tr>
-    <tr><td>投信</td><td class="positive">+410</td><td class="negative">-553</td><td class="positive">+4824</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+6,820</td>
+      <td class="positive">+738</td>
+      <td class="negative">-17,328</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="positive">+410</td>
+      <td class="negative">-553</td>
+      <td class="positive">+4,824</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+1,129</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+8,358</td>
+      <td class="positive">+185</td>
+      <td class="negative">-12,504</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">2,312</div><div class="metric-sm-change positive">+1,709</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">34</div><div class="metric-sm-change negative">-46</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>37,241</td>
+      <td class="negative">-260</td>
+      <td class="negative">-514</td>
+      <td class="positive">+3,366</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>344</td>
+      <td class="positive">+131</td>
+      <td class="positive">+21</td>
+      <td class="positive">+190</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日大幅買超6,820張，為主要推升力道，但20日累計仍賣超17,328張，中期態度尚未明朗。投信今日買超410張、20日累積買超4,824張，態度相對積極。融資餘額今日減少260張，顯示散戶未追高，籌碼相對穩健。融券及借券量偏低，空方壓力不大。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線急漲後宜觀察量能是否持續，可於拉回至870～880元附近分批布局，突破920元可加碼追強。停損設於850元以下（跌破MA20）。注意外資中期賣超背景，單日買超是否為持續性訊號仍需確認，控制倉位為宜。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 22:34:01</div><div class="news-title">欣興(3037) 個股概覽 | 個股 - 股市 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 14:53:08</div><div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 12:23:27</div><div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 11:51:51</div><div class="news-title">欣興(3037)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 09:54:01</div><div class="news-title">【即時新聞】欣興目標價上修至1225元，AI需求推升ABF載板供需缺口 - CMoney投資網誌</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>3665 BizLink Holding Inc.</h3>
-    <div class="card-price positive">$2155.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +190.00 (+9.67%)</div>
+    <div>
+      <h3>3665 BizLink Holding Inc.</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-sell">減碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技2 / 籌4
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">2,378 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$2,155.00</div>
+      <div class="card-change positive">↑ +190.00 (+9.67%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 2,378 張</div>
+        <div class="positive" style="font-size:11px;">較昨日 +311 張 (+15.0%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k3665"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># BizLink Holding Inc. (3665) 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>收盤價2155元，單日大漲9.67%，顯示強力反彈訊號。然而股價仍低於MA20（2554），均線結構偏空。KD值（K=13.2, D=7.6）處於極度超賣區，RSI=32.1接近超賣門檻（30），顯示短線反彈動能蓄積。MACD=-60.04仍深度負值，與訊號線背離甚大，趨勢尚未翻多。**支撐位**約2000-2050元（MA5附近），**壓力位**為2300-2400元及MA20的2554元。<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資呈現積極買超，今日買超528張，近5日累積4090張、近20日達10598張，顯示外資持續佈局，籌碼面具支撐力道。然而投信明顯反向操作，今日賣超133張，近5日累計賣超高達5202張，法人方向出現分歧，需留意投信持續出脫的壓力。融資餘額226張（-27張），槓桿資金撤退，**籌碼健康度提升**，浮額減少有利多頭反攻。<br><br>---<br><br>## 3. 操作建議<br><br>**短線策略**：技術指標超賣反彈搭配外資買超，短線可謹慎偏多操作。<br>- 📌 **進場點位**：可於2100-2150元區間分批介入<br>- 🎯 **目標壓力**：短線目標2300元，強力突破後看2554（MA20）<br>- 🛑 **停損設定**：跌破2000元（整數關卡）應停損出場<br>- ⚠️ **風險提示**：MACD仍深度負值、投信持續賣超，反彈力道是否持續需觀察量能配合，**建議控制倉位在3成以內**，切勿重壓。</div>
+  <div id="kline_3665" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">2046.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">2554.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">32.1</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">13/8</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">2046.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">2554.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">32.1</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">13/8</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">收盤價2155，單日大漲近10%，但仍低於MA20（2554）壓力，均線呈空頭排列。KD值K=13.2、D=7.6處於超賣區，RSI=32.1接近超賣邊緣，顯示短線有技術反彈動能。MACD=-60.04仍在負值且低於訊號線，中期趨勢偏弱，需觀察2200一帶能否有效突破。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+528</td><td class="positive">+4090</td><td class="positive">+10598</td></tr>
-    <tr><td>投信</td><td class="negative">-133</td><td class="negative">-5202</td><td class="negative">-6929</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+528</td>
+      <td class="positive">+4,090</td>
+      <td class="positive">+10,598</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-133</td>
+      <td class="negative">-5,202</td>
+      <td class="negative">-6,929</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+82</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+477</td>
+      <td class="negative">-1,112</td>
+      <td class="positive">+3,669</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">226</div><div class="metric-sm-change negative">-27</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">1</div><div class="metric-sm-change negative">-4</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>2,806</td>
+      <td class="negative">-126</td>
+      <td class="positive">+623</td>
+      <td class="positive">+248</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>23</td>
+      <td class="positive">+2</td>
+      <td class="negative">-43</td>
+      <td class="negative">-55</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日買超528張，20日累計大幅買超10598張，為主要支撐力道。投信卻持續賣出，20日賣超近6929張，形成外資與投信明顯背離。融資餘額2806張，5日小增，槓桿散戶仍在場。融券餘額極低，軋空效應有限。集保資料暫無法參考，整體籌碼以外資主導。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線技術反彈格局，可留意2200附近能否站穩作為觀察點，守住則有機會測試2300。建議進場後設停損於2050（前低支撐），風險在投信持續調節及均線下壓，操作宜輕倉短進短出，勿重押。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:53:31</div><div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-1) - 上市櫃 - 旺得富理財網</div></div><div class="news-item"><div class="news-time">2026-05-19 23:52:00</div><div class="news-title">《其他電》注意股：貿聯-KY 近5日跌28.29% - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 23:44:00</div><div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-1) - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 23:44:00</div><div class="news-title">《台北股市》處置股：20日61檔「驚見大立光」貿聯-KY等6人全抓(2-2) - 富聯網</div></div><div class="news-item"><div class="news-time">2026-05-19 12:33:00</div><div class="news-title">股民注意！大立光、貿聯-KY等6檔股明起「抓去關」 - Yahoo新聞</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>6223 6223</h3>
-    <div class="card-price negative">$5650.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value negative">↓ -30.00 (-0.53%)</div>
+    <div>
+      <h3>6223 6223</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-buy">加碼</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技5 / 籌6
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">1,180 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price negative">$5,650.00</div>
+      <div class="card-change negative">↓ -30.00 (-0.53%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 1,180 張</div>
+        <div class="positive" style="font-size:11px;">較昨日 +193 張 (+19.6%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k6223"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 6223 技嘉 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>目前股價 **5,650元**，收盤略低於前日（-30元），顯示短線賣壓存在。MA5（5,818）高於現價，形成**短線壓力**；MA20（5,290）低於現價，中期均線仍具支撐，整體均線趨勢偏多。KD值 K=50、D=56.9，K線下穿D線有死亡交叉疑慮，需觀察。RSI=62.1仍在強勢區但未過熱。MACD柱狀量雖小但多頭排列（379>378），支撐有限。**支撐區：5,500～5,600；壓力區：5,818（MA5）～5,900。**<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資**今日賣超168張**，但5日累積買超307張、20日累積買超994張，中長線仍偏多方向，短線有獲利了結跡象。投信今日賣超84張，但5日累積仍買超194張，中短期態度尚正面。融資餘額增加68張至100張，顯示**散戶追價意願升溫**，需留意融資增而股價下跌的背離風險。融券為零，無軋空題材。整體籌碼結構法人主導，尚屬健康，但短線賣壓需消化。<br><br>---<br><br>## 3. 操作建議<br><br>| 策略 | 點位 |<br>|------|------|<br>| 短線買進參考 | 5,500～5,600 整理後止穩再進場 |<br>| 壓力目標 | 5,818（MA5）突破後看 6,000 |<br>| 停損設定 | 跌破 5,450 則出場 |<br><br>**短線宜保守觀望**，等待股價重新站上MA5（5,818）確認轉強再追進。融資增量需警惕，避免短線追高。中線投資者可於5,500附近分批佈局，以20日均線作為多空分水嶺，嚴守停損紀律。<br><br>> ⚠️ **風險提示**：以上分析僅供參考，股市有風險，請依自身風險承受度操作。</div>
+  <div id="kline_6223" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">5818.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">5290.25</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">62.1</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">50/57</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">5818.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">5290.25</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">62.1</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">50/57</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">股價5650元，較前日小跌30元，位於MA5（5818）下方，短線承壓，但站穩MA20（5290）之上，中期趨勢仍偏多。KD值K=50、D=56.9，K線向下穿越D線有死叉疑慮；RSI=62.1尚在健康區間；MACD柱狀略轉正（379.14 vs 378.31），多空拉鋸。支撐參考5500，壓力在MA5的5818附近。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="negative">-168</td><td class="positive">+307</td><td class="positive">+994</td></tr>
-    <tr><td>投信</td><td class="negative">-84</td><td class="positive">+194</td><td class="positive">+588</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="negative">-168</td>
+      <td class="positive">+307</td>
+      <td class="positive">+994</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-84</td>
+      <td class="positive">+194</td>
+      <td class="positive">+588</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+14</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="negative">-238</td>
+      <td class="positive">+501</td>
+      <td class="positive">+1,582</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">100</div><div class="metric-sm-change positive">+68</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">0</div><div class="metric-sm-change negative">+0</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>1,219</td>
+      <td class="positive">+20</td>
+      <td class="negative">-201</td>
+      <td class="negative">-45</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>6</td>
+      <td class="negative">-4</td>
+      <td class="negative">-5</td>
+      <td class="positive">+3</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日賣超168張，但5日與20日累計仍買超307/994張，中期佈局意圖明確；投信今日同步賣超84張，但20日累計買超588張，態度仍偏多。融資餘額1219張，今日小增20張，5日減少201張，籌碼略為沉澱。融券及借券餘額極低，空方壓力幾乎可忽略。集保大戶資料未揭露，需留意後續變化。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線宜觀望為主，等待股價回測5500支撐止穩或有效突破MA5（5818）再行布局。建議進場點：5500附近，目標5800～5900，停損設於5400以下。留意外資是否連續賣超轉向，為主要風險。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 20:09:03</div><div class="news-title">旺矽(6223)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 13:50:02</div><div class="news-title">6223 旺矽 - 萬一在5/29前進處置的話會不會被MSCI撤銷成分股啊？？有...-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 10:14:50</div><div class="news-title">討論牆 | 盤中速報 - 旺矽(6223)大跌7.01%，報5705元 - LINE TODAY</div></div><div class="news-item"><div class="news-time">2026-05-19 09:20:08</div><div class="news-title">【26Q1財報公告】旺矽(6223) Q1 營收39.3307億元，創歷史新高，季增2.53%、年成長39.04%-CMoney 小編 - CMoney投資網誌</div></div><div class="news-item"><div class="news-time">2026-05-19 09:06:10</div><div class="news-title">6223 旺矽 - 跌破2200，跳水了。-股市爆料同學會 - CMoney</div></div></div>
+  
 </div>
-<div class="card">
+<div class="stock-card">
+  
   <div class="card-header">
-    <h3>6274 6274</h3>
-    <div class="card-price positive">$1325.00</div>
-  </div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="metric-label">漲跌</div>
-      <div class="metric-value positive">↑ +120.00 (+9.96%)</div>
+    <div>
+      <h3>6274 6274</h3>
+      <div class="card-header-sub">
+        綜合評等 <span class="rating-badge rating-label-neutral">中性</span>
+        <span style="margin-left:8px;font-size:11px;color:#999;">
+          技3 / 籌5
+        </span>
+      </div>
     </div>
-    <div class="metric">
-      <div class="metric-label">成交量</div>
-      <div class="metric-value">706 張</div>
+    <div style="text-align:right;min-width:160px;">
+      <div class="card-price positive">$1,325.00</div>
+      <div class="card-change positive">↑ +120.00 (+9.96%)</div>
+      <div class="card-volume">
+        <div class="card-volume-main">成交量 706 張</div>
+        <div class="negative" style="font-size:11px;">較昨日 -866 張 (-55.1%)</div>
+      </div>
     </div>
   </div>
-  <div class="chart-container" style="height:200px;">
-    <canvas id="k6274"></canvas>
+  
+  <!-- K 線圖 + 成交量 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📊 K 線圖 + 成交量 (近 60 日)
   </div>
-  <div class="analysis-box">
-    <div class="analysis-title">AI 分析</div>
-    <div class="analysis-text"># 6274 台燿 分析報告<br><br>---<br><br>## 1. 技術面分析<br><br>今日收盤價1,325元，單日大漲**120元（約+9.96%）**，帶量突破，多頭氣勢強勁。股價站上MA5（1,264）與MA20（1,226），均線呈多頭排列。RSI達66.3，接近超買區但尚未到達70警戒線，仍有上漲空間。KD指標K=54、D=55.5，呈現中性偏多。值得注意的是**MACD（119.27）低於訊號線（145.55）**，形成背離警訊，短線需留意動能是否持續。近期支撐參考MA5約1,264元，壓力區關注前高。<br><br>---<br><br>## 2. 籌碼面分析<br><br>外資動向積極，**今日買超265張，20日累計買超474張**，呈現持續佈局態勢，為最主要支撐力道。然而投信今日賣超47張，5日合計賣超142張，與外資方向相反，籌碼面出現分歧。融資餘額僅26張且大幅減少82張，顯示**散戶槓桿籌碼極輕，反而是健康訊號**，代表此波上漲以實單為主，非融資拉抬。融券僅1張，軋空效應有限，整體籌碼結構偏健康。<br><br>---<br><br>## 3. 操作建議<br><br>**短線策略：** 今日大漲近10%屬強勢突破，建議**追高需謹慎**，可等待回測MA5（1,264元）附近確認支撐後再行介入，風險報酬比較佳。<br>- 🟢 **支撐/買進參考**：1,260～1,280元區間<br>- 🔴 **壓力/獲利參考**：1,380～1,400元區間<br>- ⚠️ **停損參考**：跌破1,220元（MA20）則多頭格局轉弱<br><br>**風險提示：** MACD出現負背離、投信持續賣出，以及單日漲幅過大後可能面臨短線獲利回吐壓力，控制部位比例為宜。</div>
+  <div id="kline_6274" style="width:100%;height:280px;"></div>
+  
+  <!-- 技術面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📈 技術面
   </div>
-  <div class="section-title">技術指標</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">MA5</div><div class="metric-sm-value">1264.00</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">MA20</div><div class="metric-sm-value">1226.05</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">RSI</div><div class="metric-sm-value">66.3</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">KD</div><div class="metric-sm-value">54/56</div></div>
+  <div class="indicator-row">
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">1264.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">1226.05</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">RSI(14)</div><div class="indicator-cell-value">66.3</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">KD</div><div class="indicator-cell-value">54/56</div></div>
   </div>
-  <div class="section-title">三大法人 (張)</div>
-  <table class="table">
+  
+  <details class="collapsible">
+    <summary>✨ AI 技術面分析</summary>
+    <div class="collapsible-content">今日大漲9.96%，收1325元，突破MA5（1264）與MA20（1226），短期均線多頭排列。KD（54/55.5）偏多但未超買，RSI 66.3接近強勢區。MACD柱狀量雖低於訊號線，但正值擴張中。支撐參考MA5約1264元，上方壓力關注前高與整數關卡1350元。</div>
+  </details>
+  
+  <!-- 三大法人 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    👥 籌碼面 - 三大法人買賣超 (張)
+  </div>
+  <table class="data-table">
     <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-    <tr><td>外資</td><td class="positive">+265</td><td class="positive">+823</td><td class="positive">+474</td></tr>
-    <tr><td>投信</td><td class="negative">-47</td><td class="negative">-142</td><td class="positive">+2207</td></tr>
+    <tr>
+      <td>外資</td>
+      <td class="positive">+265</td>
+      <td class="positive">+823</td>
+      <td class="positive">+474</td>
+    </tr>
+    <tr>
+      <td>投信</td>
+      <td class="negative">-47</td>
+      <td class="negative">-142</td>
+      <td class="positive">+2,207</td>
+    </tr>
+    <tr>
+      <td>自營</td>
+      <td class="positive">+7</td>
+      <td>—</td><td>—</td>
+    </tr>
+    <tr class="row-total">
+      <td>合計</td>
+      <td class="positive">+225</td>
+      <td class="positive">+682</td>
+      <td class="positive">+2,680</td>
+    </tr>
   </table>
-  <div class="section-title">融資融券</div>
-  <div class="metrics-row">
-    <div class="metric-sm"><div class="metric-sm-label">融資</div><div class="metric-sm-value">26</div><div class="metric-sm-change negative">-82</div></div>
-    <div class="metric-sm"><div class="metric-sm-label">融券</div><div class="metric-sm-value">1</div><div class="metric-sm-change negative">-6</div></div>
+  
+  <!-- 融資融券借券 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    💰 融資 / 融券 / 借券 (張)
   </div>
-  <div class="section-title">相關新聞</div>
+  <table class="data-table">
+    <tr><th>項目</th><th>今日餘額</th><th>今日增減</th><th>5日增減</th><th>20日增減</th></tr>
+    <tr>
+      <td>融資</td>
+      <td>9,966</td>
+      <td class="negative">-46</td>
+      <td class="negative">-420</td>
+      <td class="positive">+2,704</td>
+    </tr>
+    <tr>
+      <td>融券</td>
+      <td>129</td>
+      <td class="negative">-3</td>
+      <td class="negative">-91</td>
+      <td class="negative">-341</td>
+    </tr>
+    <tr>
+      <td>借券</td>
+      <td>0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+      <td class="positive">+0</td>
+    </tr>
+  </table>
+  
+  <details class="collapsible">
+    <summary>✨ AI 籌碼面分析</summary>
+    <div class="collapsible-content">外資今日買超265張，近5日與20日均持續加碼，籌碼偏多。投信今日賣超47張，近5日小幅減碼，但20日仍大幅買超2207張，中期立場偏多。融資餘額近5日減少420張，顯示散戶去槓桿，籌碼趨穩。融券5日大減91張，空方回補助漲。集保大戶數據暫缺，需留意後續變化。</div>
+  </details>
+  
+  <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
+    <summary>🎯 AI 操作建議</summary>
+    <div class="collapsible-content">短線急漲後宜觀察1325元能否站穩。積極者可於小幅回測1280～1290元附近分批介入，目標看1350元。停損設MA5（1264元）以下，防止假突破。單日漲幅近10%，追高風險偏高，建議控制倉位。</div>
+  </details>
+  
+  <!-- 新聞 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:12px 0 8px 0;">
+    📰 相關新聞
+  </div>
   <div class="news-list"><div class="news-item"><div class="news-time">2026-05-19 23:10:41</div><div class="news-title">【即時新聞】台燿公告4月自結淨利6.84億元 EPS達2.35元並推進泰國廠擴充 - CMoney投資網誌</div></div><div class="news-item"><div class="news-time">2026-05-19 22:46:12</div><div class="news-title">台燿4月 EPS 2.35元 擴充泰國廠 - UDN</div></div><div class="news-item"><div class="news-time">2026-05-19 20:48:29</div><div class="news-title">台燿(6274)主力進出、主力買賣超張數與買賣家數差-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 19:59:14</div><div class="news-title">台燿(6274)董監事與大股東持股申報轉讓查詢-股市爆料同學會 - CMoney</div></div><div class="news-item"><div class="news-time">2026-05-19 19:12:28</div><div class="news-title">台燿(6274)- - 券商分點進出買賣統計-股市爆料同學會 - CMoney</div></div></div>
+  
 </div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
-new Chart(document.getElementById('k2330'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[1955.0, 2000.0, 1990.0, 2055.0, 2080.0, 2085.0, 2030.0, 2025.0, 2050.0, 2050.0, 2080.0, 2185.0, 2265.0, 2215.0, 2180.0, 2135.0, 2275.0, 2250.0, 2250.0, 2310.0, 2290.0, 2235.0, 2255.0, 2220.0, 2270.0, 2265.0, 2240.0, 2205.0, 2185.0, 2230.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_2330'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[1963.5934534984658, 1928.707275390625, 1928.707275390625, 1973.5609329578488], [1888.837375180651, 1858.9349365234375, 1858.9349365234375, 1903.7885945092576], [1933.6910862972861, 1893.8211669921875, 1888.8374270790503, 1953.6260459498355], [1873.8861581307872, 1883.8536376953125, 1873.8861581307872, 1893.821117259838], [1769.2275916673862, 1804.11376953125, 1764.2438519725483, 1804.11376953125], [1863.9187242662586, 1843.9837646484375, 1824.0488050306167, 1883.8536838840794], [1878.8699023059962, 1933.6910400390625, 1868.902422718166, 1943.6585196268927], [1893.821092195789, 1878.869873046875, 1878.869873046875, 1908.7723113447032], [1834.0162376424262, 1858.9349365234375, 1834.0162376424262, 1878.8698956282465], [1868.90243902439, 1839.0, 1839.0, 1873.8861788617885], [1875.0, 1870.0, 1860.0, 1880.0], [1900.0, 1905.0, 1890.0, 1910.0], [1875.0, 1850.0, 1850.0, 1880.0], [1860.0, 1840.0, 1840.0, 1870.0], [1790.0, 1810.0, 1785.0, 1815.0], [1850.0, 1810.0, 1800.0, 1850.0], [1865.0, 1845.0, 1845.0, 1875.0], [1850.0, 1840.0, 1840.0, 1865.0], [1805.0, 1820.0, 1800.0, 1825.0], [1780.0, 1780.0, 1780.0, 1800.0], [1775.0, 1760.0, 1760.0, 1790.0], [1840.0, 1855.0, 1830.0, 1855.0], [1865.0, 1810.0, 1805.0, 1865.0], [1850.0, 1860.0, 1835.0, 1860.0], [1935.0, 1950.0, 1925.0, 1950.0], [1945.0, 1955.0, 1930.0, 1955.0], [1975.0, 2000.0, 1970.0, 2000.0], [1985.0, 1990.0, 1975.0, 1995.0], [2015.0, 2055.0, 2010.0, 2055.0], [2065.0, 2080.0, 2060.0, 2100.0], [2080.0, 2085.0, 2055.0, 2090.0], [2055.0, 2030.0, 2030.0, 2060.0], [2030.0, 2025.0, 2025.0, 2055.0], [2050.0, 2050.0, 2045.0, 2075.0], [2045.0, 2050.0, 2040.0, 2070.0], [2090.0, 2080.0, 2055.0, 2135.0], [2110.0, 2185.0, 2105.0, 2190.0], [2280.0, 2265.0, 2265.0, 2330.0], [2245.0, 2215.0, 2215.0, 2280.0], [2175.0, 2180.0, 2165.0, 2210.0], [2205.0, 2135.0, 2135.0, 2215.0], [2200.0, 2275.0, 2195.0, 2285.0], [2250.0, 2250.0, 2240.0, 2270.0], [2250.0, 2250.0, 2240.0, 2285.0], [2335.0, 2310.0, 2310.0, 2345.0], [2300.0, 2290.0, 2265.0, 2310.0], [2265.0, 2235.0, 2235.0, 2275.0], [2235.0, 2255.0, 2210.0, 2280.0], [2205.0, 2220.0, 2205.0, 2240.0], [2250.0, 2270.0, 2230.0, 2270.0], [2310.0, 2265.0, 2250.0, 2325.0], [2225.0, 2240.0, 2215.0, 2260.0], [2220.0, 2205.0, 2205.0, 2230.0], [2205.0, 2185.0, 2185.0, 2210.0], [2240.0, 2230.0, 2230.0, 2255.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1854.7, 1846.26, 1846.06, 1841.87, 1840.68, 1847.97, 1853.52, 1856.84, 1862.4, 1872.2, 1884.25, 1895.0, 1901.25, 1910.0, 1920.5, 1932.5, 1946.0, 1963.0, 1984.25, 2004.0, 2024.0, 2042.75, 2063.75, 2085.75, 2105.25, 2123.25, 2140.0, 2151.75, 2165.0, 2173.25, 2182.75, 2191.75, 2202.25, 2211.25, 2218.0, 2227.0],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [43090, 68160, 48120, 30082, 76459, 41375, 36167, 34040, 31214, 31249, 23812, 23068, 31040, 46312, 34902, 27001, 40964, 20958, 28974, 39889, 49221, 35537, 25132, 17953, 46515, 31835, 28637, 28968, 39113, 40343, 32038, 39260, 25407, 25783, 24762, 48682, 45088, 68696, 47175, 42895, 48975, 38390, 21625, 31918, 35034, 27102, 37244, 44459, 35350, 31747, 29922, 25875, 34824, 29320, 22964].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k2454'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[1575.0, 1575.0, 1620.0, 1720.0, 1790.0, 1895.0, 1925.0, 1900.0, 2090.0, 2295.0, 2215.0, 2435.0, 2435.0, 2615.0, 2575.0, 2610.0, 2870.0, 3155.0, 3430.0, 3420.0, 3630.0, 3880.0, 3700.0, 3495.0, 3405.0, 3260.0, 3400.0, 3155.0, 3230.0, 3550.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_2454'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[1900.0, 1815.0, 1815.0, 1910.0], [1760.0, 1720.0, 1715.0, 1780.0], [1760.0, 1775.0, 1750.0, 1800.0], [1745.0, 1765.0, 1735.0, 1790.0], [1620.0, 1665.0, 1610.0, 1665.0], [1730.0, 1705.0, 1685.0, 1730.0], [1760.0, 1765.0, 1720.0, 1780.0], [1745.0, 1785.0, 1735.0, 1815.0], [1730.0, 1720.0, 1720.0, 1745.0], [1720.0, 1710.0, 1710.0, 1740.0], [1730.0, 1730.0, 1715.0, 1740.0], [1730.0, 1730.0, 1725.0, 1745.0], [1700.0, 1680.0, 1665.0, 1705.0], [1685.0, 1700.0, 1655.0, 1715.0], [1630.0, 1625.0, 1600.0, 1645.0], [1655.0, 1620.0, 1600.0, 1665.0], [1665.0, 1620.0, 1620.0, 1665.0], [1610.0, 1590.0, 1590.0, 1640.0], [1560.0, 1585.0, 1545.0, 1585.0], [1540.0, 1510.0, 1505.0, 1555.0], [1525.0, 1490.0, 1490.0, 1540.0], [1550.0, 1465.0, 1460.0, 1550.0], [1500.0, 1465.0, 1445.0, 1510.0], [1480.0, 1470.0, 1430.0, 1480.0], [1520.0, 1580.0, 1505.0, 1585.0], [1600.0, 1575.0, 1550.0, 1600.0], [1600.0, 1575.0, 1570.0, 1605.0], [1645.0, 1620.0, 1620.0, 1665.0], [1645.0, 1720.0, 1640.0, 1745.0], [1805.0, 1790.0, 1770.0, 1845.0], [1850.0, 1895.0, 1810.0, 1930.0], [1930.0, 1925.0, 1885.0, 1955.0], [1960.0, 1900.0, 1895.0, 1965.0], [1930.0, 2090.0, 1925.0, 2090.0], [2120.0, 2295.0, 2110.0, 2295.0], [2325.0, 2215.0, 2170.0, 2335.0], [2340.0, 2435.0, 2330.0, 2435.0], [2470.0, 2435.0, 2410.0, 2575.0], [2490.0, 2615.0, 2485.0, 2675.0], [2550.0, 2575.0, 2500.0, 2595.0], [2665.0, 2610.0, 2565.0, 2685.0], [2870.0, 2870.0, 2870.0, 2870.0], [3155.0, 3155.0, 3155.0, 3155.0], [3470.0, 3430.0, 3155.0, 3470.0], [3430.0, 3420.0, 3295.0, 3430.0], [3320.0, 3630.0, 3320.0, 3670.0], [3575.0, 3880.0, 3565.0, 3985.0], [3835.0, 3700.0, 3700.0, 3910.0], [3625.0, 3495.0, 3400.0, 3680.0], [3585.0, 3405.0, 3385.0, 3590.0], [3425.0, 3260.0, 3200.0, 3555.0], [3240.0, 3400.0, 3150.0, 3550.0], [3475.0, 3155.0, 3100.0, 3495.0], [3195.0, 3230.0, 3155.0, 3350.0], [3415.0, 3550.0, 3405.0, 3550.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1690.75, 1674.5, 1661.75, 1646.25, 1631.5, 1627.25, 1620.75, 1611.25, 1603.0, 1603.0, 1607.0, 1615.25, 1625.0, 1636.0, 1655.5, 1689.0, 1718.75, 1759.5, 1801.75, 1853.25, 1906.5, 1962.5, 2032.75, 2117.25, 2215.25, 2307.25, 2410.0, 2525.25, 2629.25, 2718.0, 2798.75, 2867.0, 2940.75, 3003.5, 3060.5, 3123.25],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [9621, 11024, 7826, 4418, 11475, 5273, 5783, 6354, 6467, 4423, 4260, 6009, 6764, 7874, 6372, 5324, 5839, 7031, 6833, 7235, 10218, 10756, 8691, 6910, 12976, 8061, 5381, 8802, 11909, 20848, 16504, 15450, 11027, 17347, 23044, 28172, 21684, 23842, 22923, 11761, 16785, 3450, 8515, 36338, 7619, 8599, 7943, 9538, 8651, 6305, 6680, 6249, 8398, 8111, 5636].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k2408'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[205.0, 215.0, 225.5, 220.0, 211.5, 213.5, 210.0, 207.0, 220.0, 219.0, 208.0, 206.0, 226.5, 237.5, 235.0, 215.5, 237.0, 256.5, 282.0, 287.0, 274.0, 301.0, 321.0, 321.0, 341.0, 311.5, 305.0, 274.5, 275.0, 293.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_2408'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[287.0, 256.5, 256.5, 288.0], [238.0, 234.5, 231.0, 246.5], [257.5, 257.5, 257.5, 257.5], [259.0, 233.0, 232.5, 262.0], [210.0, 210.0, 210.0, 210.0], [220.0, 231.0, 215.0, 231.0], [245.0, 254.0, 240.0, 254.0], [257.0, 239.5, 239.0, 261.5], [237.5, 238.0, 235.0, 245.5], [247.0, 261.5, 245.5, 261.5], [267.0, 271.5, 266.5, 284.5], [284.5, 276.0, 271.5, 288.5], [268.5, 260.0, 260.0, 272.5], [264.5, 234.0, 234.0, 264.5], [217.5, 223.0, 217.5, 230.0], [226.5, 216.5, 204.0, 227.0], [226.5, 226.5, 218.5, 229.5], [249.0, 225.5, 225.0, 249.0], [217.0, 219.5, 207.0, 220.0], [215.0, 220.5, 213.5, 227.0], [207.5, 198.5, 198.5, 210.0], [211.5, 211.0, 205.0, 213.0], [217.0, 200.5, 200.0, 219.0], [210.5, 206.0, 202.5, 212.0], [217.0, 223.0, 214.5, 223.5], [222.0, 205.0, 204.0, 222.0], [211.0, 215.0, 209.0, 220.0], [218.5, 225.5, 214.5, 227.5], [238.5, 220.0, 220.0, 240.0], [227.5, 211.5, 211.5, 229.5], [212.5, 213.5, 208.5, 216.5], [215.0, 210.0, 205.0, 217.0], [206.0, 207.0, 202.0, 209.0], [211.0, 220.0, 210.0, 223.5], [218.5, 219.0, 214.0, 220.5], [228.5, 208.0, 204.0, 230.0], [209.5, 206.0, 199.0, 210.5], [216.5, 226.5, 216.0, 226.5], [234.5, 237.5, 231.5, 242.5], [236.0, 235.0, 232.0, 242.0], [239.5, 215.5, 214.5, 240.0], [223.0, 237.0, 217.0, 237.0], [243.0, 256.5, 242.5, 259.0], [282.0, 282.0, 270.5, 282.0], [293.0, 287.0, 278.0, 296.0], [282.0, 274.0, 260.0, 289.0], [300.5, 301.0, 296.0, 301.0], [312.5, 321.0, 301.0, 325.0], [311.5, 321.0, 303.0, 322.5], [342.5, 341.0, 335.5, 353.0], [330.5, 311.5, 308.5, 334.5], [300.0, 305.0, 287.0, 309.0], [291.5, 274.5, 274.5, 295.0], [279.5, 275.0, 265.5, 285.0], [291.5, 293.0, 280.0, 295.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 239.43, 236.53, 235.35, 232.5, 231.15, 231.8, 230.5, 228.55, 227.85, 226.95, 224.45, 221.55, 218.25, 215.6, 214.9, 214.7, 214.28, 213.25, 213.3, 214.2, 214.93, 215.78, 217.07, 219.88, 223.68, 226.88, 230.32, 234.62, 239.4, 244.45, 250.93, 255.82, 260.57, 263.95, 266.7, 270.4],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [87454, 105278, 21082, 158410, 20638, 114034, 89192, 149941, 94195, 91624, 130911, 100661, 81924, 154684, 76862, 147786, 96516, 181359, 131297, 124793, 144693, 120891, 118678, 72854, 94079, 88390, 92689, 96214, 159108, 104925, 52221, 67233, 66688, 107973, 70266, 139289, 98138, 130698, 202410, 97459, 122600, 141700, 204348, 145982, 194781, 128264, 106175, 214784, 104400, 178096, 156299, 114548, 115560, 122061, 148145].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k3711'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[392.0, 393.0, 417.5, 424.0, 446.5, 450.5, 442.0, 461.5, 472.0, 465.0, 464.5, 496.0, 495.5, 495.5, 488.5, 478.0, 525.0, 520.0, 524.0, 540.0, 516.0, 537.0, 555.0, 548.0, 548.0, 547.0, 510.0, 472.0, 476.0, 510.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_3711'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[366.0, 359.5, 354.5, 377.5], [341.0, 327.5, 325.5, 347.0], [343.5, 353.5, 342.5, 357.0], [346.0, 342.0, 339.0, 349.5], [308.0, 320.0, 308.0, 320.0], [336.0, 335.5, 332.5, 348.0], [346.0, 345.5, 340.5, 347.0], [341.0, 335.0, 331.0, 348.0], [334.0, 341.5, 326.5, 343.0], [343.5, 337.5, 335.0, 347.0], [343.0, 342.0, 339.0, 345.5], [348.0, 357.5, 348.0, 363.0], [347.5, 347.0, 340.5, 353.0], [348.0, 344.0, 340.5, 352.0], [319.0, 329.5, 318.5, 331.0], [338.0, 332.5, 329.0, 341.0], [349.5, 352.0, 347.0, 357.5], [353.0, 359.0, 352.5, 366.0], [347.5, 353.5, 342.5, 354.0], [343.0, 353.5, 342.0, 355.0], [342.0, 328.5, 328.5, 345.0], [345.0, 361.0, 344.5, 361.0], [375.5, 361.0, 356.0, 375.5], [361.5, 352.0, 348.5, 366.0], [364.0, 383.0, 364.0, 385.0], [387.0, 392.0, 381.0, 394.5], [390.0, 393.0, 385.0, 397.5], [415.5, 417.5, 403.0, 428.0], [430.0, 424.0, 421.0, 437.0], [431.5, 446.5, 431.0, 460.0], [450.0, 450.5, 436.0, 453.0], [441.0, 442.0, 437.5, 463.0], [457.0, 461.5, 454.5, 473.0], [467.0, 472.0, 461.0, 476.0], [462.0, 465.0, 460.5, 473.0], [474.5, 464.5, 456.0, 497.5], [467.5, 496.0, 467.5, 500.0], [517.0, 495.5, 495.5, 523.0], [489.0, 495.5, 483.5, 510.0], [487.0, 488.5, 472.5, 492.0], [490.5, 478.0, 478.0, 512.0], [497.0, 525.0, 497.0, 525.0], [525.0, 520.0, 519.0, 544.0], [541.0, 524.0, 514.0, 544.0], [548.0, 540.0, 534.0, 558.0], [524.0, 516.0, 511.0, 529.0], [526.0, 537.0, 513.0, 546.0], [537.0, 555.0, 533.0, 579.0], [535.0, 548.0, 534.0, 557.0], [555.0, 548.0, 548.0, 564.0], [555.0, 547.0, 537.0, 564.0], [529.0, 510.0, 500.0, 529.0], [490.0, 472.0, 472.0, 495.5], [465.0, 476.0, 465.0, 481.5], [499.0, 510.0, 496.5, 511.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 343.4, 341.85, 343.52, 343.9, 344.4, 347.55, 350.38, 352.75, 356.88, 361.0, 366.45, 371.88, 376.1, 381.82, 388.23, 395.0, 401.6, 408.8, 415.62, 422.73, 429.48, 436.95, 445.15, 453.1, 461.7, 469.55, 475.75, 482.95, 489.82, 496.02, 501.1, 505.93, 509.32, 509.85, 510.05, 512.3],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [29787, 33919, 33485, 12622, 28686, 24659, 16364, 16532, 13237, 12051, 10234, 26458, 17655, 21952, 15053, 9985, 16491, 19447, 16784, 15165, 22922, 18034, 24099, 13602, 24931, 20330, 15087, 25289, 18668, 29996, 23061, 23839, 21265, 17256, 15643, 25246, 26583, 29200, 21147, 21088, 35678, 26384, 36440, 30251, 24011, 22065, 20929, 30004, 20739, 13869, 18235, 24692, 34699, 25163, 17919].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k2383'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[3220.0, 3420.0, 3325.0, 3605.0, 3810.0, 3835.0, 3800.0, 3850.0, 3950.0, 4065.0, 4100.0, 4475.0, 4730.0, 4375.0, 4440.0, 4545.0, 4755.0, 4730.0, 4950.0, 4960.0, 4750.0, 4850.0, 4900.0, 4930.0, 4920.0, 4615.0, 4545.0, 4535.0, 4395.0, 4690.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_2383'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[2355.0, 2320.0, 2315.0, 2430.0], [2255.0, 2190.0, 2180.0, 2295.0], [2350.0, 2365.0, 2300.0, 2395.0], [2340.0, 2360.0, 2325.0, 2470.0], [2125.0, 2175.0, 2125.0, 2210.0], [2315.0, 2375.0, 2315.0, 2390.0], [2390.0, 2450.0, 2375.0, 2520.0], [2440.0, 2600.0, 2440.0, 2665.0], [2580.0, 2705.0, 2540.0, 2765.0], [2785.0, 2585.0, 2575.0, 2785.0], [2645.0, 2700.0, 2625.0, 2750.0], [2740.0, 2700.0, 2670.0, 2745.0], [2700.0, 2890.0, 2660.0, 2970.0], [2905.0, 2810.0, 2720.0, 2915.0], [2715.0, 2795.0, 2705.0, 2880.0], [2865.0, 2685.0, 2670.0, 2870.0], [2790.0, 2845.0, 2780.0, 2915.0], [2920.0, 2945.0, 2895.0, 3035.0], [2900.0, 2910.0, 2845.0, 2950.0], [2815.0, 2785.0, 2705.0, 2850.0], [2780.0, 2600.0, 2595.0, 2830.0], [2800.0, 2860.0, 2745.0, 2860.0], [2920.0, 2785.0, 2775.0, 2965.0], [2875.0, 2885.0, 2850.0, 2970.0], [3160.0, 3170.0, 3135.0, 3170.0], [3225.0, 3220.0, 3180.0, 3350.0], [3280.0, 3420.0, 3260.0, 3435.0], [3430.0, 3325.0, 3320.0, 3440.0], [3490.0, 3605.0, 3490.0, 3655.0], [3870.0, 3810.0, 3700.0, 3875.0], [3950.0, 3835.0, 3760.0, 3950.0], [3770.0, 3800.0, 3730.0, 3865.0], [3780.0, 3850.0, 3720.0, 3915.0], [3900.0, 3950.0, 3830.0, 3990.0], [3960.0, 4065.0, 3895.0, 4200.0], [4215.0, 4100.0, 3975.0, 4440.0], [4300.0, 4475.0, 4230.0, 4485.0], [4660.0, 4730.0, 4475.0, 4800.0], [4650.0, 4375.0, 4340.0, 4655.0], [4165.0, 4440.0, 4160.0, 4460.0], [4550.0, 4545.0, 4485.0, 4660.0], [4605.0, 4755.0, 4530.0, 4770.0], [4740.0, 4730.0, 4600.0, 4775.0], [4855.0, 4950.0, 4745.0, 4995.0], [5110.0, 4960.0, 4825.0, 5115.0], [4810.0, 4750.0, 4670.0, 4905.0], [4480.0, 4850.0, 4480.0, 4860.0], [4805.0, 4900.0, 4805.0, 5080.0], [4880.0, 4930.0, 4800.0, 5000.0], [5095.0, 4920.0, 4920.0, 5215.0], [4960.0, 4615.0, 4615.0, 5020.0], [4415.0, 4545.0, 4300.0, 4575.0], [4515.0, 4535.0, 4430.0, 4675.0], [4530.0, 4395.0, 4360.0, 4530.0], [4610.0, 4690.0, 4555.0, 4785.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2609.5, 2623.5, 2657.0, 2678.0, 2704.25, 2754.0, 2796.25, 2844.75, 2881.0, 2926.0, 2987.25, 3044.0, 3099.0, 3147.0, 3204.0, 3267.5, 3338.25, 3419.75, 3509.0, 3582.25, 3665.0, 3762.25, 3857.0, 3954.25, 4057.5, 4147.0, 4223.5, 4295.0, 4373.75, 4440.0, 4495.5, 4534.5, 4571.75, 4606.0, 4628.25, 4659.5],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [2917, 3639, 3776, 2795, 3182, 2909, 4644, 5268, 4259, 4133, 2773, 2836, 5620, 4291, 3360, 3782, 3177, 4303, 1912, 3499, 4409, 2815, 3943, 3126, 2018, 3138, 2881, 2325, 3248, 3789, 2724, 2604, 3430, 2633, 2752, 4281, 4203, 5187, 3918, 3405, 3188, 2812, 1811, 3491, 2433, 2496, 2596, 2480, 1817, 2200, 2281, 3210, 1811, 1815, 2329].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k3037'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[625.0, 638.0, 626.0, 597.0, 618.0, 645.0, 643.0, 678.0, 710.0, 716.0, 728.0, 790.0, 839.0, 825.0, 803.0, 883.0, 911.0, 903.0, 858.0, 896.0, 818.0, 861.0, 875.0, 892.0, 881.0, 821.0, 816.0, 818.0, 823.0, 905.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_3037'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[477.0, 463.0, 457.0, 493.5], [440.0, 417.0, 417.0, 440.0], [450.5, 450.0, 417.0, 450.5], [442.5, 432.0, 430.5, 450.5], [389.0, 389.0, 389.0, 391.5], [410.0, 424.0, 410.0, 427.5], [446.5, 466.0, 445.0, 466.0], [466.5, 480.0, 461.0, 486.0], [468.0, 508.0, 468.0, 509.0], [519.0, 549.0, 505.0, 550.0], [571.0, 543.0, 524.0, 594.0], [550.0, 580.0, 539.0, 591.0], [564.0, 581.0, 564.0, 590.0], [577.0, 554.0, 533.0, 577.0], [501.0, 499.0, 499.0, 512.0], [510.0, 460.0, 449.5, 510.0], [487.5, 506.0, 487.5, 506.0], [510.0, 502.0, 500.0, 538.0], [473.0, 505.0, 473.0, 505.0], [485.0, 493.5, 473.5, 496.0], [479.0, 444.5, 444.5, 479.0], [484.0, 488.5, 477.0, 488.5], [535.0, 519.0, 515.0, 537.0], [546.0, 564.0, 545.0, 570.0], [606.0, 620.0, 597.0, 620.0], [624.0, 625.0, 614.0, 655.0], [641.0, 638.0, 620.0, 660.0], [635.0, 626.0, 624.0, 648.0], [630.0, 597.0, 592.0, 630.0], [600.0, 618.0, 600.0, 629.0], [620.0, 645.0, 606.0, 646.0], [640.0, 643.0, 633.0, 645.0], [644.0, 678.0, 644.0, 707.0], [710.0, 710.0, 700.0, 715.0], [718.0, 716.0, 711.0, 730.0], [726.0, 728.0, 660.0, 749.0], [775.0, 790.0, 760.0, 790.0], [835.0, 839.0, 790.0, 839.0], [864.0, 825.0, 822.0, 886.0], [805.0, 803.0, 782.0, 832.0], [828.0, 883.0, 815.0, 883.0], [912.0, 911.0, 862.0, 920.0], [899.0, 903.0, 893.0, 948.0], [908.0, 858.0, 846.0, 928.0], [875.0, 896.0, 862.0, 905.0], [871.0, 818.0, 808.0, 872.0], [830.0, 861.0, 822.0, 889.0], [904.0, 875.0, 872.0, 926.0], [853.0, 892.0, 853.0, 903.0], [910.0, 881.0, 879.0, 918.0], [901.0, 821.0, 814.0, 902.0], [791.0, 816.0, 776.0, 818.0], [821.0, 818.0, 808.0, 860.0], [819.0, 823.0, 793.0, 830.0], [870.0, 905.0, 868.0, 905.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 490.07, 489.15, 492.73, 496.18, 502.77, 514.33, 524.38, 532.98, 540.27, 544.73, 548.17, 553.27, 556.42, 561.27, 569.08, 579.92, 593.33, 607.52, 624.38, 640.38, 655.85, 677.77, 698.9, 718.1, 732.8, 746.6, 756.25, 767.4, 779.85, 794.6, 807.75, 816.55, 825.2, 832.2, 837.85, 847.3],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [17477, 25501, 17820, 13338, 15115, 14989, 14643, 14702, 20175, 16872, 60474, 49391, 9236, 8616, 8196, 9720, 5006, 7764, 5507, 4841, 9163, 7106, 47779, 35331, 38768, 42166, 30324, 57444, 10435, 7844, 6733, 4415, 8980, 7964, 4451, 7636, 9512, 7908, 38017, 31229, 33290, 42009, 25232, 40640, 25433, 31729, 26975, 28764, 25789, 28575, 28486, 20139, 22774, 20618, 29979].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k3665'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[2130.0, 2200.0, 2225.0, 2295.0, 2350.0, 2395.0, 2365.0, 2460.0, 2425.0, 2555.0, 2755.0, 2765.0, 2630.0, 2630.0, 2780.0, 2770.0, 2940.0, 2875.0, 2745.0, 2780.0, 2750.0, 2905.0, 2775.0, 2500.0, 2250.0, 2095.0, 2025.0, 1990.0, 1965.0, 2155.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_3665'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[1640.0, 1645.0, 1595.0, 1655.0], [1580.0, 1610.0, 1545.0, 1630.0], [1745.0, 1725.0, 1690.0, 1770.0], [1735.0, 1770.0, 1710.0, 1785.0], [1595.0, 1595.0, 1595.0, 1595.0], [1605.0, 1565.0, 1490.0, 1615.0], [1600.0, 1655.0, 1590.0, 1685.0], [1635.0, 1635.0, 1590.0, 1655.0], [1590.0, 1590.0, 1560.0, 1620.0], [1625.0, 1645.0, 1590.0, 1675.0], [1715.0, 1740.0, 1670.0, 1770.0], [1730.0, 1690.0, 1675.0, 1760.0], [1715.0, 1720.0, 1690.0, 1745.0], [1760.0, 1825.0, 1720.0, 1835.0], [1755.0, 1770.0, 1700.0, 1810.0], [1830.0, 1730.0, 1710.0, 1840.0], [1770.0, 1805.0, 1735.0, 1840.0], [1850.0, 1815.0, 1810.0, 1930.0], [1790.0, 1860.0, 1765.0, 1905.0], [1775.0, 1880.0, 1775.0, 1895.0], [1865.0, 1740.0, 1725.0, 1865.0], [1865.0, 1910.0, 1860.0, 1910.0], [1980.0, 1915.0, 1900.0, 2075.0], [2015.0, 1990.0, 1980.0, 2070.0], [2100.0, 2015.0, 1995.0, 2105.0], [2010.0, 2130.0, 1995.0, 2165.0], [2200.0, 2200.0, 2115.0, 2225.0], [2200.0, 2225.0, 2165.0, 2235.0], [2345.0, 2295.0, 2250.0, 2380.0], [2330.0, 2350.0, 2300.0, 2410.0], [2430.0, 2395.0, 2385.0, 2490.0], [2405.0, 2365.0, 2335.0, 2475.0], [2395.0, 2460.0, 2365.0, 2515.0], [2570.0, 2425.0, 2400.0, 2600.0], [2465.0, 2555.0, 2435.0, 2560.0], [2785.0, 2755.0, 2590.0, 2810.0], [2800.0, 2765.0, 2720.0, 2910.0], [2820.0, 2630.0, 2630.0, 2820.0], [2660.0, 2630.0, 2605.0, 2745.0], [2620.0, 2780.0, 2605.0, 2820.0], [2760.0, 2770.0, 2715.0, 2815.0], [2950.0, 2940.0, 2860.0, 2970.0], [2945.0, 2875.0, 2825.0, 2950.0], [2885.0, 2745.0, 2590.0, 2885.0], [2770.0, 2780.0, 2690.0, 2810.0], [2760.0, 2750.0, 2710.0, 2800.0], [2650.0, 2905.0, 2645.0, 2925.0], [3000.0, 2775.0, 2775.0, 3010.0], [2500.0, 2500.0, 2500.0, 2500.0], [2250.0, 2250.0, 2250.0, 2300.0], [2335.0, 2095.0, 2060.0, 2335.0], [2070.0, 2025.0, 1990.0, 2085.0], [2060.0, 1990.0, 1940.0, 2065.0], [1970.0, 1965.0, 1860.0, 2000.0], [2030.0, 2155.0, 2030.0, 2160.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1713.5, 1718.25, 1733.25, 1742.75, 1753.75, 1774.75, 1803.0, 1830.25, 1859.75, 1895.0, 1930.25, 1963.0, 1996.75, 2033.75, 2063.75, 2103.0, 2154.25, 2202.25, 2243.0, 2281.5, 2326.5, 2378.0, 2429.5, 2477.5, 2515.25, 2553.5, 2584.5, 2619.75, 2647.25, 2657.5, 2652.5, 2637.5, 2620.5, 2597.0, 2574.0, 2554.0],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [10591, 7439, 6324, 4478, 970, 8699, 3576, 3047, 2949, 4915, 4096, 3996, 4609, 9752, 3197, 2525, 4192, 3331, 2519, 2309, 3628, 2555, 4775, 2696, 2616, 3662, 2293, 1932, 2906, 2400, 2575, 2263, 2538, 2554, 3168, 6501, 3388, 2969, 2335, 2638, 2645, 2778, 2040, 6029, 2462, 1861, 2619, 3295, 834, 5038, 9777, 4966, 3433, 2067, 2378].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k6223'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[4470.0, 4620.0, 4545.0, 4560.0, 4605.0, 4915.0, 5195.0, 5135.0, 4940.0, 4825.0, 4790.0, 4650.0, 4880.0, 4880.0, 4945.0, 4925.0, 5165.0, 5000.0, 4950.0, 5030.0, 5025.0, 4985.0, 5480.0, 5720.0, 6290.0, 5895.0, 6135.0, 5730.0, 5680.0, 5650.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_6223'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[2925.0, 2855.0, 2825.0, 2940.0], [2770.0, 2660.0, 2640.0, 2845.0], [2885.0, 2845.0, 2790.0, 2885.0], [2810.0, 2965.0, 2800.0, 2995.0], [2715.0, 2720.0, 2670.0, 2785.0], [2900.0, 2990.0, 2870.0, 2990.0], [3130.0, 3285.0, 3130.0, 3285.0], [3300.0, 3610.0, 3300.0, 3610.0], [3600.0, 3550.0, 3520.0, 3635.0], [3645.0, 3565.0, 3530.0, 3680.0], [3610.0, 3580.0, 3570.0, 3700.0], [3640.0, 3735.0, 3640.0, 3870.0], [3660.0, 3665.0, 3650.0, 3865.0], [3665.0, 3860.0, 3650.0, 3910.0], [3745.0, 3715.0, 3635.0, 3845.0], [3850.0, 3670.0, 3660.0, 3940.0], [3850.0, 3750.0, 3690.0, 3850.0], [3825.0, 3655.0, 3640.0, 3850.0], [3455.0, 3665.0, 3455.0, 3695.0], [3620.0, 3735.0, 3580.0, 3735.0], [3740.0, 3595.0, 3465.0, 3780.0], [3900.0, 3950.0, 3790.0, 3950.0], [4050.0, 3765.0, 3750.0, 4050.0], [3820.0, 3920.0, 3805.0, 3965.0], [4155.0, 4310.0, 4135.0, 4310.0], [4500.0, 4470.0, 4330.0, 4560.0], [4595.0, 4620.0, 4510.0, 4800.0], [4560.0, 4545.0, 4450.0, 4675.0], [4655.0, 4560.0, 4520.0, 4760.0], [4650.0, 4605.0, 4540.0, 4825.0], [4700.0, 4915.0, 4630.0, 4935.0], [5155.0, 5195.0, 5040.0, 5405.0], [5370.0, 5135.0, 5110.0, 5395.0], [5110.0, 4940.0, 4830.0, 5110.0], [4980.0, 4825.0, 4825.0, 5065.0], [4895.0, 4790.0, 4635.0, 5040.0], [4850.0, 4650.0, 4630.0, 4995.0], [4740.0, 4880.0, 4605.0, 4915.0], [4950.0, 4880.0, 4770.0, 4985.0], [4870.0, 4945.0, 4785.0, 4970.0], [5000.0, 4925.0, 4835.0, 5040.0], [5005.0, 5165.0, 4910.0, 5200.0], [5150.0, 5000.0, 4865.0, 5150.0], [5095.0, 4950.0, 4850.0, 5115.0], [4965.0, 5030.0, 4865.0, 5050.0], [4930.0, 5025.0, 4930.0, 5370.0], [4860.0, 4985.0, 4710.0, 5125.0], [5315.0, 5480.0, 5250.0, 5480.0], [5490.0, 5720.0, 5315.0, 5820.0], [6290.0, 6290.0, 6290.0, 6290.0], [6280.0, 5895.0, 5895.0, 6665.0], [6000.0, 6135.0, 5895.0, 6245.0], [6250.0, 5730.0, 5695.0, 6275.0], [5800.0, 5680.0, 5680.0, 6015.0], [6160.0, 5650.0, 5530.0, 6160.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 3403.75, 3440.75, 3505.25, 3551.25, 3599.0, 3678.5, 3752.5, 3819.25, 3866.0, 3916.5, 3968.5, 4035.25, 4108.25, 4181.75, 4235.75, 4291.25, 4347.25, 4392.25, 4453.5, 4514.25, 4574.75, 4641.25, 4702.0, 4763.75, 4815.25, 4851.25, 4879.0, 4897.25, 4944.0, 5002.0, 5086.25, 5135.25, 5182.25, 5212.0, 5249.0, 5290.25],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [1710, 1368, 1048, 1369, 1153, 1159, 909, 2461, 1125, 734, 1053, 1223, 1010, 2357, 1251, 1281, 1517, 1450, 1047, 785, 1142, 1409, 1143, 701, 905, 1136, 999, 665, 711, 977, 1175, 1433, 1243, 2132, 1364, 1747, 1339, 1471, 1043, 930, 1146, 1257, 1197, 1232, 886, 1610, 2038, 866, 2908, 496, 2070, 1496, 1616, 987, 1180].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
-new Chart(document.getElementById('k6274'),{
-  type:'line',
-  data:{labels:["04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"],datasets:[{label:'收盤',data:[790.67578125, 801.5885009765625, 794.64404296875, 853.1758422851562, 938.4934692382812, 960.0, 946.0, 950.0, 963.0, 973.0, 950.0, 1045.0, 990.0, 966.0, 975.0, 1010.0, 1110.0, 1220.0, 1315.0, 1445.0, 1370.0, 1455.0, 1450.0, 1450.0, 1450.0, 1305.0, 1260.0, 1225.0, 1205.0, 1325.0],borderColor:'#378ADD',borderWidth:2,tension:0.3,pointRadius:2,fill:false}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:11}}},x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true}}}}
-});
+(function() {
+  var chart = echarts.init(document.getElementById('kline_6274'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', height: '18%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[537.6992169348281, 533.73095703125, 527.7785671758829, 554.5643215250349], [525.7944139330881, 486.60784912109375, 483.6316543252461, 528.7706087289357], [510.9134478060153, 501.98486328125, 499.00866843966156, 522.8182271723691], [503.968992203001, 500.000732421875, 485.61579071529326, 508.92931692940846], [450.8935239346542, 450.3974914550781, 450.3974914550781, 466.27053080151256], [468.25466690226847, 463.2943420410156, 458.83004966588805, 488.09596634727984], [473.7110040326934, 484.62371826171875, 473.7110040326934, 492.06420523605425], [477.67927708072557, 448.9093933105469, 437.50064629823464, 478.17530955952174], [446.42922252865895, 493.55230712890625, 443.9490601812775, 493.55230712890625], [510.9134463240091, 499.0086669921875, 487.10388766036596, 515.8737710456014], [507.93725247524753, 500.9927978515625, 497.02453806659963, 512.8975772064512], [507.93726459510356, 526.7864990234375, 499.00867986589276, 528.7706289632621], [518.8499464270187, 579.3659057617188, 514.8816867985138, 579.3659057617188], [593.2548634222699, 549.60400390625, 538.691289027245, 595.2389934002707], [522.8182422964103, 533.73095703125, 522.8182422964103, 555.5563865009293], [553.5722579532983, 536.7071533203125, 523.8103086009704, 557.5405178669421], [553.5722161654768, 575.3976440429688, 551.5880863584321, 580.3579685605805], [589.2865661016785, 601.1913452148438, 581.3500466929017, 625.0009034411743], [589.2865756586336, 621.0326538085938, 580.3579911789574, 621.0326538085938], [601.1913431870977, 597.2230834960938, 584.326239500331, 606.1516678008527], [593.2548703694805, 564.4849853515625, 558.5325953478554, 610.1199753799841], [595.2389639032403, 618.0564575195312, 589.286574264208, 620.0405873992087], [633.9294955488565, 616.0723266601562, 610.1199370305895, 647.8184046845122], [639.8819139516894, 677.5803833007812, 635.9136540202061, 677.5803833007812], [717.262940463362, 719.2470703125, 691.469252424569, 730.1597844827586], [725.1994932167503, 790.67578125, 725.1994932167503, 790.67578125], [831.3504502702467, 801.5885009765625, 779.7630714945274, 831.3504502702467], [803.5726277212078, 794.64404296875, 788.6916531337781, 824.4059921436095], [832.3424786944722, 853.1758422851562, 830.3583488286928, 873.0171409429505], [898.8108701161552, 938.4934692382812, 887.8981553575705, 938.4934692382812], [945.0, 960.0, 910.0, 983.0], [950.0, 946.0, 940.0, 966.0], [936.0, 950.0, 935.0, 962.0], [959.0, 963.0, 938.0, 969.0], [963.0, 973.0, 952.0, 984.0], [990.0, 950.0, 880.0, 1000.0], [974.0, 1045.0, 972.0, 1045.0], [1080.0, 990.0, 958.0, 1080.0], [995.0, 966.0, 965.0, 996.0], [966.0, 975.0, 941.0, 989.0], [993.0, 1010.0, 968.0, 1015.0], [1085.0, 1110.0, 1060.0, 1110.0], [1140.0, 1220.0, 1125.0, 1220.0], [1275.0, 1315.0, 1160.0, 1340.0], [1445.0, 1445.0, 1415.0, 1445.0], [1400.0, 1370.0, 1320.0, 1475.0], [1375.0, 1455.0, 1350.0, 1455.0], [1455.0, 1450.0, 1400.0, 1460.0], [1395.0, 1450.0, 1345.0, 1450.0], [1480.0, 1450.0, 1400.0, 1480.0], [1440.0, 1305.0, 1305.0, 1440.0], [1210.0, 1260.0, 1200.0, 1265.0], [1250.0, 1225.0, 1210.0, 1305.0], [1260.0, 1205.0, 1190.0, 1300.0], [1325.0, 1325.0, 1325.0, 1325.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 524.21, 525.74, 532.32, 538.02, 546.9, 560.34, 576.71, 592.56, 609.85, 627.83, 649.8, 672.75, 693.71, 712.25, 732.92, 754.88, 775.54, 799.02, 818.46, 835.71, 854.6, 876.88, 901.47, 931.67, 963.54, 999.83, 1028.8, 1061.47, 1094.23, 1124.07, 1149.65, 1166.9, 1182.6, 1196.35, 1208.45, 1226.05],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [8087, 11392, 7396, 13482, 5286, 11566, 8801, 26073, 17907, 16629, 9406, 14099, 25056, 22965, 13724, 15408, 15295, 19389, 13078, 10277, 12846, 13023, 16918, 9896, 19773, 11575, 14448, 9246, 10736, 8014, 15492, 3724, 3489, 2926, 2744, 3992, 4139, 4148, 2623, 2469, 3567, 6982, 13251, 16339, 4414, 14097, 2500, 1434, 1819, 2086, 1410, 2674, 1405, 1572, 706].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
 
 (function() {
   var chart = echarts.init(document.getElementById('taiex_kline'));
