@@ -116,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 <div class="container">
   <div class="header">
     <h1>📊 股票監控儀表板</h1>
-    <div class="update-time">最後更新: 2026-05-23 00:23</div>
+    <div class="update-time">最後更新: 2026-05-23 10:12</div>
   </div>
   
   
@@ -140,6 +140,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <div class="metric-value positive">+112.3</div>
   </div>
 </div>
+
+<div class="metrics-grid-4" style="margin-top:8px;">
+  <div class="metric">
+    <div class="metric-label">融資餘額(億)</div>
+    <div class="metric-value">5,223</div>
+  </div>
+  <div class="metric" title="融資餘額占當日成交金額比例">
+    <div class="metric-label">融資/成交額(%)</div>
+    <div class="metric-value">42.2%</div>
+  </div>
+  <div class="metric" title="融資5日增幅 - 大盤5日漲幅。正值=散戶比大盤積極 (危險訊號)；負值=散戶比大盤保守 (健康)">
+    <div class="metric-label">融資增-盤勢漲(%)</div>
+    <div class="metric-value negative">+199037768.66%</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">融資解讀</div>
+    <div class="metric-value" style="font-size:13px;">
+      ⚠️ 散戶過熱
+    </div>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div>
   <div id="taiex_kline" style="width:100%;height:400px;"></div>
@@ -151,7 +173,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
       <i class="ti ti-target-arrow" aria-hidden="true"></i>
       個股操作建議綜合評等
     </div>
-    <div class="rating-update">更新於 2026-05-23 00:23</div>
+    <div class="rating-update">更新於 2026-05-23 10:12</div>
   </div>
   <div class="rating-grid">
     
@@ -424,10 +446,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">2223.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">2235.75</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -439,7 +460,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeG1LcWibCGLvX4RrQ'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgz3WFKJNwaLGz8WnHW'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -463,13 +484,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+188</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+619</td>
+      <td class="positive">+125</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+456</td>
-      <td class="negative">-23,588</td>
-      <td class="negative">-96,428</td>
+      <td class="negative">-22,969</td>
+      <td class="negative">-96,303</td>
     </tr>
   </table>
   
@@ -504,12 +526,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeG1LcWibCGLvX4RrQ'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgz3WFKJNwaLGz8WnHW'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeG1LcWibCGLvX4RrQ'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgz3WFKJNwaLGz8WnHW'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -553,10 +575,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">3439.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">3205.50</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -568,7 +589,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeVctfxjrkeoZ8v1fS'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzHQuniFfK1U1fvnd4'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -592,13 +613,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+452</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+614</td>
+      <td class="positive">+310</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+418</td>
-      <td class="negative">-4,759</td>
-      <td class="positive">+3,097</td>
+      <td class="negative">-4,144</td>
+      <td class="positive">+3,407</td>
     </tr>
   </table>
   
@@ -633,12 +655,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeVctfxjrkeoZ8v1fS'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzHQuniFfK1U1fvnd4'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYeVctfxjrkeoZ8v1fS'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzHQuniFfK1U1fvnd4'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -682,10 +704,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">505.80</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">517.12</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -697,7 +718,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYehwJsCX5SbtAWKuwU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzYjQaM2CRf8efCkur'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -721,13 +742,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="negative">-254</td>
-      <td>—</td><td>—</td>
+      <td class="negative">-440</td>
+      <td class="negative">-1,059</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+3,975</td>
-      <td class="negative">-3,069</td>
-      <td class="negative">-10,216</td>
+      <td class="negative">-3,509</td>
+      <td class="negative">-11,275</td>
     </tr>
   </table>
   
@@ -762,12 +784,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYehwJsCX5SbtAWKuwU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzYjQaM2CRf8efCkur'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYehwJsCX5SbtAWKuwU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzYjQaM2CRf8efCkur'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -811,10 +833,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">1831.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">1698.50</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -826,7 +847,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYezjr8AxQ1FrwAfjgy'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzqwFodNf6ETbBsgKT'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -850,13 +871,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+44</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+83</td>
+      <td class="positive">+108</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+427</td>
-      <td class="positive">+334</td>
-      <td class="positive">+655</td>
+      <td class="positive">+417</td>
+      <td class="positive">+763</td>
     </tr>
   </table>
   
@@ -891,12 +913,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYezjr8AxQ1FrwAfjgy'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzqwFodNf6ETbBsgKT'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYezjr8AxQ1FrwAfjgy'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJgzqwFodNf6ETbBsgKT'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -940,10 +962,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">4634.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">4704.75</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -955,7 +976,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfDpeVKhSUXAekjcoH'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh17iHLUVzFTSEZkrET'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -979,13 +1000,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+2</td>
-      <td>—</td><td>—</td>
+      <td class="negative">-77</td>
+      <td class="negative">-171</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+504</td>
-      <td class="positive">+1,524</td>
-      <td class="positive">+4,269</td>
+      <td class="positive">+1,447</td>
+      <td class="positive">+4,097</td>
     </tr>
   </table>
   
@@ -1020,12 +1042,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfDpeVKhSUXAekjcoH'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh17iHLUVzFTSEZkrET'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfDpeVKhSUXAekjcoH'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh17iHLUVzFTSEZkrET'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1069,10 +1091,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">866.40</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">859.40</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1084,7 +1105,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfSBJNjc3AnipYz66h'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1LqZfxJ5WG9n6YVwg'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1108,13 +1129,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="negative">-185</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+245</td>
+      <td class="negative">-3,512</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+5,246</td>
-      <td class="positive">+12,896</td>
-      <td class="negative">-9,005</td>
+      <td class="positive">+13,141</td>
+      <td class="negative">-12,518</td>
     </tr>
   </table>
   
@@ -1149,12 +1171,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfSBJNjc3AnipYz66h'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1LqZfxJ5WG9n6YVwg'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfSBJNjc3AnipYz66h'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1LqZfxJ5WG9n6YVwg'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1198,10 +1220,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">2072.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">2527.50</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value negative">
@@ -1213,7 +1234,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfepoqQmQkPKBi94y7'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1atAJNpi4MSaXGbjN'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1237,13 +1258,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="negative">-37</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+190</td>
+      <td class="positive">+13</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+373</td>
-      <td class="positive">+144</td>
-      <td class="positive">+3,304</td>
+      <td class="positive">+333</td>
+      <td class="positive">+3,318</td>
     </tr>
   </table>
   
@@ -1278,12 +1300,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfepoqQmQkPKBi94y7'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1atAJNpi4MSaXGbjN'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfepoqQmQkPKBi94y7'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1atAJNpi4MSaXGbjN'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1327,10 +1349,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">5846.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">5352.50</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1342,7 +1363,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfwyvqp5LEHg6MEicz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1xG3CwytkSwaPJzF9'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1366,13 +1387,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="negative">-2</td>
-      <td>—</td><td>—</td>
+      <td class="negative">-106</td>
+      <td class="negative">-27</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="negative">-146</td>
-      <td class="negative">-56</td>
-      <td class="positive">+1,384</td>
+      <td class="negative">-162</td>
+      <td class="positive">+1,357</td>
     </tr>
   </table>
   
@@ -1407,12 +1429,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfwyvqp5LEHg6MEicz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1xG3CwytkSwaPJzF9'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYfwyvqp5LEHg6MEicz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh1xG3CwytkSwaPJzF9'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1456,10 +1478,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">1294.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">1251.30</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1471,7 +1492,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgCBTUWSNofkowMHmz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2FFF4Njg5JeqmP9Ly'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1495,13 +1516,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+0</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+148</td>
+      <td class="positive">+893</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+462</td>
-      <td class="positive">+1,063</td>
-      <td class="positive">+3,207</td>
+      <td class="positive">+1,211</td>
+      <td class="positive">+4,099</td>
     </tr>
   </table>
   
@@ -1536,12 +1558,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgCBTUWSNofkowMHmz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2FFF4Njg5JeqmP9Ly'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgCBTUWSNofkowMHmz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2FFF4Njg5JeqmP9Ly'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1585,10 +1607,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">467.40</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">429.05</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1600,7 +1621,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgT7sz9NSV81CocWLD'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2XDBRqQikE4vSRLKd'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1624,13 +1645,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+71</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+445</td>
+      <td class="positive">+1,935</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+1,667</td>
-      <td class="positive">+10,017</td>
-      <td class="positive">+15,090</td>
+      <td class="positive">+10,461</td>
+      <td class="positive">+17,025</td>
     </tr>
   </table>
   
@@ -1665,12 +1687,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgT7sz9NSV81CocWLD'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2XDBRqQikE4vSRLKd'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgT7sz9NSV81CocWLD'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2XDBRqQikE4vSRLKd'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1714,10 +1736,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">524.40</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">461.95</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1729,7 +1750,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgfQZdqHW9wQsnpDdE'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2kSfPfEfzcp65mBdC'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1753,13 +1774,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="negative">-109</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+244</td>
+      <td class="positive">+100</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+1,643</td>
-      <td class="positive">+2,480</td>
-      <td class="positive">+9,227</td>
+      <td class="positive">+2,724</td>
+      <td class="positive">+9,328</td>
     </tr>
   </table>
   
@@ -1794,12 +1816,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgfQZdqHW9wQsnpDdE'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2kSfPfEfzcp65mBdC'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgfQZdqHW9wQsnpDdE'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2kSfPfEfzcp65mBdC'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1843,10 +1865,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">543.80</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">411.23</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1858,7 +1879,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgsZYzpqfdrcJm7hWz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2yE7At3X4Q2e6SPfT'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1882,13 +1903,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+1,179</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+249</td>
+      <td class="positive">+4,617</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+3,225</td>
-      <td class="positive">+7,981</td>
-      <td class="positive">+49,541</td>
+      <td class="positive">+8,230</td>
+      <td class="positive">+54,158</td>
     </tr>
   </table>
   
@@ -1923,12 +1945,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgsZYzpqfdrcJm7hWz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2yE7At3X4Q2e6SPfT'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYgsZYzpqfdrcJm7hWz'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh2yE7At3X4Q2e6SPfT'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1972,10 +1994,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">116.10</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">87.56</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -1987,7 +2008,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYh7wk78G4rCHKKgc81'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3GfbfjMkG2WWJob2V'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -2011,13 +2032,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+68</td>
-      <td>—</td><td>—</td>
+      <td class="positive">+183</td>
+      <td class="positive">+490</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="negative">-39</td>
-      <td class="positive">+323</td>
-      <td class="positive">+10,941</td>
+      <td class="positive">+506</td>
+      <td class="positive">+11,430</td>
     </tr>
   </table>
   
@@ -2052,12 +2074,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYh7wk78G4rCHKKgc81'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3GfbfjMkG2WWJob2V'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYh7wk78G4rCHKKgc81'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3GfbfjMkG2WWJob2V'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -2101,10 +2123,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
+  <div class="indicator-row" style="grid-template-columns:repeat(4,1fr);">
     <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">3371.00</div></div>
     <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">2861.75</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">0.00</div></div>
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value positive">
@@ -2116,7 +2137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYhLeivxiWMHm6UFutM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3Vrr1R4tP6pnmvp22'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -2140,13 +2161,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <tr>
       <td>自營</td>
       <td class="positive">+15</td>
-      <td>—</td><td>—</td>
+      <td class="negative">-88</td>
+      <td class="positive">+233</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
       <td class="positive">+17</td>
-      <td class="positive">+1,473</td>
-      <td class="positive">+3,944</td>
+      <td class="positive">+1,385</td>
+      <td class="positive">+4,177</td>
     </tr>
   </table>
   
@@ -2181,12 +2203,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYhLeivxiWMHm6UFutM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3Vrr1R4tP6pnmvp22'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJYhLeivxiWMHm6UFutM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbJh3Vrr1R4tP6pnmvp22'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
