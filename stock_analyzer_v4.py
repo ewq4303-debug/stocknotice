@@ -11,10 +11,17 @@ import os
 import json
 import requests
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import yfinance as yf
 import pandas as pd
 import anthropic
+
+# 台灣時區 (UTC+8)
+TW_TZ = timezone(timedelta(hours=8))
+
+def now_tw():
+    """取得台灣時間 datetime"""
+    return datetime.now(TW_TZ)
 
 # ===== 設定 =====
 STOCKS = os.getenv("STOCKS", "2330,2454,2317").split(",")
@@ -335,23 +342,22 @@ def get_institution_data(stock_id: str, days: int = 30):
     foreign_20d = sum(h["foreign"] for h in history[-20:]) / 1000
     trust_5d    = sum(h["trust"]   for h in history[-5:])  / 1000
     trust_20d   = sum(h["trust"]   for h in history[-20:]) / 1000
+    dealer_5d   = sum(h["dealer"]  for h in history[-5:])  / 1000
+    dealer_20d  = sum(h["dealer"]  for h in history[-20:]) / 1000
     
     latest = history[-1]
     
-    # Debug：印最新一筆的計算結果
-    if stock_id == STOCKS[0] if STOCKS else False:
-        print(f"    [debug] {stock_id} 最新外資={latest['foreign']/1000:+.0f}張, "
-              f"投信={latest['trust']/1000:+.0f}張, 5日累計外資={foreign_5d:+.0f}張")
-    
     return {
         "latest": latest,
-        "foreign_today": latest["foreign"] / 1000,  # 張
+        "foreign_today": latest["foreign"] / 1000,
         "foreign_5d":    foreign_5d,
         "foreign_20d":   foreign_20d,
         "trust_today":   latest["trust"] / 1000,
         "trust_5d":      trust_5d,
         "trust_20d":     trust_20d,
         "dealer_today":  latest["dealer"] / 1000,
+        "dealer_5d":     dealer_5d,
+        "dealer_20d":    dealer_20d,
         "history": history,
     }
 
@@ -415,6 +421,7 @@ def get_margin_data(stock_id: str, days: int = 30):
 def get_borrowing_data(stock_id: str, days: int = 30):
     """取得借券餘額（5日/20日增減）
     FinMind: TaiwanStockSecuritiesLending
+    可能的欄位: SecuritiesLendingBalanceVolume, today_balance_volume, balance...
     """
     start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
@@ -425,13 +432,31 @@ def get_borrowing_data(stock_id: str, days: int = 30):
         return {"borrow_balance": 0, "borrow_change": 0, "borrow_5d": 0, "borrow_20d": 0, "history": []}
     
     data = sorted(data, key=lambda x: x.get("date", ""))
-    if stock_id == STOCKS[0] if STOCKS else False:
-        print(f"    [debug] {stock_id} 借券欄位: {list(data[0].keys())}")
+    
+    # Debug 印出首筆 + 嘗試所有可能的欄位
+    if STOCKS and stock_id == STOCKS[0]:
+        first = data[0]
+        print(f"    [debug] {stock_id} 借券欄位: {list(first.keys())}")
+        print(f"    [debug] {stock_id} 借券首筆: {first}")
     
     def get_balance(d):
-        return float(d.get("today_balance_volume",
-                       d.get("TodayBalanceVolume",
-                       d.get("balance", 0))))
+        # FinMind 借券常見欄位名（依序嘗試）
+        for key in [
+            "today_balance_volume",
+            "TodayBalanceVolume",
+            "SecuritiesLendingBalanceVolume",
+            "securities_lending_balance_volume",
+            "balance",
+            "today_balance",
+            "TodayBalance",
+            "today_remaining_balance_volume",
+        ]:
+            if key in d and d[key] is not None:
+                try:
+                    return float(d[key])
+                except (ValueError, TypeError):
+                    continue
+        return 0.0
     
     latest = data[-1]
     balance = int(get_balance(latest))
@@ -1377,7 +1402,7 @@ def generate_rating_table(stocks_data: dict) -> str:
       <i class="ti ti-target-arrow" aria-hidden="true"></i>
       個股操作建議綜合評等
     </div>
-    <div class="rating-update">更新於 {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
+    <div class="rating-update">更新於 {now_tw().strftime("%Y-%m-%d %H:%M")}</div>
   </div>
   <div class="rating-grid">
     {cols_html}
@@ -1440,10 +1465,24 @@ def generate_stock_card(stock_id: str, data: dict):
     vol_class     = "positive" if volume_diff >= 0 else "negative"
     vol_sign      = "+" if volume_diff >= 0 else ""
     
-    # 籌碼合計（張）
-    total_today = inst["foreign_today"] + inst["trust_today"] + inst["dealer_today"]
-    total_5d    = inst["foreign_5d"]    + inst["trust_5d"]
-    total_20d   = inst["foreign_20d"]   + inst["trust_20d"]
+    # 籌碼合計（張） - 全部從 dict 直接取
+    total_today = inst["foreign_today"] + inst["trust_today"]  + inst.get("dealer_today", 0)
+    total_5d    = inst["foreign_5d"]    + inst["trust_5d"]     + inst.get("dealer_5d",    0)
+    total_20d   = inst["foreign_20d"]   + inst["trust_20d"]    + inst.get("dealer_20d",   0)
+    
+    # MA60 條件顯示 (資料不足 60 天時 ma60 為 0)
+    has_ma60 = ind.get("ma60", 0) > 0
+    if has_ma60:
+        ma_cells = f"""
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">{ind['ma5']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">{ind['ma20']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">{ind['ma60']:.2f}</div></div>"""
+        ma_row_cols = 5
+    else:
+        ma_cells = f"""
+    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">{ind['ma5']:.2f}</div></div>
+    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">{ind['ma20']:.2f}</div></div>"""
+        ma_row_cols = 4
     
     # 新聞
     news_html = ""
@@ -1488,10 +1527,7 @@ def generate_stock_card(stock_id: str, data: dict):
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
   </div>
-  <div class="indicator-row">
-    <div class="indicator-cell"><div class="indicator-cell-label">MA5</div><div class="indicator-cell-value">{ind['ma5']:.2f}</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA20</div><div class="indicator-cell-value">{ind['ma20']:.2f}</div></div>
-    <div class="indicator-cell"><div class="indicator-cell-label">MA60</div><div class="indicator-cell-value">{ind['ma60']:.2f}</div></div>
+  <div class="indicator-row" style="grid-template-columns:repeat({ma_row_cols},1fr);">{ma_cells}
     <div class="indicator-cell">
       <div class="indicator-cell-label">Supertrend</div>
       <div class="indicator-cell-value {'positive' if ind.get('supertrend_dir')==1 else 'negative'}">
@@ -1527,7 +1563,8 @@ def generate_stock_card(stock_id: str, data: dict):
     <tr>
       <td>自營</td>
       <td class="{'positive' if inst['dealer_today']>=0 else 'negative'}">{inst['dealer_today']:+,.0f}</td>
-      <td>—</td><td>—</td>
+      <td class="{'positive' if inst.get('dealer_5d',0)>=0 else 'negative'}">{inst.get('dealer_5d',0):+,.0f}</td>
+      <td class="{'positive' if inst.get('dealer_20d',0)>=0 else 'negative'}">{inst.get('dealer_20d',0):+,.0f}</td>
     </tr>
     <tr class="row-total">
       <td>合計</td>
@@ -1590,7 +1627,7 @@ def generate_stock_card(stock_id: str, data: dict):
 def generate_html(stocks_data: dict, market_data: dict):
     """生成完整 HTML"""
     
-    update_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    update_time = now_tw().strftime("%Y-%m-%d %H:%M")
     
     # 生成評等表
     rating_table = generate_rating_table(stocks_data)
@@ -1687,7 +1724,51 @@ def generate_market_section(market_data: dict):
     divisor = 100_000_000
     foreign = foreign_raw / divisor
     trust   = trust_raw   / divisor
-
+    
+    # ── 融資相對指標 ─────────────────────────────
+    # 1. 融資餘額 / 大盤總市值 (用「融資餘額 / 加權指數成交金額」近似)
+    # 2. 融資增幅% - 大盤漲幅% (反映散戶 vs 大盤相對強弱)
+    total_margin = market_data.get("total_margin", [])
+    margin_ratio = 0  # 融資 / 成交金額 %
+    margin_vs_taiex = 0  # 融資增幅% - 大盤漲幅%
+    margin_balance_b = 0  # 融資餘額(億)
+    
+    if total_margin:
+        # 找最新一筆與 5 日前比較
+        margin_sorted = sorted(total_margin, key=lambda x: x.get("date", ""))
+        latest_m = margin_sorted[-1]
+        
+        # 嘗試多種欄位名 (可能是 TodayBalance、margin_purchase_today_balance...)
+        def margin_value(d):
+            for k in ["MarginPurchaseTodayBalance", "margin_purchase_today_balance",
+                      "TodayBalance", "today_balance", "MarginPurchaseMoney",
+                      "margin_purchase_money", "MarginPurchaseAmount"]:
+                if k in d and d[k] is not None:
+                    try:
+                        return float(d[k])
+                    except (ValueError, TypeError):
+                        continue
+            return 0
+        
+        margin_now = margin_value(latest_m)
+        margin_balance_b = margin_now / 100_000_000  # 元 → 億
+        
+        # 融資 / 大盤成交金額（同樣是元 → 比例%）
+        if money_amount > 0:
+            margin_ratio = (margin_now / money_amount) * 100
+        
+        # 融資 5 日增幅% vs 大盤 5 日漲幅%
+        if len(margin_sorted) >= 6:
+            margin_5d_ago = margin_value(margin_sorted[-6])
+            if margin_5d_ago > 0:
+                margin_growth_pct = (margin_now - margin_5d_ago) / margin_5d_ago * 100
+                
+                # 大盤 5 日漲幅
+                if len(taiex) >= 6:
+                    taiex_5d_ago = taiex[-6]["close"]
+                    taiex_growth_pct = (close - taiex_5d_ago) / taiex_5d_ago * 100
+                    margin_vs_taiex = margin_growth_pct - taiex_growth_pct
+    
     return f"""
 <div class="section-header">大盤總覽</div>
 <div class="metrics-grid-4">
@@ -1709,6 +1790,28 @@ def generate_market_section(market_data: dict):
     <div class="metric-value {'positive' if trust>0 else 'negative'}">{trust:+.1f}</div>
   </div>
 </div>
+
+<div class="metrics-grid-4" style="margin-top:8px;">
+  <div class="metric">
+    <div class="metric-label">融資餘額(億)</div>
+    <div class="metric-value">{margin_balance_b:,.0f}</div>
+  </div>
+  <div class="metric" title="融資餘額占當日成交金額比例">
+    <div class="metric-label">融資/成交額(%)</div>
+    <div class="metric-value">{margin_ratio:.1f}%</div>
+  </div>
+  <div class="metric" title="融資5日增幅 - 大盤5日漲幅。正值=散戶比大盤積極 (危險訊號)；負值=散戶比大盤保守 (健康)">
+    <div class="metric-label">融資增-盤勢漲(%)</div>
+    <div class="metric-value {'negative' if margin_vs_taiex > 0 else 'positive'}">{margin_vs_taiex:+.2f}%</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">融資解讀</div>
+    <div class="metric-value" style="font-size:13px;">
+      {'⚠️ 散戶過熱' if margin_vs_taiex > 3 else '🔥 散戶追價' if margin_vs_taiex > 0 else '✅ 籌碼健康' if margin_vs_taiex >= -3 else '❄️ 散戶縮手'}
+    </div>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div>
   <div id="taiex_kline" style="width:100%;height:400px;"></div>
@@ -2224,7 +2327,7 @@ def send_telegram(text: str):
 # =========================================================
 
 def main():
-    print(f"=== 股票監控機器人 v4.2 ({datetime.now().strftime('%Y-%m-%d %H:%M')}) ===\n")
+    print(f'=== 股票監控機器人 v4.2 ({now_tw().strftime("%Y-%m-%d %H:%M")}) ===\n')
     
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
@@ -2317,14 +2420,14 @@ def main():
         if result.returncode == 0:
             print("  無變動")
         else:
-            subprocess.run(["git", "commit", "-m", f"Update {datetime.now().strftime('%Y-%m-%d %H:%M')}"], check=True)
+            subprocess.run(["git", "commit", "-m", "Update " + now_tw().strftime("%Y-%m-%d %H:%M")], check=True)
             subprocess.run(["git", "push"], check=True)
             print("  ✓ 已更新")
     except Exception as e:
         print(f"  ⚠️ Git 失敗: {e}")
     
     # Telegram
-    tg_msg = f"📊 *股票監控* ({datetime.now().strftime('%m-%d')})\n\n"
+    tg_msg = "📊 *股票監控* (" + now_tw().strftime("%m-%d") + ")\n\n"
     for stock_id, data in stocks_data.items():
         close = data["latest"]["close"]
         foreign = data["institution"]["foreign_today"]
