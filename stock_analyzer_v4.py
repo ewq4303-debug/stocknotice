@@ -418,7 +418,7 @@ def get_margin_data(stock_id: str, days: int = 30):
     }
 
 
-BALANCE_FIELD = "SBLShortSalesCurrentDayBalance"   # 已驗證的正確欄位
+BALANCE_FIELD = "SBLShortSalesCurrentDayBalance"   # FinMind 借券賣出當日餘額（股）
 
 
 def _empty_borrow():
@@ -435,6 +435,13 @@ def get_borrowing_data(stock_id):
     """
     抓借券賣出餘額。
     資料來源：FinMind TaiwanDailyShortSaleBalances（同 TWSE TWT93U）
+
+    回傳單位：張（1 張 = 1000 股）
+        borrow_balance: 今日借券賣出餘額（張）
+        borrow_change:  與前一交易日相比的增減（張）
+        borrow_5d:      與 5  個交易日前相比的增減（張）
+        borrow_20d:     與 20 個交易日前相比的增減（張）
+        history:        近 30 個交易日的 [{date, balance(張)}]
     """
     end = now_tw().date()
     start = end - timedelta(days=60)
@@ -457,27 +464,33 @@ def get_borrowing_data(stock_id):
 
     rows = j.get("data") or []
     if not rows:
-        # 假日 / 未更新 / API 配額耗盡都會走到這
         return _empty_borrow()
 
-    # 防呆：若 FinMind 哪天改欄位名，至少噴一行讓我們知道
     if BALANCE_FIELD not in rows[0]:
         print(f"[warn] {stock_id} 借券 欄位 '{BALANCE_FIELD}' 不存在! 實際欄位: {list(rows[0].keys())}")
         return _empty_borrow()
 
     df = pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
-    df["balance"] = pd.to_numeric(df[BALANCE_FIELD], errors="coerce").fillna(0).astype(int)
 
-    latest = df.iloc[-1]
-    prev = df.iloc[-2] if len(df) >= 2 else latest
+    # 股 → 張（÷1000 並四捨五入）
+    df["lots"] = (pd.to_numeric(df[BALANCE_FIELD], errors="coerce").fillna(0) / 1000).round().astype(int)
+
+    n = len(df)
+    today_lots = int(df.iloc[-1]["lots"])
+
+    # 與 N 個交易日前比較；不夠資料時回傳 0（避免誤導）
+    def diff_n_days_ago(n_days):
+        if n < n_days + 1:
+            return 0
+        return today_lots - int(df.iloc[-(n_days + 1)]["lots"])
 
     return {
-        "borrow_balance": int(latest["balance"]),
-        "borrow_change":  int(latest["balance"] - prev["balance"]),
-        "borrow_5d":      int(df["balance"].tail(5).mean())  if len(df) >= 5  else int(latest["balance"]),
-        "borrow_20d":     int(df["balance"].tail(20).mean()) if len(df) >= 20 else int(latest["balance"]),
+        "borrow_balance": today_lots,
+        "borrow_change":  diff_n_days_ago(1),
+        "borrow_5d":      diff_n_days_ago(5),
+        "borrow_20d":     diff_n_days_ago(20),
         "history": [
-            {"date": str(r["date"]), "balance": int(r["balance"])}
+            {"date": str(r["date"]), "balance": int(r["lots"])}
             for _, r in df.tail(30).iterrows()
         ],
     }
