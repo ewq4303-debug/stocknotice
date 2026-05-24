@@ -418,43 +418,146 @@ def get_margin_data(stock_id: str, days: int = 30):
     }
 
 
-def get_borrowing_data(stock_id: str, days: int = 30):
-    """取得借券餘額（5日/20日增減）
-    
-    嘗試多個 FinMind API，因為借券資料可能在不同端點：
-      1. TaiwanStockSecuritiesLending (借券交易)
-      2. TaiwanStockShortSale (融券+借券合併)
+BAL_CANDIDATES = [
+    "SecuritiesLendingShortSaleTodayBalance",   # FinMind 完整命名最可能
+    "BorrowingShortSaleTodayBalance",
+    "SecuritiesLendingTodayBalance",
+    "BorrowShortSaleTodayBalance",
+    "SBLShortSaleTodayBalance",
+    "SBLTodayBalance",
+    "ShortSaleTodayBalance",                    # 也可能跟融券共用名稱
+    "TodayBalance",                             # 最 generic 的可能
+    "today_balance",
+]
+
+# 元資料欄位（自動推測時要排除）
+META_COLS = {"date", "stock_id", "stock_name", "Note", "note"}
+
+
+def _empty_borrow():
+    """API 失敗或沒資料時的安全回傳值"""
+    return {
+        "borrow_balance": 0,
+        "borrow_change":  0,
+        "borrow_5d":      0,
+        "borrow_20d":     0,
+        "history":        [],
+    }
+
+
+def get_borrowing_data(stock_id):
     """
-    start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
-    end = datetime.now().strftime("%Y-%m-%d")
-    
-    # 依序嘗試多個 API
-    data = []
-    api_used = None
-    for api_name in ["TaiwanStockSecuritiesLending",
-                     "TaiwanStockShortSale"]:
-        data = fetch_finmind(api_name, data_id=stock_id, start_date=start, end_date=end)
-        if data:
-            api_used = api_name
-            break
-    
-    if not data:
-        return {"borrow_balance": 0, "borrow_change": 0, "borrow_5d": 0, "borrow_20d": 0, "history": []}
-    
-    data = sorted(data, key=lambda x: x.get("date", ""))
-    
-    # Debug：印第一支股票的完整資訊
-    if STOCKS and stock_id == STOCKS[0]:
-        first = data[0]
-        last  = data[-1]
-        print(f"    [debug] {stock_id} 借券 API={api_used}")
-        print(f"    [debug] {stock_id} 借券欄位: {list(first.keys())}")
-        # 列出所有數值欄位以便辨識
-        numeric_fields = {}
-        for k, v in last.items():
-            if isinstance(v, (int, float)) and v != 0 and not isinstance(v, bool):
-                numeric_fields[k] = v
-        print(f"    [debug] {stock_id} 借券最新非零數值: {numeric_fields}")
+    抓借券賣出餘額（v10）
+
+    Returns:
+        {
+          "borrow_balance": int,    # 最新一日餘額（張）
+          "borrow_change":  int,    # 與前一日的差
+          "borrow_5d":      int,    # 近 5 日餘額平均
+          "borrow_20d":     int,    # 近 20 日餘額平均
+          "history":        [{"date": "YYYY-MM-DD", "balance": int}, ...]  # 近 30 日
+        }
+    """
+    end = now_tw().date()
+    start = end - timedelta(days=90)   # 90 天保險，足夠扣掉假日後仍有 20+ 個交易日
+
+    url = "https://api.finmindtrade.com/api/v4/data"
+    params = {
+        "dataset":    "TaiwanDailyShortSaleBalances",
+        "data_id":    stock_id,
+        "start_date": start.isoformat(),
+        "end_date":   end.isoformat(),
+    }
+    headers = {"Authorization": f"Bearer {FINMIND_TOKEN}"} if FINMIND_TOKEN else {}
+
+    # --- HTTP 層 ---
+    try:
+        resp = requests.get(url, params=params, headers=headers, timeout=15)
+    except Exception as e:
+        print(f"[debug] {stock_id} 借券 API 連線失敗: {e}")
+        return _empty_borrow()
+
+    try:
+        j = resp.json()
+    except Exception as e:
+        print(f"[debug] {stock_id} 借券 API 非 JSON 回傳 (status={resp.status_code}): {resp.text[:200]}")
+        return _empty_borrow()
+
+    # --- API 回傳碼層 ---
+    # FinMind 成功為 status=200，失敗會有 msg；422 通常 dataset 名錯或要付費
+    status = j.get("status")
+    if status not in (200, None) and "data" not in j:
+        print(f"[debug] {stock_id} 借券 API 業務錯誤: status={status}, msg={j.get('msg')!r}")
+        return _empty_borrow()
+
+    rows = j.get("data") or []
+    if not rows:
+        print(f"[debug] {stock_id} 借券 API 回傳空 data（假日/未更新/欄位錯誤皆有可能）")
+        return _empty_borrow()
+
+    # --- Debug 印出 schema（讓我們知道實際欄位） ---
+    cols = list(rows[0].keys())
+    print(f"[debug] {stock_id} 借券(SBL) 欄位: {cols}")
+    print(f"[debug] {stock_id} 借券(SBL) 最新一筆原始資料: {rows[-1]}")
+
+    df = pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
+
+    # --- 找餘額欄位：先試候選清單，再自動推測 ---
+    bal_col = next((c for c in BAL_CANDIDATES if c in df.columns), None)
+
+    if bal_col is None:
+        # 自動推測：找數值型欄位中「最大值最像餘額」的那個
+        # 借券餘額典型範圍：1萬 ~ 數億張；其他欄位（如費率、價格）會小很多
+        cand_scores = []
+        for c in df.columns:
+            if c in META_COLS:
+                continue
+            try:
+                vals = pd.to_numeric(df[c], errors="coerce").dropna()
+                if len(vals) == 0:
+                    continue
+                max_v = vals.max()
+                # 餘額至少要過萬，且不應是百分比（< 100）
+                if max_v >= 10_000:
+                    cand_scores.append((max_v, c))
+            except Exception:
+                continue
+        if cand_scores:
+            cand_scores.sort(reverse=True)
+            bal_col = cand_scores[0][1]
+            print(f"[debug] {stock_id} 借券 自動推測餘額欄位 = '{bal_col}' "
+                  f"(max={cand_scores[0][0]:.0f})；其他候選: {cand_scores[1:5]}")
+        else:
+            print(f"[debug] {stock_id} 借券 找不到任何像餘額的欄位（max < 10000）, 全欄位最大值:")
+            for c in df.columns:
+                if c in META_COLS:
+                    continue
+                try:
+                    v = pd.to_numeric(df[c], errors="coerce").max()
+                    print(f"          {c}: {v}")
+                except Exception:
+                    print(f"          {c}: <非數值>")
+            return _empty_borrow()
+    else:
+        print(f"[debug] {stock_id} 借券 命中候選欄位 = '{bal_col}'")
+
+    df["balance"] = pd.to_numeric(df[bal_col], errors="coerce").fillna(0).astype(int)
+
+    latest = df.iloc[-1]
+    prev = df.iloc[-2] if len(df) >= 2 else latest
+
+    history = [
+        {"date": str(r["date"]), "balance": int(r["balance"])}
+        for _, r in df.tail(30).iterrows()
+    ]
+
+    return {
+        "borrow_balance": int(latest["balance"]),
+        "borrow_change":  int(latest["balance"] - prev["balance"]),
+        "borrow_5d":      int(df["balance"].tail(5).mean())  if len(df) >= 5  else int(latest["balance"]),
+        "borrow_20d":     int(df["balance"].tail(20).mean()) if len(df) >= 20 else int(latest["balance"]),
+        "history":        history,
+    }
     
     def get_balance(d):
         """嘗試所有可能的借券餘額欄位"""
