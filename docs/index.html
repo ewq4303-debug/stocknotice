@@ -116,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 <div class="container">
   <div class="header">
     <h1>📊 股票監控儀表板</h1>
-    <div class="update-time">最後更新: 2026-05-24 08:23</div>
+    <div class="update-time">最後更新: 2026-05-24 18:28</div>
   </div>
   
   
@@ -141,27 +141,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
 </div>
 
-<div class="metrics-grid-4" style="margin-top:8px;">
-  <div class="metric">
-    <div class="metric-label">融資餘額(億)</div>
-    <div class="metric-value">5,223</div>
-  </div>
-  <div class="metric" title="融資餘額占當日成交金額比例">
-    <div class="metric-label">融資/成交額(%)</div>
-    <div class="metric-value">42.2%</div>
-  </div>
-  <div class="metric" title="融資5日增幅 - 大盤5日漲幅。正值=散戶比大盤積極 (危險訊號)；負值=散戶比大盤保守 (健康)">
-    <div class="metric-label">融資增-盤勢漲(%)</div>
-    <div class="metric-value negative">+199037768.66%</div>
-  </div>
-  <div class="metric">
-    <div class="metric-label">融資解讀</div>
-    <div class="metric-value" style="font-size:13px;">
-      ⚠️ 散戶過熱
-    </div>
-  </div>
-</div>
-
 <div class="card">
   <div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div>
   <div id="taiex_kline" style="width:100%;height:400px;"></div>
@@ -173,7 +152,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
       <i class="ti ti-target-arrow" aria-hidden="true"></i>
       個股操作建議綜合評等
     </div>
-    <div class="rating-update">更新於 2026-05-24 08:23</div>
+    <div class="rating-update">更新於 2026-05-24 18:28</div>
   </div>
   <div class="rating-grid">
     
@@ -405,6 +384,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <div class="chart-container"><canvas id="fx"></canvas></div>
   </div>
 </div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div>
+    <div class="chart-container"><canvas id="margin_ratio"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">融資增幅 vs 大盤漲幅 (較前日)</div>
+    <div class="chart-container"><canvas id="margin_vs_taiex"></canvas></div>
+  </div>
+</div>
 <div class="card">
   <div class="card-title">三大法人現貨 vs 期貨</div>
   <div class="chart-container" style="height:320px;">
@@ -442,6 +431,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_2330" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">30.68</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">18.39</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">1.11</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">73.51</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">35.1%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">58.4%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">58.48 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">1.06%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">36.2%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -460,7 +497,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLST3zHNhf1qemNBt2PU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEcoy4K5SNSKqfSzDq9'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -526,12 +563,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLST3zHNhf1qemNBt2PU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEcoy4K5SNSKqfSzDq9'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLST3zHNhf1qemNBt2PU'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEcoy4K5SNSKqfSzDq9'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -571,6 +608,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_2454" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">58.48</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">32.70</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">1.88</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">66.01</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value negative">-2.7%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value negative">-17.7%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">6.16 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">1.39%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">25.4%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -589,7 +674,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTFuPWnJBo5nAYJbTX'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEd2wR3ZBGrdvFZERkC'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -655,12 +740,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTFuPWnJBo5nAYJbTX'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEd2wR3ZBGrdvFZERkC'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTFuPWnJBo5nAYJbTX'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEd2wR3ZBGrdvFZERkC'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -700,6 +785,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_3711" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">54.95</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">24.10</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG <span class="label-tag tag-bull">PEG&lt;1</span></div>
+    <div class="indicator-cell-value">0.99</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">10.21</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">17.2%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">87.6%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">2.46 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">94.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">13.6%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -718,7 +851,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTSmFF7sSBD6TZuAxL'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdEFJkLTyrVfQZtqXu'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -784,12 +917,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTSmFF7sSBD6TZuAxL'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdEFJkLTyrVfQZtqXu'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTSmFF7sSBD6TZuAxL'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdEFJkLTyrVfQZtqXu'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -829,6 +962,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_3491" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">256.31</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">54.96</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">7.53</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">64.5%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">45.2%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">1328 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">34.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">20.8%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -847,7 +1028,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTgs4vKYmZJRcRK8zj'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdaZBtj9AQsDgFrwdP'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -913,12 +1094,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTgs4vKYmZJRcRK8zj'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdaZBtj9AQsDgFrwdP'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTgs4vKYmZJRcRK8zj'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdaZBtj9AQsDgFrwdP'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -958,6 +1139,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_2383" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">121.95</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">32.62</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG <span class="label-tag tag-bull">PEG&lt;1</span></div>
+    <div class="indicator-cell-value">0.23</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">41.04</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">52.5%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">53.2%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">1.79 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">33.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">40.7%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -976,7 +1205,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTuBERyRiFVKhvWnwT'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdp72JJCTH4QwDtGtm'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1042,12 +1271,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTuBERyRiFVKhvWnwT'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdp72JJCTH4QwDtGtm'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSTuBERyRiFVKhvWnwT'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEdp72JJCTH4QwDtGtm'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1087,6 +1316,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_3037" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">222.48</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">33.29</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">1.45</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">4.36</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">24.5%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">445.7%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">1.53 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">15.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">11.0%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1105,7 +1382,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSU6sSnPtBzotaGDxKw'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEe2cMNsT5mrjmUxXoR'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1171,12 +1448,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSU6sSnPtBzotaGDxKw'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEe2cMNsT5mrjmUxXoR'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSU6sSnPtBzotaGDxKw'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEe2cMNsT5mrjmUxXoR'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1216,6 +1493,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_3665" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">48.08</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">20.97</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">46.28</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">29.4%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">39.6%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">4341 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">47.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">23.1%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1234,7 +1559,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUJkZkASERKHAQXSRG'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeDVCTfKBeADzbsNDe'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1300,12 +1625,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUJkZkASERKHAQXSRG'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeDVCTfKBeADzbsNDe'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUJkZkASERKHAQXSRG'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeDVCTfKBeADzbsNDe'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1345,6 +1670,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_6223" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">181.83</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">51.10</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">33.19</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">39.0%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">63.2%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">5913 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">27.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">28.1%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1363,7 +1736,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUXLrVL8rAUWycCRhM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeVcoan4yqFLkWTcbD'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1429,12 +1802,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUXLrVL8rAUWycCRhM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeVcoan4yqFLkWTcbD'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUXLrVL8rAUWycCRhM'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEeVcoan4yqFLkWTcbD'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1474,6 +1847,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_6274" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">120.45</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">26.63</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">12.08</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">57.8%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">71.7%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">4201 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">52.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">25.4%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1492,7 +1913,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUkCGXVePA6hBfcefY'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEej9eTQdU7ou8Xa6SC'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1558,12 +1979,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUkCGXVePA6hBfcefY'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEej9eTQdU7ou8Xa6SC'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUkCGXVePA6hBfcefY'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEej9eTQdU7ou8Xa6SC'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1603,6 +2024,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_8358" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">123.40</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">22.78</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">4.23</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">46.5%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">90.6%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">1318 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">29.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">17.6%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1621,7 +2090,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUx1AtmZ2Zbe1azB1M'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEey2pdqGXb6adSrNG9'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1687,12 +2156,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUx1AtmZ2Zbe1azB1M'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEey2pdqGXb6adSrNG9'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSUx1AtmZ2Zbe1azB1M'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEey2pdqGXb6adSrNG9'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1732,6 +2201,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_6415" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">89.35</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">33.19</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">6.29</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">18.7%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">112.1%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">2183 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">45.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">7.8%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1750,7 +2267,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSV9CNWq96MWMeYY96m'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEf9piCmunrvu8FyHHE'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1816,12 +2333,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSV9CNWq96MWMeYY96m'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEf9piCmunrvu8FyHHE'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSV9CNWq96MWMeYY96m'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEf9piCmunrvu8FyHHE'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1861,6 +2378,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_2327" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">54.65</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">29.46</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG <span class="label-tag tag-bear">PEG&gt;2</span></div>
+    <div class="indicator-cell-value">2.17</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">11.51</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">22.7%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value positive">44.6%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">1.29 兆</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">79.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">15.9%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -1879,7 +2444,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVMHeTCP6vKWtceeMg'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEfNNGPSCwXGuPHjK5H'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -1945,12 +2510,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVMHeTCP6vKWtceeMg'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEfNNGPSCwXGuPHjK5H'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVMHeTCP6vKWtceeMg'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEfNNGPSCwXGuPHjK5H'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -1990,6 +2555,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_8042" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E <span class="label-tag tag-bear">偏貴</span></div>
+    <div class="indicator-cell-value">138.20</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG </div>
+    <div class="indicator-cell-value">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">0.89</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">32.9%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value ">—</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">159 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">98.00%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">9.9%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -2008,7 +2621,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVaLU19uEHAgvFMgwq'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEff4N8ySZXH5gZFE4Z'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -2074,12 +2687,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVaLU19uEHAgvFMgwq'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEff4N8ySZXH5gZFE4Z'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVaLU19uEHAgvFMgwq'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEff4N8ySZXH5gZFE4Z'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -2119,6 +2732,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
   <div id="kline_3008" style="width:100%;height:280px;"></div>
   
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E </div>
+    <div class="indicator-cell-value">22.52</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">18.07</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG <span class="label-tag tag-bear">PEG&gt;2</span></div>
+    <div class="indicator-cell-value">4.46</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">157.18</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value positive">6.6%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value negative">-3.4%</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">4630 億</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">2.26%</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">11.4%</div>
+  </div>
+</div>
+  
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
     📈 技術面
@@ -2137,7 +2798,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 技術面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVnFKiwBxhffG4pF8Q'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEftUkiTomuhZbCzpKs'}</div>
   </details>
   
   <!-- 三大法人 -->
@@ -2203,12 +2864,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   
   <details class="collapsible">
     <summary>✨ AI 籌碼面分析</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVnFKiwBxhffG4pF8Q'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEftUkiTomuhZbCzpKs'}</div>
   </details>
   
   <details class="collapsible" style="background:rgba(55,138,221,0.05);border-color:#bbdefb;">
     <summary>🎯 AI 操作建議</summary>
-    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbLSVnFKiwBxhffG4pF8Q'}</div>
+    <div class="collapsible-content">AI 分析暫時無法使用: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbMEftUkiTomuhZbCzpKs'}</div>
   </details>
   
   <!-- 新聞（可摺疊） -->
@@ -3315,6 +3976,60 @@ new Chart(document.getElementById('fx'),{
     plugins:{legend:{display:false}},
     scales:{
       y:{ticks:{font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}},
+      x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('margin_ratio'),{
+  type:'line',
+  data:{
+    labels:["05-11", "05-11", "05-11", "05-12", "05-12", "05-12", "05-13", "05-13", "05-13", "05-14", "05-14", "05-14", "05-15", "05-15", "05-15", "05-18", "05-18", "05-18", "05-19", "05-19", "05-19", "05-20", "05-20", "05-20", "05-21", "05-21", "05-21", "05-22", "05-22", "05-22"],
+    datasets:[{
+      label:'融資市值比(%)',
+      data:[0.0, 0.0, 0.464, 0.469, 0.0, 0.0, 0.0, 0.0, 0.478, 0.0, 0.0, 0.478, 0.479, 0.0, 0.0, 0.0, 0.0, 0.491, 0.0, 0.0, 0.495, 0.0, 0.0, 0.502, 0.0, 0.0, 0.494, 0.0, 0.0, 0.494],
+      borderColor:'#D4537E',
+      backgroundColor:'rgba(212,83,126,0.1)',
+      borderWidth:2,fill:true,tension:0.3,pointRadius:2
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return ctx.parsed.y.toFixed(3)+'%'}}}
+    },
+    scales:{
+      y:{ticks:{callback:function(v){return v.toFixed(2)+'%'},font:{size:11}},
+          grid:{color:'rgba(0,0,0,0.05)'}},
+      x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('margin_vs_taiex'),{
+  type:'line',
+  data:{
+    labels:["05-11", "05-11", "05-12", "05-12", "05-12", "05-13", "05-13", "05-13", "05-14", "05-14", "05-14", "05-15", "05-15", "05-15", "05-18", "05-18", "05-18", "05-19", "05-19", "05-19", "05-20", "05-20", "05-20", "05-21", "05-21", "05-21", "05-22", "05-22", "05-22"],
+    datasets:[
+      {label:'融資增幅(%)',data:[-97.62, 229320184.69, 1.36, -100.0, 4185.95, 0.59, -97.5, 216700695.94, -100.0, -97.48, 217934163.63, -1.27, -100.0, -97.44, 3849.1, -97.38, 209499519.52, -100.0, -97.36, 207724271.56, -100.0, -97.3, 205330784.34, -100.0, 3377.75, 5601066.21, -100.0, 3487.76, 5654589.09],
+        borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',
+        borderWidth:2,tension:0.3,pointRadius:2,fill:false},
+      {label:'大盤漲幅(%)',data:[0.0, 0.0, 0.26, 0.0, 0.0, -1.25, 0.0, 0.0, 0.91, 0.0, 0.0, -1.39, 0.0, 0.0, -0.68, 0.0, 0.0, -1.75, 0.0, 0.0, -0.39, 0.0, 0.0, 3.37, 0.0, 0.0, 2.18, 0.0, 0.0],
+        borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',
+        borderWidth:2,tension:0.3,pointRadius:2,fill:false}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:12}},
+      tooltip:{mode:'index',intersect:false,
+        callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'%'}}}
+    },
+    scales:{
+      y:{ticks:{callback:function(v){return v.toFixed(1)+'%'},font:{size:11}},
+          grid:{color:'rgba(0,0,0,0.05)'}},
       x:{ticks:{font:{size:10},maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false}}
     }
   }
