@@ -420,36 +420,59 @@ def get_margin_data(stock_id: str, days: int = 30):
 
 def get_borrowing_data(stock_id: str, days: int = 30):
     """取得借券餘額（5日/20日增減）
-    FinMind: TaiwanStockSecuritiesLending
-    可能的欄位: SecuritiesLendingBalanceVolume, today_balance_volume, balance...
+    
+    嘗試多個 FinMind API，因為借券資料可能在不同端點：
+      1. TaiwanStockSecuritiesLending (借券交易)
+      2. TaiwanStockShortSale (融券+借券合併)
     """
     start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
-    data = fetch_finmind("TaiwanStockSecuritiesLending",
-                        data_id=stock_id, start_date=start, end_date=end)
+    
+    # 依序嘗試多個 API
+    data = []
+    api_used = None
+    for api_name in ["TaiwanStockSecuritiesLending",
+                     "TaiwanStockShortSale"]:
+        data = fetch_finmind(api_name, data_id=stock_id, start_date=start, end_date=end)
+        if data:
+            api_used = api_name
+            break
     
     if not data:
         return {"borrow_balance": 0, "borrow_change": 0, "borrow_5d": 0, "borrow_20d": 0, "history": []}
     
     data = sorted(data, key=lambda x: x.get("date", ""))
     
-    # Debug 印出首筆 + 嘗試所有可能的欄位
+    # Debug：印第一支股票的完整資訊
     if STOCKS and stock_id == STOCKS[0]:
         first = data[0]
+        last  = data[-1]
+        print(f"    [debug] {stock_id} 借券 API={api_used}")
         print(f"    [debug] {stock_id} 借券欄位: {list(first.keys())}")
-        print(f"    [debug] {stock_id} 借券首筆: {first}")
+        # 列出所有數值欄位以便辨識
+        numeric_fields = {}
+        for k, v in last.items():
+            if isinstance(v, (int, float)) and v != 0 and not isinstance(v, bool):
+                numeric_fields[k] = v
+        print(f"    [debug] {stock_id} 借券最新非零數值: {numeric_fields}")
     
     def get_balance(d):
-        # FinMind 借券常見欄位名（依序嘗試）
+        """嘗試所有可能的借券餘額欄位"""
         for key in [
             "today_balance_volume",
             "TodayBalanceVolume",
             "SecuritiesLendingBalanceVolume",
             "securities_lending_balance_volume",
+            "today_remaining_balance_volume",
+            "OffsetLoanAndShort",
+            "SecuritiesLendingBalance",
+            "BalanceVolume",
+            "balance_volume",
             "balance",
             "today_balance",
             "TodayBalance",
-            "today_remaining_balance_volume",
+            "lending_balance",
+            "LendingBalance",
         ]:
             if key in d and d[key] is not None:
                 try:
@@ -1102,6 +1125,55 @@ def get_stock_name(stock_id: str):
         return stock_id
 
 
+def get_fundamentals(stock_id: str):
+    """取得個股基本面數據（yfinance）"""
+    result = {
+        "trailing_pe":   None,   # P/E (TTM)
+        "forward_pe":    None,   # 預期 P/E
+        "peg":           None,   # PEG
+        "eps_ttm":       None,   # EPS (TTM)
+        "eps_forward":   None,   # 預期 EPS
+        "eps_growth":    None,   # 盈餘成長率
+        "revenue_growth":None,   # 營收成長率
+        "market_cap":    None,   # 市值
+        "dividend_yield":None,   # 殖利率 %
+        "roe":           None,   # 股東權益報酬率 %
+    }
+    
+    # 嘗試 .TW 與 .TWO
+    for suffix in (".TW", ".TWO"):
+        try:
+            ticker = yf.Ticker(f"{stock_id}{suffix}")
+            info = ticker.info
+            if not info or len(info) < 5:
+                continue
+            
+            result["trailing_pe"]    = info.get("trailingPE")
+            result["forward_pe"]     = info.get("forwardPE")
+            result["peg"]            = info.get("trailingPegRatio") or info.get("pegRatio")
+            result["eps_ttm"]        = info.get("trailingEps") or info.get("epsTrailingTwelveMonths")
+            result["eps_forward"]    = info.get("forwardEps")
+            result["eps_growth"]     = info.get("earningsGrowth")    # 比例 (0.15 = 15%)
+            result["revenue_growth"] = info.get("revenueGrowth")
+            result["market_cap"]     = info.get("marketCap")
+            div_y                    = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
+            if div_y is not None:
+                # yfinance 有時回傳 0.025 (=2.5%)，有時回傳 2.5
+                result["dividend_yield"] = div_y * 100 if div_y < 1 else div_y
+            result["roe"]            = info.get("returnOnEquity")
+            
+            # Debug 第一支
+            if STOCKS and stock_id == STOCKS[0]:
+                print(f"    [debug] {stock_id} 基本面: PE={result['trailing_pe']}, "
+                      f"FwdPE={result['forward_pe']}, PEG={result['peg']}, "
+                      f"EPS={result['eps_ttm']}, RevGrowth={result['revenue_growth']}")
+            return result
+        except Exception as e:
+            continue
+    
+    return result
+
+
 # =========================================================
 # AI 分析
 # =========================================================
@@ -1435,6 +1507,100 @@ def generate_rating_table(stocks_data: dict) -> str:
 
 
 
+def generate_fundamentals_block(fund: dict) -> str:
+    """生成基本面區塊 HTML"""
+    def fmt(v, suffix="", prec=2, percent=False):
+        if v is None:
+            return "—"
+        try:
+            v = float(v)
+            if percent:
+                # yfinance growth 是比例 0.15 = 15%
+                v = v * 100
+            if abs(v) < 0.01 and v != 0:
+                return "—"
+            return f"{v:,.{prec}f}{suffix}"
+        except (ValueError, TypeError):
+            return "—"
+    
+    def fmt_market_cap(v):
+        if v is None:
+            return "—"
+        try:
+            v = float(v)
+            if v > 1e12:
+                return f"{v/1e12:.2f} 兆"
+            elif v > 1e8:
+                return f"{v/1e8:.0f} 億"
+            else:
+                return f"{v:,.0f}"
+        except (ValueError, TypeError):
+            return "—"
+    
+    # 判斷估值
+    pe  = fund.get("trailing_pe")
+    fpe = fund.get("forward_pe")
+    peg = fund.get("peg")
+    
+    pe_tag = ""
+    if isinstance(pe, (int, float)) and pe > 0:
+        if pe < 15:
+            pe_tag = '<span class="label-tag tag-bull">低估</span>'
+        elif pe > 30:
+            pe_tag = '<span class="label-tag tag-bear">偏貴</span>'
+    
+    peg_tag = ""
+    if isinstance(peg, (int, float)) and peg > 0:
+        if peg < 1:
+            peg_tag = '<span class="label-tag tag-bull">PEG&lt;1</span>'
+        elif peg > 2:
+            peg_tag = '<span class="label-tag tag-bear">PEG&gt;2</span>'
+    
+    return f"""
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">本益比 P/E {pe_tag}</div>
+    <div class="indicator-cell-value">{fmt(pe)}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">預期 Fwd P/E</div>
+    <div class="indicator-cell-value">{fmt(fpe)}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">PEG {peg_tag}</div>
+    <div class="indicator-cell-value">{fmt(peg)}</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS (TTM)</div>
+    <div class="indicator-cell-value">{fmt(fund.get("eps_ttm"))}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">營收成長</div>
+    <div class="indicator-cell-value {'positive' if (fund.get('revenue_growth') or 0) > 0 else 'negative' if (fund.get('revenue_growth') or 0) < 0 else ''}">{fmt(fund.get("revenue_growth"), "%", percent=True, prec=1)}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">EPS 成長</div>
+    <div class="indicator-cell-value {'positive' if (fund.get('eps_growth') or 0) > 0 else 'negative' if (fund.get('eps_growth') or 0) < 0 else ''}">{fmt(fund.get("eps_growth"), "%", percent=True, prec=1)}</div>
+  </div>
+</div>
+<div class="indicator-row" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">市值</div>
+    <div class="indicator-cell-value">{fmt_market_cap(fund.get("market_cap"))}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">殖利率</div>
+    <div class="indicator-cell-value">{fmt(fund.get("dividend_yield"), "%", prec=2)}</div>
+  </div>
+  <div class="indicator-cell">
+    <div class="indicator-cell-label">ROE</div>
+    <div class="indicator-cell-value">{fmt(fund.get("roe"), "%", percent=True, prec=1)}</div>
+  </div>
+</div>"""
+
+
 def generate_stock_card(stock_id: str, data: dict):
     """生成新版個股卡片：K 線 + 成交量、AI 分析摺疊、合計列、融資融券借券單一表格"""
     latest  = data["latest"]
@@ -1522,6 +1688,12 @@ def generate_stock_card(stock_id: str, data: dict):
     📊 K 線圖 + 成交量 (近 60 日)
   </div>
   <div id="kline_{stock_id}" style="width:100%;height:280px;"></div>
+  
+  <!-- 基本面 -->
+  <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
+    📋 基本面
+  </div>
+  {generate_fundamentals_block(data.get("fundamentals", {}))}
   
   <!-- 技術面 -->
   <div class="section-title" style="font-size:13px;font-weight:500;margin:16px 0 8px 0;">
@@ -1791,27 +1963,6 @@ def generate_market_section(market_data: dict):
   </div>
 </div>
 
-<div class="metrics-grid-4" style="margin-top:8px;">
-  <div class="metric">
-    <div class="metric-label">融資餘額(億)</div>
-    <div class="metric-value">{margin_balance_b:,.0f}</div>
-  </div>
-  <div class="metric" title="融資餘額占當日成交金額比例">
-    <div class="metric-label">融資/成交額(%)</div>
-    <div class="metric-value">{margin_ratio:.1f}%</div>
-  </div>
-  <div class="metric" title="融資5日增幅 - 大盤5日漲幅。正值=散戶比大盤積極 (危險訊號)；負值=散戶比大盤保守 (健康)">
-    <div class="metric-label">融資增-盤勢漲(%)</div>
-    <div class="metric-value {'negative' if margin_vs_taiex > 0 else 'positive'}">{margin_vs_taiex:+.2f}%</div>
-  </div>
-  <div class="metric">
-    <div class="metric-label">融資解讀</div>
-    <div class="metric-value" style="font-size:13px;">
-      {'⚠️ 散戶過熱' if margin_vs_taiex > 3 else '🔥 散戶追價' if margin_vs_taiex > 0 else '✅ 籌碼健康' if margin_vs_taiex >= -3 else '❄️ 散戶縮手'}
-    </div>
-  </div>
-</div>
-
 <div class="card">
   <div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div>
   <div id="taiex_kline" style="width:100%;height:400px;"></div>
@@ -1830,6 +1981,16 @@ def generate_timeseries_section(market_data: dict):
   <div class="card">
     <div class="card-title">美元兌新台幣</div>
     <div class="chart-container"><canvas id="fx"></canvas></div>
+  </div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div>
+    <div class="chart-container"><canvas id="margin_ratio"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">融資增幅 vs 大盤漲幅 (較前日)</div>
+    <div class="chart-container"><canvas id="margin_vs_taiex"></canvas></div>
   </div>
 </div>
 <div class="card">
@@ -2122,6 +2283,143 @@ document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20p
 document.getElementById('fx').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">匯率數據暫時無法取得</div>';
 """)
     
+    # ── 融資市值比 + 融資 vs 大盤 ────────────────────
+    total_margin = market_data.get("total_margin", [])
+    taiex = market_data.get("taiex", [])
+    
+    if total_margin and taiex and len(total_margin) >= 5 and len(taiex) >= 5:
+        # 排序
+        margin_sorted = sorted(total_margin, key=lambda x: x.get("date", ""))
+        taiex_by_date = {d["date"]: d for d in taiex}
+        
+        # 嘗試多種融資餘額欄位
+        def margin_value(d):
+            for k in ["MarginPurchaseTodayBalance", "margin_purchase_today_balance",
+                      "TodayBalance", "today_balance", "MarginPurchaseMoney",
+                      "margin_purchase_money", "MarginPurchaseAmount"]:
+                if k in d and d[k] is not None:
+                    try:
+                        return float(d[k])
+                    except (ValueError, TypeError):
+                        continue
+            return 0
+        
+        if margin_sorted:
+            print(f"  [debug] 大盤融資欄位: {list(margin_sorted[0].keys())}")
+        
+        # 計算近30日的兩個指標
+        ratio_dates  = []
+        ratio_values = []      # 融資市值比 (%)
+        gap_dates    = []
+        margin_growth = []     # 融資日增幅 %
+        taiex_growth  = []     # 大盤日漲幅 %
+        
+        # 取最近30天 + 1天（多1天算增幅）
+        recent = margin_sorted[-31:]
+        for i in range(len(recent)):
+            d = recent[i]
+            date = d.get("date", "")
+            if not date or date not in taiex_by_date:
+                continue
+            
+            margin_now  = margin_value(d)
+            taiex_close = taiex_by_date[date]["close"]
+            
+            # 總市值近似 = 加權指數 × 25 億元/點 (台股大約係數)
+            # 換算成元：× 1e8
+            market_cap_yuan = taiex_close * 25 * 1e8
+            if market_cap_yuan > 0 and margin_now > 0:
+                ratio = margin_now / market_cap_yuan * 100
+                ratio_dates.append(date[-5:])
+                ratio_values.append(round(ratio, 3))
+            
+            # 計算日增幅 (需要前一日)
+            if i > 0:
+                prev_d = recent[i-1]
+                prev_date = prev_d.get("date", "")
+                if prev_date in taiex_by_date:
+                    prev_margin = margin_value(prev_d)
+                    prev_taiex  = taiex_by_date[prev_date]["close"]
+                    if prev_margin > 0 and prev_taiex > 0:
+                        m_g = (margin_now - prev_margin) / prev_margin * 100
+                        t_g = (taiex_close - prev_taiex) / prev_taiex * 100
+                        gap_dates.append(date[-5:])
+                        margin_growth.append(round(m_g, 2))
+                        taiex_growth.append(round(t_g, 2))
+        
+        # 只保留最近30天
+        ratio_dates  = ratio_dates[-30:]
+        ratio_values = ratio_values[-30:]
+        gap_dates    = gap_dates[-30:]
+        margin_growth = margin_growth[-30:]
+        taiex_growth  = taiex_growth[-30:]
+        
+        # 圖A：融資市值比
+        if ratio_values:
+            scripts.append(f"""
+new Chart(document.getElementById('margin_ratio'),{{
+  type:'line',
+  data:{{
+    labels:{json.dumps(ratio_dates)},
+    datasets:[{{
+      label:'融資市值比(%)',
+      data:{json.dumps(ratio_values)},
+      borderColor:'#D4537E',
+      backgroundColor:'rgba(212,83,126,0.1)',
+      borderWidth:2,fill:true,tension:0.3,pointRadius:2
+    }}]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{
+      legend:{{display:false}},
+      tooltip:{{callbacks:{{label:function(ctx){{return ctx.parsed.y.toFixed(3)+'%'}}}}}}
+    }},
+    scales:{{
+      y:{{ticks:{{callback:function(v){{return v.toFixed(2)+'%'}},font:{{size:11}}}},
+          grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
+    }}
+  }}
+}});""")
+        
+        # 圖B：融資增幅 vs 大盤漲幅
+        if margin_growth and taiex_growth:
+            scripts.append(f"""
+new Chart(document.getElementById('margin_vs_taiex'),{{
+  type:'line',
+  data:{{
+    labels:{json.dumps(gap_dates)},
+    datasets:[
+      {{label:'融資增幅(%)',data:{json.dumps(margin_growth)},
+        borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',
+        borderWidth:2,tension:0.3,pointRadius:2,fill:false}},
+      {{label:'大盤漲幅(%)',data:{json.dumps(taiex_growth)},
+        borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',
+        borderWidth:2,tension:0.3,pointRadius:2,fill:false}}
+    ]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{
+      legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}},
+      tooltip:{{mode:'index',intersect:false,
+        callbacks:{{label:function(ctx){{return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'%'}}}}}}
+    }},
+    scales:{{
+      y:{{ticks:{{callback:function(v){{return v.toFixed(1)+'%'}},font:{{size:11}}}},
+          grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
+    }}
+  }}
+}});""")
+    else:
+        print("  ⚠️ 融資指標資料不足")
+        scripts.append("""
+document.getElementById('margin_ratio').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">融資市值比資料不足</div>';
+document.getElementById('margin_vs_taiex').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">融資漲幅比較資料不足</div>';
+""")
+    
     # 三大法人
     inst = market_data["institution"]
     if inst and len(inst) > 0:
@@ -2348,6 +2646,7 @@ def main():
         tdcc        = get_tdcc_holding(stock_id)
         news        = get_news(stock_id)
         name        = get_stock_name(stock_id)
+        fundamentals = get_fundamentals(stock_id)
         
         # 前一日成交量（用於顯示「較昨日 +N 張」）
         df = stock_data["df"]
@@ -2373,12 +2672,13 @@ def main():
             "borrow":      borrow,
             "tdcc":        tdcc,
             "news":        news,
+            "fundamentals": fundamentals,
             "volume_prev": volume_prev,
             "change_pct":  change_pct,
             "ai_tech":     ai_tech,
             "ai_chip":     ai_chip,
             "ai_oper":     ai_oper,
-            "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,  # 向下相容
+            "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,
             "name":        name,
         }
         
