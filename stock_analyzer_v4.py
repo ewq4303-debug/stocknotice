@@ -790,7 +790,7 @@ def get_market_overview():
                 {"date": str(r["date"]), "TodayBalance": int(float(r["TodayBalance"]))}
                 for _, r in margin_df.sort_values("date").tail(30).iterrows()
             ]
-            print(f"  ✓ 大盤融資: {len(total_margin)} 筆，最新={total_margin[-1]['margin_money']/1e8:.1f}億元")
+            print(f"  ✓ 大盤融資: {len(total_margin)} 筆，最新={total_margin[-1]['TodayBalance']/1e8:.1f}億元")
         else:
             print(f"  [warn] 大盤融資 篩選 MarginPurchaseMoney 後為空")
             total_margin = []
