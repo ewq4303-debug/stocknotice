@@ -2071,7 +2071,7 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     }},
     grid: [
       {{left: '10%', right: '4%', top: '15%', height: '55%'}},
-      {{left: '10%', right: '4%', top: '78%', height: '18%'}}
+      {{left: '10%', right: '4%', top: '78%', bottom: '8%'}}
     ],
     xAxis: [
       {{type: 'category', data: {json.dumps(ind_dates)}, gridIndex: 0,
@@ -2409,39 +2409,60 @@ new Chart(document.getElementById('margin_ratio'),{{
         # 圖B：融資增幅 vs 大盤漲幅
         if margin_growth and taiex_growth:
             scripts.append(f"""
-new Chart(document.getElementById('margin_vs_taiex'),{{
-  type:'line',
-  data:{{
-    labels:{json.dumps(gap_dates)},
-    datasets:[
-      {{label:'融資增幅(%)',data:{json.dumps(margin_growth)},
-        borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',
-        borderWidth:2,tension:0.3,pointRadius:2,fill:false}},
-      {{label:'大盤漲幅(%)',data:{json.dumps(taiex_growth)},
-        borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',
-        borderWidth:2,tension:0.3,pointRadius:2,fill:false}}
-    ]
-  }},
-  options:{{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{{
-      legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}},
-      tooltip:{{mode:'index',intersect:false,
-        callbacks:{{label:function(ctx){{return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'%'}}}}}}
+(function() {{
+  var mgData  = {json.dumps(margin_growth)};
+  var taiexData = {json.dumps(taiex_growth)};
+  var gapData = mgData.map(function(m, i) {{
+    return (m != null && taiexData[i] != null)
+      ? parseFloat((m - taiexData[i]).toFixed(2))
+      : null;
+  }});
+  new Chart(document.getElementById('margin_vs_taiex'), {{
+    type: 'bar',
+    data: {{
+      labels: {json.dumps(gap_dates)},
+      datasets: [
+        {{label: '融資增幅(%)', data: mgData,
+          type: 'line',
+          borderColor: '#EF5350', backgroundColor: 'transparent',
+          borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y'}},
+        {{label: '大盤漲幅(%)', data: taiexData,
+          type: 'line',
+          borderColor: '#378ADD', backgroundColor: 'transparent',
+          borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y'}},
+        {{label: '融資-大盤(%)', data: gapData,
+          type: 'bar',
+          backgroundColor: gapData.map(function(v) {{
+            return v >= 0 ? 'rgba(239,83,80,0.5)' : 'rgba(55,138,221,0.5)';
+          }}),
+          borderColor: 'transparent', yAxisID: 'y'}}
+      ]
     }},
-    scales:{{
-      y:{{ticks:{{callback:function(v){{return v.toFixed(1)+'%'}},font:{{size:11}}}},
-          grid:{{color:'rgba(0,0,0,0.05)'}}}},
-      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}
+    options: {{
+      responsive: true, maintainAspectRatio: false,
+      plugins: {{
+        legend: {{display: true, position: 'top',
+          labels: {{font: {{size: 11}}, boxWidth: 12}}}},
+        tooltip: {{mode: 'index', intersect: false,
+          callbacks: {{label: function(ctx) {{
+            return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + '%';
+          }}}}}}
+      }},
+      scales: {{
+        y: {{
+          ticks: {{callback: function(v) {{ return v.toFixed(1) + '%'; }},
+                  font: {{size: 11}}}},
+          grid: {{color: 'rgba(0,0,0,0.05)'}}
+        }},
+        x: {{
+          ticks: {{font: {{size: 10}}, maxRotation: 0,
+                  autoSkip: true, maxTicksLimit: 8}},
+          grid: {{display: false}}
+        }}
+      }}
     }}
-  }}
-}});""")
-    else:
-        print("  ⚠️ 融資指標資料不足")
-        scripts.append("""
-document.getElementById('margin_ratio').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">融資市值比資料不足</div>';
-document.getElementById('margin_vs_taiex').parentElement.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">融資漲幅比較資料不足</div>';
-""")
+  }});
+}})();
     
     # 三大法人
     inst = market_data["institution"]
