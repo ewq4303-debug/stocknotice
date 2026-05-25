@@ -2012,14 +2012,10 @@ def generate_timeseries_section(market_data: dict):
     <div class="chart-container"><canvas id="margin_ratio"></canvas></div>
   </div>
   <div class="card">
-    <div class="card-title">融資增幅 vs 大盤漲幅 (較前日)</div>
-    <div class="chart-container"><canvas id="margin_vs_taiex"></canvas></div>
-  </div>
-</div>
-<div class="card">
-  <div class="card-title">三大法人現貨 vs 期貨</div>
-  <div class="chart-container" style="height:320px;">
-    <canvas id="inst"></canvas>
+    <div class="card-title">三大法人現貨 vs 期貨</div>
+    <div class="chart-container" style="height:320px;">
+      <canvas id="inst"></canvas>
+    </div>
   </div>
 </div>"""
 
@@ -2406,65 +2402,6 @@ new Chart(document.getElementById('margin_ratio'),{{
   }}
 }});""")
         
-        # 圖B：融資增幅 vs 大盤漲幅
-        if margin_growth and taiex_growth:
-            scripts.append(f"""
-(function() {{
-  var mgData  = {json.dumps(margin_growth)};
-  var taiexData = {json.dumps(taiex_growth)};
-  var gapData = mgData.map(function(m, i) {{
-    return (m != null && taiexData[i] != null)
-      ? parseFloat((m - taiexData[i]).toFixed(2))
-      : null;
-  }});
-  new Chart(document.getElementById('margin_vs_taiex'), {{
-    type: 'bar',
-    data: {{
-      labels: {json.dumps(gap_dates)},
-      datasets: [
-        {{label: '融資增幅(%)', data: mgData,
-          type: 'line',
-          borderColor: '#EF5350', backgroundColor: 'transparent',
-          borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y'}},
-        {{label: '大盤漲幅(%)', data: taiexData,
-          type: 'line',
-          borderColor: '#378ADD', backgroundColor: 'transparent',
-          borderWidth: 2, tension: 0.3, pointRadius: 2, yAxisID: 'y'}},
-        {{label: '融資-大盤(%)', data: gapData,
-          type: 'bar',
-          backgroundColor: gapData.map(function(v) {{
-            return v >= 0 ? 'rgba(239,83,80,0.5)' : 'rgba(55,138,221,0.5)';
-          }}),
-          borderColor: 'transparent', yAxisID: 'y'}}
-      ]
-    }},
-    options: {{
-      responsive: true, maintainAspectRatio: false,
-      plugins: {{
-        legend: {{display: true, position: 'top',
-          labels: {{font: {{size: 11}}, boxWidth: 12}}}},
-        tooltip: {{mode: 'index', intersect: false,
-          callbacks: {{label: function(ctx) {{
-            return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + '%';
-          }}}}}}
-      }},
-      scales: {{
-        y: {{
-          ticks: {{callback: function(v) {{ return v.toFixed(1) + '%'; }},
-                  font: {{size: 11}}}},
-          grid: {{color: 'rgba(0,0,0,0.05)'}}
-        }},
-        x: {{
-          ticks: {{font: {{size: 10}}, maxRotation: 0,
-                  autoSkip: true, maxTicksLimit: 8}},
-          grid: {{display: false}}
-        }}
-      }}
-    }}
-  }});
-}})();
-""")    
-
     # 三大法人
     inst = market_data["institution"]
     if inst and len(inst) > 0:
