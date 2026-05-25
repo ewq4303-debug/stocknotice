@@ -1,8 +1,8 @@
 name: Daily Stock Analysis v4
 
 on:
-  schedule:
-    - cron: '30 0 * * 1-5'  # 台灣時間每週一到五早上 8:30 (UTC 00:30)
+#  schedule:
+#    - cron: '30 0 * * 1-5'  # 台灣時間每週一到五早上 8:30 (UTC 00:30)
   workflow_dispatch:
 
 permissions:
