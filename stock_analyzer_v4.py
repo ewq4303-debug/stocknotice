@@ -420,7 +420,6 @@ def get_margin_data(stock_id: str, days: int = 30):
 
 BALANCE_FIELD = "SBLShortSalesCurrentDayBalance"   # FinMind 借券賣出當日餘額（股）
 
-
 def _empty_borrow():
     return {
         "borrow_balance": 0,
@@ -495,31 +494,7 @@ def get_borrowing_data(stock_id):
         ],
     }
     
-    def get_balance(d):
-        """嘗試所有可能的借券餘額欄位"""
-        for key in [
-            "today_balance_volume",
-            "TodayBalanceVolume",
-            "SecuritiesLendingBalanceVolume",
-            "securities_lending_balance_volume",
-            "today_remaining_balance_volume",
-            "OffsetLoanAndShort",
-            "SecuritiesLendingBalance",
-            "BalanceVolume",
-            "balance_volume",
-            "balance",
-            "today_balance",
-            "TodayBalance",
-            "lending_balance",
-            "LendingBalance",
-        ]:
-            if key in d and d[key] is not None:
-                try:
-                    return float(d[key])
-                except (ValueError, TypeError):
-                    continue
-        return 0.0
-    
+  
     latest = data[-1]
     balance = int(get_balance(latest))
     
@@ -754,12 +729,7 @@ def get_market_overview():
     # B. 抓 TMF 全市場每日（含未平倉量）
     tmf_daily = fetch_finmind("TaiwanFuturesDaily",
                               data_id="TMF", start_date=start, end_date=end)
-    
-    if tmf_inst:
-        print(f"  [debug] TMF 法人欄位: {list(tmf_inst[0].keys())}")
-    if tmf_daily:
-        print(f"  [debug] TMF 全市場欄位: {list(tmf_daily[0].keys())}")
-    
+        
     # 計算每日法人淨未平倉 (3 家法人加總)
     INST_KEYS = {"外資及陸資", "外資", "投信", "自營商"}
     inst_net_by_date = {}
@@ -778,9 +748,7 @@ def get_market_overview():
     for r in tmf_daily:
         date = r.get("date", "")
         # 全市場未平倉量欄位嘗試多種
-        oi = float(r.get("open_interest",
-              r.get("open_interest_balance",
-              r.get("close_open_interest", 0))))
+        oi = float(r.get("open_interest", 0))
         total_oi_by_date[date] = total_oi_by_date.get(date, 0) + oi
     
     # 合併計算
@@ -809,9 +777,25 @@ def get_market_overview():
     futures_oi = sorted(futures_oi, key=lambda x: x.get("date", ""))[-30:] if futures_oi else []
     
     # 大盤融資
-    total_margin = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", 
-                                start_date=start, end_date=end)
-    total_margin = sorted(total_margin, key=lambda x: x.get("date", ""))[-30:] if total_margin else []
+    # 大盤融資（金額，元）
+    margin_raw = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", 
+                              start_date=start, end_date=end)
+    if margin_raw:
+        print(f"  [debug] 大盤融資欄位: {list(margin_raw[0].keys())}")
+        # 篩選 name='MarginPurchaseMoney' 取金額
+        margin_df = pd.DataFrame(margin_raw)
+        margin_df = margin_df[margin_df['name'].astype(str).str.lower() == 'marginpurchasemoney']
+        if not margin_df.empty:
+            total_margin = [
+                {"date": str(r["date"]), "margin_money": int(float(r["TodayBalance"]))}
+                for _, r in margin_df.sort_values("date").tail(30).iterrows()
+            ]
+            print(f"  ✓ 大盤融資: {len(total_margin)} 筆，最新={total_margin[-1]['margin_money']/1e8:.1f}億元")
+        else:
+            print(f"  [warn] 大盤融資 篩選 MarginPurchaseMoney 後為空")
+            total_margin = []
+    else:
+        total_margin = []
     
     return {
         "taiex": taiex_data,
