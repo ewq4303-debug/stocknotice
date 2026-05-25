@@ -2463,7 +2463,8 @@ new Chart(document.getElementById('margin_ratio'),{{
     }}
   }});
 }})();
-    
+""")    
+
     # 三大法人
     inst = market_data["institution"]
     if inst and len(inst) > 0:
