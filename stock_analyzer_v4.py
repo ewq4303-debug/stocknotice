@@ -1141,12 +1141,14 @@ def get_news(stock_id: str, limit: int = 5):
 def get_stock_name(stock_id: str):
     """取得股票名稱"""
     try:
-        ticker = yf.Ticker(f"{stock_id}.TW")
-        info = ticker.info
-        return info.get("longName", stock_id)
+        #ticker = yf.Ticker(f"{stock_id}.TW")
+        #info = ticker.info
+        #return info.get("longName", stock_id)
+        resp = requests.get("https://api.finmindtrade.com/api/v4/data", params={"dataset": "TaiwanStockInfo","data_id": stock_id, "token": FINMIND_TOKEN})
+        return resp.json()["data"][0]["stock_name"] 
     except:
         return stock_id
-
+    
 
 def get_fundamentals(stock_id: str):
     """取得個股基本面數據（yfinance）"""
@@ -2453,24 +2455,77 @@ new Chart(document.getElementById('inst'),{{
   }},
   options:{{
     responsive:true,maintainAspectRatio:false,
-    plugins:{{legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}}}},
+    plugins:{{
+      legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}},
+      tooltip:{{
+        callbacks:{{
+          label:function(context){{
+            if(context.dataset.yAxisID==='y1'){{
+              return context.dataset.label+': '+(context.parsed.y/1000).toFixed(1)+'k 口';
+            }}
+            return context.dataset.label+': '+context.parsed.y.toFixed(0)+' 億';
+          }}
+        }}
+      }}
+    }},
     scales:{{
       y:{{type:'linear',position:'left',
           title:{{display:true,text:'現貨買賣超(億)'}},
           ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
       y1:{{type:'linear',position:'right',
-           title:{{display:true,text:'期貨口數'}},
-           ticks:{{font:{{size:11}}}},grid:{{display:false}}}},
+           title:{{display:true,text:'期貨口數(k)'}},
+           ticks:{{font:{{size:11}},callback:function(value){{return (value/1000).toFixed(0)+'k';}}}},
+           grid:{{display:false}}}},
       x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:10}},grid:{{display:false}}}}
     }}
   }}
 }});""")
     else:
         print("  ⚠️ 三大法人無數據")
-        scripts.append("""
-document.getElementById('inst').parentElement.innerHTML =
-  '<div style="padding:20px;text-align:center;color:#999;">法人數據暫時無法取得</div>';
-""")
+        scripts.append(f"""
+new Chart(document.getElementById('inst'),{{
+  type:'bar',
+  data:{{
+    labels:{json.dumps(inst_dates)},
+    datasets:[
+      {{label:'外資現貨(億)',data:{json.dumps(foreign)},
+        backgroundColor:'rgba(55,138,221,0.7)',yAxisID:'y'}},
+      {{label:'投信現貨(億)',data:{json.dumps(trust)},
+        backgroundColor:'rgba(29,158,117,0.7)',yAxisID:'y'}},
+      {{label:'自營現貨(億)',data:{json.dumps(dealer)},
+        backgroundColor:'rgba(255,152,0,0.7)',yAxisID:'y'}},
+      {{label:'外資期貨淨部位(口)',data:{json.dumps(fut_foreign)},
+        type:'line',borderColor:'#EF5350',borderWidth:2,
+        pointRadius:0,tension:0.3,fill:false,yAxisID:'y1'}}
+    ]
+  }},
+  options:{{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{{
+      legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}},
+      tooltip:{{
+        callbacks:{{
+          label:function(context){{
+            if(context.dataset.yAxisID==='y1'){{
+              return context.dataset.label+': '+(context.parsed.y/1000).toFixed(1)+'k 口';
+            }}
+            return context.dataset.label+': '+context.parsed.y.toFixed(0)+' 億';
+          }}
+        }}
+      }}
+    }},
+    scales:{{
+      y:{{type:'linear',position:'left',
+          title:{{display:true,text:'現貨買賣超(億)'}},
+          ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},
+      y1:{{type:'linear',position:'right',
+           title:{{display:true,text:'期貨口數(k)'}},
+           ticks:{{font:{{size:11}},callback:function(value){{return (value/1000).toFixed(0)+'k';}}}},
+           grid:{{display:false}}}},
+      x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:10}},grid:{{display:false}}}}
+    }}
+  }}
+}});""")
     
     return "\n".join(scripts)
 
