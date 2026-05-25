@@ -787,7 +787,7 @@ def get_market_overview():
         margin_df = margin_df[margin_df['name'].astype(str).str.lower() == 'marginpurchasemoney']
         if not margin_df.empty:
             total_margin = [
-                {"date": str(r["date"]), "margin_money": int(float(r["TodayBalance"]))}
+                {"date": str(r["date"]), "TodayBalance": int(float(r["TodayBalance"]))}
                 for _, r in margin_df.sort_values("date").tail(30).iterrows()
             ]
             print(f"  ✓ 大盤融資: {len(total_margin)} 筆，最新={total_margin[-1]['margin_money']/1e8:.1f}億元")
