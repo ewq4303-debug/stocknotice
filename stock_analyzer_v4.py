@@ -1225,6 +1225,7 @@ def _call_gemini(prompt: str) -> str:
         prompt,
         generation_config={"max_output_tokens": 1200, "temperature": 0.7},
     )
+    print(f"[debug] Gemini 回傳長度: {len(text)}, 前50字: {text[:50]}")  # ← 加這行
     return response.text
   
 def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
