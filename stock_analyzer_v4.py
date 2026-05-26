@@ -1219,14 +1219,31 @@ def _call_claude(prompt: str) -> str:
 
 def _call_gemini(prompt: str) -> str:
     import google.generativeai as genai
+    import time
+    import re
+
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(GEMINI_MODEL)
-    response = model.generate_content(
-        prompt,
-        generation_config={"max_output_tokens": 1200, "temperature": 0.7},
-    )
-    print(f"[debug] Gemini 回傳長度: {len(text)}, 前50字: {text[:50]}")  # ← 加這行
-    return response.text
+
+    for attempt in range(5):
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config={"max_output_tokens": 1200, "temperature": 0.7},
+            )
+            return response.text
+
+        except Exception as e:
+            err_str = str(e)
+            # 嘗試從錯誤訊息解析建議等待秒數
+            match = re.search(r'retry in ([\d.]+)s', err_str, re.IGNORECASE)
+            wait = float(match.group(1)) + 2 if match else 15
+
+            print(f"[debug] Gemini 第{attempt+1}次失敗 (等 {wait:.1f}s): {e}")
+            if attempt < 4:
+                time.sleep(wait)
+            else:
+                raise
   
 def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
                          institution: dict, margin: dict,
@@ -1234,6 +1251,10 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
     """呼叫 Claude API 生成股票分析，回傳 (技術面, 籌碼面, 操作建議) 三段"""
     
     if AI_PROVIDER == "gemini":
+        import time
+        # 每分鐘上限 20，保守用 18
+        GEMINI_RPM_LIMIT = 18
+        time.sleep(60 / GEMINI_RPM_LIMIT)  # ≈ 3.3 秒
         if not GEMINI_API_KEY:
             msg = "AI 分析未啟用（請設定 GEMINI_API_KEY）"
             return msg, msg, msg
