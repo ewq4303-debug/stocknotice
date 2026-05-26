@@ -2219,8 +2219,8 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
                 taiex_vol_color.append("#ef5350")
             else:
                 taiex_vol_color.append("#26a69a")
-            taiex_k = [round(d.get("k"), 2) if d.get("k") is not None else None for d in taiex]
-            taiex_d = [round(d.get("d"), 2) if d.get("d") is not None else None for d in taiex]
+        taiex_k = [round(d.get("k"), 2) if d.get("k") is not None else None for d in taiex]
+        taiex_d = [round(d.get("d"), 2) if d.get("d") is not None else None for d in taiex]
 
         scripts.append(f"""
 (function() {{
@@ -2299,8 +2299,6 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         lineStyle: {{color: '#4a90e2', width: 1.5}}}}
     ]
   }});
-}})();""")
-  
   window.addEventListener('resize', function() {{ chart.resize(); }});
 }})();""")
     else:
