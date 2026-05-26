@@ -1219,15 +1219,17 @@ def _call_claude(prompt: str) -> str:
 
 
 def _call_gemini(prompt: str) -> str:
-    import google.generativeai as genai
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(GEMINI_MODEL)
-    response = model.generate_content(
-        prompt,
-        generation_config={
-            "max_output_tokens": 4096,    # ← 提高到 4096,留給 thinking + 輸出
-            "temperature": 0.7,
-        },
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            max_output_tokens=4096,
+            temperature=0.7,
+        ),
     )
     return response.text
   
@@ -1494,6 +1496,7 @@ def generate_rating_table(stocks_data: dict) -> str:
                 "change":   data.get("change_pct", 0),
                 "tech":     rating.get("tech", 0),
                 "chip":     rating.get("chip", 0),
+                "total":    rating.get("total", 0), 
             })
           
     for stock_id, data in stocks_data.items():
