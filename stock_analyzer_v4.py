@@ -646,7 +646,19 @@ def get_market_overview():
                 dr = st_dir_series.iloc[i]
                 d["supertrend"]     = float(v) if pd.notna(v) else None
                 d["supertrend_dir"] = int(dr) if pd.notna(dr) else 0
-    
+              
+            
+            # 計算大盤 KD
+              k_series, d_series = calculate_stochastic(
+                  taiex_df["High"], taiex_df["Low"], taiex_df["Close"],  # ← 大寫
+                  14, 3, 3
+              )
+              for i, d in enumerate(taiex_data):                          # ← taiex_data 不是 market_data
+                  k_val = k_series.iloc[i]
+                  d_val = d_series.iloc[i]
+                  d["k"] = round(float(k_val), 2) if pd.notna(k_val) else None
+                  d["d"] = round(float(d_val), 2) if pd.notna(d_val) else None
+              
     # ── 方法 B: 如果 FinMind 空或 OHLC 不完整，fallback 到 yfinance ──
     need_yf = (not taiex_data) or any(d["open"] == 0 for d in taiex_data[-5:])
     if need_yf:
@@ -1961,6 +1973,12 @@ def generate_market_section(market_data: dict):
     change_pct = (change / prev_close * 100) if prev_close else 0
     change_class = "positive" if change > 0 else "negative"
     arrow     = "↑" if change > 0 else "↓"
+    money_today = market_data["taiex"][-1]["money"] / 1e8  # 換算成億
+    money_prev  = market_data["taiex"][-2]["money"] / 1e8
+    money_diff  = money_today - money_prev
+    money_pct   = (money_diff / money_prev * 100) if money_prev else 0
+    money_color = "up" if money_diff >= 0 else "down"
+    money_arrow = "↑" if money_diff >= 0 else "↓"
 
     # 成交金額：FinMind 回傳「元」→ 換算「億元」
     money_amount = latest.get("money", 0)
@@ -2038,6 +2056,7 @@ def generate_market_section(market_data: dict):
   <div class="metric">
     <div class="metric-label">成交金額(億)</div>
     <div class="metric-value">{money_b:,.0f}</div>
+    <div class="sub {money_color}">{money_arrow} {money_diff:+,.0f} ({money_pct:+.2f}%)</div>
   </div>
   <div class="metric">
     <div class="metric-label">外資(億)</div>
@@ -2200,7 +2219,9 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
                 taiex_vol_color.append("#ef5350")
             else:
                 taiex_vol_color.append("#26a69a")
-        
+            taiex_k = [round(d.get("k"), 2) if d.get("k") is not None else None for d in taiex]
+            taiex_d = [round(d.get("d"), 2) if d.get("d") is not None else None for d in taiex]
+
         scripts.append(f"""
 (function() {{
   var chart = echarts.init(document.getElementById('taiex_kline'));
@@ -2210,7 +2231,9 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
   var stUp   = {json.dumps(taiex_st_up)};
   var stDown = {json.dumps(taiex_st_down)};
   var volColors = {json.dumps(taiex_vol_color)};
-  
+  var kData = {json.dumps(taiex_k)};
+  var dData = {json.dumps(taiex_d)};
+
   chart.setOption({{
     animation: false,
     tooltip: {{
@@ -2222,17 +2245,20 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
     }},
     axisPointer: {{ link: [{{xAxisIndex: 'all'}}] }},
     legend: {{
-      data: ['加權指數', 'Supertrend↑', 'Supertrend↓', '成交金額(億)'],
+      data: ['加權指數', 'Supertrend↑', 'Supertrend↓', '成交金額(億)', 'K', 'D'],
       top: 0, textStyle: {{fontSize: 10}}
     }},
     grid: [
-      {{ left: '8%', right: '4%', top: '8%',  height: '57%' }},
-      {{ left: '8%', right: '4%', top: '72%', height: '20%' }}
+      {{ left: '8%', right: '4%', top: '5%',  height: '52%' }},
+      {{ left: '8%', right: '4%', top: '62%', height: '15%' }},
+      {{ left: '8%', right: '4%', top: '82%', height: '13%' }}
     ],
     xAxis: [
       {{ type: 'category', data: dates, gridIndex: 0,
          axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}} }},
       {{ type: 'category', data: dates, gridIndex: 1,
+         axisLabel: {{show: false}} }},
+      {{ type: 'category', data: dates, gridIndex: 2,
          axisLabel: {{fontSize: 10, color: '#666'}} }}
     ],
     yAxis: [
@@ -2240,9 +2266,11 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
          axisLabel: {{color: '#666'}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
       {{ scale: true, gridIndex: 1, splitNumber: 2, name: '成交金額(億)',
          nameTextStyle: {{color: '#999', fontSize: 10}},
+         axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }},
+      {{ gridIndex: 2, min: 0, max: 100, splitNumber: 2,
          axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }}
     ],
-    dataZoom: [{{type: 'inside', xAxisIndex: [0, 1], start: 50, end: 100}}],
+    dataZoom: [{{type: 'inside', xAxisIndex: [0, 1, 2], start: 50, end: 100}}],
     series: [
       {{name: '加權指數', type: 'candlestick',
         xAxisIndex: 0, yAxisIndex: 0, data: ohlc,
@@ -2260,9 +2288,18 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         xAxisIndex: 1, yAxisIndex: 1,
         data: money.map(function(v, i) {{
           return {{value: v, itemStyle: {{color: volColors[i]}}}};
-        }})}}
+        }})}},
+      {{name: 'K', type: 'line',
+        xAxisIndex: 2, yAxisIndex: 2, data: kData,
+        smooth: true, showSymbol: false,
+        lineStyle: {{color: '#f5a623', width: 1.5}}}},
+      {{name: 'D', type: 'line',
+        xAxisIndex: 2, yAxisIndex: 2, data: dData,
+        smooth: true, showSymbol: false,
+        lineStyle: {{color: '#4a90e2', width: 1.5}}}}
     ]
   }});
+}})();""")
   
   window.addEventListener('resize', function() {{ chart.resize(); }});
 }})();""")
