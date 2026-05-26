@@ -2760,7 +2760,7 @@ def main():
         stock_data = get_stock_data_yf(stock_id)
         if not stock_data:
             continue
-        
+        print(f"[debug] {stock_id} close={stock_data['latest']['close']} prev={stock_data['prev']['close']}")  # ← 加這行
         institution = get_institution_data(stock_id)
         margin      = get_margin_data(stock_id)
         borrow      = get_borrowing_data(stock_id)
