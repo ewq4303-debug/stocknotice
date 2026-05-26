@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 import yfinance as yf
 import pandas as pd
 import anthropic
+_gemini_quota_exhausted = False
 
 # 台灣時區 (UTC+8)
 TW_TZ = timezone(timedelta(hours=8))
@@ -1219,46 +1220,29 @@ def _call_claude(prompt: str) -> str:
 
 def _call_gemini(prompt: str) -> str:
     import google.generativeai as genai
-    import time
-    import re
-
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(GEMINI_MODEL)
-    last_error = None  # ← 記錄最後一次錯誤
-
-    for attempt in range(5):
-        try:
-            response = model.generate_content(
-                prompt,
-                generation_config={"max_output_tokens": 1200, "temperature": 0.7},
-            )
-            return response.text  # ← 成功就直接 return，不會掉出迴圈
-
-        except Exception as e:
-            last_error = e
-            err_str = str(e)
-            match = re.search(r'retry in ([\d.]+)s', err_str, re.IGNORECASE)
-            wait = float(match.group(1)) + 2 if match else 15
-
-            print(f"[debug] Gemini 第{attempt+1}次失敗 (等 {wait:.1f}s): {e}")
-            if attempt < 4:
-                time.sleep(wait)
-
-    raise last_error  # ← 5 次全失敗才往上拋，由 generate_ai_analysis 的 except 接住
+    response = model.generate_content(
+        prompt,
+        generation_config={"max_output_tokens": 1200, "temperature": 0.7},
+    )
+    return response.text
   
 def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
                          institution: dict, margin: dict,
                          borrow: dict = None, tdcc: dict = None):
     """呼叫 Claude API 生成股票分析，回傳 (技術面, 籌碼面, 操作建議) 三段"""
-    
+    global _gemini_quota_exhausted
     if AI_PROVIDER == "gemini":
-        import time
-        # 每分鐘上限 20，保守用 18
-        GEMINI_RPM_LIMIT = 18
-        time.sleep(60 / GEMINI_RPM_LIMIT)  # ≈ 3.3 秒
         if not GEMINI_API_KEY:
             msg = "AI 分析未啟用（請設定 GEMINI_API_KEY）"
             return msg, msg, msg
+        if _gemini_quota_exhausted:                       # ← 先檢查旗標
+            msg = "Gemini 配額已用完，跳過 AI 分析"
+            return msg, msg, msg
+        import time                                       # ← 通過檢查才 sleep
+        GEMINI_RPM_LIMIT = 18
+        time.sleep(60 / GEMINI_RPM_LIMIT)
     else:
         if not ANTHROPIC_API_KEY:
             msg = "AI 分析未啟用（請設定 ANTHROPIC_API_KEY）"
@@ -1291,17 +1275,20 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
 請用繁體中文，用 === 分隔三段：
 
 === 技術面 ===
-（約 80 字，聚焦：均線排列、Supertrend 方向、MACD 動能、是否突破壓力、量價配合）
+（約 60 字，聚焦：均線排列、Supertrend 方向、MACD 動能、是否突破壓力、量價配合）
 
 === 籌碼面 ===
-（約 80 字，聚焦：法人共識、散戶退場、大戶持股動向）
+（約 60 字，聚焦：法人共識、散戶退場、大戶持股動向）
 
 === 操作建議 ===
 （約 60 字，短線策略、進出場價位、停損點、風險提示）"""
     
     try:
-        text = _call_gemini(prompt) if AI_PROVIDER == "gemini" else _call_claude(prompt)
-        
+        if AI_PROVIDER == "gemini":
+            text = _call_gemini(prompt)
+        else:
+            text = _call_claude(prompt)
+
         # 解析三段
         sections = {"技術面": "", "籌碼面": "", "操作建議": ""}
         current = None
@@ -1314,15 +1301,20 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
                         break
             elif current and stripped:
                 sections[current] += line + "\n"
-        
+
         ai_tech = sections["技術面"].strip() or text
         ai_chip = sections["籌碼面"].strip() or ""
         ai_oper = sections["操作建議"].strip() or ""
-        
+
         return ai_tech, ai_chip, ai_oper
-        
+
     except Exception as e:
-        print(f"  ⚠️ AI 分析失敗: {e}")
+        err_str = str(e)
+        # Gemini 配額用完 → 設旗標,後續股票全跳過
+        if AI_PROVIDER == "gemini" and ("429" in err_str or "quota" in err_str.lower()):
+            _gemini_quota_exhausted = True
+            print(f"  ⚠️ Gemini 配額已用完,後續股票將跳過 AI 分析")
+        print(f"  ⚠️ AI 分析失敗 ({AI_PROVIDER}): {e}")
         err = f"AI 分析暫時無法使用: {e}"
         return err, err, err
 
