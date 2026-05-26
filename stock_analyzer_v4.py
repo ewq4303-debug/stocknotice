@@ -1492,7 +1492,23 @@ def generate_rating_table(stocks_data: dict) -> str:
                 "tech":     rating.get("tech", 0),
                 "chip":     rating.get("chip", 0),
             })
+          
+    RATING_ORDER = {
+        "strong_buy":  0,   # 強力加碼
+        "buy":         1,   # 加碼
+        "neutral":     2,   # 中立
+        "reduce":      3,   # 減碼
+        "strong_sell": 4,   # 強力減碼
+    }
     
+    # 依 rating_key 排序;同級內依 total 分數降冪
+    stocks_data = dict(sorted(
+        stocks_data.items(),
+        key=lambda kv: (
+            RATING_ORDER.get(kv[1]["rating"]["rating_key"], 99),
+            -kv[1]["rating"]["total"]
+        )
+    ))
     # 生成 HTML
     cols_html = ""
     for key, g in groups.items():
