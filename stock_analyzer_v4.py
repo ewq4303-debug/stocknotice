@@ -1498,19 +1498,7 @@ def generate_rating_table(stocks_data: dict) -> str:
         "strong-sell": {"label": "強力減碼", "stocks": [], "icon": "ti-arrow-big-down-filled"},
     }
     
-    for stock_id, data in stocks_data.items():
-        rating = data.get("rating", {})
-        key = rating.get("rating_key", "neutral")
-        if key in groups:
-            groups[key]["stocks"].append({
-                "stock_id": stock_id,
-                "name":     data.get("name", ""),
-                "change":   data.get("change_pct", 0),
-                "tech":     rating.get("tech", 0),
-                "chip":     rating.get("chip", 0),
-                "total":    rating.get("total", 0), 
-            })
-          
+         
     for stock_id, data in stocks_data.items():
         rating = data.get("rating", {})
         key = rating.get("rating_key", "neutral")
