@@ -1224,7 +1224,10 @@ def _call_gemini(prompt: str) -> str:
     model = genai.GenerativeModel(GEMINI_MODEL)
     response = model.generate_content(
         prompt,
-        generation_config={"max_output_tokens": 1200, "temperature": 0.7},
+        generation_config={
+            "max_output_tokens": 4096,    # ← 提高到 4096,留給 thinking + 輸出
+            "temperature": 0.7,
+        },
     )
     return response.text
   
@@ -1272,16 +1275,16 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
 - 借券 餘額/5日: {borrow.get('borrow_balance',0):,} / {borrow.get('borrow_5d',0):+,} 張
 - 集保 400張以上大戶比例: {tdcc.get('big_holder_ratio',0):.2f}% (週變化: {tdcc.get('big_holder_change',0):+.2f}%)
 
-請用繁體中文，用 === 分隔三段：
+請用繁體中文嚴格按照以下格式輸出三段分析,不要輸出任何草稿、思考過程或額外說明。每段直接給結論,不要重複括號內的指引文字。
 
 === 技術面 ===
-（約 60 字，聚焦：均線排列、Supertrend 方向、MACD 動能、是否突破壓力、量價配合）
+[約 60 字，聚焦：均線排列、Supertrend 方向、MACD 動能、是否突破壓力、量價配合]
 
 === 籌碼面 ===
-（約 60 字，聚焦：法人共識、散戶退場、大戶持股動向）
+[約 60 字，聚焦：法人共識、散戶退場、大戶持股動向]
 
 === 操作建議 ===
-（約 60 字，短線策略、進出場價位、停損點、風險提示）"""
+[約 60 字，短線策略、進出場價位、停損點、風險提示]"""
     
     try:
         if AI_PROVIDER == "gemini":
@@ -1493,22 +1496,23 @@ def generate_rating_table(stocks_data: dict) -> str:
                 "chip":     rating.get("chip", 0),
             })
           
-    RATING_ORDER = {
-        "strong_buy":  0,   # 強力加碼
-        "buy":         1,   # 加碼
-        "neutral":     2,   # 中立
-        "reduce":      3,   # 減碼
-        "strong_sell": 4,   # 強力減碼
-    }
-    
-    # 依 rating_key 排序;同級內依 total 分數降冪
-    stocks_data = dict(sorted(
-        stocks_data.items(),
-        key=lambda kv: (
-            RATING_ORDER.get(kv[1]["rating"]["rating_key"], 99),
-            -kv[1]["rating"]["total"]
-        )
-    ))
+    for stock_id, data in stocks_data.items():
+        rating = data.get("rating", {})
+        key = rating.get("rating_key", "neutral")
+        if key in groups:
+            groups[key]["stocks"].append({
+                "stock_id": stock_id,
+                "name":     data.get("name", ""),
+                "change":   data.get("change_pct", 0),
+                "tech":     rating.get("tech", 0),
+                "chip":     rating.get("chip", 0),
+                "total":    rating.get("total", 0),   # ← 加這行,排序要用
+            })
+
+    # 每個分類內依 total 分數降冪排序
+    for g in groups.values():
+        g["stocks"].sort(key=lambda s: -s["total"])
+      
     # 生成 HTML
     cols_html = ""
     for key, g in groups.items():
@@ -2790,6 +2794,21 @@ def main():
     print(f"  ✓ 散戶多空: {len(market_data['retail'])} 筆")
     print(f"  ✓ 美元匯率: {len(market_data['usd_twd'])} 筆")
     print(f"  ✓ 期貨留倉: {len(market_data['futures'])} 筆")
+
+    RATING_ORDER = {
+    "strong-buy":  0,
+    "buy":         1,
+    "neutral":     2,
+    "sell":        3,
+    "strong-sell": 4,
+    }
+    stocks_data = dict(sorted(
+        stocks_data.items(),
+        key=lambda kv: (
+            RATING_ORDER.get(kv[1]["rating"]["rating_key"], 99),
+            -kv[1]["rating"]["total"]
+        )
+    ))
     
     # 3. 生成 HTML
     print("\n[3/4] 生成 HTML...")
