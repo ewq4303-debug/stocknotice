@@ -189,7 +189,7 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
     try:
         # 只保留最近 days 天
         df = df.tail(days)
-        
+        df = df[df["Close"] > 0].copy()
         # 計算技術指標
         df['SMA_5']  = calculate_sma(df['Close'], 5)
         df['SMA_10'] = calculate_sma(df['Close'], 10)
