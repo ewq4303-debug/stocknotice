@@ -29,7 +29,11 @@ FINMIND_TOKEN = os.getenv("FINMIND_TOKEN", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+AI_PROVIDER    = os.getenv("AI_PROVIDER", "claude").lower()   # "claude" 或 "gemini"
+CLAUDE_MODEL   = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+GEMINI_API_KEY    = os.getenv("GEMINI_API_KEY", "")
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 OUTPUT_DIR = "docs"
@@ -1202,15 +1206,40 @@ def get_fundamentals(stock_id: str):
 # =========================================================
 # AI 分析
 # =========================================================
+def _call_claude(prompt: str) -> str:
+    import anthropic
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    response = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=1200,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return response.content[0].text
 
+
+def _call_gemini(prompt: str) -> str:
+    import google.generativeai as genai
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel(GEMINI_MODEL)
+    response = model.generate_content(
+        prompt,
+        generation_config={"max_output_tokens": 1200, "temperature": 0.7},
+    )
+    return response.text
+  
 def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
                          institution: dict, margin: dict,
                          borrow: dict = None, tdcc: dict = None):
     """呼叫 Claude API 生成股票分析，回傳 (技術面, 籌碼面, 操作建議) 三段"""
     
-    if not ANTHROPIC_API_KEY:
-        msg = "AI 分析功能未啟用（請設定 ANTHROPIC_API_KEY）"
-        return msg, msg, msg
+    if AI_PROVIDER == "gemini":
+        if not GEMINI_API_KEY:
+            msg = "AI 分析未啟用（請設定 GEMINI_API_KEY）"
+            return msg, msg, msg
+    else:
+        if not ANTHROPIC_API_KEY:
+            msg = "AI 分析未啟用（請設定 ANTHROPIC_API_KEY）"
+            return msg, msg, msg
     
     latest = data["latest"]
     prev = data["prev"]
@@ -1248,13 +1277,7 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
 （約 60 字，短線策略、進出場價位、停損點、風險提示）"""
     
     try:
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-        response = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=1200,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        text = response.content[0].text
+        text = _call_gemini(prompt) if AI_PROVIDER == "gemini" else _call_claude(prompt)
         
         # 解析三段
         sections = {"技術面": "", "籌碼面": "", "操作建議": ""}
