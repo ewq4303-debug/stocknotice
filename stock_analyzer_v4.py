@@ -1224,6 +1224,7 @@ def _call_gemini(prompt: str) -> str:
 
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(GEMINI_MODEL)
+    last_error = None  # ← 記錄最後一次錯誤
 
     for attempt in range(5):
         try:
@@ -1231,19 +1232,19 @@ def _call_gemini(prompt: str) -> str:
                 prompt,
                 generation_config={"max_output_tokens": 1200, "temperature": 0.7},
             )
-            return response.text
+            return response.text  # ← 成功就直接 return，不會掉出迴圈
 
         except Exception as e:
+            last_error = e
             err_str = str(e)
-            # 嘗試從錯誤訊息解析建議等待秒數
             match = re.search(r'retry in ([\d.]+)s', err_str, re.IGNORECASE)
             wait = float(match.group(1)) + 2 if match else 15
 
             print(f"[debug] Gemini 第{attempt+1}次失敗 (等 {wait:.1f}s): {e}")
             if attempt < 4:
                 time.sleep(wait)
-            else:
-                raise
+
+    raise last_error  # ← 5 次全失敗才往上拋，由 generate_ai_analysis 的 except 接住
   
 def generate_ai_analysis(stock_id: str, stock_name: str, data: dict,
                          institution: dict, margin: dict,
