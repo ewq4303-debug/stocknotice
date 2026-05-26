@@ -649,11 +649,11 @@ def get_market_overview():
               
             
             # 計算大盤 KD
-              k_series, d_series = calculate_stochastic(
+            k_series, d_series = calculate_stochastic(
                   taiex_df["High"], taiex_df["Low"], taiex_df["Close"],  # ← 大寫
                   14, 3, 3
               )
-              for i, d in enumerate(taiex_data):                          # ← taiex_data 不是 market_data
+            for i, d in enumerate(taiex_data):                          # ← taiex_data 不是 market_data
                   k_val = k_series.iloc[i]
                   d_val = d_series.iloc[i]
                   d["k"] = round(float(k_val), 2) if pd.notna(k_val) else None
