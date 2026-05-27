@@ -86,72 +86,64 @@ def calculate_atr(high, low, close, period=7):
 
 
 def calculate_supertrend(df, period=7, multiplier=3):
-    """
-    Supertrend 指標 (ATR period=7, multiplier=3)
-    回傳: (supertrend_value, direction)
-      direction: 1=上升趨勢(綠色，買進)，-1=下降趨勢(紅色，賣出)
-    """
-    high  = df['High'].astype(float)
-    low   = df['Low'].astype(float)
-    close = df['Close'].astype(float)
+    """優化版：使用 Numpy Array 加速運算，移除耗時的 .iloc"""
+    high  = df['High'].astype(float).values
+    low   = df['Low'].astype(float).values
+    close = df['Close'].astype(float).values
     
-    atr = calculate_atr(high, low, close, period)
+    atr = calculate_atr(df['High'], df['Low'], df['Close'], period).values
     hl2 = (high + low) / 2
     basic_upper = hl2 + multiplier * atr
     basic_lower = hl2 - multiplier * atr
     
-    # 預先建立陣列（避免 SettingWithCopyWarning）
     n = len(df)
-    final_upper = [None] * n
-    final_lower = [None] * n
-    supertrend  = [None] * n
-    direction   = [None] * n
+    final_upper = [0.0] * n
+    final_lower = [0.0] * n
+    supertrend  = [0.0] * n
+    direction   = [0] * n
     
     for i in range(n):
-        bu = basic_upper.iloc[i]
-        bl = basic_lower.iloc[i]
-        c  = close.iloc[i]
+        bu = basic_upper[i]
+        bl = basic_lower[i]
+        c  = close[i]
         
-        # ATR 尚未產生（前 period-1 筆）→ 跳過
         if pd.isna(bu) or pd.isna(bl):
+            final_upper[i] = bu
+            final_lower[i] = bl
+            supertrend[i] = bu
+            direction[i] = -1
             continue
         
-        if i == 0 or final_upper[i-1] is None:
+        if i == 0 or pd.isna(final_upper[i-1]):
             final_upper[i] = bu
             final_lower[i] = bl
             supertrend[i]  = bu
             direction[i]   = -1
             continue
         
-        # 更新 final upper
-        if bu < final_upper[i-1] or close.iloc[i-1] > final_upper[i-1]:
+        # 陣列操作
+        if bu < final_upper[i-1] or close[i-1] > final_upper[i-1]:
             final_upper[i] = bu
         else:
             final_upper[i] = final_upper[i-1]
-        
-        # 更新 final lower
-        if bl > final_lower[i-1] or close.iloc[i-1] < final_lower[i-1]:
+            
+        if bl > final_lower[i-1] or close[i-1] < final_lower[i-1]:
             final_lower[i] = bl
         else:
             final_lower[i] = final_lower[i-1]
-        
-        # 決定 supertrend 與方向
+            
         prev_st = supertrend[i-1]
-        if prev_st == final_upper[i-1]:  # 前次下降
+        if prev_st == final_upper[i-1]:
             if c <= final_upper[i]:
-                supertrend[i] = final_upper[i]
-                direction[i]  = -1
+                supertrend[i], direction[i] = final_upper[i], -1
             else:
-                supertrend[i] = final_lower[i]
-                direction[i]  = 1
-        else:  # 前次上升
+                supertrend[i], direction[i] = final_lower[i], 1
+        else:
             if c >= final_lower[i]:
-                supertrend[i] = final_lower[i]
-                direction[i]  = 1
+                supertrend[i], direction[i] = final_lower[i], 1
             else:
-                supertrend[i] = final_upper[i]
-                direction[i]  = -1
-    
+                supertrend[i], direction[i] = final_upper[i], -1
+                
     return pd.Series(supertrend, index=df.index), pd.Series(direction, index=df.index)
 
 
