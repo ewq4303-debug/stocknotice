@@ -492,9 +492,6 @@ def get_borrowing_data(stock_id):
         ],
     }
     
-  
-    latest = data[-1]
-    balance = int(get_balance(latest))
     
     def diff_n_days_ago(n):
         if len(data) <= n:
