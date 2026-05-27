@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 import yfinance as yf
 import pandas as pd
 import anthropic
+import concurrent.futures
 _gemini_quota_exhausted = False
 
 # 台灣時區 (UTC+8)
@@ -2737,71 +2738,94 @@ def send_telegram(text: str):
 # 主流程
 # =========================================================
 
+# =========================================================
+# 主流程
+# =========================================================
+
+def process_single_stock(stock_id):
+    """將單檔股票的抓取與分析邏輯獨立出來，供平行處理使用"""
+    print(f"  處理 {stock_id}...")
+    stock_data = get_stock_data_yf(stock_id)
+    if not stock_data:
+        return None, None
+        
+    print(f"[debug] {stock_id} close={stock_data['latest']['close']} prev={stock_data['prev']['close']}")
+    
+    # 抓取各項資料
+    institution = get_institution_data(stock_id)
+    margin      = get_margin_data(stock_id)
+    borrow      = get_borrowing_data(stock_id)
+    tdcc        = get_tdcc_holding(stock_id)
+    news        = get_news(stock_id)
+    name        = get_stock_name(stock_id)
+    fundamentals = get_fundamentals(stock_id)
+    
+    # 前一日成交量
+    df = stock_data["df"]
+    volume_prev = int(df["Volume"].iloc[-2] / 1000) if len(df) > 1 else 0
+    
+    # 漲跌幅
+    close = stock_data["latest"]["close"]
+    prev_close = stock_data["prev"]["close"]
+    change_pct = ((close - prev_close) / prev_close * 100) if prev_close else 0
+    
+    print(f"    生成 AI 分析 ({stock_id})...")
+    ai_tech, ai_chip, ai_oper = generate_ai_analysis(
+        stock_id, name, stock_data, institution, margin, borrow, tdcc
+    )
+    
+    record = {
+        "latest":      stock_data["latest"],
+        "prev":        stock_data["prev"],
+        "df":          stock_data["df"],
+        "indicators":  stock_data["indicators"],
+        "institution": institution,
+        "margin":      margin,
+        "borrow":      borrow,
+        "tdcc":        tdcc,
+        "news":        news,
+        "fundamentals": fundamentals,
+        "volume_prev": volume_prev,
+        "change_pct":  change_pct,
+        "ai_tech":     ai_tech,
+        "ai_chip":     ai_chip,
+        "ai_oper":     ai_oper,
+        "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,
+        "name":        name,
+    }
+    
+    # 計算評等
+    record["rating"] = calculate_stock_rating(record)
+    r = record["rating"]
+    print(f"    ✓ {stock_id} 評等: {r['rating']} (技{r['tech']:g}/籌{r['chip']:g} = {r['total']:g})")
+    
+    return stock_id, record
+
+
 def main():
     print(f'=== 股票監控機器人 v4.2 ({now_tw().strftime("%Y-%m-%d %H:%M")}) ===\n')
     
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    # 1. 抓個股
-    print("[1/4] 抓取個股資料...")
+    # 1. 抓個股 (改為多執行緒平行處理)
+    print("[1/4] 平行抓取個股資料...")
     stocks_data = {}
     
-    for stock_id in STOCKS:
-        print(f"  處理 {stock_id}...")
+    # 使用 ThreadPoolExecutor 同時處理最多 3 檔股票 (避免瞬間觸發 API 頻率限制)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # 將所有股票提交給執行緒池
+        future_to_stock = {executor.submit(process_single_stock, sid): sid for sid in STOCKS}
         
-        stock_data = get_stock_data_yf(stock_id)
-        if not stock_data:
-            continue
-        print(f"[debug] {stock_id} close={stock_data['latest']['close']} prev={stock_data['prev']['close']}")  # ← 加這行
-        institution = get_institution_data(stock_id)
-        margin      = get_margin_data(stock_id)
-        borrow      = get_borrowing_data(stock_id)
-        tdcc        = get_tdcc_holding(stock_id)
-        news        = get_news(stock_id)
-        name        = get_stock_name(stock_id)
-        fundamentals = get_fundamentals(stock_id)
+        # 當任何一檔股票處理完成時，馬上收集資料
+        for future in concurrent.futures.as_completed(future_to_stock):
+            sid = future_to_stock[future]
+            try:
+                res_id, record = future.result()
+                if res_id and record:
+                    stocks_data[res_id] = record
+            except Exception as exc:
+                print(f"  ⚠️ {sid} 處理過程中發生錯誤: {exc}")
         
-        # 前一日成交量（用於顯示「較昨日 +N 張」）
-        df = stock_data["df"]
-        volume_prev = int(df["Volume"].iloc[-2] / 1000) if len(df) > 1 else 0
-        
-        # 漲跌幅
-        close = stock_data["latest"]["close"]
-        prev_close = stock_data["prev"]["close"]
-        change_pct = ((close - prev_close) / prev_close * 100) if prev_close else 0
-        
-        print(f"    生成 AI 分析...")
-        ai_tech, ai_chip, ai_oper = generate_ai_analysis(
-            stock_id, name, stock_data, institution, margin, borrow, tdcc
-        )
-        
-        record = {
-            "latest":      stock_data["latest"],
-            "prev":        stock_data["prev"],
-            "df":          stock_data["df"],
-            "indicators":  stock_data["indicators"],
-            "institution": institution,
-            "margin":      margin,
-            "borrow":      borrow,
-            "tdcc":        tdcc,
-            "news":        news,
-            "fundamentals": fundamentals,
-            "volume_prev": volume_prev,
-            "change_pct":  change_pct,
-            "ai_tech":     ai_tech,
-            "ai_chip":     ai_chip,
-            "ai_oper":     ai_oper,
-            "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,
-            "name":        name,
-        }
-        
-        # 計算評等
-        record["rating"] = calculate_stock_rating(record)
-        r = record["rating"]
-        print(f"    ✓ 評等: {r['rating']} (技{r['tech']:g}/籌{r['chip']:g} = {r['total']:g})")
-        
-        stocks_data[stock_id] = record
-    
     # 2. 抓大盤
     print("\n[2/4] 抓取大盤資料...")
     market_data = get_market_overview()
