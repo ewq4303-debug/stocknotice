@@ -1671,7 +1671,7 @@ def generate_fundamentals_block(fund: dict) -> str:
 
 
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
-    """生成單檔股票分析卡片 (支援電腦主畫面與手機摺疊)"""
+    """生成單檔股票分析卡片 (支援電腦主畫面與手機摺疊，包含新聞模組)"""
     
     latest  = data["latest"]
     prev    = data["prev"]
@@ -1687,10 +1687,10 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     ai_oper  = data.get("ai_oper",  "")
     
     r = data["rating"]
-    c_cls = "up" if data["change_pct"] >= 0 else "down"
-    c_sign = "+" if data["change_pct"] >= 0 else ""
-    change_str = f"{c_sign}{data['change_pct']:.2f}%"
-    close_price = latest['close']
+    c_cls = "up" if data.get("change_pct", 0) >= 0 else "down"
+    c_sign = "+" if data.get("change_pct", 0) >= 0 else ""
+    change_str = f"{c_sign}{data.get('change_pct', 0):.2f}%"
+    close_price = latest.get('close', 0)
     
     # 決定預設顯示狀態 (第一檔股票預設展開)
     active_cls = "active" if is_first else ""
@@ -1701,6 +1701,22 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     total_today = inst.get("foreign_today", 0) + inst.get("trust_today", 0)  + inst.get("dealer_today", 0)
     total_5d    = inst.get("foreign_5d", 0)    + inst.get("trust_5d", 0)     + inst.get("dealer_5d", 0)
     total_20d   = inst.get("foreign_20d", 0)   + inst.get("trust_20d", 0)    + inst.get("dealer_20d", 0)
+
+    # 📰 處理新聞區塊 HTML
+    news_html = ""
+    if news:
+        for n in news[:5]:
+            # 確保能抓到網址，若無則預設為 #
+            link = n.get('url', n.get('link', '#'))
+            news_html += f"""
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div>
+                <a href="{link}" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    {n.get("title","")}
+                </a>
+            </div>"""
+    else:
+        news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
 
     html = f"""
     <div class="stock-card {active_cls} {mobile_expanded_cls}" id="card_{stock_id}">
@@ -1809,6 +1825,17 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
             <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
             <div>{ai_oper.replace(chr(10), '<br>')}</div>
           </div>
+        </div>
+
+        <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
+            <details>
+                <summary style="padding: 12px 15px; background: #fdfdfd; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; list-style: none; user-select: none;">
+                    📰 近期相關新聞 ({len(news[:5])}) <span style="float:right; font-size:12px; color:#aaa; font-weight:normal;">點擊展開 ▼</span>
+                </summary>
+                <div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;">
+                    {news_html}
+                </div>
+            </details>
         </div>
         
       </div>
