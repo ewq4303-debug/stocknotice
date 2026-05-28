@@ -1543,39 +1543,33 @@ def generate_rating_table(stocks_data: dict) -> str:
       {chips_html}
     </div>"""
     
+   # 👇 替換 generate_rating_table 函數最後的 return 區塊 👇
     return f"""
 <div class="rating-section">
   <div class="rating-header">
     <div class="rating-title">
-      <i class="ti ti-target-arrow" aria-hidden="true"></i>
-      個股操作建議綜合評等
+      📊 個股操作建議綜合評等
     </div>
     <div class="rating-update">更新於 {now_tw().strftime("%Y-%m-%d %H:%M")}</div>
   </div>
   <div class="rating-grid">
     {cols_html}
   </div>
-  <details style="background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;margin-top:12px;">
-    <summary style="cursor:pointer;font-size:12px;font-weight:500;list-style:none;">
-      <i class="ti ti-info-circle" aria-hidden="true"></i> 評分邏輯說明（階梯式給分）
-    </summary>
-    <div class="scoring-key">
-      <div class="key-block">
-        <strong>技術面 (10分)</strong>
-        T1 均線趨勢 (+3)：站月線+1 / 月>季+1 / 5>10+1<br>
-        T2 強勢創高 (+3)：近20日高檔3%內+1.5 / 量>5均量+1.5<br>
-        T3 MACD 紅柱 (+2)：柱體>0<br>
-        T4 量價配合 (+2)：5日量>20日量
+  
+  <details class="compact-legend">
+    <summary>ℹ️ 點此查看評分邏輯與門檻</summary>
+    <div class="legend-content">
+      <div class="legend-row">
+        <span class="legend-badge l-tech">技術(10)</span> 
+        <span>站月線(+1) / 月>季(+1) / 5>10(+1) / 創高(+1.5) / 量>5均(+1.5) / MACD紅(+2) / 5日量>20日量(+2)</span>
       </div>
-      <div class="key-block">
-        <strong>籌碼面 (10分)</strong>
-        C1 法人買盤 (+4)：外資3日+1.5 / 投信3日+1.5 / 今日同買+1<br>
-        C2 散戶退場 (+3)：融資減+1.5 / 借券減+1.5<br>
-        C3 大戶持股 (+3)：400張大戶比例週週增
+      <div class="legend-row">
+        <span class="legend-badge l-chip">籌碼(10)</span> 
+        <span>外資3日(+1.5) / 投信3日(+1.5) / 同買(+1) / 融資減(+1.5) / 借券減(+1.5) / 大戶增(+3)</span>
       </div>
-      <div class="key-block">
-        <strong>綜合評等 (技+籌)</strong>
-        強力加碼 ≥14 / 加碼 10-13 / 中性觀望 6-9 / 減碼 3-5 / 強力減碼 ≤2
+      <div class="legend-row">
+        <span class="legend-badge l-total">總分門檻</span> 
+        <span>≥14 強力加碼 | 10~13 加碼 | 6~9 觀望 | 3~5 減碼 | ≤2 強力減碼</span>
       </div>
     </div>
   </details>
@@ -2719,9 +2713,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
 .chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
 .empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
-.scoring-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px 12px;font-size:11px;color:#666}
-.key-block{line-height:1.6}
-.key-block strong{display:block;color:#333;margin-bottom:2px;font-weight:500}
+/* ── 極簡版評分說明 (取代原本笨重的 scoring-key) ── */
+.compact-legend { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
+.compact-legend summary { cursor: pointer; font-size: 12px; color: #888; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; user-select: none; list-style: none; transition: 0.2s; }
+.compact-legend summary::-webkit-details-marker { display: none; }
+.compact-legend summary:hover { color: var(--primary); }
+.legend-content { margin-top: 10px; background: #fafafa; border-radius: 6px; padding: 10px; font-size: 11.5px; color: #555; display: flex; flex-direction: column; gap: 8px; border: 1px solid #f0f0f0; }
+.legend-row { display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+.legend-badge { padding: 2px 6px; border-radius: 4px; font-weight: bold; white-space: nowrap; font-size: 10px; }
+.l-tech { background: #e3f2fd; color: #1565c0; }
+.l-chip { background: #e8f5e9; color: #2e7d32; }
+.l-total { background: #fff3e0; color: #e65100; }
 
 /* 表格共用 */
 .data-table{width:100%;font-size:12px;border-collapse:collapse;margin-bottom:8px}
