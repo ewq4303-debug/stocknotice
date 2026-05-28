@@ -1680,71 +1680,141 @@ def generate_fundamentals_block(fund: dict) -> str:
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     """生成單檔股票分析卡片 (支援電腦主畫面與手機摺疊)"""
     
+    latest  = data["latest"]
+    prev    = data["prev"]
+    ind     = data["indicators"]
+    inst    = data["institution"]
+    margin  = data["margin"]
+    borrow  = data.get("borrow", {})
+    tdcc    = data.get("tdcc", {})
+    news    = data.get("news", [])
+    
+    ai_tech  = data.get("ai_tech",  "")
+    ai_chip  = data.get("ai_chip",  "")
+    ai_oper  = data.get("ai_oper",  "")
+    
     r = data["rating"]
     c_cls = "up" if data["change_pct"] >= 0 else "down"
     c_sign = "+" if data["change_pct"] >= 0 else ""
     change_str = f"{c_sign}{data['change_pct']:.2f}%"
-    close_price = data['latest']['close']
+    close_price = latest['close']
     
     # 決定預設顯示狀態 (第一檔股票預設展開)
     active_cls = "active" if is_first else ""
     mobile_expanded_cls = "mobile-expanded" if is_first else ""
     icon = "▼" if is_first else "▶"
     
+    # 籌碼合計（張）
+    total_today = inst.get("foreign_today", 0) + inst.get("trust_today", 0)  + inst.get("dealer_today", 0)
+    total_5d    = inst.get("foreign_5d", 0)    + inst.get("trust_5d", 0)     + inst.get("dealer_5d", 0)
+    total_20d   = inst.get("foreign_20d", 0)   + inst.get("trust_20d", 0)    + inst.get("dealer_20d", 0)
+
     html = f"""
     <div class="stock-card {active_cls} {mobile_expanded_cls}" id="card_{stock_id}">
       
       <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
         <div class="mh-top">
           <span class="mh-icon" id="icon_{stock_id}">{icon}</span>
-          <span class="mh-name">{stock_id} {data['name']}</span>
-          <span class="mh-price {c_cls}">${close_price} ({change_str})</span>
+          <span class="mh-name">{stock_id} {data.get('name','')}</span>
+          <span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span>
         </div>
         <div class="mh-bottom">
-          <span class="mh-rating">🌟 {r['rating']}</span>
-          <span class="mh-score">技 {r['tech']:g} / 籌 {r['chip']:g}</span>
+          <span class="mh-rating">🌟 {r.get('rating','')}</span>
+          <span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span>
         </div>
       </div>
 
       <div class="stock-body">
         
         <div class="card-header-desktop desktop-only">
-          <h2>{stock_id} {data['name']} <span class="{c_cls}">${close_price} ({change_str})</span></h2>
+          <h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2>
           <div style="font-size:16px; font-weight:bold;">
-            綜合評等: <span style="color:var(--primary);">{r['rating']}</span> 
-            (技術: {r['tech']:g} / 籌碼: {r['chip']:g})
+            綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> 
+            (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})
           </div>
         </div>
 
-        <div id="chart_{stock_id}" style="width: 100%; height: 400px; margin-bottom: 15px;"></div>
+        <div id="kline_{stock_id}" style="width: 100%; height: 400px; margin-bottom: 15px;"></div>
         
         <div class="grid-2-col">
+          
           <div>
             <h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3>
-            {generate_institution_html(data['institution'])}
+            <table class="data-table">
+              <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+              <tr>
+                <td>外資</td>
+                <td class="{'up' if inst.get('foreign_today',0)>=0 else 'down'}">{inst.get('foreign_today',0):+,.0f}</td>
+                <td class="{'up' if inst.get('foreign_5d',0)>=0 else 'down'}">{inst.get('foreign_5d',0):+,.0f}</td>
+                <td class="{'up' if inst.get('foreign_20d',0)>=0 else 'down'}">{inst.get('foreign_20d',0):+,.0f}</td>
+              </tr>
+              <tr>
+                <td>投信</td>
+                <td class="{'up' if inst.get('trust_today',0)>=0 else 'down'}">{inst.get('trust_today',0):+,.0f}</td>
+                <td class="{'up' if inst.get('trust_5d',0)>=0 else 'down'}">{inst.get('trust_5d',0):+,.0f}</td>
+                <td class="{'up' if inst.get('trust_20d',0)>=0 else 'down'}">{inst.get('trust_20d',0):+,.0f}</td>
+              </tr>
+              <tr>
+                <td>自營</td>
+                <td class="{'up' if inst.get('dealer_today',0)>=0 else 'down'}">{inst.get('dealer_today',0):+,.0f}</td>
+                <td class="{'up' if inst.get('dealer_5d',0)>=0 else 'down'}">{inst.get('dealer_5d',0):+,.0f}</td>
+                <td class="{'up' if inst.get('dealer_20d',0)>=0 else 'down'}">{inst.get('dealer_20d',0):+,.0f}</td>
+              </tr>
+              <tr class="row-total">
+                <td>合計</td>
+                <td class="{'up' if total_today>=0 else 'down'}">{total_today:+,.0f}</td>
+                <td class="{'up' if total_5d>=0 else 'down'}">{total_5d:+,.0f}</td>
+                <td class="{'up' if total_20d>=0 else 'down'}">{total_20d:+,.0f}</td>
+              </tr>
+            </table>
           </div>
+          
           <div>
-            <h3 style="margin:0 0 10px 0; font-size:16px;">🏦 融資券與借券 (張)</h3>
-            {generate_margin_borrow_html(data['margin'], data['borrow'])}
+            <h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3>
+            <table class="data-table">
+              <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+              <tr>
+                <td>融資</td>
+                <td>{margin.get('margin_balance',0):,}</td>
+                <td class="{'up' if margin.get('margin_change',0)>=0 else 'down'}">{margin.get('margin_change',0):+,}</td>
+                <td class="{'up' if margin.get('margin_5d',0)>=0 else 'down'}">{margin.get('margin_5d',0):+,}</td>
+                <td class="{'up' if margin.get('margin_20d',0)>=0 else 'down'}">{margin.get('margin_20d',0):+,}</td>
+              </tr>
+              <tr>
+                <td>融券</td>
+                <td>{margin.get('short_balance',0):,}</td>
+                <td class="{'up' if margin.get('short_change',0)>=0 else 'down'}">{margin.get('short_change',0):+,}</td>
+                <td class="{'up' if margin.get('short_5d',0)>=0 else 'down'}">{margin.get('short_5d',0):+,}</td>
+                <td class="{'up' if margin.get('short_20d',0)>=0 else 'down'}">{margin.get('short_20d',0):+,}</td>
+              </tr>
+              <tr>
+                <td>借券</td>
+                <td>{borrow.get('borrow_balance',0):,}</td>
+                <td class="{'up' if borrow.get('borrow_change',0)>=0 else 'down'}">{borrow.get('borrow_change',0):+,}</td>
+                <td class="{'up' if borrow.get('borrow_5d',0)>=0 else 'down'}">{borrow.get('borrow_5d',0):+,}</td>
+                <td class="{'up' if borrow.get('borrow_20d',0)>=0 else 'down'}">{borrow.get('borrow_20d',0):+,}</td>
+              </tr>
+            </table>
           </div>
         </div>
 
-        <div style="margin-bottom: 15px;">
-           <h3 style="margin:0 0 10px 0; font-size:16px;">📊 集保大戶與散戶變化</h3>
-           {generate_tdcc_html(data['tdcc'])}
+        <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+           <h3 style="margin:0 0 5px 0; font-size:14px; color: var(--primary);">📊 集保 400 張以上大戶比例</h3>
+           <span style="font-size: 14px;">最新比例: <strong>{tdcc.get('big_holder_ratio',0):.2f}%</strong> 
+           (較上週 <span class="{'up' if tdcc.get('big_holder_change',0)>=0 else 'down'}">{tdcc.get('big_holder_change',0):+.2f}%</span>)</span>
         </div>
 
         <div class="grid-2-col">
           <div class="ai-box">
             <h4>🧠 AI 技術與籌碼分析</h4>
-            <div>{data['ai_tech'].replace(chr(10), '<br>')}</div>
+            <div>{ai_tech.replace(chr(10), '<br>')}</div>
             <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
-              {data['ai_chip'].replace(chr(10), '<br>')}
+              {ai_chip.replace(chr(10), '<br>')}
             </div>
           </div>
           <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;">
             <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
-            <div>{data['ai_oper'].replace(chr(10), '<br>')}</div>
+            <div>{ai_oper.replace(chr(10), '<br>')}</div>
           </div>
         </div>
         
@@ -1752,7 +1822,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     </div>
     """
     return html
-
 
 def generate_html(stocks_data: dict, market_data: dict) -> str:
     """組裝最終的 HTML (包含側邊欄與動態 JS)"""
