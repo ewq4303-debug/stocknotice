@@ -1488,7 +1488,6 @@ def generate_rating_table(stocks_data: dict) -> str:
         "strong-sell": {"label": "強力減碼", "stocks": [], "icon": "ti-arrow-big-down-filled"},
     }
     
-         
     for stock_id, data in stocks_data.items():
         rating = data.get("rating", {})
         key = rating.get("rating_key", "neutral")
@@ -1499,7 +1498,7 @@ def generate_rating_table(stocks_data: dict) -> str:
                 "change":   data.get("change_pct", 0),
                 "tech":     rating.get("tech", 0),
                 "chip":     rating.get("chip", 0),
-                "total":    rating.get("total", 0),   # ← 加這行,排序要用
+                "total":    rating.get("total", 0),
             })
 
     # 每個分類內依 total 分數降冪排序
@@ -1518,7 +1517,7 @@ def generate_rating_table(stocks_data: dict) -> str:
                 change_class = "up" if s["change"] >= 0 else "down"
                 change_sign  = "+" if s["change"] >= 0 else ""
                 chips_html += f"""
-        <a href="#card_{s['stock_id']}" class="stock-chip">
+        <div class="stock-chip">
           <div class="chip-top">
             <span class="chip-name">{s['stock_id']} {s['name']}</span>
             <span class="chip-change {change_class}">{change_sign}{s['change']:.2f}%</span>
@@ -1527,7 +1526,7 @@ def generate_rating_table(stocks_data: dict) -> str:
             <span class="chip-tag">技{s['tech']:g}</span>
             <span class="chip-tag">籌{s['chip']:g}</span>
           </div>
-        </a>"""
+        </div>"""
         else:
             chips_html = '<div class="empty-hint">無</div>'
         
@@ -1543,7 +1542,7 @@ def generate_rating_table(stocks_data: dict) -> str:
       {chips_html}
     </div>"""
     
-   # 👇 替換 generate_rating_table 函數最後的 return 區塊 👇
+    # 回傳的 HTML 已經移除了舊的 inline style，改用全新的 compact-legend 結構
     return f"""
 <div class="rating-section">
   <div class="rating-header">
