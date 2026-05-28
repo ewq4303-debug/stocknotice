@@ -1905,8 +1905,14 @@ def generate_html(stocks_data: dict, market_data: dict):
 <body>
 <div class="container">
   <div class="header" id="top">
-    <h1>📊 股票監控儀表板</h1>
-    <div class="update-time">最後更新: {update_time}</div>
+    <div class="header-left">
+      <h1>📊 股票監控儀表板</h1>
+      <div class="update-time">最後更新: {update_time}</div>
+    </div>
+    
+    <button id="runBtn" class="btn-run" onclick="triggerAction()">
+      ▶ 立刻重新執行
+    </button>
   </div>
   
   {market_section}
@@ -1926,7 +1932,7 @@ def generate_html(stocks_data: dict, market_data: dict):
 <script>
 {chart_scripts}
 
-// 監聽滾動事件，控制返回頂部按鈕的顯示/隱藏
+// 監聽滾動事件
 window.onscroll = function() {{
     var btn = document.getElementById('backToTop');
     if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {{
@@ -1935,6 +1941,35 @@ window.onscroll = function() {{
         btn.style.display = 'none';
     }}
 }};
+
+// 🚀 透過 Google 中間人觸發 GitHub Actions 🚀
+function triggerAction() {{
+    const btn = document.getElementById('runBtn');
+    btn.innerText = "⏳ 觸發中...";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+
+    // 🔴 請將下方的網址替換成你在【步驟 2】取得的 Google 網頁應用程式網址 🔴
+    const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
+
+    fetch(googleScriptUrl, {{
+        method: 'POST',
+        // mode: 'no-cors' 可避免瀏覽器跨網域阻擋，但我們不會讀取回傳值
+        mode: 'no-cors' 
+    }})
+    .then(() => {{
+        // 因為使用了 no-cors，無論成功失敗都會執行到這裡
+        alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁查看最新資料。");
+    }})
+    .catch(error => {{
+        alert("❌ 發生錯誤，請檢查網路連線。");
+    }})
+    .finally(() => {{
+        btn.innerText = "▶ 立刻重新執行";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+    }});
+}}
 </script>
 </body>
 </html>"""
