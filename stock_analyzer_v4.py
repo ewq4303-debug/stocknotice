@@ -1827,34 +1827,36 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     """組裝最終的 HTML (包含側邊欄與動態 JS)"""
     update_time = now_tw().strftime("%Y-%m-%d %H:%M")
     
+    # 建立大盤、評等表與時序圖表 (這三行被我誤刪了，現在補回來)
+    market_section = generate_market_section(market_data)
+    rating_table = generate_rating_table(stocks_data)
+    timeseries_section = generate_timeseries_section(market_data)
+    
     # 建立電腦版左側清單 & 生成個股卡片
     sidebar_items = ""
     stock_cards = ""
     is_first = True
     
     for stock_id, data in stocks_data.items():
-        # 產生卡片 (傳入 is_first 讓第一檔預設顯示)
         stock_cards += generate_stock_card(stock_id, data, is_first)
         
-        # 產生側邊欄項目
         r = data["rating"]
         c_cls = "up" if data["change_pct"] >= 0 else "down"
         active_cls = "active" if is_first else ""
         sidebar_items += f"""
         <div class="sidebar-item {active_cls}" id="nav_{stock_id}" onclick="showStock('{stock_id}')">
             <div class="nav-top">
-                <span>{stock_id} {data['name']}</span>
-                <span class="{c_cls}">{data['change_pct']:+.2f}%</span>
+                <span>{stock_id} {data.get('name','')}</span>
+                <span class="{c_cls}">{data.get('change_pct',0):+.2f}%</span>
             </div>
             <div class="nav-bottom">
-                <span>⭐ {r['rating']}</span>
-                <span>技{r['tech']:g} / 籌{r['chip']:g}</span>
+                <span>⭐ {r.get('rating','')}</span>
+                <span>技{r.get('tech',0):g} / 籌{r.get('chip',0):g}</span>
             </div>
         </div>
         """
         is_first = False
         
-    market_section = generate_market_section(market_data)
     chart_scripts = generate_chart_scripts(stocks_data, market_data)
     
     html = f"""<!DOCTYPE html>
@@ -1867,7 +1869,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 </head>
 <body>
 <div class="container">
-  <div class="header">
+  <div class="header" id="top">
     <div>
       <h1>📊 股票監控儀表板</h1>
       <div class="update-time">最後更新: {update_time}</div>
@@ -1879,10 +1881,16 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   
   {market_section}
   
+  {rating_table}
+  
+  {timeseries_section}
+  
+  <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
+  
   <div class="app-layout">
     
     <div class="sidebar desktop-only">
-      <div class="sidebar-title">追蹤清單</div>
+      <div class="sidebar-title">個股清單</div>
       {sidebar_items}
     </div>
     
@@ -1893,12 +1901,16 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   </div>
 </div>
 
+<button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">
+  ↑ 返回頂部
+</button>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 {chart_scripts}
 
-// 🎯 ECharts 寬度修復魔法 (當 div 從隱藏變顯示時，強制圖表重新計算寬度)
+// 🎯 ECharts 寬度修復魔法
 function resizeAllCharts() {{
     setTimeout(() => {{
         window.dispatchEvent(new Event('resize'));
@@ -1907,13 +1919,11 @@ function resizeAllCharts() {{
 
 // 💻 電腦版：點擊左側選單切換右側股票
 function showStock(stockId) {{
-    if (window.innerWidth <= 900) return; // 手機模式下點擊側邊欄無效(其實已被隱藏)
+    if (window.innerWidth <= 900) return;
     
-    // 移除所有的 active
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.stock-card').forEach(el => el.classList.remove('active'));
     
-    // 加上指定的 active
     document.getElementById('nav_' + stockId).classList.add('active');
     document.getElementById('card_' + stockId).classList.add('active');
     
@@ -1927,26 +1937,21 @@ function toggleMobile(stockId) {{
     const icon = document.getElementById('icon_' + stockId);
     const isExpanded = card.classList.contains('mobile-expanded');
     
-    // 手風琴效果：如果你想點開一個就自動收起其他個，可以解除下面兩行的註解
-    // document.querySelectorAll('.stock-card').forEach(c => c.classList.remove('mobile-expanded'));
-    // document.querySelectorAll('.mh-icon').forEach(i => i.innerText = '▶');
-
     if (isExpanded) {{
         card.classList.remove('mobile-expanded');
         icon.innerText = '▶';
     }} else {{
         card.classList.add('mobile-expanded');
         icon.innerText = '▼';
-        resizeAllCharts(); // 展開時重繪圖表
+        resizeAllCharts();
         
-        // 稍微滑動讓焦點對準展開的卡片
         setTimeout(() => {{
            card.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
         }}, 150);
     }}
 }}
 
-// 🚀 一鍵觸發更新 (請替換成你的 Google Script 網址)
+// 🚀 一鍵觸發更新
 function triggerAction() {{
     const btn = document.getElementById('runBtn');
     btn.innerText = "⏳ 觸發中...";
@@ -1960,6 +1965,16 @@ function triggerAction() {{
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
     .finally(() => {{ btn.innerText = "▶ 立刻重新執行"; btn.disabled = false; btn.style.opacity = "1"; }});
 }}
+
+// 返回頂部按鈕顯示邏輯
+window.onscroll = function() {{
+    var btn = document.getElementById('backToTop');
+    if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {{
+        btn.style.display = 'block';
+    }} else {{
+        btn.style.display = 'none';
+    }}
+}};
 </script>
 </body>
 </html>"""
@@ -2646,83 +2661,134 @@ new Chart(document.getElementById('inst'),{{
 
 
 def get_css():
-    """全新響應式 CSS 樣式 (支援電腦側邊欄 & 手機摺疊)"""
+    """完整 CSS 樣式 (保留大盤/評等表 + 新增雙棲版響應式)"""
     return """
-    :root { --primary: #1565c0; --bg: #f5f7fa; --card-bg: #ffffff; --text: #333333; --up: #d32f2f; --down: #388e3c; --border: #e0e0e0; }
-    * { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; line-height: 1.5; scroll-behavior: smooth; }
-    .container { max-width: 1400px; margin: 0 auto; }
-    
-    /* 頂部標題與按鈕 */
-    .header { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { margin: 0; font-size: 24px; color: var(--primary); }
-    .update-time { font-size: 14px; color: #666; margin-top: 5px; }
-    .btn-run { background: #2e7d32; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .btn-run:hover { background: #1b5e20; }
+:root { --primary: #1565c0; --bg: #f5f5f5; --card-bg: #ffffff; --text: #333333; --up: #d32f2f; --down: #388e3c; --border: #e0e0e0; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);padding:16px;line-height:1.5;color:var(--text);scroll-behavior:smooth}
+.container{max-width:1400px;margin:0 auto}
 
-    /* 共用表格與字體設定 */
-    .up { color: var(--up); font-weight: bold; }
-    .down { color: var(--down); font-weight: bold; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
-    th, td { border: 1px solid var(--border); padding: 8px; text-align: center; }
-    th { background: #f8f9fa; font-weight: 500; }
-    .ai-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 14px; }
-    .ai-box h4 { margin: 0 0 8px 0; color: var(--primary); }
-    
-    /* ─── 雙棲版核心排版 (App Layout) ─── */
-    .app-layout { display: flex; gap: 20px; align-items: flex-start; margin-top: 20px; }
-    
-    /* 電腦版側邊欄 */
-    .sidebar { width: 300px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 10px; }
-    .sidebar-title { font-size: 18px; font-weight: bold; color: var(--primary); padding-bottom: 10px; border-bottom: 2px solid var(--primary); margin-bottom: 5px; }
-    .sidebar-item { background: var(--card-bg); padding: 15px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; }
-    .sidebar-item:hover { border-color: #90caf9; }
-    .sidebar-item.active { border-color: var(--primary); background: #e3f2fd; }
-    .nav-top { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-    .nav-bottom { display: flex; justify-content: space-between; font-size: 13px; color: #555; }
-    
-    /* 右側主內容區 */
-    .main-content { flex: 1; min-width: 0; }
-    
-    /* 個股卡片 (預設隱藏，有 active 才會顯示) */
-    .stock-card { display: none; background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
-    .stock-card.active { display: block; }
-    .stock-body { padding: 20px; }
-    .card-header-desktop { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
-    .card-header-desktop h2 { margin: 0; font-size: 24px; color: var(--primary); }
-    
-    /* 雙欄並排表格 (電腦版) */
-    .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
-    
-    /* 工具類 */
-    .mobile-only { display: none; }
-    .desktop-only { display: block; }
+/* 頂部標題 */
+.header{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1.25rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:22px;font-weight:500;margin:0;color:var(--primary)}
+.update-time{font-size:13px;color:#666;margin-top:4px}
+.btn-run{background:#2e7d32;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:0.2s}
+.btn-run:hover{background:#1b5e20;transform:translateY(-1px)}
 
-    /* ─── 手機版響應式設計 (視窗小於 900px 時觸發) ─── */
-    @media (max-width: 900px) {
-        .app-layout { flex-direction: column; gap: 12px; margin-top: 10px; }
-        .desktop-only { display: none !important; }
-        .mobile-only { display: flex; }
-        
-        .sidebar { display: none; } /* 隱藏側邊欄 */
-        .main-content { width: 100%; }
-        
-        /* 手機摺疊卡片設計 */
-        .stock-card { display: block; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); }
-        .mobile-header { padding: 15px; background: #fff; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
-        .mh-top { display: flex; align-items: center; font-size: 18px; font-weight: bold; }
-        .mh-icon { margin-right: 10px; color: var(--primary); font-size: 14px; }
-        .mh-price { margin-left: auto; }
-        .mh-bottom { display: flex; justify-content: space-between; font-size: 14px; color: #555; padding-left: 24px; }
-        
-        /* 手機卡片展開與收合 */
-        .stock-body { display: none; padding: 15px; border-top: 1px solid #eee; background: #fafafa; }
-        .stock-card.mobile-expanded .stock-body { display: block; }
-        
-        /* 手機版表格改為單欄垂直堆疊 */
-        .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
-    }
-    """
+/* 大盤與共用圖表區塊 */
+.section-header{font-size:18px;font-weight:500;margin:24px 0 16px 0;color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:4px;display:inline-block}
+.card{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1rem;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:500;margin-bottom:12px}
+.positive, .up{color:var(--up)}
+.negative, .down{color:var(--down)}
+
+.metrics-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.metric{background:#f8f9fa;border-radius:8px;padding:12px;border:1px solid #eee}
+.metric-label{font-size:11px;color:#666;margin-bottom:4px}
+.metric-value{font-size:16px;font-weight:500}
+.metric-change{font-size:12px;margin-top:2px}
+.sub{font-size:12px;margin-top:2px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-container{position:relative;height:280px;margin-bottom:12px}
+
+/* ── 個股評等表 (原始完整保留) ── */
+.rating-section{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1.25rem;margin-bottom:16px}
+.rating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--border)}
+.rating-title{font-size:16px;font-weight:500;display:flex;align-items:center;gap:6px}
+.rating-update{font-size:11px;color:#999}
+.rating-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.rating-col{background:#f8f9fa;border-radius:8px;padding:10px 8px;border-top:3px solid;border:1px solid #eee}
+.rating-col-strong-buy{border-top-color:#c62828}
+.rating-col-buy{border-top-color:#ef5350}
+.rating-col-neutral{border-top-color:#888}
+.rating-col-sell{border-top-color:#66bb6a}
+.rating-col-strong-sell{border-top-color:#2e7d32}
+.rating-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.rating-col-label{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.rating-label-strong-buy{color:#c62828}
+.rating-label-buy{color:#ef5350}
+.rating-label-neutral{color:#555}
+.rating-label-sell{color:#66bb6a}
+.rating-label-strong-sell{color:#2e7d32}
+.rating-col-count{font-size:11px;color:#999;background:white;border-radius:8px;padding:1px 6px;border:1px solid #eee}
+.stock-chip{background:white;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;margin-bottom:5px;font-size:12px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.chip-top{display:flex;justify-content:space-between;align-items:baseline}
+.chip-name{font-weight:500;font-size:12px}
+.chip-change{font-size:10px}
+.chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
+.chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
+.empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
+.scoring-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:10px 12px;font-size:11px;color:#666}
+.key-block{line-height:1.6}
+.key-block strong{display:block;color:#333;margin-bottom:2px;font-weight:500}
+
+/* 表格共用 */
+.data-table{width:100%;font-size:12px;border-collapse:collapse;margin-bottom:8px}
+.data-table th{text-align:right;padding:6px 8px;background:#f8f9fa;color:#666;font-weight:500;font-size:11px;border:1px solid var(--border)}
+.data-table th:first-child{text-align:left}
+.data-table td{padding:6px 8px;border:1px solid var(--border);text-align:right}
+.data-table td:first-child{text-align:left}
+.data-table .row-total{background:#f8f9fa;font-weight:500}
+
+.ai-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 13px; }
+.ai-box h4 { margin: 0 0 8px 0; color: var(--primary); }
+
+/* ─── 雙棲版核心排版 (App Layout) ─── */
+.app-layout { display: flex; gap: 20px; align-items: flex-start; }
+
+/* 電腦版側邊欄 */
+.sidebar { width: 300px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.sidebar-title { font-size: 16px; font-weight: bold; color: #333; padding-bottom: 8px; border-bottom: 1px solid #ccc; margin-bottom: 5px; }
+.sidebar-item { background: var(--card-bg); padding: 12px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.2s; }
+.sidebar-item:hover { border-color: #90caf9; }
+.sidebar-item.active { border-color: var(--primary); background: #e3f2fd; }
+.nav-top { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+.nav-bottom { display: flex; justify-content: space-between; font-size: 12px; color: #555; }
+
+/* 右側主內容區 */
+.main-content { flex: 1; min-width: 0; }
+
+/* 個股卡片 (預設隱藏，有 active 才會顯示) */
+.stock-card { display: none; background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; border:0.5px solid var(--border); }
+.stock-card.active { display: block; }
+.stock-body { padding: 20px; }
+.card-header-desktop { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+.card-header-desktop h2 { margin: 0; font-size: 22px; color: var(--primary); }
+
+/* 雙欄並排表格 (電腦版) */
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+
+/* 工具類 */
+.mobile-only { display: none; }
+.desktop-only { display: block; }
+
+/* ─── 手機版響應式設計 (視窗小於 900px 時觸發) ─── */
+@media (max-width: 900px) {
+    .app-layout { flex-direction: column; gap: 12px; margin-top: 10px; }
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex; }
+    
+    /* 大盤與評等表也要響應式 */
+    .metrics-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .rating-grid { grid-template-columns: repeat(2, 1fr); }
+    
+    .sidebar { display: none; }
+    .main-content { width: 100%; }
+    
+    .stock-card { display: block; margin-bottom: 12px; border-radius: 10px; }
+    .mobile-header { padding: 15px; background: #fff; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
+    .mh-top { display: flex; align-items: center; font-size: 16px; font-weight: bold; }
+    .mh-icon { margin-right: 8px; color: var(--primary); font-size: 12px; }
+    .mh-price { margin-left: auto; }
+    .mh-bottom { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding-left: 20px; }
+    
+    .stock-body { display: none; padding: 12px; border-top: 1px solid #eee; background: #fafafa; }
+    .stock-card.mobile-expanded .stock-body { display: block; }
+    .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
+}
+"""
 
 
 
