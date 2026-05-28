@@ -1518,7 +1518,7 @@ def generate_rating_table(stocks_data: dict) -> str:
                 change_class = "up" if s["change"] >= 0 else "down"
                 change_sign  = "+" if s["change"] >= 0 else ""
                 chips_html += f"""
-        <div class="stock-chip">
+        <a href="#card_{s['stock_id']}" class="stock-chip">
           <div class="chip-top">
             <span class="chip-name">{s['stock_id']} {s['name']}</span>
             <span class="chip-change {change_class}">{change_sign}{s['change']:.2f}%</span>
@@ -1527,7 +1527,7 @@ def generate_rating_table(stocks_data: dict) -> str:
             <span class="chip-tag">技{s['tech']:g}</span>
             <span class="chip-tag">籌{s['chip']:g}</span>
           </div>
-        </div>"""
+        </a>"""
         else:
             chips_html = '<div class="empty-hint">無</div>'
         
@@ -1737,7 +1737,7 @@ def generate_stock_card(stock_id: str, data: dict):
     rating_key = rating.get("rating_key", "neutral")
     
     return f"""
-<div class="stock-card">
+<div class="stock-card" id="card_{stock_id}">
   
   <div class="card-header">
     <div>
@@ -1904,7 +1904,7 @@ def generate_html(stocks_data: dict, market_data: dict):
 </head>
 <body>
 <div class="container">
-  <div class="header">
+  <div class="header" id="top">
     <h1>📊 股票監控儀表板</h1>
     <div class="update-time">最後更新: {update_time}</div>
   </div>
@@ -1916,9 +1916,26 @@ def generate_html(stocks_data: dict, market_data: dict):
   <div class="section-header">追蹤個股分析</div>
   <div class="stock-grid">{stock_cards}</div>
 </div>
+
+<button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});">
+  ↑ 返回頂部
+</button>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<script>{chart_scripts}</script>
+<script>
+{chart_scripts}
+
+// 監聽滾動事件，控制返回頂部按鈕的顯示/隱藏
+window.onscroll = function() {{
+    var btn = document.getElementById('backToTop');
+    if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {{
+        btn.style.display = 'block';
+    }} else {{
+        btn.style.display = 'none';
+    }}
+}};
+</script>
 </body>
 </html>"""
     
@@ -2712,7 +2729,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .key-block strong{display:block;color:#333;margin-bottom:2px;font-weight:500}
 
 @media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}.rating-grid{grid-template-columns:repeat(2,1fr)}.indicator-row{grid-template-columns:repeat(3,1fr)}}
+/* ── 以下為新增的導覽與互動樣式 ── */
+html {
+  scroll-behavior: smooth; /* 開啟全局平滑滾動 */
+}
+
+a.stock-chip {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+
+a.stock-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: #378ADD;
+}
+
+#backToTop {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: none; /* 預設隱藏 */
+  background: #378ADD;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+
+#backToTop:hover {
+  background: #2a69a8;
+  transform: translateY(-2px);
+}
+
+@media (max-width:1024px){.grid-2{grid-template-columns:1fr}.metrics-grid-4{grid-template-columns:repeat(2,1fr)}.stock-grid{grid-template-columns:1fr}.rating-grid{grid-template-columns:repeat(2,1fr)}.indicator-row{grid-template-columns:repeat(3,1fr)}}
 """
+
 
 
 # =========================================================
