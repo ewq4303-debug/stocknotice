@@ -72,12 +72,15 @@ def calculate_stochastic(high, low, close, period=14, smooth_k=3, smooth_d=3):
     d = k.rolling(window=smooth_d).mean()
     return k, d
 
-def calculate_atr(high, low, close, period=7):
+def calculate_atr(high, low, close, period=10):
     hl = high - low
     hc = (high - close.shift()).abs()
     lc = (low - close.shift()).abs()
     tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
-    return tr.rolling(period).mean()
+    
+    # 原本的寫法 (SMA): return tr.rolling(period).mean()
+    # TradingView 算法 (RMA / Wilder's Smoothing):
+    return tr.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
 
 def calculate_supertrend(df, period=7, multiplier=3):
     high  = df['High'].astype(float).values
@@ -144,7 +147,7 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
     df = None
     suffix_used = None
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=days+20)
+    start_date = end_date - timedelta(days=days+200)
     
     for suffix in (".TW", ".TWO"):
         try:
@@ -161,8 +164,10 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         return None
     
     try:
-        df = df.tail(days)
+        # 【修改 2】先清理資料
         df = df[df["Close"] > 0].copy()
+        
+        # 【修改 3】在「完整資料」上計算所有指標
         df['SMA_5']  = calculate_sma(df['Close'], 5)
         df['SMA_10'] = calculate_sma(df['Close'], 10)
         df['SMA_20'] = calculate_sma(df['Close'], 20)
@@ -171,11 +176,14 @@ def get_stock_data_yf(stock_id: str, days: int = 60):
         df['MACD'], df['MACD_Signal'] = calculate_macd(df['Close'])
         df['MACD_Hist'] = df['MACD'] - df['MACD_Signal']
         df['K'], df['D'] = calculate_stochastic(df['High'], df['Low'], df['Close'])
-        df['ST'], df['ST_DIR'] = calculate_supertrend(df, period=7, multiplier=3)
+        
+        # 確認這裡帶入的參數是 (10, 3)
+        df['ST'], df['ST_DIR'] = calculate_supertrend(df, period=10, multiplier=3)
         df['Vol_MA20']    = df['Volume'].rolling(20).mean()
         df['Vol_MA5']     = df['Volume'].rolling(5).mean()
         df['High_20']     = df['Close'].rolling(20).max()
-        
+
+        df = df.tail(days)
         latest = df.iloc[-1]
         prev   = df.iloc[-2] if len(df) > 1 else latest
         
