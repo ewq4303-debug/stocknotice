@@ -74,68 +74,85 @@ def calculate_stochastic(high, low, close, period=14, smooth_k=3, smooth_d=3):
 
 def calculate_atr(high, low, close, period=10):
     hl = high - low
-    hc = (high - close.shift()).abs()
-    lc = (low - close.shift()).abs()
+    hc = (high - close.shift(1)).abs()
+    lc = (low - close.shift(1)).abs()
     tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
     
-    # 原本的寫法 (SMA): return tr.rolling(period).mean()
-    # TradingView 算法 (RMA / Wilder's Smoothing):
-    return tr.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
-
-def calculate_supertrend(df, period=7, multiplier=3):
-    high  = df['High'].astype(float).values
-    low   = df['Low'].astype(float).values
-    close = df['Close'].astype(float).values
+    atr = [float('nan')] * len(tr)
+    tr_vals = tr.tolist()
     
-    atr = calculate_atr(df['High'], df['Low'], df['Close'], period).values
-    hl2 = (high + low) / 2
-    basic_upper = hl2 + multiplier * atr
-    basic_lower = hl2 - multiplier * atr
+    # 完全模擬 TradingView 的 ta.rma()：第一筆使用 SMA 初始化，後續使用 RMA 遞迴
+    sma = tr.rolling(window=period).mean().tolist()
+    
+    for i in range(len(tr_vals)):
+        if pd.notna(sma[i]) and pd.isna(atr[i-1] if i > 0 else float('nan')):
+            atr[i] = sma[i]  # 初始值
+        elif i > 0 and pd.notna(atr[i-1]):
+            atr[i] = (tr_vals[i] + (period - 1) * atr[i-1]) / period  # RMA公式
+            
+    return pd.Series(atr, index=tr.index)
+
+def calculate_supertrend(df, period=10, multiplier=3):
+    high  = df['High'].tolist()
+    low   = df['Low'].tolist()
+    close = df['Close'].tolist()
+    
+    atr = calculate_atr(df['High'], df['Low'], df['Close'], period).tolist()
     
     n = len(df)
-    final_upper = [0.0] * n
-    final_lower = [0.0] * n
-    supertrend  = [0.0] * n
-    direction   = [0] * n
+    basic_upper = [float('nan')] * n
+    basic_lower = [float('nan')] * n
     
     for i in range(n):
-        bu, bl, c = basic_upper[i], basic_lower[i], close[i]
-        
-        if pd.isna(bu) or pd.isna(bl):
-            final_upper[i] = bu
-            final_lower[i] = bl
-            supertrend[i] = bu
-            direction[i] = -1
+        if pd.notna(atr[i]):
+            hl2 = (high[i] + low[i]) / 2
+            basic_upper[i] = hl2 + multiplier * atr[i]
+            basic_lower[i] = hl2 - multiplier * atr[i]
+            
+    final_upper = [float('nan')] * n
+    final_lower = [float('nan')] * n
+    supertrend  = [float('nan')] * n
+    direction   = [0] * n
+    
+    for i in range(1, n):
+        if pd.isna(atr[i]):
             continue
         
-        if i == 0 or pd.isna(final_upper[i-1]):
-            final_upper[i] = bu
-            final_lower[i] = bl
-            supertrend[i]  = bu
+        # 第一筆有效資料初始化
+        if pd.isna(final_upper[i-1]):
+            final_upper[i] = basic_upper[i]
+            final_lower[i] = basic_lower[i]
+            supertrend[i]  = basic_upper[i]
             direction[i]   = -1
             continue
-        
-        if bu < final_upper[i-1] or close[i-1] > final_upper[i-1]:
-            final_upper[i] = bu
+            
+        # 計算 Final Upper Band
+        if basic_upper[i] < final_upper[i-1] or close[i-1] > final_upper[i-1]:
+            final_upper[i] = basic_upper[i]
         else:
             final_upper[i] = final_upper[i-1]
             
-        if bl > final_lower[i-1] or close[i-1] < final_lower[i-1]:
-            final_lower[i] = bl
+        # 計算 Final Lower Band
+        if basic_lower[i] > final_lower[i-1] or close[i-1] < final_lower[i-1]:
+            final_lower[i] = basic_lower[i]
         else:
             final_lower[i] = final_lower[i-1]
             
-        prev_st = supertrend[i-1]
-        if prev_st == final_upper[i-1]:
-            if c <= final_upper[i]:
-                supertrend[i], direction[i] = final_upper[i], -1
+        # 決定趨勢方向與指標數值
+        if supertrend[i-1] == final_upper[i-1]:
+            if close[i] > final_upper[i]:
+                direction[i] = 1
+                supertrend[i] = final_lower[i]
             else:
-                supertrend[i], direction[i] = final_lower[i], 1
-        else:
-            if c >= final_lower[i]:
-                supertrend[i], direction[i] = final_lower[i], 1
+                direction[i] = -1
+                supertrend[i] = final_upper[i]
+        elif supertrend[i-1] == final_lower[i-1]:
+            if close[i] < final_lower[i]:
+                direction[i] = -1
+                supertrend[i] = final_upper[i]
             else:
-                supertrend[i], direction[i] = final_upper[i], -1
+                direction[i] = 1
+                supertrend[i] = final_lower[i]
                 
     return pd.Series(supertrend, index=df.index), pd.Series(direction, index=df.index)
 
@@ -821,16 +838,21 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         ind_ohlc  = [[float(r["Open"]), float(r["Close"]), float(r["Low"]), float(r["High"])] for _, r in df_tail.iterrows()]
         ind_vol   = [int(r["Volume"]/1000) if r["Volume"] else 0 for _, r in df_tail.iterrows()]
         ind_ma20  = [round(v, 2) if v==v else None for v in df_tail["SMA_20"].tolist()]
-        ind_ma60  = [round(v, 2) if v==v else None for v in df_tail["SMA_60"].tolist()]
-        st_up   = [v if (d==1 and v==v) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
-        st_down = [v if (d==-1 and v==v) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
+        
+        # 刪除了 ind_ma60 變數
+        # 使用 int(round(v)) 將 ST 數值四捨五入到個位數
+        st_up   = [int(round(v)) if (d==1 and pd.notna(v)) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
+        st_down = [int(round(v)) if (d==-1 and pd.notna(v)) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
         ind_vol_color = ["#ef5350" if r["Close"] >= r["Open"] else "#26a69a" for _, r in df_tail.iterrows()]
         
         scripts.append(f"""
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
 chartK_{stock_id}.setOption({{
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-  legend: {{ data: ['K線', 'MA20', 'MA60', 'ST上升', 'ST下降'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+  
+  /* 更新 legend，拿掉 MA60，合併成單一 ST指標 */
+  legend: {{ data: ['K線', 'MA20', 'ST指標'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+  
   grid: [{{ left: '10%', right: '5%', top: '15%', height: '55%' }}, {{ left: '10%', right: '5%', top: '75%', height: '20%' }}],
   xAxis: [
     {{ type: 'category', data: {json.dumps(ind_dates)}, scale: true, boundaryGap: true, axisLine: {{onZero: false}}, splitLine: {{show: false}}, min: 'dataMin', max: 'dataMax', axisLabel: {{show: false}} }},
@@ -844,9 +866,11 @@ chartK_{stock_id}.setOption({{
   series: [
     {{ name: 'K線', type: 'candlestick', data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
     {{ name: 'MA20', type: 'line', data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
-    {{ name: 'MA60', type: 'line', data: {json.dumps(ind_ma60)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#1976d2'}} }},
-    {{ name: 'ST上升', type: 'line', data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
-    {{ name: 'ST下降', type: 'line', data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
+    
+    /* 兩個 name 都設定為 'ST指標' 來合併圖例，並各自保留原先的紅綠虛線樣式 */
+    {{ name: 'ST指標', type: 'line', data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
+    {{ name: 'ST指標', type: 'line', data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
+    
     {{ name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }}
   ]
 }});
