@@ -1847,7 +1847,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     """組裝最終的 HTML (包含側邊欄與動態 JS)"""
     update_time = now_tw().strftime("%Y-%m-%d %H:%M")
     
-    # 建立大盤、評等表與時序圖表 (這三行被我誤刪了，現在補回來)
+    # 建立大盤、評等表與時序圖表
     market_section = generate_market_section(market_data)
     rating_table = generate_rating_table(stocks_data)
     timeseries_section = generate_timeseries_section(market_data)
@@ -1861,7 +1861,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
         stock_cards += generate_stock_card(stock_id, data, is_first)
         
         r = data["rating"]
-        c_cls = "up" if data["change_pct"] >= 0 else "down"
+        c_cls = "up" if data.get("change_pct", 0) >= 0 else "down"
         active_cls = "active" if is_first else ""
         sidebar_items += f"""
         <div class="sidebar-item {active_cls}" id="nav_{stock_id}" onclick="showStock('{stock_id}')">
@@ -1901,9 +1901,9 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   
   {market_section}
   
-  {rating_table}
-  
   {timeseries_section}
+  
+  {rating_table}
   
   <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
   
