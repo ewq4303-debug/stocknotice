@@ -2624,7 +2624,7 @@ new Chart(document.getElementById('inst'),{{
 
 
 def get_css():
-    """完整 CSS 樣式 (保留大盤/評等表 + 新增雙棲版響應式)"""
+    """完整 CSS 樣式"""
     return """
 :root { --primary: #1565c0; --bg: #f5f5f5; --card-bg: #ffffff; --text: #333333; --up: #d32f2f; --down: #388e3c; --border: #e0e0e0; }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -2655,7 +2655,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .chart-container{position:relative;height:280px;margin-bottom:12px}
 
-/* ── 個股評等表 (原始完整保留) ── */
+/* ── 個股評等表 ── */
 .rating-section{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1.25rem;margin-bottom:16px}
 .rating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--border)}
 .rating-title{font-size:16px;font-weight:500;display:flex;align-items:center;gap:6px}
@@ -2682,7 +2682,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
 .chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
 .empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
-/* ── 極簡版評分說明 (取代原本笨重的 scoring-key) ── */
+
+/* ── 極簡版評分說明 ── */
 .compact-legend { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
 .compact-legend summary { cursor: pointer; font-size: 12px; color: #888; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; user-select: none; list-style: none; transition: 0.2s; }
 .compact-legend summary::-webkit-details-marker { display: none; }
@@ -2720,7 +2721,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 /* 右側主內容區 */
 .main-content { flex: 1; min-width: 0; }
 
-/* 個股卡片 (預設隱藏，有 active 才會顯示) */
+/* 個股卡片 */
 .stock-card { display: none; background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; border:0.5px solid var(--border); }
 .stock-card.active { display: block; }
 .stock-body { padding: 20px; }
@@ -2740,7 +2741,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     .desktop-only { display: none !important; }
     .mobile-only { display: flex; }
     
-    /* 大盤與評等表也要響應式 */
     .metrics-grid-4 { grid-template-columns: repeat(2, 1fr); }
     .grid-2 { grid-template-columns: 1fr; }
     .rating-grid { grid-template-columns: repeat(2, 1fr); }
