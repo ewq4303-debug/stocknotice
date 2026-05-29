@@ -360,59 +360,42 @@ def get_institution_data(stock_id: str, days: int = 30):
     }
 
 
-def get_margin_data(stock_id: str, days: int = 30):
-    """取得融資、融券餘額（含 5日/20日增減）
-    FinMind: MarginPurchaseTodayBalance (融資餘額), ShortSaleTodayBalance (融券餘額)
-    """
-    start = (datetime.now() - timedelta(days=days+25)).strftime("%Y-%m-%d")
+def get_margin_data(stock_id: str, days: int = 80):
+    start = (datetime.now() - timedelta(days=days+30)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
-    data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", 
-                        data_id=stock_id, start_date=start, end_date=end)
+    data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", data_id=stock_id, start_date=start, end_date=end)
     
     if not data:
-        return {
-            "margin_balance": 0, "margin_change": 0, "margin_5d": 0, "margin_20d": 0,
-            "short_balance": 0, "short_change": 0, "short_5d": 0, "short_20d": 0,
-            "history": [],
-        }
+        return {"margin_balance": 0, "margin_change": 0, "margin_5d": 0, "margin_20d": 0, "short_balance": 0, "short_change": 0, "short_5d": 0, "short_20d": 0, "history": []}
     
     data = sorted(data, key=lambda x: x.get("date", ""))
-    if stock_id == STOCKS[0] if STOCKS else False:
-        print(f"    [debug] {stock_id} 融資融券欄位: {list(data[0].keys())}")
     
-    # 嘗試多種欄位名稱（FinMind 版本差異）
     def get_balance(d, kind):
-        if kind == "margin":
-            return float(d.get("MarginPurchaseTodayBalance",
-                          d.get("margin_purchase_today_balance",
-                          d.get("MarginPurchaseBuy", 0))))
-        else:
-            return float(d.get("ShortSaleTodayBalance",
-                          d.get("short_sale_today_balance",
-                          d.get("ShortSaleBuy", 0))))
+        if kind == "margin": return float(d.get("MarginPurchaseTodayBalance", d.get("margin_purchase_today_balance", d.get("MarginPurchaseBuy", 0))))
+        else: return float(d.get("ShortSaleTodayBalance", d.get("short_sale_today_balance", d.get("ShortSaleBuy", 0))))
     
+    history = []
+    for i in range(len(data)):
+        d = data[i]
+        date, mb, sb = d.get("date", ""), int(get_balance(d, "margin")), int(get_balance(d, "short"))
+        mdiff, sdiff = 0, 0
+        if i > 0:
+            mdiff = mb - int(get_balance(data[i-1], "margin"))
+            sdiff = sb - int(get_balance(data[i-1], "short"))
+        history.append({"date": date, "margin_bal": mb, "margin_diff": mdiff, "short_bal": sb, "short_diff": sdiff})
+        
     latest = data[-1]
     margin_balance = int(get_balance(latest, "margin"))
     short_balance  = int(get_balance(latest, "short"))
     
-    # 計算 N 日前的餘額，得到增減
     def diff_n_days_ago(n, kind):
-        if len(data) <= n:
-            return 0
-        balance_now = get_balance(data[-1],  kind)
-        balance_past = get_balance(data[-n-1], kind)
-        return int(balance_now - balance_past)
-    
+        if len(data) <= n: return 0
+        return int(get_balance(data[-1], kind) - get_balance(data[-n-1], kind))
+        
     return {
-        "margin_balance": margin_balance,
-        "margin_change":  diff_n_days_ago(1,  "margin"),
-        "margin_5d":      diff_n_days_ago(5,  "margin"),
-        "margin_20d":     diff_n_days_ago(20, "margin"),
-        "short_balance":  short_balance,
-        "short_change":   diff_n_days_ago(1,  "short"),
-        "short_5d":       diff_n_days_ago(5,  "short"),
-        "short_20d":      diff_n_days_ago(20, "short"),
-        "history": data[-days:],
+        "margin_balance": margin_balance, "margin_change": diff_n_days_ago(1, "margin"), "margin_5d": diff_n_days_ago(5, "margin"), "margin_20d": diff_n_days_ago(20, "margin"),
+        "short_balance": short_balance, "short_change": diff_n_days_ago(1, "short"), "short_5d": diff_n_days_ago(5, "short"), "short_20d": diff_n_days_ago(20, "short"),
+        "history": history
     }
 
 
@@ -428,69 +411,34 @@ def _empty_borrow():
     }
 
 
-def get_borrowing_data(stock_id):
-    """
-    抓借券賣出餘額。
-    資料來源：FinMind TaiwanDailyShortSaleBalances（同 TWSE TWT93U）
-
-    回傳單位：張（1 張 = 1000 股）
-        borrow_balance: 今日借券賣出餘額（張）
-        borrow_change:  與前一交易日相比的增減（張）
-        borrow_5d:      與 5  個交易日前相比的增減（張）
-        borrow_20d:     與 20 個交易日前相比的增減（張）
-        history:        近 30 個交易日的 [{date, balance(張)}]
-    """
+def get_borrowing_data(stock_id: str):
     end = now_tw().date()
-    start = end - timedelta(days=60)
-
+    start = end - timedelta(days=120)
     url = "https://api.finmindtrade.com/api/v4/data"
-    params = {
-        "dataset":    "TaiwanDailyShortSaleBalances",
-        "data_id":    stock_id,
-        "start_date": start.isoformat(),
-        "end_date":   end.isoformat(),
-    }
+    params = {"dataset": "TaiwanDailyShortSaleBalances", "data_id": stock_id, "start_date": start.isoformat(), "end_date": end.isoformat()}
     headers = {"Authorization": f"Bearer {FINMIND_TOKEN}"} if FINMIND_TOKEN else {}
 
-    try:
-        resp = requests.get(url, params=params, headers=headers, timeout=15)
-        j = resp.json()
-    except Exception as e:
-        print(f"[warn] {stock_id} 借券 API 失敗: {e}")
-        return _empty_borrow()
-
+    try: j = requests.get(url, params=params, headers=headers, timeout=15).json()
+    except Exception: return _empty_borrow()
     rows = j.get("data") or []
-    if not rows:
-        return _empty_borrow()
-
-    if BALANCE_FIELD not in rows[0]:
-        print(f"[warn] {stock_id} 借券 欄位 '{BALANCE_FIELD}' 不存在! 實際欄位: {list(rows[0].keys())}")
-        return _empty_borrow()
+    if not rows or BALANCE_FIELD not in rows[0]: return _empty_borrow()
 
     df = pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
-
-    # 股 → 張（÷1000 並四捨五入）
     df["lots"] = (pd.to_numeric(df[BALANCE_FIELD], errors="coerce").fillna(0) / 1000).round().astype(int)
 
-    n = len(df)
-    today_lots = int(df.iloc[-1]["lots"])
+    history = []
+    for i in range(len(df)):
+        date = str(df.iloc[i]["date"])
+        bal = int(df.iloc[i]["lots"])
+        diff = bal - int(df.iloc[i-1]["lots"]) if i > 0 else 0
+        history.append({"date": date, "balance": bal, "diff": diff})
 
-    # 與 N 個交易日前比較；不夠資料時回傳 0（避免誤導）
+    today_lots = int(df.iloc[-1]["lots"])
     def diff_n_days_ago(n_days):
-        if n < n_days + 1:
-            return 0
+        if len(df) < n_days + 1: return 0
         return today_lots - int(df.iloc[-(n_days + 1)]["lots"])
 
-    return {
-        "borrow_balance": today_lots,
-        "borrow_change":  diff_n_days_ago(1),
-        "borrow_5d":      diff_n_days_ago(5),
-        "borrow_20d":     diff_n_days_ago(20),
-        "history": [
-            {"date": str(r["date"]), "balance": int(r["lots"])}
-            for _, r in df.tail(30).iterrows()
-        ],
-    }
+    return {"borrow_balance": today_lots, "borrow_change": diff_n_days_ago(1), "borrow_5d": diff_n_days_ago(5), "borrow_20d": diff_n_days_ago(20), "history": history}
     
     
     def diff_n_days_ago(n):
@@ -507,94 +455,114 @@ def get_borrowing_data(stock_id):
     }
 
 
-def get_tdcc_holding(stock_id: str):
+def get_tdcc_holding(stock_id: str, close_price: float):
     """
-    從 GitHub repo 取得集保大戶持股比例變化
-    URL: https://raw.githubusercontent.com/ewq4303-debug/stocknotice/main/tdcc_history/YYYYMMDD.csv
-    
-    CSV 格式: 資料日期,證券代號,持股分級,人數,股數,占集保庫存數比例%
-    分級 12-15 = 400張以上大戶 (12: 400K-600K, 13: 600K-800K, 14: 800K-1M, 15: >1M 股)
-    
-    回傳本週 vs 上週的大戶持股比例變化
+    動態集保戶數分析 (依據股價與投入資金換算)
+    散戶：投入資金 < 500萬台幣
+    大戶：投入資金 > 5000萬台幣
     """
+    if close_price <= 0: close_price = 100
+    # 換算門檻股數
+    retail_shares = 5_000_000 / close_price
+    large_shares = 50_000_000 / close_price
+
+    # TDCC 各級距的上限股數
+    LEVEL_MAX = {
+        "1": 999, "2": 5000, "3": 10000, "4": 15000, "5": 20000,
+        "6": 30000, "7": 40000, "8": 50000, "9": 100000, "10": 200000,
+        "11": 400000, "12": 600000, "13": 800000, "14": 1000000, "15": float('inf')
+    }
+    
+    # 動態判定級距
+    retail_levels = {k for k, v in LEVEL_MAX.items() if v <= max(retail_shares, 999)}
+    if not retail_levels: retail_levels = {"1"}
+    
+    large_levels = {k for k, v in LEVEL_MAX.items() if v >= large_shares}
+    if not large_levels: large_levels = {"15"}
+
     GITHUB_BASE = "https://raw.githubusercontent.com/ewq4303-debug/stocknotice/main/tdcc_history"
-    BIG_LEVELS  = {"12", "13", "14", "15"}   # 400 張 (400,000股) 以上
     
     def fetch_csv(date_str):
-        """下載並解析某天的 CSV，回傳該股票大戶持股比例%"""
         url = f"{GITHUB_BASE}/{date_str}.csv"
         try:
             r = requests.get(url, timeout=15)
-            if r.status_code != 200 or len(r.content) < 1000:
-                return None
-            
-            # UTF-8 with BOM
+            if r.status_code != 200 or len(r.content) < 1000: return None
             text = r.content.decode("utf-8-sig", errors="replace")
-            big_ratio = 0.0
-            found = False
             
-            for line in text.splitlines()[1:]:   # 跳過標頭
+            ret_ratio, lrg_ratio, total_holders, total_shares = 0.0, 0.0, 0, 0
+            
+            for line in text.splitlines()[1:]:
                 parts = [p.strip() for p in line.split(",")]
-                if len(parts) < 6:
-                    continue
-                # 股票代號可能有空格補齊 (例 "2330  ")
-                code  = parts[1].strip()
-                if code != stock_id:
-                    continue
+                if len(parts) < 6: continue
+                code = parts[1]
+                if code != stock_id: continue
+                
                 level = parts[2]
-                if level not in BIG_LEVELS:
-                    continue
                 try:
                     ratio = float(parts[5])
-                    big_ratio += ratio
-                    found = True
+                    holders = int(parts[3])
+                    shares = int(parts[4])
+                    
+                    if level in retail_levels: ret_ratio += ratio
+                    if level in large_levels: lrg_ratio += ratio
+                    if level == "17": # 17 代表合計
+                        total_holders = holders
+                        total_shares = shares
                 except ValueError:
                     continue
             
-            return big_ratio if found else None
-        except Exception as e:
-            print(f"    ⚠️ TDCC {date_str} 下載失敗: {e}")
+            if total_holders > 0:
+                return {
+                    "date": date_str, "retail_ratio": ret_ratio, "large_ratio": lrg_ratio,
+                    "total_holders": total_holders, "total_shares": total_shares
+                }
             return None
-    
+        except:
+            return None
+
     # 從本週最近的週五往前找最近 2 個有資料的週五
     today = datetime.now()
     cursor = today
-    # 先找到本週最近的週五（含今天）
     while cursor.weekday() != 4:
         cursor -= timedelta(days=1)
-    
+        
     results = []
-    for _ in range(8):   # 最多往前找 8 個週五（約 2 個月）
+    for _ in range(8):
         date_str = cursor.strftime("%Y%m%d")
-        ratio = fetch_csv(date_str)
-        if ratio is not None and ratio > 0:
-            results.append({"date": cursor.strftime("%Y-%m-%d"), "big_ratio": ratio})
-            if len(results) >= 2:
-                break
-        cursor -= timedelta(days=7)   # 回到上一個週五
-    
+        data = fetch_csv(date_str)
+        if data is not None:
+            results.append(data)
+            if len(results) >= 2: break
+        cursor -= timedelta(days=7)
+        
     if not results:
-        return {"big_holder_ratio": 0, "big_holder_change": 0, "trend": 0}
+        return {
+            "retail_ratio": 0, "retail_change": 0, "large_ratio": 0, "large_change": 0, 
+            "big_holder_change": 0, "total_holders": 0, "holders_change": 0,
+            "avg_lots": 0, "avg_lots_change": 0, 
+            "retail_threshold_shares": retail_shares, "large_threshold_shares": large_shares
+        }
+        
+    latest = results[0]
+    prev = results[1] if len(results) >= 2 else latest
     
-    latest_ratio = results[0]["big_ratio"]
-    
-    if len(results) >= 2:
-        prev_ratio = results[1]["big_ratio"]
-        change = round(latest_ratio - prev_ratio, 2)
-    else:
-        change = 0
-    
-    # Debug 第一支股票印出來
-    if STOCKS and stock_id == STOCKS[0]:
-        debug_info = ", ".join(f"{r['date']}={r['big_ratio']:.2f}%" for r in results)
-        print(f"    [debug] {stock_id} 大戶資料: {debug_info}")
+    # 計算平均持股 (張)
+    avg_lots_latest = (latest["total_shares"] / 1000) / latest["total_holders"] if latest["total_holders"] else 0
+    avg_lots_prev = (prev["total_shares"] / 1000) / prev["total_holders"] if prev["total_holders"] else 0
     
     return {
-        "big_holder_ratio":  round(latest_ratio, 2),
-        "big_holder_change": change,
-        "trend":             1 if change > 0 else (-1 if change < 0 else 0),
+        "retail_ratio": latest["retail_ratio"],
+        "retail_change": latest["retail_ratio"] - prev["retail_ratio"],
+        "large_ratio": latest["large_ratio"],
+        "large_change": latest["large_ratio"] - prev["large_ratio"],
+        "big_holder_change": latest["large_ratio"] - prev["large_ratio"], # 讓 AI 評分維持相容
+        "total_holders": latest["total_holders"],
+        "holders_change": latest["total_holders"] - prev["total_holders"],
+        "avg_lots": avg_lots_latest,
+        "avg_lots_change": avg_lots_latest - avg_lots_prev,
+        "retail_threshold_shares": retail_shares,
+        "large_threshold_shares": large_shares
     }
-
 
 def get_market_overview():
     """取得大盤資料"""
@@ -1743,7 +1711,45 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
           </div>
         </div>
 
-        <div id="kline_{stock_id}" style="width: 100%; height: 400px; margin-bottom: 15px;"></div>
+        <div id="kline_{stock_id}" style="width: 100%; height: 350px; margin-bottom: 10px;"></div>
+        <div class="grid-2-col" style="margin-bottom: 15px; gap: 10px;">
+            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;">
+                <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">👥 三大法人買賣超(億)與累計</div>
+                <div id="inst_chart_{stock_id}" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;">
+                <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">💰 融資/券/借券 增減(張)與餘額</div>
+                <div id="margin_chart_{stock_id}" style="width: 100%; height: 200px;"></div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
+           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+               📊 大戶與散戶持股變動 <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">以市場資金規模分級</span>
+           </h3>
+           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                   <div style="color:#666; font-size: 11px; margin-bottom: 2px;">大戶 (>5千萬, ≥{int(tdcc.get('large_threshold_shares',0)//1000)}張)</div>
+                   <strong style="font-size: 15px;">{tdcc.get('large_ratio',0):.2f}%</strong> 
+                   <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('large_change',0)>=0 else 'down'}">{tdcc.get('large_change',0):+.2f}%</span>)</span>
+               </div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                   <div style="color:#666; font-size: 11px; margin-bottom: 2px;">散戶 (<5百萬, ≤{int(tdcc.get('retail_threshold_shares',0)//1000)}張)</div>
+                   <strong style="font-size: 15px;">{tdcc.get('retail_ratio',0):.2f}%</strong> 
+                   <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('retail_change',0)>=0 else 'down'}">{tdcc.get('retail_change',0):+.2f}%</span>)</span>
+               </div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                   <div style="color:#666; font-size: 11px; margin-bottom: 2px;">總股東人數</div>
+                   <strong style="font-size: 15px;">{tdcc.get('total_holders',0):,} <span style="font-size:12px; font-weight:normal;">人</span></strong> 
+                   <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('holders_change',0)>=0 else 'down'}">{tdcc.get('holders_change',0):+,}</span>)</span>
+               </div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                   <div style="color:#666; font-size: 11px; margin-bottom: 2px;">平均每戶持股</div>
+                   <strong style="font-size: 15px;">{tdcc.get('avg_lots',0):,.1f} <span style="font-size:12px; font-weight:normal;">張</span></strong> 
+                   <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('avg_lots_change',0)>=0 else 'down'}">{tdcc.get('avg_lots_change',0):+.1f}</span>)</span>
+               </div>
+           </div>
+        </div>
         
         <div class="grid-2-col">
           
@@ -2183,77 +2189,51 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         ind_vol_color = []
         for _, row in df_tail.iterrows():
             ind_vol_color.append("#ef5350" if row["Close"] >= row["Open"] else "#26a69a")
+        # 在 K 線圖 JS 的下方，加入以下這段新增的兩張圖表腳本：
+        cd = data.get("chart_data", {})
+        if cd and cd.get("dates"):
         
-        scripts.append(f"""
-(function() {{
-  var chart = echarts.init(document.getElementById('kline_{stock_id}'));
-  chart.setOption({{
-    animation: false,
-    tooltip: {{
-      trigger: 'axis',
-      axisPointer: {{type: 'cross'}},
-      backgroundColor: 'rgba(255,255,255,0.95)',
-      borderColor: '#ccc',
-      textStyle: {{color: '#333'}}
-    }},
-    axisPointer: {{link: [{{xAxisIndex: 'all'}}]}},
-    legend: {{
-      data: ['K線', 'MA20', 'MA60', 'Supertrend↑', 'Supertrend↓'],
-      top: 0, textStyle: {{fontSize: 10}}
-    }},
-    grid: [
-      {{left: '10%', right: '4%', top: '15%', height: '55%'}},
-      {{left: '10%', right: '4%', top: '78%', bottom: '8%'}}
-    ],
-    xAxis: [
-      {{type: 'category', data: {json.dumps(ind_dates)}, gridIndex: 0,
-        axisLabel: {{show: false}}, axisLine: {{show: false}}}},
-      {{type: 'category', data: {json.dumps(ind_dates)}, gridIndex: 1,
-        axisLabel: {{fontSize: 9, color: '#666'}}}}
-    ],
+            scripts.append(f"""       
+        (function() {{
+  var chartInst = echarts.init(document.getElementById('inst_chart_{stock_id}'));
+  chartInst.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['外資', '投信', '自營', '累計(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '12%', right: '12%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
     yAxis: [
-      {{scale: true, gridIndex: 0, splitNumber: 4,
-        axisLabel: {{fontSize: 10, color: '#666'}},
-        splitLine: {{lineStyle: {{color: '#eee'}}}}}},
-      {{scale: true, gridIndex: 1, splitNumber: 2,
-        axisLabel: {{fontSize: 9, color: '#666'}},
-        splitLine: {{show: false}}}}
+      {{ type: 'value', name: '買賣超(億)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '累計(億)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }}
     ],
     series: [
-      {{name: 'K線', type: 'candlestick',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: {json.dumps(ind_ohlc)},
-        itemStyle: {{color: '#ef5350', color0: '#26a69a',
-          borderColor: '#ef5350', borderColor0: '#26a69a'}}}},
-      {{name: 'MA20', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: {json.dumps(ind_ma20)},
-        smooth: true, showSymbol: false,
-        lineStyle: {{color: '#fb8c00', width: 1}}}},
-      {{name: 'MA60', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: {json.dumps(ind_ma60)},
-        smooth: true, showSymbol: false,
-        lineStyle: {{color: '#9c27b0', width: 1}}}},
-      {{name: 'Supertrend↑', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: {json.dumps(st_up)},
-        showSymbol: false, connectNulls: false,
-        lineStyle: {{color: '#26a69a', width: 2}}}},
-      {{name: 'Supertrend↓', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0,
-        data: {json.dumps(st_down)},
-        showSymbol: false, connectNulls: false,
-        lineStyle: {{color: '#ef5350', width: 2}}}},
-      {{name: '成交量', type: 'bar',
-        xAxisIndex: 1, yAxisIndex: 1,
-        data: {json.dumps(ind_vol)}.map(function(v, i) {{
-          return {{value: v, itemStyle: {{color: {json.dumps(ind_vol_color)}[i]}}}};
-        }})}}
+      {{ name: '外資', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_foreign'])}, itemStyle: {{color: '#378ADD'}} }},
+      {{ name: '投信', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_trust'])}, itemStyle: {{color: '#1D9E75'}} }},
+      {{ name: '自營', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_dealer'])}, itemStyle: {{color: '#FF9800'}} }},
+      {{ name: '累計(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['inst_cum'])}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }}
     ]
   }});
-  window.addEventListener('resize', function() {{ chart.resize(); }});
-}})();""")
+  
+  var chartMargin = echarts.init(document.getElementById('margin_chart_{stock_id}'));
+  chartMargin.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['融資', '融券', '借券', '融資餘額(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '12%', right: '15%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
+    yAxis: [
+      {{ type: 'value', name: '增減(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '餘額(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
+    ],
+    series: [
+      {{ name: '融資', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
+      {{ name: '融券', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
+      {{ name: '借券', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
+      {{ name: '融資餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }}
+    ]
+  }});
+  
+  // 綁定自適應縮放
+  window.addEventListener('resize', function() {{ chartInst.resize(); chartMargin.resize(); }});
+}})();
     
     # 大盤 K 線 + 成交金額 (ECharts)
     taiex = market_data["taiex"]
@@ -2278,83 +2258,46 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
 
         scripts.append(f"""
 (function() {{
-  var chart = echarts.init(document.getElementById('taiex_kline'));
-  var dates = {json.dumps(taiex_dates)};
-  var ohlc  = {json.dumps(taiex_ohlc)};
-  var money = {json.dumps(taiex_money)};
-  var stUp   = {json.dumps(taiex_st_up)};
-  var stDown = {json.dumps(taiex_st_down)};
-  var volColors = {json.dumps(taiex_vol_color)};
-  var kData = {json.dumps(taiex_k)};
-  var dData = {json.dumps(taiex_d)};
-
-  chart.setOption({{
-    animation: false,
-    tooltip: {{
-      trigger: 'axis',
-      axisPointer: {{ type: 'cross' }},
-      backgroundColor: 'rgba(255,255,255,0.95)',
-      borderColor: '#ccc',
-      textStyle: {{ color: '#333' }}
-    }},
-    axisPointer: {{ link: [{{xAxisIndex: 'all'}}] }},
-    legend: {{
-      data: ['加權指數', 'Supertrend↑', 'Supertrend↓', '成交金額(億)', 'K', 'D'],
-      top: 0, textStyle: {{fontSize: 10}}
-    }},
-    grid: [
-      {{ left: '8%', right: '4%', top: '5%',  height: '52%' }},
-      {{ left: '8%', right: '4%', top: '62%', height: '15%' }},
-      {{ left: '8%', right: '4%', top: '82%', height: '13%' }}
-    ],
-    xAxis: [
-      {{ type: 'category', data: dates, gridIndex: 0,
-         axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}} }},
-      {{ type: 'category', data: dates, gridIndex: 1,
-         axisLabel: {{show: false}} }},
-      {{ type: 'category', data: dates, gridIndex: 2,
-         axisLabel: {{fontSize: 10, color: '#666'}} }}
-    ],
+  var chartInst = echarts.init(document.getElementById('inst_chart_{stock_id}'));
+  chartInst.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['外資', '投信', '自營', '累計(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '12%', right: '12%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
     yAxis: [
-      {{ scale: true, gridIndex: 0, splitNumber: 5,
-         axisLabel: {{color: '#666'}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-      {{ scale: true, gridIndex: 1, splitNumber: 2, name: '成交金額(億)',
-         nameTextStyle: {{color: '#999', fontSize: 10}},
-         axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }},
-      {{ gridIndex: 2, min: 0, max: 100, splitNumber: 2,
-         axisLabel: {{color: '#666'}}, splitLine: {{show: false}} }}
+      {{ type: 'value', name: '買賣超(億)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '累計(億)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }}
     ],
-    dataZoom: [{{type: 'inside', xAxisIndex: [0, 1, 2], start: 50, end: 100}}],
     series: [
-      {{name: '加權指數', type: 'candlestick',
-        xAxisIndex: 0, yAxisIndex: 0, data: ohlc,
-        itemStyle: {{color: '#ef5350', color0: '#26a69a',
-          borderColor: '#ef5350', borderColor0: '#26a69a'}}}},
-      {{name: 'Supertrend↑', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0, data: stUp,
-        showSymbol: false, connectNulls: false,
-        lineStyle: {{color: '#26a69a', width: 2}}}},
-      {{name: 'Supertrend↓', type: 'line',
-        xAxisIndex: 0, yAxisIndex: 0, data: stDown,
-        showSymbol: false, connectNulls: false,
-        lineStyle: {{color: '#ef5350', width: 2}}}},
-      {{name: '成交金額(億)', type: 'bar',
-        xAxisIndex: 1, yAxisIndex: 1,
-        data: money.map(function(v, i) {{
-          return {{value: v, itemStyle: {{color: volColors[i]}}}};
-        }})}},
-      {{name: 'K', type: 'line',
-        xAxisIndex: 2, yAxisIndex: 2, data: kData,
-        smooth: true, showSymbol: false,
-        lineStyle: {{color: '#f5a623', width: 1.5}}}},
-      {{name: 'D', type: 'line',
-        xAxisIndex: 2, yAxisIndex: 2, data: dData,
-        smooth: true, showSymbol: false,
-        lineStyle: {{color: '#4a90e2', width: 1.5}}}}
+      {{ name: '外資', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_foreign'])}, itemStyle: {{color: '#378ADD'}} }},
+      {{ name: '投信', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_trust'])}, itemStyle: {{color: '#1D9E75'}} }},
+      {{ name: '自營', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_dealer'])}, itemStyle: {{color: '#FF9800'}} }},
+      {{ name: '累計(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['inst_cum'])}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }}
     ]
   }});
-  window.addEventListener('resize', function() {{ chart.resize(); }});
-}})();""")
+  
+  var chartMargin = echarts.init(document.getElementById('margin_chart_{stock_id}'));
+  chartMargin.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['融資', '融券', '借券', '融資餘額(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '12%', right: '15%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
+    yAxis: [
+      {{ type: 'value', name: '增減(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '餘額(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
+    ],
+    series: [
+      {{ name: '融資', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
+      {{ name: '融券', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
+      {{ name: '借券', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
+      {{ name: '融資餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }}
+    ]
+  }});
+  
+  // 綁定自適應縮放
+  window.addEventListener('resize', function() {{ chartInst.resize(); chartMargin.resize(); }});
+}})();
+""")
     else:
         print("  ⚠️ TAIEX 無資料")
     
@@ -2857,43 +2800,63 @@ def process_single_stock(stock_id):
     institution = get_institution_data(stock_id)
     margin      = get_margin_data(stock_id)
     borrow      = get_borrowing_data(stock_id)
-    tdcc        = get_tdcc_holding(stock_id)
+    tdcc        = get_tdcc_holding(stock_id, close_price)
     news        = get_news(stock_id)
     name        = get_stock_name(stock_id)
     fundamentals = get_fundamentals(stock_id)
-    
-    # 前一日成交量
+        
+    # 整合 ECharts 畫圖所需的所有籌碼時序資料 (自動對齊近 60 個交易日)
     df = stock_data["df"]
+    df_tail = df.tail(60)
+    inst_hist = {d["date"]: d for d in institution.get("history", [])}
+    marg_hist = {d["date"]: d for d in margin.get("history", [])}
+    borr_hist = {d["date"]: d for d in borrow.get("history", [])}
+        
+    chart_data = {"dates": [], "inst_foreign": [], "inst_trust": [], "inst_dealer": [], "inst_cum": [],
+                      "margin_diff": [], "margin_bal": [], "short_diff": [], "short_bal": [], "borrow_diff": [], "borrow_bal": []}
+        
+    cum_inst = 0
+    for d_ts, row in df_tail.iterrows():
+        d_str = d_ts.strftime("%Y-%m-%d")
+        d_short = d_ts.strftime("%m-%d")
+        price = float(row["Close"])
+        chart_data["dates"].append(d_short)
+            
+        # 法人買賣超換算為「億元」
+        i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
+        f_amt = (i_data["foreign"] * price) / 100_000_000
+        t_amt = (i_data["trust"] * price) / 100_000_000
+        d_amt = (i_data["dealer"] * price) / 100_000_000
+        cum_inst += (f_amt + t_amt + d_amt)
+            
+        chart_data["inst_foreign"].append(round(f_amt, 2))
+        chart_data["inst_trust"].append(round(t_amt, 2))
+        chart_data["inst_dealer"].append(round(d_amt, 2))
+        chart_data["inst_cum"].append(round(cum_inst, 2))
+            
+        # 融資券借券張數
+        m_data = marg_hist.get(d_str, {"margin_bal":0, "margin_diff":0, "short_bal":0, "short_diff":0})
+        b_data = borr_hist.get(d_str, {"balance":0, "diff":0})
+        chart_data["margin_bal"].append(m_data.get("margin_bal", 0))
+        chart_data["margin_diff"].append(m_data.get("margin_diff", 0))
+        chart_data["short_bal"].append(m_data.get("short_bal", 0))
+        chart_data["short_diff"].append(m_data.get("short_diff", 0))
+        chart_data["borrow_bal"].append(b_data.get("balance", 0))
+        chart_data["borrow_diff"].append(b_data.get("diff", 0))
+
     volume_prev = int(df["Volume"].iloc[-2] / 1000) if len(df) > 1 else 0
-    
-    # 漲跌幅
     close = stock_data["latest"]["close"]
     prev_close = stock_data["prev"]["close"]
     change_pct = ((close - prev_close) / prev_close * 100) if prev_close else 0
-    
-    print(f"    生成 AI 分析 ({stock_id})...")
-    ai_tech, ai_chip, ai_oper = generate_ai_analysis(
-        stock_id, name, stock_data, institution, margin, borrow, tdcc
-    )
-    
+        
+    print(f"    生成 AI 分析...")
+    ai_tech, ai_chip, ai_oper = generate_ai_analysis(stock_id, name, stock_data, institution, margin, borrow, tdcc)
+        
     record = {
-        "latest":      stock_data["latest"],
-        "prev":        stock_data["prev"],
-        "df":          stock_data["df"],
-        "indicators":  stock_data["indicators"],
-        "institution": institution,
-        "margin":      margin,
-        "borrow":      borrow,
-        "tdcc":        tdcc,
-        "news":        news,
-        "fundamentals": fundamentals,
-        "volume_prev": volume_prev,
-        "change_pct":  change_pct,
-        "ai_tech":     ai_tech,
-        "ai_chip":     ai_chip,
-        "ai_oper":     ai_oper,
-        "ai_analysis": ai_tech + "\n\n" + ai_chip + "\n\n" + ai_oper,
-        "name":        name,
+        "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
+        "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news, "fundamentals": fundamentals,
+        "volume_prev": volume_prev, "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name,
+        "chart_data": chart_data   # 將做好的畫圖資料存入
     }
     
     # 計算評等
