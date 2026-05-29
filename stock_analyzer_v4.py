@@ -2759,7 +2759,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     .stock-card.mobile-expanded .stock-body { display: block; }
     .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
 }
-"""
+""" 
 
 
 
