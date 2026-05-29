@@ -254,4 +254,998 @@ def get_institution_data(stock_id: str, days: int = 80):
         else:
             by_date[date]["foreign"] += float(d.get("Foreign_Investor_diff", d.get("foreign_investor_diff", 0)))
             by_date[date]["trust"]   += float(d.get("Investment_Trust_diff", d.get("investment_trust_diff", 0)))
-            by_date[date]["dealer
+            by_date[date]["dealer"]  += float(d.get("Dealer_diff", d.get("dealer_diff", 0)))
+    
+    history = sorted(by_date.values(), key=lambda x: x["date"])[-days:]
+    if not history:
+        return {"latest": {}, "foreign_today": 0, "foreign_5d": 0, "foreign_20d": 0, "trust_today": 0, "trust_5d": 0, "trust_20d": 0, "dealer_today": 0, "history": []}
+    
+    latest = history[-1]
+    return {
+        "latest": latest,
+        "foreign_today": latest["foreign"] / 1000,
+        "foreign_5d":    sum(h["foreign"] for h in history[-5:])  / 1000,
+        "foreign_20d":   sum(h["foreign"] for h in history[-20:]) / 1000,
+        "trust_today":   latest["trust"] / 1000,
+        "trust_5d":      sum(h["trust"] for h in history[-5:])  / 1000,
+        "trust_20d":     sum(h["trust"] for h in history[-20:]) / 1000,
+        "dealer_today":  latest["dealer"] / 1000,
+        "dealer_5d":     sum(h["dealer"] for h in history[-5:]) / 1000,
+        "dealer_20d":    sum(h["dealer"] for h in history[-20:]) / 1000,
+        "history": history,
+    }
+
+def get_margin_data(stock_id: str, days: int = 80):
+    start = (datetime.now() - timedelta(days=days+30)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
+    data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", data_id=stock_id, start_date=start, end_date=end)
+    
+    if not data:
+        return {"margin_balance": 0, "margin_change": 0, "margin_5d": 0, "margin_20d": 0, "short_balance": 0, "short_change": 0, "short_5d": 0, "short_20d": 0, "history": []}
+    
+    data = sorted(data, key=lambda x: x.get("date", ""))
+    
+    def get_balance(d, kind):
+        if kind == "margin": return float(d.get("MarginPurchaseTodayBalance", d.get("margin_purchase_today_balance", d.get("MarginPurchaseBuy", 0))))
+        else: return float(d.get("ShortSaleTodayBalance", d.get("short_sale_today_balance", d.get("ShortSaleBuy", 0))))
+    
+    history = []
+    for i in range(len(data)):
+        d = data[i]
+        date, mb, sb = d.get("date", ""), int(get_balance(d, "margin")), int(get_balance(d, "short"))
+        mdiff, sdiff = 0, 0
+        if i > 0:
+            mdiff = mb - int(get_balance(data[i-1], "margin"))
+            sdiff = sb - int(get_balance(data[i-1], "short"))
+        history.append({"date": date, "margin_bal": mb, "margin_diff": mdiff, "short_bal": sb, "short_diff": sdiff})
+        
+    latest = data[-1]
+    margin_balance = int(get_balance(latest, "margin"))
+    short_balance  = int(get_balance(latest, "short"))
+    
+    def diff_n_days_ago(n, kind):
+        if len(data) <= n: return 0
+        return int(get_balance(data[-1], kind) - get_balance(data[-n-1], kind))
+        
+    return {
+        "margin_balance": margin_balance, "margin_change": diff_n_days_ago(1, "margin"), "margin_5d": diff_n_days_ago(5, "margin"), "margin_20d": diff_n_days_ago(20, "margin"),
+        "short_balance": short_balance, "short_change": diff_n_days_ago(1, "short"), "short_5d": diff_n_days_ago(5, "short"), "short_20d": diff_n_days_ago(20, "short"),
+        "history": history[-days:]
+    }
+
+def get_borrowing_data(stock_id: str):
+    end = now_tw().date()
+    start = end - timedelta(days=120)
+    url = "https://api.finmindtrade.com/api/v4/data"
+    params = {"dataset": "TaiwanDailyShortSaleBalances", "data_id": stock_id, "start_date": start.isoformat(), "end_date": end.isoformat()}
+    headers = {"Authorization": f"Bearer {FINMIND_TOKEN}"} if FINMIND_TOKEN else {}
+
+    def _empty_borrow():
+        return {"borrow_balance": 0, "borrow_change":  0, "borrow_5d": 0, "borrow_20d": 0, "history": []}
+
+    try: j = requests.get(url, params=params, headers=headers, timeout=15).json()
+    except Exception: return _empty_borrow()
+    rows = j.get("data") or []
+    if not rows or "SBLShortSalesCurrentDayBalance" not in rows[0]: return _empty_borrow()
+
+    df = pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
+    df["lots"] = (pd.to_numeric(df["SBLShortSalesCurrentDayBalance"], errors="coerce").fillna(0) / 1000).round().astype(int)
+
+    history = []
+    for i in range(len(df)):
+        date = str(df.iloc[i]["date"])
+        bal = int(df.iloc[i]["lots"])
+        diff = bal - int(df.iloc[i-1]["lots"]) if i > 0 else 0
+        history.append({"date": date, "balance": bal, "diff": diff})
+
+    today_lots = int(df.iloc[-1]["lots"])
+    def diff_n_days_ago(n_days):
+        if len(df) < n_days + 1: return 0
+        return today_lots - int(df.iloc[-(n_days + 1)]["lots"])
+
+    return {"borrow_balance": today_lots, "borrow_change": diff_n_days_ago(1), "borrow_5d": diff_n_days_ago(5), "borrow_20d": diff_n_days_ago(20), "history": history[-80:]}
+
+def get_tdcc_holding(stock_id: str, close_price: float):
+    if close_price <= 0: close_price = 100
+    retail_shares = 5_000_000 / close_price
+    large_shares = 50_000_000 / close_price
+
+    LEVEL_MAX = {
+        "1": 999, "2": 5000, "3": 10000, "4": 15000, "5": 20000,
+        "6": 30000, "7": 40000, "8": 50000, "9": 100000, "10": 200000,
+        "11": 400000, "12": 600000, "13": 800000, "14": 1000000, "15": float('inf')
+    }
+    
+    retail_levels = {k for k, v in LEVEL_MAX.items() if v <= max(retail_shares, 999)}
+    if not retail_levels: retail_levels = {"1"}
+    large_levels = {k for k, v in LEVEL_MAX.items() if v >= large_shares}
+    if not large_levels: large_levels = {"15"}
+
+    GITHUB_BASE = "https://raw.githubusercontent.com/ewq4303-debug/stocknotice/main/tdcc_history"
+    
+    def fetch_csv(date_str):
+        url = f"{GITHUB_BASE}/{date_str}.csv"
+        try:
+            r = requests.get(url, timeout=15)
+            if r.status_code != 200 or len(r.content) < 1000: return None
+            text = r.content.decode("utf-8-sig", errors="replace")
+            ret_ratio, lrg_ratio, total_holders, total_shares = 0.0, 0.0, 0, 0
+            for line in text.splitlines()[1:]:
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) < 6: continue
+                if parts[1] != stock_id: continue
+                level = parts[2]
+                try:
+                    ratio = float(parts[5])
+                    holders = int(parts[3])
+                    shares = int(parts[4])
+                    if level in retail_levels: ret_ratio += ratio
+                    if level in large_levels: lrg_ratio += ratio
+                    if level == "17": 
+                        total_holders = holders
+                        total_shares = shares
+                except ValueError: continue
+            if total_holders > 0:
+                return {"date": date_str, "retail_ratio": ret_ratio, "large_ratio": lrg_ratio, "total_holders": total_holders, "total_shares": total_shares}
+            return None
+        except: return None
+
+    today = datetime.now()
+    cursor = today
+    while cursor.weekday() != 4: cursor -= timedelta(days=1)
+        
+    results = []
+    for _ in range(8):
+        data = fetch_csv(cursor.strftime("%Y%m%d"))
+        if data:
+            results.append(data)
+            if len(results) >= 2: break
+        cursor -= timedelta(days=7)
+        
+    if not results:
+        return {"retail_ratio": 0, "retail_change": 0, "large_ratio": 0, "large_change": 0, "big_holder_change": 0, "total_holders": 0, "holders_change": 0, "avg_lots": 0, "avg_lots_change": 0, "retail_threshold_shares": retail_shares, "large_threshold_shares": large_shares}
+        
+    latest = results[0]
+    prev = results[1] if len(results) >= 2 else latest
+    avg_lots_latest = (latest["total_shares"] / 1000) / latest["total_holders"] if latest["total_holders"] else 0
+    avg_lots_prev = (prev["total_shares"] / 1000) / prev["total_holders"] if prev["total_holders"] else 0
+    
+    return {
+        "retail_ratio": latest["retail_ratio"],
+        "retail_change": latest["retail_ratio"] - prev["retail_ratio"],
+        "large_ratio": latest["large_ratio"],
+        "large_change": latest["large_ratio"] - prev["large_ratio"],
+        "big_holder_change": latest["large_ratio"] - prev["large_ratio"],
+        "total_holders": latest["total_holders"],
+        "holders_change": latest["total_holders"] - prev["total_holders"],
+        "avg_lots": avg_lots_latest,
+        "avg_lots_change": avg_lots_latest - avg_lots_prev,
+        "retail_threshold_shares": retail_shares,
+        "large_threshold_shares": large_shares
+    }
+
+def _get(d, *keys, default=0.0):
+    for k in keys:
+        v = d.get(k)
+        if v is not None:
+            try: return float(v)
+            except (ValueError, TypeError): continue
+    return float(default)
+
+def get_market_overview():
+    start = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d")
+    end = datetime.now().strftime("%Y-%m-%d")
+    taiex_data = []
+    
+    fm_taiex = fetch_finmind("TaiwanStockPrice", data_id="TAIEX", start_date=start, end_date=end)
+    if fm_taiex:
+        for r in sorted(fm_taiex, key=lambda x: x.get("date", ""))[-60:]:
+            taiex_data.append({
+                "date":  r.get("date", ""),
+                "open":  float(r.get("open", r.get("Open", 0))),
+                "high":  float(r.get("max",  r.get("High", r.get("high", 0)))),
+                "low":   float(r.get("min",  r.get("Low",  r.get("low", 0)))),
+                "close": float(r.get("close", r.get("Close", 0))),
+                "volume": int(float(r.get("Trading_Volume", r.get("trading_volume", 0)) or 0)),
+                "money":  float(r.get("Trading_money", r.get("trading_money", 0)) or 0),
+            })
+        if len(taiex_data) >= 10:
+            taiex_df = pd.DataFrame([{"Open": d["open"], "High": d["high"], "Low": d["low"], "Close": d["close"]} for d in taiex_data])
+            st_series, st_dir_series = calculate_supertrend(taiex_df, period=7, multiplier=3)
+            k_series, d_series = calculate_stochastic(taiex_df["High"], taiex_df["Low"], taiex_df["Close"], 14, 3, 3)
+            for i, d in enumerate(taiex_data):
+                v, dr = st_series.iloc[i], st_dir_series.iloc[i]
+                d["supertrend"]     = float(v) if pd.notna(v) else None
+                d["supertrend_dir"] = int(dr) if pd.notna(dr) else 0
+                k_val, d_val = k_series.iloc[i], d_series.iloc[i]
+                d["k"] = round(float(k_val), 2) if pd.notna(k_val) else None
+                d["d"] = round(float(d_val), 2) if pd.notna(d_val) else None
+              
+    need_yf = (not taiex_data) or any(d["open"] == 0 for d in taiex_data[-5:])
+    if need_yf:
+        try:
+            taiex_ticker = yf.Ticker("^TWII")
+            taiex_df = taiex_ticker.history(period="3mo").tail(60).reset_index()
+            if not taiex_data:
+                money_by_date = {r.get("date", ""): float(r.get("Trading_money", 0) or 0) for r in (fm_taiex or [])}
+                for _, row in taiex_df.iterrows():
+                    date_str = row["Date"].strftime("%Y-%m-%d")
+                    taiex_data.append({
+                        "date":  date_str, "open": float(row["Open"]), "high": float(row["High"]),
+                        "low":   float(row["Low"]), "close": float(row["Close"]), "volume": int(row["Volume"] or 0),
+                        "money":  money_by_date.get(date_str, 0),
+                    })
+        except Exception: pass
+    
+    inst_raw = fetch_finmind("TaiwanStockTotalInstitutionalInvestors", start_date=start, end_date=end)
+    inst_by_date = {}
+    for d in inst_raw:
+        date = d.get("date", "")
+        name = d.get("name", "")
+        diff = float(d.get("buy", 0)) - float(d.get("sell", 0))
+        if date not in inst_by_date:
+            inst_by_date[date] = {"date": date, "Foreign_Investor_diff": 0, "Investment_Trust_diff": 0, "Dealer_diff": 0}
+        name_low = name.lower()
+        if "外" in name or "foreign" in name_low: inst_by_date[date]["Foreign_Investor_diff"] += diff
+        elif "投信" in name or "trust" in name_low: inst_by_date[date]["Investment_Trust_diff"] += diff
+        elif "自營" in name or "dealer" in name_low: inst_by_date[date]["Dealer_diff"] += diff
+    
+    institution = sorted(inst_by_date.values(), key=lambda x: x["date"])[-30:]
+    futures = fetch_finmind("TaiwanFuturesInstitutionalInvestors", data_id="TX", start_date=start, end_date=end)
+    futures = sorted(futures, key=lambda x: x.get("date", ""))[-30:] if futures else []
+    
+    usd_twd = get_usd_twd_rate(days=35)[-30:]
+    
+    tmf_inst = fetch_finmind("TaiwanFuturesInstitutionalInvestors", data_id="TMF", start_date=start, end_date=end)
+    tmf_daily = fetch_finmind("TaiwanFuturesDaily", data_id="TMF", start_date=start, end_date=end)
+    inst_net_by_date = {}
+    for r in tmf_inst:
+        date = r.get("date", "")
+        if not any(k in r.get("institutional_investors", r.get("name", "")) for k in {"外資及陸資", "外資", "投信", "自營商"}): continue
+        inst_net_by_date[date] = inst_net_by_date.get(date, 0) + (float(r.get("long_open_interest_balance_volume", 0)) - float(r.get("short_open_interest_balance_volume", 0)))
+    
+    total_oi_by_date = {}
+    for r in tmf_daily:
+        total_oi_by_date[r.get("date", "")] = total_oi_by_date.get(r.get("date", ""), 0) + float(r.get("open_interest", 0))
+    
+    retail = []
+    for date in sorted(total_oi_by_date.keys()):
+        total_oi = total_oi_by_date[date]
+        if total_oi == 0: continue
+        retail_net = -inst_net_by_date.get(date, 0)
+        retail.append({"date": date, "retail_ratio": round((retail_net / total_oi) * 100, 2)})
+    retail = retail[-30:]
+    
+    margin_raw = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", start_date=start, end_date=end)
+    total_margin = []
+    if margin_raw:
+        margin_df = pd.DataFrame(margin_raw)
+        margin_df = margin_df[margin_df['name'].astype(str).str.lower() == 'marginpurchasemoney']
+        if not margin_df.empty:
+            total_margin = [{"date": str(r["date"]), "TodayBalance": int(float(r["TodayBalance"]))} for _, r in margin_df.sort_values("date").tail(30).iterrows()]
+    
+    return {"taiex": taiex_data, "institution": institution, "futures": futures, "usd_twd": usd_twd, "retail": retail, "total_margin": total_margin}
+
+def get_usd_twd_rate(days: int = 35):
+    result = []
+    today = datetime.now()
+    cutoff = today - timedelta(days=days)
+    years_needed = list({cutoff.year, today.year})
+    
+    for year in sorted(years_needed):
+        url = f"https://www.tpefx.com.tw/uploads/service/tw/{year}nt.csv"
+        try:
+            r = requests.get(url, timeout=15)
+            r.raise_for_status()
+            content = None
+            for enc in ("utf-8", "big5", "cp950", "utf-8-sig"):
+                try: content = r.content.decode(enc); break
+                except UnicodeDecodeError: continue
+            if not content: continue
+            
+            lines = [l.strip() for l in content.splitlines() if l.strip()]
+            if not lines: continue
+            
+            header = None
+            data_start = 0
+            for i, line in enumerate(lines):
+                cols = [c.strip().lower() for c in line.split(",")]
+                if any("close" in c for c in cols):
+                    header = [c.strip() for c in line.split(",")]
+                    data_start = i + 1
+                    break
+            if not header:
+                header = [c.strip() for c in lines[0].split(",")]
+                data_start = 1
+            
+            close_idx, date_idx = None, 0
+            for i, h in enumerate(header):
+                if h.lower() in ("close", "收盤", "收盤價"): close_idx = i
+                if h.lower() in ("date", "日期", "交易日"): date_idx = i
+            if close_idx is None: close_idx = len(header) - 1
+            
+            for line in lines[data_start:]:
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) <= close_idx: continue
+                raw_date, raw_close = parts[date_idx], parts[close_idx]
+                if not raw_close or raw_close in ("-", "N/A", ""): continue
+                try:
+                    for fmt in ("%Y/%m/%d", "%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y"):
+                        try:
+                            dt = datetime.strptime(raw_date, fmt)
+                            date_str = dt.strftime("%Y-%m-%d")
+                            break
+                        except ValueError: continue
+                    else: continue
+                    if dt < cutoff: continue
+                    result.append({"date": date_str, "close": float(raw_close.replace(",", ""))})
+                except: continue
+        except: continue
+    
+    seen, unique = set(), []
+    for d in sorted(result, key=lambda x: x["date"]):
+        if d["date"] not in seen:
+            seen.add(d["date"])
+            unique.append(d)
+    return unique[-days:]
+
+def get_news(stock_id: str, limit: int = 5):
+    start = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+    news = fetch_finmind("TaiwanStockNews", data_id=stock_id, start_date=start)
+    return sorted(news, key=lambda x: x.get("date", ""), reverse=True)[:limit]
+
+def get_stock_name(stock_id: str):
+    try:
+        resp = requests.get("https://api.finmindtrade.com/api/v4/data", params={"dataset": "TaiwanStockInfo","data_id": stock_id, "token": FINMIND_TOKEN})
+        return resp.json()["data"][0]["stock_name"] 
+    except: return stock_id
+
+def get_fundamentals(stock_id: str):
+    result = {"trailing_pe": None, "forward_pe": None, "peg": None, "eps_ttm": None, "eps_forward": None, "eps_growth": None, "revenue_growth": None, "market_cap": None, "dividend_yield": None, "roe": None}
+    for suffix in (".TW", ".TWO"):
+        try:
+            info = yf.Ticker(f"{stock_id}{suffix}").info
+            if not info or len(info) < 5: continue
+            result["trailing_pe"]    = info.get("trailingPE")
+            result["forward_pe"]     = info.get("forwardPE")
+            result["peg"]            = info.get("trailingPegRatio") or info.get("pegRatio")
+            result["eps_ttm"]        = info.get("trailingEps") or info.get("epsTrailingTwelveMonths")
+            result["eps_forward"]    = info.get("forwardEps")
+            result["eps_growth"]     = info.get("earningsGrowth")
+            result["revenue_growth"] = info.get("revenueGrowth")
+            result["market_cap"]     = info.get("marketCap")
+            div_y                    = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
+            if div_y is not None: result["dividend_yield"] = div_y * 100 if div_y < 1 else div_y
+            result["roe"]            = info.get("returnOnEquity")
+            return result
+        except: continue
+    return result
+
+# =========================================================
+# AI 分析
+# =========================================================
+def _call_claude(prompt: str) -> str:
+    import anthropic
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    return client.messages.create(model=CLAUDE_MODEL, max_tokens=1200, messages=[{"role": "user", "content": prompt}]).content[0].text
+
+def _call_gemini(prompt: str) -> str:
+    from google import genai
+    from google.genai import types
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    return client.models.generate_content(model=GEMINI_MODEL, contents=prompt, config=types.GenerateContentConfig(max_output_tokens=4096, temperature=0.7)).text
+  
+def generate_ai_analysis(stock_id: str, stock_name: str, data: dict, institution: dict, margin: dict, borrow: dict, tdcc: dict):
+    global _gemini_quota_exhausted
+    if AI_PROVIDER == "gemini":
+        if not GEMINI_API_KEY: return "未設定 API", "未設定 API", "未設定 API"
+        if _gemini_quota_exhausted: return "配額用完", "配額用完", "配額用完"
+        import time; time.sleep(4)
+    else:
+        if not ANTHROPIC_API_KEY: return "未設定 API", "未設定 API", "未設定 API"
+    
+    latest, prev, ind = data["latest"], data["prev"], data["indicators"]
+    prompt = f"""請分析 {stock_id} {stock_name} 的當前狀況。
+
+## 技術面
+- 收盤: {latest['close']:.2f} (前日: {prev['close']:.2f})
+- 5/10/20/60MA: {ind.get('ma5',0):.2f} / {ind.get('ma10',0):.2f} / {ind.get('ma20',0):.2f} / {ind.get('ma60',0):.2f}
+- Supertrend(7,3): {ind.get('supertrend',0):.2f} ({'↑上升' if ind.get('supertrend_dir')==1 else '↓下降'})
+- MACD 柱體: {ind.get('macd_hist',0):+.3f}
+- 5日均量 vs 20日均量: {ind.get('vol_ma5',0):,.0f} vs {ind.get('vol_ma20',0):,.0f}
+
+## 籌碼面
+- 外資 今日/5日/20日: {institution.get('foreign_today',0):+.0f} / {institution.get('foreign_5d',0):+.0f} / {institution.get('foreign_20d',0):+.0f} 張
+- 投信 今日/5日/20日: {institution.get('trust_today',0):+.0f} / {institution.get('trust_5d',0):+.0f} / {institution.get('trust_20d',0):+.0f} 張
+- 融資 餘額/今日/5日: {margin.get('margin_balance',0):,} / {margin.get('margin_change',0):+,} / {margin.get('margin_5d',0):+,} 張
+- 借券 餘額/5日: {borrow.get('borrow_balance',0):,} / {borrow.get('borrow_5d',0):+,} 張
+- 集保 資金大戶比例: {tdcc.get('large_ratio',0):.2f}% (週變化: {tdcc.get('large_change',0):+.2f}%)
+
+請用繁體中文嚴格按照以下格式輸出三段分析,不要輸出額外說明。
+=== 技術面 ===
+[60字]
+=== 籌碼面 ===
+[60字]
+=== 操作建議 ===
+[60字]"""
+    try:
+        text = _call_gemini(prompt) if AI_PROVIDER == "gemini" else _call_claude(prompt)
+        sections = {"技術面": "", "籌碼面": "", "操作建議": ""}
+        current = None
+        for line in text.split("\n"):
+            stripped = line.strip()
+            if "===" in stripped:
+                for key in sections:
+                    if key in stripped: current = key; break
+            elif current and stripped: sections[current] += line + "\n"
+        return sections["技術面"].strip() or text, sections["籌碼面"].strip(), sections["操作建議"].strip()
+    except Exception as e:
+        if AI_PROVIDER == "gemini" and ("429" in str(e) or "quota" in str(e).lower()): _gemini_quota_exhausted = True
+        return "分析失敗", "分析失敗", "分析失敗"
+
+# =========================================================
+# HTML 生成
+# =========================================================
+
+def calculate_stock_rating(data: dict) -> dict:
+    ind, inst, margin, borrow, tdcc, latest = data.get("indicators",{}), data.get("institution",{}), data.get("margin",{}), data.get("borrow",{}), data.get("tdcc",{}), data.get("latest",{})
+    tech = 0.0
+    close, ma20, ma60, ma5, ma10 = latest.get("close",0), ind.get("ma20",0), ind.get("ma60",0), ind.get("ma5",0), ind.get("ma10",0)
+    if close > ma20 > 0: tech += 1
+    if ma20 > ma60 > 0: tech += 1
+    if ma5 > ma10 > 0: tech += 1
+    if ind.get("high_20",0) > 0 and close >= ind.get("high_20",0)*0.97: tech += 1.5
+    if latest.get("volume",0) > ind.get("vol_ma5",0) > 0: tech += 1.5
+    if ind.get("macd_hist",0) > 0: tech += 2
+    if ind.get("vol_ma5",0) > ind.get("vol_ma20",0) > 0: tech += 2
+    
+    chip = 0.0
+    last3 = inst.get("history", [])[-3:]
+    if sum(h.get("foreign",0) for h in last3) > 0: chip += 1.5
+    if sum(h.get("trust",0) for h in last3) > 0: chip += 1.5
+    if inst.get("foreign_today",0) > 0 and inst.get("trust_today",0) > 0: chip += 1
+    if margin.get("margin_change",0) < 0: chip += 1.5
+    if borrow.get("borrow_change",0) < 0: chip += 1.5
+    if tdcc.get("large_change",0) > 0: chip += 3
+    
+    total = tech + chip
+    if total >= 14: rating, rk = "強力加碼", "strong-buy"
+    elif total >= 10: rating, rk = "加碼", "buy"
+    elif total >= 6: rating, rk = "中性觀望", "neutral"
+    elif total >= 3: rating, rk = "減碼", "sell"
+    else: rating, rk = "強力減碼", "strong-sell"
+    return {"tech": round(tech,1), "chip": round(chip,1), "total": round(total,1), "rating": rating, "rating_key": rk}
+
+def generate_rating_table(stocks_data: dict) -> str:
+    groups = {"strong-buy": {"label": "強力加碼", "stocks": [], "icon": "ti-arrow-big-up-filled"}, "buy": {"label": "加碼", "stocks": [], "icon": "ti-arrow-up"}, "neutral": {"label": "中性", "stocks": [], "icon": "ti-minus"}, "sell": {"label": "減碼", "stocks": [], "icon": "ti-arrow-down"}, "strong-sell": {"label": "強力減碼", "stocks": [], "icon": "ti-arrow-big-down-filled"}}
+    for sid, data in stocks_data.items():
+        r = data.get("rating", {})
+        key = r.get("rating_key", "neutral")
+        if key in groups: groups[key]["stocks"].append({"stock_id": sid, "name": data.get("name",""), "change": data.get("change_pct",0), "tech": r.get("tech",0), "chip": r.get("chip",0), "total": r.get("total",0)})
+    for g in groups.values(): g["stocks"].sort(key=lambda s: -s["total"])
+    cols_html = ""
+    for key, g in groups.items():
+        stocks = g["stocks"]
+        chips_html = ""
+        for s in stocks:
+            chips_html += f'<div class="stock-chip"><div class="chip-top"><span class="chip-name">{s["stock_id"]} {s["name"]}</span><span class="chip-change {"up" if s["change"]>=0 else "down"}">{"+" if s["change"]>=0 else ""}{s["change"]:.2f}%</span></div><div class="chip-meta"><span class="chip-tag">技{s["tech"]:g}</span><span class="chip-tag">籌{s["chip"]:g}</span></div></div>'
+        if not stocks: chips_html = '<div class="empty-hint">無</div>'
+        cols_html += f'<div class="rating-col rating-col-{key}"><div class="rating-col-header"><span class="rating-col-label rating-label-{key}"><i class="ti {g["icon"]}" style="font-size:11px;"></i>{g["label"]}</span><span class="rating-col-count">{len(stocks)}</span></div>{chips_html}</div>'
+    return f"""<div class="rating-section"><div class="rating-header"><div class="rating-title">📊 個股操作建議綜合評等</div><div class="rating-update">更新於 {now_tw().strftime("%Y-%m-%d %H:%M")}</div></div><div class="rating-grid">{cols_html}</div><details class="compact-legend"><summary>ℹ️ 點此查看評分邏輯與門檻</summary><div class="legend-content"><div class="legend-row"><span class="legend-badge l-tech">技術(10)</span><span>站月線(+1) / 月>季(+1) / 5>10(+1) / 創高(+1.5) / 量>5均(+1.5) / MACD紅(+2) / 5日量>20日量(+2)</span></div><div class="legend-row"><span class="legend-badge l-chip">籌碼(10)</span><span>外資3日(+1.5) / 投信3日(+1.5) / 同買(+1) / 融資減(+1.5) / 借券減(+1.5) / 大戶增(+3)</span></div><div class="legend-row"><span class="legend-badge l-total">總分門檻</span><span>≥14 強力加碼 | 10~13 加碼 | 6~9 觀望 | 3~5 減碼 | ≤2 強力減碼</span></div></div></details></div>"""
+
+def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
+    latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
+    c_cls = "up" if data.get("change_pct",0) >= 0 else "down"
+    c_sign = "+" if data.get("change_pct",0) >= 0 else ""
+    change_str = f"{c_sign}{data.get('change_pct',0):.2f}%"
+    close_price = latest.get('close',0)
+    tt_today, tt_5d, tt_20d = inst.get("foreign_today",0)+inst.get("trust_today",0)+inst.get("dealer_today",0), inst.get("foreign_5d",0)+inst.get("trust_5d",0)+inst.get("dealer_5d",0), inst.get("foreign_20d",0)+inst.get("trust_20d",0)+inst.get("dealer_20d",0)
+    
+    news_html = ""
+    for n in news[:5]: news_html += f'<div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div><a href="{n.get("url", n.get("link", "#"))}" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">{n.get("title","")}</a></div>'
+    if not news: news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
+
+    return f"""
+    <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
+      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
+        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
+        <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
+      </div>
+      <div class="stock-body">
+        <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
+        
+        <div id="kline_{stock_id}" style="width: 100%; height: 350px; margin-bottom: 10px;"></div>
+        
+        <div class="grid-2-col" style="margin-bottom: 15px; gap: 10px;">
+            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;"><div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">👥 三大法人買賣超(億)與累計</div><div id="inst_chart_{stock_id}" style="width: 100%; height: 200px;"></div></div>
+            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;"><div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">💰 融資/券/借券 增減(張)與餘額</div><div id="margin_chart_{stock_id}" style="width: 100%; height: 200px;"></div></div>
+        </div>
+        
+        <div class="grid-2-col">
+          <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="{'up' if inst.get('foreign_today',0)>=0 else 'down'}">{inst.get('foreign_today',0):+,.0f}</td><td class="{'up' if inst.get('foreign_5d',0)>=0 else 'down'}">{inst.get('foreign_5d',0):+,.0f}</td><td class="{'up' if inst.get('foreign_20d',0)>=0 else 'down'}">{inst.get('foreign_20d',0):+,.0f}</td></tr><tr><td>投信</td><td class="{'up' if inst.get('trust_today',0)>=0 else 'down'}">{inst.get('trust_today',0):+,.0f}</td><td class="{'up' if inst.get('trust_5d',0)>=0 else 'down'}">{inst.get('trust_5d',0):+,.0f}</td><td class="{'up' if inst.get('trust_20d',0)>=0 else 'down'}">{inst.get('trust_20d',0):+,.0f}</td></tr><tr><td>自營</td><td class="{'up' if inst.get('dealer_today',0)>=0 else 'down'}">{inst.get('dealer_today',0):+,.0f}</td><td class="{'up' if inst.get('dealer_5d',0)>=0 else 'down'}">{inst.get('dealer_5d',0):+,.0f}</td><td class="{'up' if inst.get('dealer_20d',0)>=0 else 'down'}">{inst.get('dealer_20d',0):+,.0f}</td></tr><tr class="row-total"><td>合計</td><td class="{'up' if tt_today>=0 else 'down'}">{tt_today:+,.0f}</td><td class="{'up' if tt_5d>=0 else 'down'}">{tt_5d:+,.0f}</td><td class="{'up' if tt_20d>=0 else 'down'}">{tt_20d:+,.0f}</td></tr></table></div>
+          <div><h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3><table class="data-table"><tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>融資</td><td>{margin.get('margin_balance',0):,}</td><td class="{'up' if margin.get('margin_change',0)>=0 else 'down'}">{margin.get('margin_change',0):+,}</td><td class="{'up' if margin.get('margin_5d',0)>=0 else 'down'}">{margin.get('margin_5d',0):+,}</td><td class="{'up' if margin.get('margin_20d',0)>=0 else 'down'}">{margin.get('margin_20d',0):+,}</td></tr><tr><td>融券</td><td>{margin.get('short_balance',0):,}</td><td class="{'up' if margin.get('short_change',0)>=0 else 'down'}">{margin.get('short_change',0):+,}</td><td class="{'up' if margin.get('short_5d',0)>=0 else 'down'}">{margin.get('short_5d',0):+,}</td><td class="{'up' if margin.get('short_20d',0)>=0 else 'down'}">{margin.get('short_20d',0):+,}</td></tr><tr><td>借券</td><td>{borrow.get('borrow_balance',0):,}</td><td class="{'up' if borrow.get('borrow_change',0)>=0 else 'down'}">{borrow.get('borrow_change',0):+,}</td><td class="{'up' if borrow.get('borrow_5d',0)>=0 else 'down'}">{borrow.get('borrow_5d',0):+,}</td><td class="{'up' if borrow.get('borrow_20d',0)>=0 else 'down'}">{borrow.get('borrow_20d',0):+,}</td></tr></table></div>
+        </div>
+
+        <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
+           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">以市場資金規模分級</span></h3>
+           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">大戶 (>5千萬, ≥{int(tdcc.get('large_threshold_shares',0)//1000)}張)</div><strong style="font-size: 15px;">{tdcc.get('large_ratio',0):.2f}%</strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('large_change',0)>=0 else 'down'}">{tdcc.get('large_change',0):+.2f}%</span>)</span></div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">散戶 (<5百萬, ≤{int(tdcc.get('retail_threshold_shares',0)//1000)}張)</div><strong style="font-size: 15px;">{tdcc.get('retail_ratio',0):.2f}%</strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('retail_change',0)>=0 else 'down'}">{tdcc.get('retail_change',0):+.2f}%</span>)</span></div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">總股東人數</div><strong style="font-size: 15px;">{tdcc.get('total_holders',0):,} <span style="font-size:12px; font-weight:normal;">人</span></strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('holders_change',0)>=0 else 'down'}">{tdcc.get('holders_change',0):+,}</span>)</span></div>
+               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">平均每戶持股</div><strong style="font-size: 15px;">{tdcc.get('avg_lots',0):,.1f} <span style="font-size:12px; font-weight:normal;">張</span></strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('avg_lots_change',0)>=0 else 'down'}">{tdcc.get('avg_lots_change',0):+.1f}</span>)</span></div>
+           </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>{data.get('ai_tech','').replace(chr(10), '<br>')}</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">{data.get('ai_chip','').replace(chr(10), '<br>')}</div></div>
+          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;"><h4 style="color: #e65100;">🎯 AI 操作建議</h4><div>{data.get('ai_oper','').replace(chr(10), '<br>')}</div></div>
+        </div>
+
+        <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
+            <details><summary style="padding: 12px 15px; background: #fdfdfd; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; list-style: none; user-select: none;">📰 近期相關新聞 ({len(news[:5])}) <span style="float:right; font-size:12px; color:#aaa; font-weight:normal;">點擊展開 ▼</span></summary><div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;">{news_html}</div></details>
+        </div>
+      </div>
+    </div>"""
+
+def generate_market_section(market_data: dict):
+    taiex = market_data["taiex"]
+    if not taiex: return "<p>大盤資料載入中...</p>"
+    latest, prev = taiex[-1], taiex[-2] if len(taiex)>1 else taiex[-1]
+    close, change = latest["close"], latest["close"] - prev["close"]
+    change_pct, change_class, arrow = (change / prev["close"] * 100) if prev["close"] else 0, "positive" if change > 0 else "negative", "↑" if change > 0 else "↓"
+    money_b, money_prev = latest.get("money",0) / 100_000_000, prev.get("money",0) / 100_000_000
+    money_diff, money_pct = money_b - money_prev, ((money_b - money_prev) / money_prev * 100) if money_prev else 0
+    
+    inst_latest = market_data["institution"][-1] if market_data["institution"] else {}
+    foreign = _get(inst_latest, "Foreign_Investor_diff", "foreign_investor_diff") / 100_000_000
+    trust   = _get(inst_latest, "Investment_Trust_diff", "investment_trust_diff") / 100_000_000
+    
+    return f"""<div class="section-header">大盤總覽</div><div class="metrics-grid-4"><div class="metric"><div class="metric-label">加權指數</div><div class="metric-value {change_class}">{close:,.2f}</div><div class="metric-change {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">成交金額(億)</div><div class="metric-value">{money_b:,.0f}</div><div class="sub {'up' if money_diff>=0 else 'down'}">{'↑' if money_diff>=0 else '↓'} {money_diff:+,.0f} ({money_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">外資(億)</div><div class="metric-value {'positive' if foreign>0 else 'negative'}">{foreign:+.1f}</div></div><div class="metric"><div class="metric-label">投信(億)</div><div class="metric-value {'positive' if trust>0 else 'negative'}">{trust:+.1f}</div></div></div><div class="card"><div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div><div id="taiex_kline" style="width:100%;height:400px;"></div></div>"""
+
+def generate_timeseries_section(market_data: dict):
+    return """<div class="section-header">市場指標綜合研判 (近30日)</div><div class="grid-2"><div class="card"><div class="card-title">微台散戶多空比</div><div class="chart-container"><canvas id="retail"></canvas></div></div><div class="card"><div class="card-title">美元兌新台幣</div><div class="chart-container"><canvas id="fx"></canvas></div></div></div><div class="grid-2"><div class="card"><div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div><div class="chart-container"><canvas id="margin_ratio"></canvas></div></div><div class="card"><div class="card-title">三大法人現貨 vs 期貨</div><div class="chart-container" style="height:320px;"><canvas id="inst"></canvas></div></div></div>"""
+
+def generate_chart_scripts(stocks_data: dict, market_data: dict):
+    scripts = []
+    for stock_id, data in stocks_data.items():
+        df_tail = data["df"].tail(60)
+        ind_dates = [d.strftime("%m-%d") for d in df_tail.index]
+        ind_ohlc  = [[float(r["Open"]), float(r["Close"]), float(r["Low"]), float(r["High"])] for _, r in df_tail.iterrows()]
+        ind_vol   = [int(r["Volume"]/1000) if r["Volume"] else 0 for _, r in df_tail.iterrows()]
+        ind_ma20  = [round(v, 2) if v==v else None for v in df_tail["SMA_20"].tolist()]
+        ind_ma60  = [round(v, 2) if v==v else None for v in df_tail["SMA_60"].tolist()]
+        st_up   = [v if (d==1 and v==v) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
+        st_down = [v if (d==-1 and v==v) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
+        ind_vol_color = ["#ef5350" if r["Close"] >= r["Open"] else "#26a69a" for _, r in df_tail.iterrows()]
+        
+        scripts.append(f"""
+var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
+chartK_{stock_id}.setOption({{
+  tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+  legend: {{ data: ['K線', 'MA20', 'MA60', 'ST上升', 'ST下降'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+  grid: [{{ left: '10%', right: '5%', top: '15%', height: '55%' }}, {{ left: '10%', right: '5%', top: '75%', height: '20%' }}],
+  xAxis: [
+    {{ type: 'category', data: {json.dumps(ind_dates)}, scale: true, boundaryGap: true, axisLine: {{onZero: false}}, splitLine: {{show: false}}, min: 'dataMin', max: 'dataMax', axisLabel: {{show: false}} }},
+    {{ type: 'category', gridIndex: 1, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, axisTick: {{show: false}}, splitLine: {{show: false}}, axisLabel: {{fontSize: 9}} }}
+  ],
+  yAxis: [
+    {{ scale: true, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
+    {{ scale: true, gridIndex: 1, splitNumber: 2, axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}}, splitLine: {{show: false}} }}
+  ],
+  dataZoom: [{{ type: 'inside', xAxisIndex: [0, 1], start: 0, end: 100 }}, {{ show: true, xAxisIndex: [0, 1], type: 'slider', bottom: '0%', start: 0, end: 100, height: 15 }}],
+  series: [
+    {{ name: 'K線', type: 'candlestick', data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
+    {{ name: 'MA20', type: 'line', data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
+    {{ name: 'MA60', type: 'line', data: {json.dumps(ind_ma60)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#1976d2'}} }},
+    {{ name: 'ST上升', type: 'line', data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
+    {{ name: 'ST下降', type: 'line', data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
+    {{ name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }}
+  ]
+}});
+window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
+""")
+        cd = data.get("chart_data", {})
+        if cd and cd.get("dates"):
+            scripts.append(f"""
+(function() {{
+  var chartInst = echarts.init(document.getElementById('inst_chart_{stock_id}'));
+  chartInst.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['外資', '投信', '自營', '累計(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '15%', right: '15%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
+    yAxis: [
+      {{ type: 'value', name: '買賣超', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '累計', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }}
+    ],
+    series: [
+      {{ name: '外資', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_foreign'])}, itemStyle: {{color: '#378ADD'}} }},
+      {{ name: '投信', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_trust'])}, itemStyle: {{color: '#1D9E75'}} }},
+      {{ name: '自營', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_dealer'])}, itemStyle: {{color: '#FF9800'}} }},
+      {{ name: '累計(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['inst_cum'])}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }}
+    ]
+  }});
+  var chartMargin = echarts.init(document.getElementById('margin_chart_{stock_id}'));
+  chartMargin.setOption({{
+    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+    legend: {{ data: ['融資', '融券', '借券', '餘額(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    grid: {{ left: '15%', right: '15%', top: '25%', bottom: '15%' }},
+    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
+    yAxis: [
+      {{ type: 'value', name: '增減', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '餘額', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
+    ],
+    series: [
+      {{ name: '融資', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
+      {{ name: '融券', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
+      {{ name: '借券', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
+      {{ name: '餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }}
+    ]
+  }});
+  window.addEventListener('resize', function() {{ chartInst.resize(); chartMargin.resize(); }});
+}})();
+""")
+            
+    taiex = market_data["taiex"]
+    if taiex and len(taiex) > 0:
+        taiex_dates = [d["date"][-5:] for d in taiex]
+        taiex_ohlc  = [[d["open"], d["close"], d["low"], d["high"]] for d in taiex]
+        taiex_money = [round(d.get("money", 0) / 1e8, 1) for d in taiex]
+        taiex_vol_color = ["#ef5350" if d["close"] >= d["open"] else "#26a69a" for d in taiex]
+        scripts.append(f"""
+var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
+chartTaiex.setOption({{
+  tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
+  legend: {{ data: ['加權指數', '成交金額(億)'], top: 0, textStyle: {{fontSize: 11}} }},
+  grid: [{{ left: '10%', right: '5%', top: '10%', height: '60%' }}, {{ left: '10%', right: '5%', top: '75%', height: '20%' }}],
+  xAxis: [
+    {{ type: 'category', data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, splitLine: {{show: false}}, min: 'dataMin', max: 'dataMax', axisLabel: {{show: false}} }},
+    {{ type: 'category', gridIndex: 1, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, axisTick: {{show: false}}, splitLine: {{show: false}}, axisLabel: {{fontSize: 9}} }}
+  ],
+  yAxis: [
+    {{ scale: true, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10}} }},
+    {{ scale: true, gridIndex: 1, splitNumber: 2, axisLabel: {{fontSize: 9}}, axisLine: {{show: false}}, axisTick: {{show: false}}, splitLine: {{show: false}} }}
+  ],
+  dataZoom: [{{ type: 'inside', xAxisIndex: [0, 1], start: 0, end: 100 }}, {{ show: true, xAxisIndex: [0, 1], type: 'slider', bottom: '0%', start: 0, end: 100, height: 15 }}],
+  series: [
+    {{ name: '加權指數', type: 'candlestick', data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
+    {{ name: '成交金額(億)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(taiex_money)}, itemStyle: {{color: function(params) {{ return {json.dumps(taiex_vol_color)}[params.dataIndex]; }} }} }}
+  ]
+}});
+window.addEventListener('resize', function() {{ chartTaiex.resize(); }});
+""")
+    
+    retail = market_data["retail"]
+    if retail:
+        scripts.append(f"new Chart(document.getElementById('retail'),{{type:'line',data:{{labels:{json.dumps([d['date'][-5:] for d in retail])},datasets:[{{label:'散戶多單%',data:{json.dumps([d['retail_ratio'] for d in retail])},borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',borderWidth:2,fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:'#EF5350'}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}},tooltip:{{callbacks:{{label:function(ctx){{return '散戶多單: '+ctx.parsed.y.toFixed(1)+'%'}}}}}}}},scales:{{y:{{ticks:{{callback:function(v){{return v.toFixed(0)+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
+    
+    fx = market_data["usd_twd"]
+    valid_fx = [(d.get("date","")[-5:], float(d.get("close", d.get("Close", d.get("rate",0))))) for d in fx if d.get("close", d.get("Close", d.get("rate",0)))]
+    if valid_fx:
+        fx_dates, fx_vals = zip(*valid_fx)
+        scripts.append(f"new Chart(document.getElementById('fx'),{{type:'line',data:{{labels:{json.dumps(list(fx_dates))},datasets:[{{label:'USD/TWD',data:{json.dumps(list(fx_vals))},borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',borderWidth:2,tension:0.3,fill:true,pointRadius:2}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
+
+    total_margin = market_data.get("total_margin", [])
+    if total_margin and taiex and len(total_margin) >= 5 and len(taiex) >= 5:
+        margin_sorted = sorted(total_margin, key=lambda x: x.get("date", ""))
+        taiex_by_date = {d["date"]: d for d in taiex}
+        ratio_dates, ratio_values = [], []
+        for d in margin_sorted[-30:]:
+            date = d.get("date", "")
+            if date in taiex_by_date:
+                margin_now = _get(d, "MarginPurchaseTodayBalance", "TodayBalance", "MarginPurchaseMoney")
+                taiex_close = taiex_by_date[date]["close"]
+                if margin_now > 0 and taiex_close > 0:
+                    ratio_dates.append(date[-5:])
+                    ratio_values.append(round(margin_now / (taiex_close * 25 * 1e8) * 100, 3))
+        if ratio_values:
+            scripts.append(f"new Chart(document.getElementById('margin_ratio'),{{type:'line',data:{{labels:{json.dumps(ratio_dates)},datasets:[{{label:'融資市值比(%)',data:{json.dumps(ratio_values)},borderColor:'#D4537E',backgroundColor:'rgba(212,83,126,0.1)',borderWidth:2,fill:true,tension:0.3,pointRadius:2}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{callback:function(v){{return v.toFixed(2)+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
+
+    inst = market_data["institution"]
+    if inst:
+        inst_dates = [d.get("date", "")[-5:] for d in inst]
+        foreign = [_get(d, "Foreign_Investor_diff") / 1e8 for d in inst]
+        trust   = [_get(d, "Investment_Trust_diff") / 1e8 for d in inst]
+        dealer  = [_get(d, "Dealer_diff") / 1e8 for d in inst]
+        fut = market_data["futures"]
+        fut_foreign_by_date = {}
+        for f in fut:
+            if "外資" in f.get("institutional_investors", ""):
+                fut_foreign_by_date[f.get("date", "")] = float(f.get("long_open_interest_balance_volume", 0)) - float(f.get("short_open_interest_balance_volume", 0))
+        fut_foreign = [fut_foreign_by_date.get(d.get("date",""), 0) for d in inst]
+        scripts.append(f"new Chart(document.getElementById('inst'),{{type:'bar',data:{{labels:{json.dumps(inst_dates)},datasets:[{{label:'外資現貨(億)',data:{json.dumps(foreign)},backgroundColor:'rgba(55,138,221,0.7)',yAxisID:'y'}},{{label:'投信現貨(億)',data:{json.dumps(trust)},backgroundColor:'rgba(29,158,117,0.7)',yAxisID:'y'}},{{label:'自營現貨(億)',data:{json.dumps(dealer)},backgroundColor:'rgba(255,152,0,0.7)',yAxisID:'y'}},{{label:'外資期貨淨部位(口)',data:{json.dumps(fut_foreign)},type:'line',borderColor:'#EF5350',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1'}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}}}},scales:{{y:{{type:'linear',position:'left',ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},y1:{{type:'linear',position:'right',ticks:{{font:{{size:11}},callback:function(v){{return (v/1000).toFixed(0)+'k';}}}},grid:{{display:false}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:10}},grid:{{display:false}}}}}}}}}});")
+
+    return "\n".join(scripts)
+
+def get_css():
+    return """
+:root { --primary: #1565c0; --bg: #f5f5f5; --card-bg: #ffffff; --text: #333333; --up: #d32f2f; --down: #388e3c; --border: #e0e0e0; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);padding:16px;line-height:1.5;color:var(--text);scroll-behavior:smooth}
+.container{max-width:1400px;margin:0 auto}
+.header{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1.25rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:22px;font-weight:500;margin:0;color:var(--primary)}
+.update-time{font-size:13px;color:#666;margin-top:4px}
+.btn-run{background:#2e7d32;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:0.2s}
+.btn-run:hover{background:#1b5e20;transform:translateY(-1px)}
+.section-header{font-size:18px;font-weight:500;margin:24px 0 16px 0;color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:4px;display:inline-block}
+.card{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1rem;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:500;margin-bottom:12px}
+.positive, .up{color:var(--up)}
+.negative, .down{color:var(--down)}
+.metrics-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.metric{background:#f8f9fa;border-radius:8px;padding:12px;border:1px solid #eee}
+.metric-label{font-size:11px;color:#666;margin-bottom:4px}
+.metric-value{font-size:16px;font-weight:500}
+.metric-change{font-size:12px;margin-top:2px}
+.sub{font-size:12px;margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-container{position:relative;height:280px;margin-bottom:12px}
+.rating-section{background:white;border-radius:12px;border:0.5px solid var(--border);padding:1.25rem;margin-bottom:16px}
+.rating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--border)}
+.rating-title{font-size:16px;font-weight:500;display:flex;align-items:center;gap:6px}
+.rating-update{font-size:11px;color:#999}
+.rating-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.rating-col{background:#f8f9fa;border-radius:8px;padding:10px 8px;border-top:3px solid;border:1px solid #eee}
+.rating-col-strong-buy{border-top-color:#c62828}
+.rating-col-buy{border-top-color:#ef5350}
+.rating-col-neutral{border-top-color:#888}
+.rating-col-sell{border-top-color:#66bb6a}
+.rating-col-strong-sell{border-top-color:#2e7d32}
+.rating-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.rating-col-label{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.rating-label-strong-buy{color:#c62828}
+.rating-label-buy{color:#ef5350}
+.rating-label-neutral{color:#555}
+.rating-label-sell{color:#66bb6a}
+.rating-label-strong-sell{color:#2e7d32}
+.rating-col-count{font-size:11px;color:#999;background:white;border-radius:8px;padding:1px 6px;border:1px solid #eee}
+.stock-chip{background:white;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;margin-bottom:5px;font-size:12px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.chip-top{display:flex;justify-content:space-between;align-items:baseline}
+.chip-name{font-weight:500;font-size:12px}
+.chip-change{font-size:10px}
+.chip-meta{font-size:10px;color:#999;margin-top:2px;display:flex;gap:6px}
+.chip-tag{display:inline-block;font-size:9px;padding:1px 4px;border-radius:4px;background:#f5f5f5;color:#666}
+.empty-hint{font-size:11px;color:#999;text-align:center;padding:14px 0}
+.compact-legend { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
+.compact-legend summary { cursor: pointer; font-size: 12px; color: #888; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; user-select: none; list-style: none; transition: 0.2s; }
+.compact-legend summary::-webkit-details-marker { display: none; }
+.compact-legend summary:hover { color: var(--primary); }
+.legend-content { margin-top: 10px; background: #fafafa; border-radius: 6px; padding: 10px; font-size: 11.5px; color: #555; display: flex; flex-direction: column; gap: 8px; border: 1px solid #f0f0f0; }
+.legend-row { display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+.legend-badge { padding: 2px 6px; border-radius: 4px; font-weight: bold; white-space: nowrap; font-size: 10px; }
+.l-tech { background: #e3f2fd; color: #1565c0; }
+.l-chip { background: #e8f5e9; color: #2e7d32; }
+.l-total { background: #fff3e0; color: #e65100; }
+.data-table{width:100%;font-size:12px;border-collapse:collapse;margin-bottom:8px}
+.data-table th{text-align:right;padding:6px 8px;background:#f8f9fa;color:#666;font-weight:500;font-size:11px;border:1px solid var(--border)}
+.data-table th:first-child{text-align:left}
+.data-table td{padding:6px 8px;border:1px solid var(--border);text-align:right}
+.data-table td:first-child{text-align:left}
+.data-table .row-total{background:#f8f9fa;font-weight:500}
+.ai-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 13px; }
+.ai-box h4 { margin: 0 0 8px 0; color: var(--primary); }
+.app-layout { display: flex; gap: 20px; align-items: flex-start; }
+.sidebar { width: 300px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.sidebar-title { font-size: 16px; font-weight: bold; color: #333; padding-bottom: 8px; border-bottom: 1px solid #ccc; margin-bottom: 5px; }
+.sidebar-item { background: var(--card-bg); padding: 12px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.2s; }
+.sidebar-item:hover { border-color: #90caf9; }
+.sidebar-item.active { border-color: var(--primary); background: #e3f2fd; }
+.nav-top { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+.nav-bottom { display: flex; justify-content: space-between; font-size: 12px; color: #555; }
+.main-content { flex: 1; min-width: 0; }
+.stock-card { display: none; background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; border:0.5px solid var(--border); }
+.stock-card.active { display: block; }
+.stock-body { padding: 20px; }
+.card-header-desktop { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+.card-header-desktop h2 { margin: 0; font-size: 22px; color: var(--primary); }
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+.mobile-only { display: none; }
+.desktop-only { display: block; }
+
+@media (max-width: 900px) {
+    .app-layout { flex-direction: column; gap: 12px; margin-top: 10px; }
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex; }
+    .metrics-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .rating-grid { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { display: none; }
+    .main-content { width: 100%; }
+    .stock-card { display: block; margin-bottom: 12px; border-radius: 10px; }
+    .mobile-header { padding: 15px; background: #fff; cursor: pointer; display: flex; flex-direction: column; gap: 8px; }
+    .mh-top { display: flex; align-items: center; font-size: 16px; font-weight: bold; }
+    .mh-icon { margin-right: 8px; color: var(--primary); font-size: 12px; }
+    .mh-price { margin-left: auto; }
+    .mh-bottom { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding-left: 20px; }
+    .stock-body { display: none; padding: 12px; border-top: 1px solid #eee; background: #fafafa; }
+    .stock-card.mobile-expanded .stock-body { display: block; }
+    .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
+}
+"""
+
+def generate_html(stocks_data: dict, market_data: dict) -> str:
+    update_time = now_tw().strftime("%Y-%m-%d %H:%M")
+    market_section = generate_market_section(market_data)
+    rating_table = generate_rating_table(stocks_data)
+    timeseries_section = generate_timeseries_section(market_data)
+    
+    sidebar_items = ""
+    stock_cards = ""
+    is_first = True
+    for stock_id, data in stocks_data.items():
+        stock_cards += generate_stock_card(stock_id, data, is_first)
+        r = data["rating"]
+        sidebar_items += f'<div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock(\'{stock_id}\')"><div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div><div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div></div>'
+        is_first = False
+        
+    chart_scripts = generate_chart_scripts(stocks_data, market_data)
+    
+    return f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>股票監控儀表板</title>
+<style>{get_css()}</style>
+</head>
+<body>
+<div class="container">
+  <div class="header" id="top">
+    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
+    <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行</button>
+  </div>
+  {market_section}
+  {timeseries_section}
+  {rating_table}
+  <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
+  <div class="app-layout">
+    <div class="sidebar desktop-only"><div class="sidebar-title">個股清單</div>{sidebar_items}</div>
+    <div class="main-content">{stock_cards}</div>
+  </div>
+</div>
+<button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+{chart_scripts}
+function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 100); }}
+function showStock(stockId) {{
+    if (window.innerWidth <= 900) return;
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.stock-card').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav_' + stockId).classList.add('active');
+    document.getElementById('card_' + stockId).classList.add('active');
+    resizeAllCharts();
+    window.scrollTo({{ top: document.querySelector('.app-layout').offsetTop - 20, behavior: 'smooth' }});
+}}
+function toggleMobile(stockId) {{
+    const card = document.getElementById('card_' + stockId);
+    const icon = document.getElementById('icon_' + stockId);
+    if (card.classList.contains('mobile-expanded')) {{ card.classList.remove('mobile-expanded'); icon.innerText = '▶'; }}
+    else {{ card.classList.add('mobile-expanded'); icon.innerText = '▼'; resizeAllCharts(); setTimeout(() => {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 150); }}
+}}
+function triggerAction() {{
+    const btn = document.getElementById('runBtn');
+    btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
+    fetch('https://script.google.com/macros/s/你的專屬代碼/exec', {{ method: 'POST', mode: 'no-cors' }})
+    .then(() => alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁。"))
+    .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
+    .finally(() => {{ btn.innerText = "▶ 立刻重新執行"; btn.disabled = false; btn.style.opacity = "1"; }});
+}}
+window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
+</script>
+</body>
+</html>"""
+
+# =========================================================
+# 主流程
+# =========================================================
+
+def send_telegram(text: str):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID: return
+    try: requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage", data={"chat_id": TELEGRAM_CHAT_ID, "text": text[:4000], "parse_mode": "Markdown"}, timeout=10)
+    except: pass
+
+def process_single_stock(stock_id):
+    print(f"  處理 {stock_id}...")
+    stock_data = get_stock_data_yf(stock_id)
+    if not stock_data: return None, None
+    close_price = stock_data["latest"]["close"]
+    
+    institution = get_institution_data(stock_id, days=80)
+    margin      = get_margin_data(stock_id, days=80)
+    borrow      = get_borrowing_data(stock_id)
+    tdcc        = get_tdcc_holding(stock_id, close_price)
+    news        = get_news(stock_id)
+    name        = get_stock_name(stock_id)
+    
+    df = stock_data["df"]
+    inst_hist = {d["date"]: d for d in institution.get("history", [])}
+    marg_hist = {d["date"]: d for d in margin.get("history", [])}
+    borr_hist = {d["date"]: d for d in borrow.get("history", [])}
+    chart_data = {"dates": [], "inst_foreign": [], "inst_trust": [], "inst_dealer": [], "inst_cum": [], "margin_diff": [], "margin_bal": [], "short_diff": [], "short_bal": [], "borrow_diff": [], "borrow_bal": []}
+    
+    cum_inst = 0
+    for d_ts, row in df.tail(60).iterrows():
+        d_str, d_short = d_ts.strftime("%Y-%m-%d"), d_ts.strftime("%m-%d")
+        price = float(row["Close"])
+        chart_data["dates"].append(d_short)
+        
+        i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
+        f_amt, t_amt, d_amt = (i_data["foreign"]*price)/1e8, (i_data["trust"]*price)/1e8, (i_data["dealer"]*price)/1e8
+        cum_inst += (f_amt + t_amt + d_amt)
+        chart_data["inst_foreign"].append(round(f_amt, 2)); chart_data["inst_trust"].append(round(t_amt, 2)); chart_data["inst_dealer"].append(round(d_amt, 2)); chart_data["inst_cum"].append(round(cum_inst, 2))
+        
+        m_data = marg_hist.get(d_str, {"margin_bal":0, "margin_diff":0, "short_bal":0, "short_diff":0})
+        b_data = borr_hist.get(d_str, {"balance":0, "diff":0})
+        chart_data["margin_bal"].append(m_data.get("margin_bal", 0)); chart_data["margin_diff"].append(m_data.get("margin_diff", 0))
+        chart_data["short_bal"].append(m_data.get("short_bal", 0)); chart_data["short_diff"].append(m_data.get("short_diff", 0))
+        chart_data["borrow_bal"].append(b_data.get("balance", 0)); chart_data["borrow_diff"].append(b_data.get("diff", 0))
+
+    prev_close = stock_data["prev"]["close"]
+    change_pct = ((close_price - prev_close) / prev_close * 100) if prev_close else 0
+    
+    ai_tech, ai_chip, ai_oper = generate_ai_analysis(stock_id, name, stock_data, institution, margin, borrow, tdcc)
+    
+    record = {
+        "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
+        "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news,
+        "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data
+    }
+    record["rating"] = calculate_stock_rating(record)
+    print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
+    return stock_id, record
+
+def main():
+    print(f'=== 股票監控機器人 v4.2 ({now_tw().strftime("%Y-%m-%d %H:%M")}) ===\n')
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    
+    print("[1/4] 平行抓取個股資料...")
+    stocks_data = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        future_to_stock = {executor.submit(process_single_stock, sid): sid for sid in STOCKS}
+        for future in concurrent.futures.as_completed(future_to_stock):
+            sid = future_to_stock[future]
+            try:
+                res_id, record = future.result()
+                if res_id and record: stocks_data[res_id] = record
+            except Exception as exc: print(f"  ⚠️ {sid} 處理過程中發生錯誤: {exc}")
+        
+    print("\n[2/4] 抓取大盤資料...")
+    market_data = get_market_overview()
+    print(f"  ✓ 大盤指數: {len(market_data['taiex'])} 筆")
+    print(f"  ✓ 三大法人: {len(market_data['institution'])} 筆")
+    print(f"  ✓ 散戶多空: {len(market_data['retail'])} 筆")
+    print(f"  ✓ 美元匯率: {len(market_data['usd_twd'])} 筆")
+    print(f"  ✓ 期貨留倉: {len(market_data['futures'])} 筆")
+
+    RATING_ORDER = {"strong-buy": 0, "buy": 1, "neutral": 2, "sell": 3, "strong-sell": 4}
+    stocks_data = dict(sorted(stocks_data.items(), key=lambda kv: (RATING_ORDER.get(kv[1]["rating"]["rating_key"], 99), -kv[1]["rating"]["total"])))
+    
+    print("\n[3/4] 生成 HTML...")
+    html = generate_html(stocks_data, market_data)
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f: f.write(html)
+    print(f"  ✓ {OUTPUT_FILE}")
+    
+    print("\n[4/4] 更新 GitHub Pages...")
+    try:
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
+        subprocess.run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], check=True)
+        subprocess.run(["git", "add", OUTPUT_DIR], check=True)
+        if subprocess.run(["git", "diff", "--staged", "--quiet"]).returncode == 0: print("  無變動")
+        else:
+            subprocess.run(["git", "commit", "-m", f"Update {now_tw().strftime('%Y-%m-%d %H:%M')}"], check=True)
+            subprocess.run(["git", "push"], check=True)
+            print("  ✓ 已更新")
+    except Exception as e: print(f"  ⚠️ Git 失敗: {e}")
+    
+    tg_msg = f"📊 *股票監控* ({now_tw().strftime('%m-%d')})\n\n"
+    for stock_id, data in stocks_data.items():
+        tg_msg += f"*{stock_id}* ${data['latest']['close']:.2f} | 外資{data['institution']['foreign_today']:+.0f}張\n"
+    tg_msg += "\n🌐 https://ewq4303-debug.github.io/stocknotice/"
+    send_telegram(tg_msg)
+    print("\n✅ 完成！")
+
+if __name__ == "__main__":
+    main()
