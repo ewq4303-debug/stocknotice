@@ -145,7 +145,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <div class="header" id="top">
     <div>
       <h1>📊 股票監控儀表板</h1>
-      <div class="update-time">最後更新: 2026-05-29 10:11</div>
+      <div class="update-time">最後更新: 2026-05-29 12:00</div>
     </div>
     <button id="runBtn" class="btn-run" onclick="triggerAction()">
       ▶ 立刻重新執行
@@ -181,12 +181,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 </div>
   
   
+<div class="section-header">市場指標綜合研判 (近30日)</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">微台散戶多空比</div>
+    <div class="chart-container"><canvas id="retail"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">美元兌新台幣</div>
+    <div class="chart-container"><canvas id="fx"></canvas></div>
+  </div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div>
+    <div class="chart-container"><canvas id="margin_ratio"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">三大法人現貨 vs 期貨</div>
+    <div class="chart-container" style="height:320px;">
+      <canvas id="inst"></canvas>
+    </div>
+  </div>
+</div>
+  
+  
 <div class="rating-section">
   <div class="rating-header">
     <div class="rating-title">
       📊 個股操作建議綜合評等
     </div>
-    <div class="rating-update">更新於 2026-05-29 10:11</div>
+    <div class="rating-update">更新於 2026-05-29 12:00</div>
   </div>
   <div class="rating-grid">
     
@@ -246,7 +271,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
           <i class="ti ti-arrow-up" aria-hidden="true" style="font-size:11px;"></i>
           加碼
         </span>
-        <span class="rating-col-count">8</span>
+        <span class="rating-col-count">9</span>
       </div>
       
         <div class="stock-chip">
@@ -317,6 +342,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
           <div class="chip-meta">
             <span class="chip-tag">技5.5</span>
             <span class="chip-tag">籌6</span>
+          </div>
+        </div>
+        <div class="stock-chip">
+          <div class="chip-top">
+            <span class="chip-name">2454 聯發科</span>
+            <span class="chip-change down">-4.96%</span>
+          </div>
+          <div class="chip-meta">
+            <span class="chip-tag">技6</span>
+            <span class="chip-tag">籌4.5</span>
           </div>
         </div>
         <div class="stock-chip">
@@ -429,31 +464,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
       </div>
     </div>
   </details>
-</div>
-  
-  
-<div class="section-header">市場指標綜合研判 (近30日)</div>
-<div class="grid-2">
-  <div class="card">
-    <div class="card-title">微台散戶多空比</div>
-    <div class="chart-container"><canvas id="retail"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-title">美元兌新台幣</div>
-    <div class="chart-container"><canvas id="fx"></canvas></div>
-  </div>
-</div>
-<div class="grid-2">
-  <div class="card">
-    <div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div>
-    <div class="chart-container"><canvas id="margin_ratio"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-title">三大法人現貨 vs 期貨</div>
-    <div class="chart-container" style="height:320px;">
-      <canvas id="inst"></canvas>
-    </div>
-  </div>
 </div>
   
   <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
@@ -581,6 +591,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
             <div class="nav-bottom">
                 <span>⭐ 加碼</span>
                 <span>技5.5 / 籌6</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-item " id="nav_2454" onclick="showStock('2454')">
+            <div class="nav-top">
+                <span>2454 聯發科</span>
+                <span class="down">-4.96%</span>
+            </div>
+            <div class="nav-bottom">
+                <span>⭐ 加碼</span>
+                <span>技6 / 籌4.5</span>
             </div>
         </div>
         
@@ -1341,14 +1362,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         <div class="grid-2-col">
           <div class="ai-box">
             <h4>🧠 AI 技術與籌碼分析</h4>
-            <div>均線多頭排列，Supertrend維持上升。惟股價跌破5MA，且MACD紅柱縮短、KD死叉，顯示短線動能轉弱，呈現量縮拉回，暫無突破創高動能。</div>
+            <div>Gemini 配額已用完，跳過 AI 分析</div>
             <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
-              外資持續買超，投信微幅調節，法人具偏多共識。融資與借券同步減少，顯示散戶退場；大戶持股比例週增1.63%，整體籌碼集中且結構穩定。
+              Gemini 配額已用完，跳過 AI 分析
             </div>
           </div>
           <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;">
             <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
-            <div>短線採拉回買進策略。建議待股價回測10MA（約1910元）止穩分批布局。若跌破20MA（約1793元）則應停損，並須留意量縮高檔震盪之風險。</div>
+            <div>Gemini 配額已用完，跳過 AI 分析</div>
           </div>
         </div>
 
@@ -1633,14 +1654,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         <div class="grid-2-col">
           <div class="ai-box">
             <h4>🧠 AI 技術與籌碼分析</h4>
-            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 21.982595302s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '21s'}]}}</div>
+            <div>均線多頭排列，Supertrend上升，MACD紅柱增長。今日自高點拉回仍守穩5日線，伴隨均量放大，屬創高後的強勢整理。</div>
             <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
-              AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 21.982595302s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '21s'}]}}
+              土洋對峙，外資持續賣超，投信積極買超力挺。融資減少使散戶籌碼沉澱，惟大戶持股微減且借券增加，高檔仍面臨部分賣壓。
             </div>
           </div>
           <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;">
             <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
-            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 21.982595302s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '21s'}]}}</div>
+            <div>短線偏多，建議採拉回承接策略。可於5日線611元附近分批布局，跌破10日線557元停損。留意高檔震盪及外資持續提款風險。</div>
           </div>
         </div>
 
@@ -2229,6 +2250,158 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
                 </summary>
                 <div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;">
                     <div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>
+                </div>
+            </details>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="stock-card  " id="card_2454">
+      
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2454')">
+        <div class="mh-top">
+          <span class="mh-icon" id="icon_2454">▶</span>
+          <span class="mh-name">2454 聯發科</span>
+          <span class="mh-price down">$4,410.00 (-4.96%)</span>
+        </div>
+        <div class="mh-bottom">
+          <span class="mh-rating">🌟 加碼</span>
+          <span class="mh-score">技 6 / 籌 4.5</span>
+        </div>
+      </div>
+
+      <div class="stock-body">
+        
+        <div class="card-header-desktop desktop-only">
+          <h2>2454 聯發科 <span class="down">$4,410.00 (-4.96%)</span></h2>
+          <div style="font-size:16px; font-weight:bold;">
+            綜合評等: <span style="color:var(--primary);">加碼</span> 
+            (技術: 6 / 籌碼: 4.5)
+          </div>
+        </div>
+
+        <div id="kline_2454" style="width: 100%; height: 400px; margin-bottom: 15px;"></div>
+        
+        <div class="grid-2-col">
+          
+          <div>
+            <h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3>
+            <table class="data-table">
+              <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+              <tr>
+                <td>外資</td>
+                <td class="down">-856</td>
+                <td class="up">+764</td>
+                <td class="down">-153</td>
+              </tr>
+              <tr>
+                <td>投信</td>
+                <td class="down">-624</td>
+                <td class="down">-1,926</td>
+                <td class="down">-2,963</td>
+              </tr>
+              <tr>
+                <td>自營</td>
+                <td class="down">-72</td>
+                <td class="up">+884</td>
+                <td class="up">+571</td>
+              </tr>
+              <tr class="row-total">
+                <td>合計</td>
+                <td class="down">-1,552</td>
+                <td class="down">-278</td>
+                <td class="down">-2,546</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div>
+            <h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3>
+            <table class="data-table">
+              <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+              <tr>
+                <td>融資</td>
+                <td>10,582</td>
+                <td class="down">-594</td>
+                <td class="up">+152</td>
+                <td class="up">+1,044</td>
+              </tr>
+              <tr>
+                <td>融券</td>
+                <td>115</td>
+                <td class="down">-15</td>
+                <td class="up">+9</td>
+                <td class="down">-94</td>
+              </tr>
+              <tr>
+                <td>借券</td>
+                <td>2,564</td>
+                <td class="down">-22</td>
+                <td class="up">+434</td>
+                <td class="down">-1,711</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+           <h3 style="margin:0 0 5px 0; font-size:14px; color: var(--primary);">📊 集保 400 張以上大戶比例</h3>
+           <span style="font-size: 14px;">最新比例: <strong>76.39%</strong> 
+           (較上週 <span class="down">-0.22%</span>)</span>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="ai-box">
+            <h4>🧠 AI 技術與籌碼分析</h4>
+            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.889874042s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}</div>
+            <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
+              AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.889874042s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}
+            </div>
+          </div>
+          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;">
+            <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
+            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.889874042s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
+            <details>
+                <summary style="padding: 12px 15px; background: #fdfdfd; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; list-style: none; user-select: none;">
+                    📰 近期相關新聞 (5) <span style="float:right; font-size:12px; color:#aaa; font-weight:normal;">點擊展開 ▼</span>
+                </summary>
+                <div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;">
+                    
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-26 23:30:00</div>
+                <a href="https://www.ftnn.com.tw/news/548828" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    目標價衝5088元！聯發科被大摩封「Google TPU一哥」 下一步還要吃下1.4奈米AI大單 - FTNN 新聞網
+                </a>
+            </div>
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-26 23:14:58</div>
+                <a href="https://cmnews.com.tw/article/forumnews-b69a750d-5958-11f1-8cbf-4abfc88dee38" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    半導體版圖重塑：美光移轉產能，聯發科獲單-財經焦點情報站 - CMoney投資網誌
+                </a>
+            </div>
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-26 21:21:25</div>
+                <a href="https://wantrich.chinatimes.com/news/20260527900002-420101" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    外資喊上5922元！聯發科能到價？專家「3情境」剖析：不只台積電TPU金絲雀是他- 上市櫃 - 旺得富理財網
+                </a>
+            </div>
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-26 21:21:25</div>
+                <a href="https://wantrich.chinatimes.com/news/20260527900002-420101" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    3表看》外資喊上5922元！聯發科能到價？專家「3情境」剖析：不只台積電TPU金絲雀是他- 上市櫃 - 旺得富理財網
+                </a>
+            </div>
+            <div style="padding:10px 0; border-bottom:1px dashed #eee;">
+                <div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-26 21:06:03</div>
+                <a href="https://udn.com/news/story/7253/9527265" target="_blank" style="font-size:13px; line-height:1.4; font-weight:500; color:#333; text-decoration:none; display:block;">
+                    聯發科目標價 喊5,088 - UDN
+                </a>
+            </div>
                 </div>
             </details>
         </div>
@@ -2905,14 +3078,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         <div class="grid-2-col">
           <div class="ai-box">
             <h4>🧠 AI 技術與籌碼分析</h4>
-            <div>均線多頭排列且Supertrend看多，MACD負值收斂動能漸增。然股價逼近前高2310元，量能萎縮未見突破，短期呈現高檔量縮震盪格局。</div>
+            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.867239394s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.5-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}</div>
             <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
-              土洋對峙，外資持續調節而投信逢低承接。融資連日增加顯示散戶進場，大戶持股比微幅下滑至88.10%，籌碼集中度稍降，整體偏向震盪整理。
+              AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.867239394s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.5-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}
             </div>
           </div>
           <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;">
             <h4 style="color: #e65100;">🎯 AI 操作建議</h4>
-            <div>短線建議於5日線2286元附近逢低布局，突破前高2310元可順勢加碼。跌破月線2252元停損。風險提示：留意量能不足與外資持續賣壓。</div>
+            <div>AI 分析暫時無法使用: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.867239394s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.5-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '16s'}]}}</div>
           </div>
         </div>
 
@@ -3889,6 +4062,76 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         xAxisIndex: 1, yAxisIndex: 1,
         data: [21214, 18310, 25511, 14365, 14363, 52742, 58759, 31568, 30413, 27422, 18074, 13485, 13320, 11515, 12141, 19775, 11740, 13335, 12566, 22773, 33963, 31491, 95999, 69139, 74637, 67201, 48902, 30695, 32767, 29016, 56753, 31605, 32412, 49765, 27495, 34586, 53410, 38973, 43188, 51576, 94993, 50647, 61941, 52265, 16396, 114743, 90065, 87505, 83354, 24105, 72182, 65747, 27484, 23677, 23497].map(function(v, i) {
           return {value: v, itemStyle: {color: ["#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350"][i]}};
+        })}
+    ]
+  });
+  window.addEventListener('resize', function() { chart.resize(); });
+})();
+
+(function() {
+  var chart = echarts.init(document.getElementById('kline_2454'));
+  chart.setOption({
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {type: 'cross'},
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderColor: '#ccc',
+      textStyle: {color: '#333'}
+    },
+    axisPointer: {link: [{xAxisIndex: 'all'}]},
+    legend: {
+      data: ['K線', 'MA20', 'MA60', 'Supertrend↑', 'Supertrend↓'],
+      top: 0, textStyle: {fontSize: 10}
+    },
+    grid: [
+      {left: '10%', right: '4%', top: '15%', height: '55%'},
+      {left: '10%', right: '4%', top: '78%', bottom: '8%'}
+    ],
+    xAxis: [
+      {type: 'category', data: ["03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28"], gridIndex: 0,
+        axisLabel: {show: false}, axisLine: {show: false}},
+      {type: 'category', data: ["03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28"], gridIndex: 1,
+        axisLabel: {fontSize: 9, color: '#666'}}
+    ],
+    yAxis: [
+      {scale: true, gridIndex: 0, splitNumber: 4,
+        axisLabel: {fontSize: 10, color: '#666'},
+        splitLine: {lineStyle: {color: '#eee'}}},
+      {scale: true, gridIndex: 1, splitNumber: 2,
+        axisLabel: {fontSize: 9, color: '#666'},
+        splitLine: {show: false}}
+    ],
+    series: [
+      {name: 'K線', type: 'candlestick',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [[1730.0, 1705.0, 1685.0, 1730.0], [1760.0, 1765.0, 1720.0, 1780.0], [1745.0, 1785.0, 1735.0, 1815.0], [1730.0, 1720.0, 1720.0, 1745.0], [1720.0, 1710.0, 1710.0, 1740.0], [1730.0, 1730.0, 1715.0, 1740.0], [1730.0, 1730.0, 1725.0, 1745.0], [1700.0, 1680.0, 1665.0, 1705.0], [1685.0, 1700.0, 1655.0, 1715.0], [1630.0, 1625.0, 1600.0, 1645.0], [1655.0, 1620.0, 1600.0, 1665.0], [1665.0, 1620.0, 1620.0, 1665.0], [1610.0, 1590.0, 1590.0, 1640.0], [1560.0, 1585.0, 1545.0, 1585.0], [1540.0, 1510.0, 1505.0, 1555.0], [1525.0, 1490.0, 1490.0, 1540.0], [1550.0, 1465.0, 1460.0, 1550.0], [1500.0, 1465.0, 1445.0, 1510.0], [1480.0, 1470.0, 1430.0, 1480.0], [1520.0, 1580.0, 1505.0, 1585.0], [1600.0, 1575.0, 1550.0, 1600.0], [1600.0, 1575.0, 1570.0, 1605.0], [1645.0, 1620.0, 1620.0, 1665.0], [1645.0, 1720.0, 1640.0, 1745.0], [1805.0, 1790.0, 1770.0, 1845.0], [1850.0, 1895.0, 1810.0, 1930.0], [1930.0, 1925.0, 1885.0, 1955.0], [1960.0, 1900.0, 1895.0, 1965.0], [1930.0, 2090.0, 1925.0, 2090.0], [2120.0, 2295.0, 2110.0, 2295.0], [2325.0, 2215.0, 2170.0, 2335.0], [2340.0, 2435.0, 2330.0, 2435.0], [2470.0, 2435.0, 2410.0, 2575.0], [2490.0, 2615.0, 2485.0, 2675.0], [2550.0, 2575.0, 2500.0, 2595.0], [2665.0, 2610.0, 2565.0, 2685.0], [2870.0, 2870.0, 2870.0, 2870.0], [3155.0, 3155.0, 3155.0, 3155.0], [3470.0, 3430.0, 3155.0, 3470.0], [3430.0, 3420.0, 3295.0, 3430.0], [3320.0, 3630.0, 3320.0, 3670.0], [3575.0, 3880.0, 3565.0, 3985.0], [3835.0, 3700.0, 3700.0, 3910.0], [3625.0, 3495.0, 3400.0, 3680.0], [3585.0, 3405.0, 3385.0, 3590.0], [3425.0, 3260.0, 3200.0, 3555.0], [3240.0, 3400.0, 3150.0, 3550.0], [3475.0, 3155.0, 3100.0, 3495.0], [3195.0, 3230.0, 3155.0, 3350.0], [3415.0, 3550.0, 3405.0, 3550.0], [3765.0, 3860.0, 3675.0, 3880.0], [4245.0, 4245.0, 4245.0, 4245.0], [4375.0, 4265.0, 4180.0, 4440.0], [4475.0, 4640.0, 4450.0, 4690.0], [4620.0, 4410.0, 4270.0, 4685.0]],
+        itemStyle: {color: '#ef5350', color0: '#26a69a',
+          borderColor: '#ef5350', borderColor0: '#26a69a'}},
+      {name: 'MA20', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1627.25, 1620.75, 1611.25, 1603.0, 1603.0, 1607.0, 1615.25, 1625.0, 1636.0, 1655.5, 1689.0, 1718.75, 1759.5, 1801.75, 1853.25, 1906.5, 1962.5, 2032.75, 2117.25, 2215.25, 2307.25, 2410.0, 2525.25, 2629.25, 2718.0, 2798.75, 2867.0, 2940.75, 3003.5, 3060.5, 3123.25, 3205.5, 3296.0, 3387.5, 3488.75, 3580.5],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#fb8c00', width: 1}},
+      {name: 'MA60', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        smooth: true, showSymbol: false,
+        lineStyle: {color: '#9c27b0', width: 1}},
+      {name: 'Supertrend↑', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1465.357142857143, 1554.642857142857, 1578.5714285714284, 1647.857142857143, 1649.2857142857142, 1660.357142857143, 1806.0714285714284, 1838.9285714285716, 1928.2142857142858, 2027.5, 2042.142857142857, 2042.142857142857, 2097.857142857143, 2319.285714285714, 2552.857142857143, 2669.642857142857, 2732.5, 2817.857142857143, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 2967.142857142857, 3225.0, 3330.714285714286, 3580.0, 3580.0],
+        showSymbol: false, connectNulls: false,
+        lineStyle: {color: '#26a69a', width: 2}},
+      {name: 'Supertrend↓', type: 'line',
+        xAxisIndex: 0, yAxisIndex: 0,
+        data: [null, null, null, null, null, null, 1882.857142857143, 1841.4285714285716, 1835.0, 1781.0714285714284, 1781.0714285714284, 1781.0714285714284, 1781.0714285714284, 1749.2857142857142, 1720.7142857142858, 1701.4285714285716, 1687.142857142857, 1659.642857142857, 1639.2857142857142, 1639.2857142857142, 1639.2857142857142, 1639.2857142857142, 1639.2857142857142, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        showSymbol: false, connectNulls: false,
+        lineStyle: {color: '#ef5350', width: 2}},
+      {name: '成交量', type: 'bar',
+        xAxisIndex: 1, yAxisIndex: 1,
+        data: [5273, 5783, 6354, 6467, 4423, 4260, 6009, 6764, 7874, 6372, 5324, 5839, 7031, 6833, 7235, 10218, 10756, 8691, 6910, 12976, 8061, 5381, 8802, 11909, 20848, 16504, 15450, 11027, 17347, 23044, 28172, 21684, 23842, 22923, 11761, 16785, 3450, 8515, 36338, 7619, 8599, 7943, 9538, 8651, 6305, 6680, 6249, 8398, 8111, 5636, 19537, 4181, 18199, 16927, 14431].map(function(v, i) {
+          return {value: v, itemStyle: {color: ["#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a"][i]}};
         })}
     ]
   });
