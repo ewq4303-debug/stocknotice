@@ -905,16 +905,31 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         cd = data.get("chart_data", {})
         
         scripts.append(f"""
-// 建立該個股專用的智能日期格式化器 (修正：使用絕對索引定位，徹底解決錯亂)
+// 建立該個股專用的智能日期格式化器 (修正版：渲染追蹤法，徹底解決縮放漏字問題)
 var dates_{stock_id} = {json.dumps(ind_dates)};
-var dateFmt_{stock_id} = function(value) {{
-  var idx = dates_{stock_id}.indexOf(value);
-  if (idx <= 0) return value.replace('-', '/'); 
+var state_{stock_id} = {{ lastIdx: -1, lastMonth: null }};
+
+var dateFmt_{stock_id} = function(value, index) {{
+  // ECharts 是從左到右畫圖，若 index 變小或重置，代表是一次全新的畫面渲染
+  if (index <= state_{stock_id}.lastIdx) {{ state_{stock_id}.lastMonth = null; }}
+  state_{stock_id}.lastIdx = index;
+  
   var currM = value.split('-')[0];
   var currD = value.split('-')[1];
-  var prevM = dates_{stock_id}[idx - 1].split('-')[0];
-  // 若月份與前一個交易日不同，顯示 MM/DD，否則只顯示 DD
-  return (currM !== prevM) ? (currM + '/' + currD) : currD;
+  var isBoundary = false;
+  
+  // 1. 檢查原始資料的換月點
+  if (index === 0) isBoundary = true;
+  else if (dates_{stock_id}[index - 1].split('-')[0] !== currM) isBoundary = true;
+  
+  // 2. 如果原始換月點被 ECharts 隱藏了，目前這個可見的標籤月份跟上一個不同，強制顯示！
+  if (state_{stock_id}.lastMonth !== null && state_{stock_id}.lastMonth !== currM) isBoundary = true;
+  
+  // 3. 畫面上最左邊的第一個日期，一律顯示月份方便對照
+  if (state_{stock_id}.lastMonth === null) isBoundary = true;
+  
+  state_{stock_id}.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
 }};
 
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
@@ -933,19 +948,15 @@ chartK_{stock_id}.setOption({{
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '6%', right: '8%', top: '5%', height: '25%' }},   // K線 (稍微縮減，保留空間給下方 X 軸日期)
-    {{ left: '6%', right: '8%', top: '37%', height: '14%' }},  // 成交量
-    {{ left: '6%', right: '8%', top: '58%', height: '14%' }},  // 法人
-    {{ left: '6%', right: '8%', top: '79%', height: '14%' }}   // 融資
+    {{ left: '6%', right: '8%', top: '5%', height: '25%' }},
+    {{ left: '6%', right: '8%', top: '37%', height: '14%' }},
+    {{ left: '6%', right: '8%', top: '58%', height: '14%' }},
+    {{ left: '6%', right: '8%', top: '79%', height: '14%' }}
   ],
   xAxis: [
-    // 【修改重點】K 線圖 (Grid 0) 下方顯示日期，並套用智能月份 Formatter
     {{ type: 'category', gridIndex: 0, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }},
-    
     {{ type: 'category', gridIndex: 1, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
     {{ type: 'category', gridIndex: 2, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    
-    // 【修改重點】最底部的日期軸，同樣套用智能月份 Formatter
     {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
@@ -1040,13 +1051,24 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
         scripts.append(f"""
 // 建立大盤專用的智能日期格式化器
 var taiexDates = {json.dumps(taiex_dates)};
-var taiexDateFmt = function(value) {{
-  var idx = taiexDates.indexOf(value);
-  if (idx <= 0) return value.replace('-', '/');
+var taiexState = {{ lastIdx: -1, lastMonth: null }};
+
+var taiexDateFmt = function(value, index) {{
+  if (index <= taiexState.lastIdx) {{ taiexState.lastMonth = null; }}
+  taiexState.lastIdx = index;
+  
   var currM = value.split('-')[0];
   var currD = value.split('-')[1];
-  var prevM = taiexDates[idx - 1].split('-')[0];
-  return (currM !== prevM) ? (currM + '/' + currD) : currD;
+  var isBoundary = false;
+  
+  if (index === 0) isBoundary = true;
+  else if (taiexDates[index - 1].split('-')[0] !== currM) isBoundary = true;
+  
+  if (taiexState.lastMonth !== null && taiexState.lastMonth !== currM) isBoundary = true;
+  if (taiexState.lastMonth === null) isBoundary = true;
+  
+  taiexState.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
 }};
 
 var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
@@ -1067,7 +1089,6 @@ function renderTaiex() {{
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
   titles.push({{ text: '加權指數 (含 MA20, Supertrend)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
   
-  // 【修改重點】大盤 K 線下方必定顯示日期，並套用智能 Formatter
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10}} }});
   
@@ -1076,7 +1097,6 @@ function renderTaiex() {{
   series.push({{ name: 'ST指標(紅)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標(綠)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
 
-  // 稍微加大 K 線跟下方指標的間隙，保留標籤顯示空間
   var startTop = 5 + kHeight + 6; 
   var totalAvailable = 92 - startTop; 
   
@@ -1102,7 +1122,6 @@ function renderTaiex() {{
       
       var isLast = (idx === activeIdxs.length - 1);
       
-      // 【修改重點】最底部的動態指標，同樣套用智能月份 Formatter
       xAxes.push({{ type: 'category', gridIndex: gridIdx, data: taiexDates, boundaryGap: true, axisLabel: {{show: isLast, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: isLast}} }});
       
       dataZooms[0].xAxisIndex.push(gridIdx);
