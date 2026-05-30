@@ -905,39 +905,52 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         cd = data.get("chart_data", {})
         
         scripts.append(f"""
+// 建立該個股專用的智能日期格式化器
+var dates_{stock_id} = {json.dumps(ind_dates)};
+var dateFmt_{stock_id} = function(value, index) {{
+  if (index === 0) return value; // 第一筆資料直接顯示
+  var parts = value.split('-');
+  var currM = parts[0];
+  var currD = parts[1];
+  var prevM = dates_{stock_id}[index - 1].split('-')[0];
+  // 若月份與前一天不同，顯示 MM/DD，否則只顯示 DD
+  return (currM !== prevM) ? (currM + '/' + currD) : currD;
+}};
+
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
 chartK_{stock_id}.setOption({{
   title: [
     {{ text: '日K線圖', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
-    {{ text: '成交量(張)', left: '6%', top: '35%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '成交量(張)', left: '6%', top: '34%', textStyle: {{fontSize: 11, color: '#555'}} }},
     {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '54%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {{fontSize: 11, color: '#555'}} }}
+    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '75%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
   legend: [
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
     {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '54%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '75%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '6%', right: '8%', top: '5%', height: '28%' }},   // K線高度減少1/4
-    {{ left: '6%', right: '8%', top: '39%', height: '12%' }},  // 成交量
-    {{ left: '6%', right: '8%', top: '58%', height: '15%' }},  // 法人
-    {{ left: '6%', right: '8%', top: '80%', height: '15%' }}   // 融資
+    {{ left: '6%', right: '8%', top: '5%', height: '26%' }},   // K線 (留出空間給下方日期)
+    {{ left: '6%', right: '8%', top: '38%', height: '13%' }},  // 成交量
+    {{ left: '6%', right: '8%', top: '58%', height: '14%' }},  // 法人
+    {{ left: '6%', right: '8%', top: '79%', height: '14%' }}   // 融資
   ],
   xAxis: [
-    {{ type: 'category', gridIndex: 0, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    {{ type: 'category', gridIndex: 1, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    {{ type: 'category', gridIndex: 2, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    {{ type: 'category', gridIndex: 3, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{fontSize: 10}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
+    // 【修改】K 線圖下方加入日期，並套用月份簡化 Formatter
+    {{ type: 'category', gridIndex: 0, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }},
+    
+    {{ type: 'category', gridIndex: 1, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 2, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    
+    // 【修改】底部日期也套用月份簡化 Formatter
+    {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
-    
-    // 【修改】成交量 Y 軸加上 formatter，超過一萬自動加上 k
     {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(value) {{ return value >= 10000 ? (value / 1000) + 'k' : value; }} }}, splitLine: {{show: false}} }},
-    
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
@@ -952,8 +965,6 @@ chartK_{stock_id}.setOption({{
     {{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
-    
-    // 【修改】名稱加上(張)，讓 Tooltip 提示更清楚
     {{ name: '成交量(張)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
     
     {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
@@ -1027,6 +1038,17 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
         fut_aligned = [fut_dict.get(date, None) for date in taiex_dates]
 
         scripts.append(f"""
+// 建立大盤專用的智能日期格式化器
+var taiexDates = {json.dumps(taiex_dates)};
+var taiexDateFmt = function(value, index) {{
+  if (index === 0) return value;
+  var parts = value.split('-');
+  var currM = parts[0];
+  var currD = parts[1];
+  var prevM = taiexDates[index - 1].split('-')[0];
+  return (currM !== prevM) ? (currM + '/' + currD) : currD;
+}};
+
 var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
 
 function renderTaiex() {{
@@ -1045,7 +1067,8 @@ function renderTaiex() {{
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
   titles.push({{ text: '加權指數 (含 MA20, Supertrend)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
   
-  xAxes.push({{ type: 'category', gridIndex: 0, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: activeIdxs.length === 0, fontSize: 10}}, axisLine: {{onZero: false}}, axisTick: {{show: activeIdxs.length === 0}} }});
+  // 【修改】大盤主 K 線強制顯示日期，並套用月份簡化 Formatter
+  xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10}} }});
   
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }});
@@ -1053,7 +1076,8 @@ function renderTaiex() {{
   series.push({{ name: 'ST指標(紅)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標(綠)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
 
-  var startTop = 5 + kHeight + 2; 
+  // 稍微加大間距，避免文字重疊 (從 2 改為 4)
+  var startTop = 5 + kHeight + 4; 
   var totalAvailable = 92 - startTop; 
   
   if(activeIdxs.length > 0) {{
@@ -1077,7 +1101,10 @@ function renderTaiex() {{
       grids.push({{ left: '8%', right: '5%', top: gridTop + '%', height: gridHeight + '%' }});
       
       var isLast = (idx === activeIdxs.length - 1);
-      xAxes.push({{ type: 'category', gridIndex: gridIdx, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: isLast, fontSize:10}}, axisLine: {{onZero: false}}, axisTick: {{show: isLast}} }});
+      
+      // 【修改】動態底部的 X 軸也套用月份簡化 Formatter
+      xAxes.push({{ type: 'category', gridIndex: gridIdx, data: taiexDates, boundaryGap: true, axisLabel: {{show: isLast, fontSize: 10, color: '#666', formatter: taiexDateFmt}}, axisLine: {{onZero: false}}, axisTick: {{show: isLast}} }});
+      
       dataZooms[0].xAxisIndex.push(gridIdx);
       dataZooms[1].xAxisIndex.push(gridIdx);
 
