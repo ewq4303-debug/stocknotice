@@ -787,6 +787,14 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     for n in news[:5]: news_html += f'<div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div><a href="{n.get("url", n.get("link", "#"))}" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">{n.get("title","")}</a></div>'
     if not news: news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
 
+    # 【新增邏輯】建立法人日資料的字典，方便查找當週四、五的資料 (單位：張)
+    inst_history = inst.get("history", [])
+    inst_dict = {}
+    for d in inst_history:
+        date_key = d.get("date", "").replace("-", "")
+        net_lots = (d.get("foreign", 0) + d.get("trust", 0) + d.get("dealer", 0)) / 1000
+        inst_dict[date_key] = net_lots
+
     # --- TDCC 多週變化表格 ---
     tdcc_hist = tdcc.get("history", [])
     tdcc_table_rows = ""
@@ -798,21 +806,34 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         h_diff = curr['total_holders'] - prev_r['total_holders']
         a_diff = curr.get('avg_lots',0) - prev_r.get('avg_lots',0)
         
+        # 【新增邏輯】找出當周四與週五的法人買賣加總 (即 TDCC 日期與前一天的加總)
+        date_str = curr.get('date', '')
+        thu_fri_net = 0
+        if date_str:
+            try:
+                dt = datetime.strptime(date_str, "%Y%m%d")
+                fri_str = dt.strftime("%Y%m%d")
+                thu_str = (dt - timedelta(days=1)).strftime("%Y%m%d")
+                thu_fri_net = inst_dict.get(fri_str, 0) + inst_dict.get(thu_str, 0)
+            except Exception:
+                pass
+        
         def get_diff_html(diff, fmt):
             if diff == 0: return ""
             cls = "up" if diff > 0 else "down"
             return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({fmt.format(diff)})</span>'
 
-        tdcc_table_rows += f"""<tr>
+        tdcc_table_rows += f'''<tr>
             <td style="text-align:center;">{curr['date']}</td>
-            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, '{:+.2f}%')}</td>
-            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, '{:+.2f}%')}</td>
-            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, '{:+,}')}</td>
-            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, '{:+.1f}')}</td>
-        </tr>"""
+            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, '{{:+.2f}}%')}</td>
+            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, '{{:+.2f}}%')}</td>
+            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, '{{:+,}}')}</td>
+            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, '{{:+.1f}}')}</td>
+            <td style="text-align:center;" class="{'up' if thu_fri_net >= 0 else 'down'}">{thu_fri_net:+,.0f}</td>
+        </tr>'''
         
     if not tdcc_table_rows:
-        tdcc_table_rows = "<tr><td colspan='5' style='text-align:center;'>無集保資料</td></tr>"
+        tdcc_table_rows = "<tr><td colspan='6' style='text-align:center;'>無集保資料</td></tr>"
 
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
@@ -833,13 +854,14 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
            <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">大戶 >5千萬 / 散戶 <5百萬</span></h3>
            <div style="overflow-x: auto;">
-             <table class="data-table" style="min-width: 500px; margin-bottom: 0;">
+             <table class="data-table" style="min-width: 600px; margin-bottom: 0;">
                <tr>
                  <th style="text-align: center;">日期</th>
                  <th style="text-align: center;">大戶比例</th>
                  <th style="text-align: center;">散戶比例</th>
                  <th style="text-align: center;">總股東人數</th>
                  <th style="text-align: center;">平均每戶(張)</th>
+                 <th style="text-align: center;">四五法人(張)</th>
                </tr>
                {tdcc_table_rows}
              </table>
@@ -928,7 +950,6 @@ var dateFmt_{stock_id} = function(value, index) {{
 
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
 
-// 建立游標追蹤，用於智能 Tooltip 判斷目前指著哪一張副圖
 var currentMouseY_{stock_id} = 0;
 chartK_{stock_id}.getZr().on('mousemove', function(e) {{
     currentMouseY_{stock_id} = e.offsetY;
@@ -950,7 +971,6 @@ chartK_{stock_id}.setOption({{
       var date = params[0].axisValue;
       var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
       
-      // 動態判定游標正在哪張圖表上
       var hoveredGrid = 0; 
       if (yPct >= 34 && yPct < 55) hoveredGrid = 1;
       else if (yPct >= 55 && yPct < 77) hoveredGrid = 2;
@@ -961,7 +981,6 @@ chartK_{stock_id}.setOption({{
         var isVol = (p.seriesName === '成交量(張)');
         var axIdx = p.axisIndex || 0;
         
-        // 規則：K線、成交量永遠顯示。其他指標（包含MA20、ST、法人等）只有在游標指到它們時才顯示
         if (isPrice) {{
           var val = p.data;
           html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
@@ -977,8 +996,8 @@ chartK_{stock_id}.setOption({{
         }} else if (axIdx === hoveredGrid) {{
           var val = p.data;
           var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v == null || isNaN(v) || v === '') v = '-';
-          else v = Math.round(v).toLocaleString();
+          if (v == null || isNaN(v) || v === '') return; // 【防空值】ST 為空時跳過不顯示
+          v = Math.round(v).toLocaleString();
           html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
         }}
       }});
@@ -1020,17 +1039,15 @@ chartK_{stock_id}.setOption({{
     {{ name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
     {{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
     
-    // 【整合圖例重點】兩條線都命名為 'ST指標'，ECharts 圖例就會自動將其合併為一個
+    // 【修改】這裡兩者名稱皆設為 ST指標，確保圖例完美合併
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
     
     {{ name: '成交量(張)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
-    
     {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
     {{ name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_trust', []))}, itemStyle: {{color: '#1D9E75'}} }},
     {{ name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_dealer', []))}, itemStyle: {{color: '#FF9800'}} }},
     {{ name: '法人累計(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 3, data: {json.dumps(cd.get('inst_cum', []))}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }},
-    
     {{ name: '融資增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('margin_diff', []))}, itemStyle: {{color: '#EF5350'}} }},
     {{ name: '融券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('short_diff', []))}, itemStyle: {{color: '#66BB6A'}} }},
     {{ name: '借券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('borrow_diff', []))}, itemStyle: {{color: '#AB47BC'}} }},
@@ -1116,7 +1133,6 @@ var taiexDateFmt = function(value, index) {{
 
 var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
 
-// 大盤游標追蹤
 var currentMouseY_taiex = 0;
 chartTaiex.getZr().on('mousemove', function(e) {{
     currentMouseY_taiex = e.offsetY;
@@ -1147,7 +1163,7 @@ function renderTaiex() {{
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }});
   series.push({{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1.5, color: '#fbc02d'}} }});
   
-  // 【整合圖例重點】兩條線都命名為 'ST指標'
+  // 【修改】大盤也將名字統稱為 ST指標 以合併圖例
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
   
@@ -1245,7 +1261,7 @@ function renderTaiex() {{
             }} else if (axIdx === hoveredGrid) {{
                 var val = p.data;
                 var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-                if (v == null || isNaN(v) || v === '') v = '-';
+                if (v == null || isNaN(v) || v === '') return; // 【防空值】ST 為空時跳過
                 else {{
                     if (p.seriesName.indexOf('融資市值比') !== -1) {{
                         v = parseFloat(v).toFixed(2) + '%';
@@ -1260,6 +1276,7 @@ function renderTaiex() {{
         return html;
       }}
     }},
+    // 【修改】大盤圖例修改為純 ST指標
     legend: {{ data: ['MA20', 'ST指標'], top: '1%', right: '5%', textStyle: {{fontSize: 10}}, itemWidth: 10, itemHeight: 10 }},
     axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
     grid: grids,
