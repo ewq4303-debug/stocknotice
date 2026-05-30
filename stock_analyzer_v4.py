@@ -865,7 +865,7 @@ def generate_market_section(market_data: dict):
     foreign = _get(inst_latest, "Foreign_Investor_diff", "foreign_investor_diff") / 100_000_000
     trust   = _get(inst_latest, "Investment_Trust_diff", "investment_trust_diff") / 100_000_000
     
-    return f"""<div class="section-header">大盤總覽</div><div class="metrics-grid-4"><div class="metric"><div class="metric-label">加權指數</div><div class="metric-value {change_class}">{close:,.2f}</div><div class="metric-change {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">成交金額(億)</div><div class="metric-value">{money_b:,.0f}</div><div class="sub {'up' if money_diff>=0 else 'down'}">{'↑' if money_diff>=0 else '↓'} {money_diff:+,.0f} ({money_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">外資(億)</div><div class="metric-value {'positive' if foreign>0 else 'negative'}">{foreign:+.1f}</div></div><div class="metric"><div class="metric-label">投信(億)</div><div class="metric-value {'positive' if trust>0 else 'negative'}">{trust:+.1f}</div></div></div><div class="card"><div class="card-title">加權指數 K 線圖 + 成交量 (近60日)</div><div id="taiex_kline" style="width:100%;height:400px;"></div></div>"""
+    return f"""<div class="section-header">大盤總覽</div><div class="metrics-grid-4"><div class="metric"><div class="metric-label">加權指數</div><div class="metric-value {change_class}">{close:,.2f}</div><div class="metric-change {change_class}">{arrow} {change:+.2f} ({change_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">成交金額(億)</div><div class="metric-value">{money_b:,.0f}</div><div class="sub {'up' if money_diff>=0 else 'down'}">{'↑' if money_diff>=0 else '↓'} {money_diff:+,.0f} ({money_pct:+.2f}%)</div></div><div class="metric"><div class="metric-label">外資(億)</div><div class="metric-value {'positive' if foreign>0 else 'negative'}">{foreign:+.1f}</div></div><div class="metric"><div class="metric-label">投信(億)</div><div class="metric-value {'positive' if trust>0 else 'negative'}">{trust:+.1f}</div></div></div><div class="card"><div class="card-title">加權指數與市場指標綜合研判 (近60日)</div><div id="taiex_kline" style="width:100%;height:850px;"></div></div>"""
 
 def generate_timeseries_section(market_data: dict):
     return """<div class="section-header">市場指標綜合研判 (近30日)</div><div class="grid-2"><div class="card"><div class="card-title">微台散戶多空比</div><div class="chart-container"><canvas id="retail"></canvas></div></div><div class="card"><div class="card-title">美元兌新台幣</div><div class="chart-container"><canvas id="fx"></canvas></div></div></div><div class="grid-2"><div class="card"><div class="card-title">融資市值比 (融資餘額 ÷ 台股總市值)</div><div class="chart-container"><canvas id="margin_ratio"></canvas></div></div><div class="card"><div class="card-title">三大法人現貨 vs 期貨</div><div class="chart-container" style="height:320px;"><canvas id="inst"></canvas></div></div></div>"""
@@ -873,10 +873,6 @@ def generate_timeseries_section(market_data: dict):
 def generate_chart_scripts(stocks_data: dict, market_data: dict):
     scripts = []
     
-    # 建立大盤字典，方便後續對應 4 個 Chart.js 子圖的日期
-    taiex = market_data.get("taiex", [])
-    taiex_dict = {d["date"][-5:]: d["close"] for d in taiex} if taiex else {}
-
     for stock_id, data in stocks_data.items():
         df_tail = data["df"].tail(60)
         ind_dates = [d.strftime("%m-%d") for d in df_tail.index]
@@ -893,8 +889,6 @@ var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}')
 chartK_{stock_id}.setOption({{
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
   legend: {{ data: ['K線', 'MA20', 'ST指標'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
-  
-  /* 【修改1 & 2】調整個股 K 線與成交量高度比例，避免日期重疊 */
   grid: [
     {{ left: '10%', right: '5%', top: '15%', height: '55%' }}, 
     {{ left: '10%', right: '5%', top: '74%', height: '14%' }}
@@ -907,7 +901,6 @@ chartK_{stock_id}.setOption({{
     {{ scale: true, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
     {{ scale: true, gridIndex: 1, splitNumber: 2, axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}}, splitLine: {{show: false}} }}
   ],
-  /* 將 dataZoom bottom 設為固定像素 5，避開 x 軸文字 */
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1], start: 0, end: 100 }}, 
     {{ show: true, xAxisIndex: [0, 1], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
@@ -966,89 +959,116 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 }})();
 """)
             
+    # 【大盤與市場指標整合 ECharts 區塊】
+    taiex = market_data.get("taiex", [])
     if taiex and len(taiex) > 0:
         taiex_dates = [d["date"][-5:] for d in taiex]
         taiex_ohlc  = [[d["open"], d["close"], d["low"], d["high"]] for d in taiex]
         taiex_money = [round(d.get("money", 0) / 1e8, 1) for d in taiex]
         taiex_vol_color = ["#ef5350" if d["close"] >= d["open"] else "#26a69a" for d in taiex]
+        
+        # 1. 散戶多空 對齊日期
+        retail = market_data.get("retail", [])
+        retail_dict = {d['date'][-5:]: d['retail_ratio'] for d in retail}
+        retail_aligned = [retail_dict.get(date, None) for date in taiex_dates]
+        
+        # 2. 匯率 對齊日期
+        fx = market_data.get("usd_twd", [])
+        fx_dict = {d.get("date","")[-5:]: float(d.get("close", d.get("Close", d.get("rate",0)))) for d in fx if d.get("close", d.get("Close", d.get("rate",0)))}
+        fx_aligned = [fx_dict.get(date, None) for date in taiex_dates]
+        
+        # 3. 融資市值比 對齊日期
+        total_margin = market_data.get("total_margin", [])
+        margin_dict = {}
+        if total_margin:
+            margin_sorted = sorted(total_margin, key=lambda x: x.get("date", ""))
+            taiex_by_date = {d["date"]: d for d in taiex}
+            for d in margin_sorted:
+                date = d.get("date", "")
+                if date in taiex_by_date:
+                    margin_now = _get(d, "MarginPurchaseTodayBalance", "TodayBalance", "MarginPurchaseMoney")
+                    taiex_close = taiex_by_date[date]["close"]
+                    if margin_now > 0 and taiex_close > 0:
+                        margin_dict[date[-5:]] = round(margin_now / (taiex_close * 25 * 1e8) * 100, 3)
+        margin_aligned = [margin_dict.get(date, None) for date in taiex_dates]
+        
+        # 4. 三大法人與期貨 對齊日期
+        inst = market_data.get("institution", [])
+        inst_f_dict, inst_t_dict, inst_d_dict, fut_dict = {}, {}, {}, {}
+        for d in inst:
+            date_short = d.get("date", "")[-5:]
+            inst_f_dict[date_short] = _get(d, "Foreign_Investor_diff") / 1e8
+            inst_t_dict[date_short] = _get(d, "Investment_Trust_diff") / 1e8
+            inst_d_dict[date_short] = _get(d, "Dealer_diff") / 1e8
+            
+        futures = market_data.get("futures", [])
+        for f in futures:
+            if "外資" in f.get("institutional_investors", ""):
+                fut_dict[f.get("date", "")[-5:]] = float(f.get("long_open_interest_balance_volume", 0)) - float(f.get("short_open_interest_balance_volume", 0))
+                
+        inst_f_aligned = [inst_f_dict.get(date, 0) for date in taiex_dates]
+        inst_t_aligned = [inst_t_dict.get(date, 0) for date in taiex_dates]
+        inst_d_aligned = [inst_d_dict.get(date, 0) for date in taiex_dates]
+        fut_aligned = [fut_dict.get(date, None) for date in taiex_dates]
+
         scripts.append(f"""
 var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
 chartTaiex.setOption({{
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-  legend: {{ data: ['加權指數', '成交金額(億)'], top: 0, textStyle: {{fontSize: 11}} }},
+  legend: {{ 
+    data: ['加權指數', '成交金額(億)', '散戶多空比(%)', 'USD/TWD', '融資市值比(%)', '外資現貨', '投信現貨', '自營現貨', '外資期貨'], 
+    top: 0, textStyle: {{fontSize: 11}} 
+  }},
   
-  /* 【修改1 & 2】大盤 K 線與捲軸也套用相同的防重疊比例 */
+  /* 6個子圖：K線高度32%，下方成交量及四指標高度皆為 10% 依序排列 */
   grid: [
-    {{ left: '10%', right: '5%', top: '10%', height: '60%' }}, 
-    {{ left: '10%', right: '5%', top: '74%', height: '14%' }}
+    {{ left: '8%', right: '5%', top: '8%', height: '32%' }},  // 0: K線
+    {{ left: '8%', right: '5%', top: '42%', height: '10%' }}, // 1: 成交量
+    {{ left: '8%', right: '5%', top: '53%', height: '10%' }}, // 2: 散戶多空
+    {{ left: '8%', right: '5%', top: '64%', height: '10%' }}, // 3: 匯率
+    {{ left: '8%', right: '5%', top: '75%', height: '10%' }}, // 4: 融資
+    {{ left: '8%', right: '5%', top: '86%', height: '10%' }}  // 5: 法人
   ],
   xAxis: [
-    {{ type: 'category', data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, splitLine: {{show: false}}, min: 'dataMin', max: 'dataMax', axisLabel: {{show: false}} }},
-    {{ type: 'category', gridIndex: 1, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, axisTick: {{show: false}}, splitLine: {{show: false}}, axisLabel: {{fontSize: 9}} }}
+    {{ type: 'category', gridIndex: 0, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 1, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 2, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 3, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 4, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 5, data: {json.dumps(taiex_dates)}, boundaryGap: true, axisLabel: {{fontSize: 10}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
-    {{ scale: true, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10}} }},
-    {{ scale: true, gridIndex: 1, splitNumber: 2, axisLabel: {{fontSize: 9}}, axisLine: {{show: false}}, axisTick: {{show: false}}, splitLine: {{show: false}} }}
+    {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10}} }},
+    {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }},
+    {{ scale: true, gridIndex: 2, axisLabel: {{fontSize: 9, formatter: '{{value}}%'}}, splitLine: {{show: false}} }},
+    {{ scale: true, gridIndex: 3, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }},
+    {{ scale: true, gridIndex: 4, axisLabel: {{fontSize: 9, formatter: '{{value}}%'}}, splitLine: {{show: false}} }},
+    {{ scale: true, gridIndex: 5, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }},
+    {{ scale: true, gridIndex: 5, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, position: 'right' }}
   ],
   dataZoom: [
-    {{ type: 'inside', xAxisIndex: [0, 1], start: 0, end: 100 }}, 
-    {{ show: true, xAxisIndex: [0, 1], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
+    {{ type: 'inside', xAxisIndex: [0, 1, 2, 3, 4, 5], start: 0, end: 100 }}, 
+    {{ show: true, xAxisIndex: [0, 1, 2, 3, 4, 5], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }}
   ],
   series: [
-    {{ name: '加權指數', type: 'candlestick', data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
-    {{ name: '成交金額(億)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(taiex_money)}, itemStyle: {{color: function(params) {{ return {json.dumps(taiex_vol_color)}[params.dataIndex]; }} }} }}
+    {{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
+    
+    {{ name: '成交金額(億)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(taiex_money)}, itemStyle: {{color: function(params) {{ return {json.dumps(taiex_vol_color)}[params.dataIndex]; }} }} }},
+    
+    {{ name: '散戶多空比(%)', type: 'line', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(retail_aligned)}, itemStyle: {{color: '#EF5350'}}, areaStyle: {{color: 'rgba(239,83,80,0.1)'}}, smooth: true, showSymbol: false }},
+    
+    {{ name: 'USD/TWD', type: 'line', xAxisIndex: 3, yAxisIndex: 3, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '#378ADD'}}, areaStyle: {{color: 'rgba(55,138,221,0.1)'}}, smooth: true, showSymbol: false }},
+    
+    {{ name: '融資市值比(%)', type: 'line', xAxisIndex: 4, yAxisIndex: 4, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '#D4537E'}}, areaStyle: {{color: 'rgba(212,83,126,0.1)'}}, smooth: true, showSymbol: false }},
+    
+    {{ name: '外資現貨', type: 'bar', stack: 'inst', xAxisIndex: 5, yAxisIndex: 5, data: {json.dumps(inst_f_aligned)}, itemStyle: {{color: '#378ADD'}} }},
+    {{ name: '投信現貨', type: 'bar', stack: 'inst', xAxisIndex: 5, yAxisIndex: 5, data: {json.dumps(inst_t_aligned)}, itemStyle: {{color: '#1D9E75'}} }},
+    {{ name: '自營現貨', type: 'bar', stack: 'inst', xAxisIndex: 5, yAxisIndex: 5, data: {json.dumps(inst_d_aligned)}, itemStyle: {{color: '#FF9800'}} }},
+    {{ name: '外資期貨', type: 'line', xAxisIndex: 5, yAxisIndex: 6, data: {json.dumps(fut_aligned)}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }}
   ]
 }});
 window.addEventListener('resize', function() {{ chartTaiex.resize(); }});
 """)
-    
-    # 【修改 3】四大市場指標全部加入 Taiex 折線 (共用右軸或獨立右軸)
-    retail = market_data["retail"]
-    if retail:
-        retail_dates = [d['date'][-5:] for d in retail]
-        retail_taiex = [taiex_dict.get(d, None) for d in retail_dates]
-        scripts.append(f"new Chart(document.getElementById('retail'),{{type:'line',data:{{labels:{json.dumps(retail_dates)},datasets:[{{label:'散戶多單%',data:{json.dumps([d['retail_ratio'] for d in retail])},borderColor:'#EF5350',backgroundColor:'rgba(239,83,80,0.1)',borderWidth:2,fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:'#EF5350',yAxisID:'y'}},{{label:'加權指數(右)',data:{json.dumps(retail_taiex)},borderColor:'#9E9E9E',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1',spanGaps:true}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}},tooltip:{{callbacks:{{label:function(ctx){{return ctx.dataset.label+': '+ctx.parsed.y}}}}}}}},scales:{{y:{{ticks:{{callback:function(v){{return v.toFixed(0)+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},y1:{{type:'linear',position:'right',grid:{{display:false}},ticks:{{font:{{size:10}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
-    
-    fx = market_data["usd_twd"]
-    valid_fx = [(d.get("date","")[-5:], float(d.get("close", d.get("Close", d.get("rate",0))))) for d in fx if d.get("close", d.get("Close", d.get("rate",0)))]
-    if valid_fx:
-        fx_dates, fx_vals = zip(*valid_fx)
-        fx_dates_list = list(fx_dates)
-        fx_taiex = [taiex_dict.get(d, None) for d in fx_dates_list]
-        scripts.append(f"new Chart(document.getElementById('fx'),{{type:'line',data:{{labels:{json.dumps(fx_dates_list)},datasets:[{{label:'USD/TWD',data:{json.dumps(list(fx_vals))},borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',borderWidth:2,tension:0.3,fill:true,pointRadius:2,yAxisID:'y'}},{{label:'加權指數(右)',data:{json.dumps(fx_taiex)},borderColor:'#9E9E9E',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1',spanGaps:true}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},y1:{{type:'linear',position:'right',grid:{{display:false}},ticks:{{font:{{size:10}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
-
-    total_margin = market_data.get("total_margin", [])
-    if total_margin and taiex and len(total_margin) >= 5 and len(taiex) >= 5:
-        margin_sorted = sorted(total_margin, key=lambda x: x.get("date", ""))
-        taiex_by_date = {d["date"]: d for d in taiex}
-        ratio_dates, ratio_values = [], []
-        for d in margin_sorted[-30:]:
-            date = d.get("date", "")
-            if date in taiex_by_date:
-                margin_now = _get(d, "MarginPurchaseTodayBalance", "TodayBalance", "MarginPurchaseMoney")
-                taiex_close = taiex_by_date[date]["close"]
-                if margin_now > 0 and taiex_close > 0:
-                    ratio_dates.append(date[-5:])
-                    ratio_values.append(round(margin_now / (taiex_close * 25 * 1e8) * 100, 3))
-        if ratio_values:
-            margin_taiex = [taiex_dict.get(d, None) for d in ratio_dates]
-            scripts.append(f"new Chart(document.getElementById('margin_ratio'),{{type:'line',data:{{labels:{json.dumps(ratio_dates)},datasets:[{{label:'融資市值比(%)',data:{json.dumps(ratio_values)},borderColor:'#D4537E',backgroundColor:'rgba(212,83,126,0.1)',borderWidth:2,fill:true,tension:0.3,pointRadius:2,yAxisID:'y'}},{{label:'加權指數(右)',data:{json.dumps(margin_taiex)},borderColor:'#9E9E9E',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1',spanGaps:true}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{y:{{ticks:{{callback:function(v){{return v.toFixed(2)+'%'}},font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},y1:{{type:'linear',position:'right',grid:{{display:false}},ticks:{{font:{{size:10}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:8}},grid:{{display:false}}}}}}}}}});")
-
-    inst = market_data["institution"]
-    if inst:
-        inst_dates = [d.get("date", "")[-5:] for d in inst]
-        foreign = [_get(d, "Foreign_Investor_diff") / 1e8 for d in inst]
-        trust   = [_get(d, "Investment_Trust_diff") / 1e8 for d in inst]
-        dealer  = [_get(d, "Dealer_diff") / 1e8 for d in inst]
-        fut = market_data["futures"]
-        fut_foreign_by_date = {}
-        for f in fut:
-            if "外資" in f.get("institutional_investors", ""):
-                fut_foreign_by_date[f.get("date", "")] = float(f.get("long_open_interest_balance_volume", 0)) - float(f.get("short_open_interest_balance_volume", 0))
-        fut_foreign = [fut_foreign_by_date.get(d.get("date",""), 0) for d in inst]
-        
-        inst_taiex = [taiex_dict.get(d, None) for d in inst_dates]
-        scripts.append(f"new Chart(document.getElementById('inst'),{{type:'bar',data:{{labels:{json.dumps(inst_dates)},datasets:[{{label:'外資現貨(億)',data:{json.dumps(foreign)},backgroundColor:'rgba(55,138,221,0.7)',yAxisID:'y'}},{{label:'投信現貨(億)',data:{json.dumps(trust)},backgroundColor:'rgba(29,158,117,0.7)',yAxisID:'y'}},{{label:'自營現貨(億)',data:{json.dumps(dealer)},backgroundColor:'rgba(255,152,0,0.7)',yAxisID:'y'}},{{label:'外資期貨淨部位(口)',data:{json.dumps(fut_foreign)},type:'line',borderColor:'#EF5350',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y1'}},{{label:'加權指數(右)',data:{json.dumps(inst_taiex)},type:'line',borderColor:'#9E9E9E',borderWidth:2,pointRadius:0,tension:0.3,fill:false,yAxisID:'y2',spanGaps:true}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:true,position:'top',labels:{{font:{{size:11}},boxWidth:12}}}}}},scales:{{y:{{type:'linear',position:'left',ticks:{{font:{{size:11}}}},grid:{{color:'rgba(0,0,0,0.05)'}}}},y1:{{type:'linear',position:'right',ticks:{{font:{{size:11}},callback:function(v){{return (v/1000).toFixed(0)+'k';}}}},grid:{{display:false}}}},y2:{{type:'linear',position:'right',grid:{{display:false}},ticks:{{font:{{size:10}}}}}},x:{{ticks:{{font:{{size:10}},maxRotation:0,autoSkip:true,maxTicksLimit:10}},grid:{{display:false}}}}}}}}}});")
 
     return "\n".join(scripts)
 
@@ -1163,7 +1183,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     update_time = now_tw().strftime("%Y-%m-%d %H:%M")
     market_section = generate_market_section(market_data)
     rating_table = generate_rating_table(stocks_data)
-    timeseries_section = generate_timeseries_section(market_data)
     
     sidebar_items = ""
     stock_cards = ""
@@ -1191,7 +1210,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行</button>
   </div>
   {market_section}
-  {timeseries_section}
   {rating_table}
   <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
   <div class="app-layout">
