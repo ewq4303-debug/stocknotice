@@ -1494,7 +1494,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 {chart_scripts}
 
 /* ======================================================== */
-/* 【修正版：雙大括號跳脫，與加入 no-cors 模式】              */
+/* 【智慧偵錯版：拔除 no-cors 並加入詳細錯誤訊息解析】          */
 /* ======================================================== */
 function manageStock(action, btn) {{
     const stockId = document.getElementById('stockInput').value.trim();
@@ -1504,20 +1504,29 @@ function manageStock(action, btn) {{
     btn.innerText = "⏳ 處理中...";
     btn.disabled = true;
 
-    // ⚠️ ⚠️ ⚠️ 請確保這裡有換成您自己真實的 Google Apps Script 網址！
+    // 您已經設定好的 GAS 網址
     const gasUrl = 'https://script.google.com/macros/s/AKfycbxkoROkZ-7UwQkzVxYXX3aq7HWVrv4UwghWyqPP8rItjbNRPebe4n9XaYqZLyDhpL0V/exec'; 
     
     fetch(gasUrl, {{
         method: 'POST',
-        mode: 'no-cors',
         body: JSON.stringify({{ action: action, stock: stockId }}),
         headers: {{ "Content-Type": "text/plain;charset=utf-8" }} 
     }})
-    .then(() => {{
-        alert("✅ " + (action==='add'?"新增":"刪除") + "指令已發送！系統正在更新清單並重抓資料，請等待約 2~3 分鐘後重新整理網頁即可。");
-        document.getElementById('stockInput').value = '';
+    .then(response => response.text())
+    .then(text => {{
+        // 解析 GAS 傳回來的真實錯誤
+        if (text.includes("Error")) {{
+            alert("❌ GAS 伺服器內部錯誤：\\n" + text + "\\n\\n👉 請檢查您 GAS 程式碼中的「GitHub Token」、「帳號名稱」是否輸入正確！");
+        }} else if (text.includes("Success") || text.includes("No changes")) {{
+            alert("✅ 指令發送成功！\\n系統正在更新股票清單並重新抓取資料，請等待約 2 分鐘後重新整理網頁。");
+            document.getElementById('stockInput').value = '';
+        }} else {{
+            alert("⚠️ 收到未知網頁回應：\\n\\n這代表您的 GAS 沒有設定為「所有人」。\\n👉 請回到 GAS，重新點擊「新增部署作業」，並務必將最下方的「誰可以存取」設為「所有人 (Anyone)」！");
+        }}
     }})
-    .catch(err => alert("❌ 發生錯誤，請檢查網路連線或網址設定。"))
+    .catch(err => {{
+        alert("❌ 網路請求完全失敗！\\n錯誤訊息：" + err.message + "\\n\\n【請檢查】\\n您可能在 GAS 中只按了存檔，卻「忘記發布新版本」。\\n👉 請回到 GAS -> 點擊右上角「部署」-> 選擇「新增部署作業」，部署一個全新的版本！");
+    }})
     .finally(() => {{
         btn.innerText = originalText;
         btn.disabled = false;
@@ -1555,7 +1564,6 @@ function triggerAction() {{
     const btn = document.getElementById('runBtn');
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
     
-    // ⚠️ 這裡也可以一併替換為您的 GAS 網址，做為手動立刻更新按鈕
     fetch('https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec', {{ method: 'POST', mode: 'no-cors' }})
     .then(() => alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁。"))
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
