@@ -1494,35 +1494,36 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 {chart_scripts}
 
 /* ======================================================== */
-/* 【修改 2：向 Google Apps Script 發送新增/刪除的指令】      */
+/* 【修正版：加入 no-cors 模式，避免被 Google CORS 擋下】      */
 /* ======================================================== */
-function manageStock(action, btn) {{
+function manageStock(action, btn) {
     const stockId = document.getElementById('stockInput').value.trim();
-    if (!stockId) {{ alert("請先輸入股票代號！"); return; }}
+    if (!stockId) { alert("請先輸入股票代號！"); return; }
     
     const originalText = btn.innerText;
     btn.innerText = "⏳ 處理中...";
     btn.disabled = true;
 
-    // ⚠️ ⚠️ ⚠️ 請將下方的網址替換為您部署的 Google Apps Script 網址
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbx6M_q5cK9SjaloiBQ1-L_6qeqaALfRCxDMzrCI_ZpLEcfnRT3qp9xmPtiRO1e7SU5S/exec'; 
+    // ⚠️ ⚠️ ⚠️ 請確保這裡有換成您自己真實的 Google Apps Script 網址！
+    const gasUrl = 'https://script.google.com/macros/s/您的專屬GAS代碼/exec'; 
     
-    fetch(gasUrl, {{
+    fetch(gasUrl, {
         method: 'POST',
-        body: JSON.stringify({{ action: action, stock: stockId }}),
-        headers: {{ "Content-Type": "text/plain;charset=utf-8" }} 
-    }})
-    .then(response => response.text())
-    .then(text => {{
+        mode: 'no-cors', // 【重要修正】加入此行，強制忽略跨網域阻擋
+        body: JSON.stringify({ action: action, stock: stockId }),
+        headers: { "Content-Type": "text/plain;charset=utf-8" } 
+    })
+    .then(() => {
+        // 在 no-cors 模式下瀏覽器無法讀取回傳文字，只要不報錯就視為成功發送
         alert("✅ " + (action==='add'?"新增":"刪除") + "指令已發送！系統正在更新清單並重抓資料，請等待約 2~3 分鐘後重新整理網頁即可。");
         document.getElementById('stockInput').value = '';
-    }})
-    .catch(err => alert("❌ 發生錯誤，請檢查網路連線。"))
-    .finally(() => {{
+    })
+    .catch(err => alert("❌ 發生錯誤，請檢查網路連線或網址設定。"))
+    .finally(() => {
         btn.innerText = originalText;
         btn.disabled = false;
-    }});
-}}
+    });
+}
 
 function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 50); }}
 
