@@ -420,7 +420,6 @@ def get_tdcc_holding(stock_id: str, close_price: float):
     while cursor.weekday() != 4: cursor -= timedelta(days=1)
         
     results = []
-results = []
     # 改為抓 10 週，且拿掉原本的 break，以保留所有歷史資料
     for _ in range(10):
         data = fetch_csv(cursor.strftime("%Y%m%d"))
@@ -450,7 +449,7 @@ results = []
         "avg_lots_change": latest["avg_lots"] - prev["avg_lots"],
         "retail_threshold_shares": retail_shares,
         "large_threshold_shares": large_shares,
-        "history": results  # <== 將歷史陣列傳出
+        "history": results
     }
 
 def _get(d, *keys, default=0.0):
