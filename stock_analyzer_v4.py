@@ -1453,7 +1453,15 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <div class="container">
   <div class="header" id="top">
     <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
-    <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行</button>
+    
+    <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+      <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+        <input type="text" id="stockInput" placeholder="輸入股號 (如 2330)" style="padding:6px 12px; border-radius:6px; border:1px solid #ccc; width:130px; font-size:14px;">
+        <button class="btn-run" style="background:#4CAF50; border-color:#388E3C; padding:6px 12px;" onclick="manageStock('add', this)">➕ 新增</button>
+        <button class="btn-run" style="background:#F44336; border-color:#D32F2F; padding:6px 12px;" onclick="manageStock('remove', this)">🗑️ 刪除</button>
+      </div>
+      <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行 (抓取最新資料)</button>
+    </div>
   </div>
   
   <div class="tabs-container">
@@ -1479,27 +1487,50 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   
 </div>
 <button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 {chart_scripts}
 
-/* 重新計算圖表大小 (非常重要：解決 ECharts 隱藏時寬高為 0 的 bug) */
+/* ======================================================== */
+/* 【修改 2：向 Google Apps Script 發送新增/刪除的指令】      */
+/* ======================================================== */
+function manageStock(action, btn) {{
+    const stockId = document.getElementById('stockInput').value.trim();
+    if (!stockId) {{ alert("請先輸入股票代號！"); return; }}
+    
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ 處理中...";
+    btn.disabled = true;
+
+    // ⚠️ ⚠️ ⚠️ 請將下方的網址替換為您部署的 Google Apps Script 網址
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbx6M_q5cK9SjaloiBQ1-L_6qeqaALfRCxDMzrCI_ZpLEcfnRT3qp9xmPtiRO1e7SU5S/exec'; 
+    
+    fetch(gasUrl, {{
+        method: 'POST',
+        body: JSON.stringify({{ action: action, stock: stockId }}),
+        headers: {{ "Content-Type": "text/plain;charset=utf-8" }} 
+    }})
+    .then(response => response.text())
+    .then(text => {{
+        alert("✅ " + (action==='add'?"新增":"刪除") + "指令已發送！系統正在更新清單並重抓資料，請等待約 2~3 分鐘後重新整理網頁即可。");
+        document.getElementById('stockInput').value = '';
+    }})
+    .catch(err => alert("❌ 發生錯誤，請檢查網路連線。"))
+    .finally(() => {{
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }});
+}}
+
 function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 50); }}
 
-/* 分頁切換邏輯 */
 function switchTab(tabId, btnElement) {{
-    // 1. 移除所有按鈕的 active 狀態
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    // 2. 將點擊的按鈕設為 active
     btnElement.classList.add('active');
-    
-    // 3. 隱藏所有分頁內容
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    // 4. 顯示目標分頁內容
     document.getElementById(tabId).classList.add('active');
-    
-    // 5. 切換分頁後，強制重新計算圖表尺寸
     resizeAllCharts();
 }}
 
@@ -1523,10 +1554,12 @@ function toggleMobile(stockId) {{
 function triggerAction() {{
     const btn = document.getElementById('runBtn');
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
-    fetch('https://script.google.com/macros/s/你的專屬代碼/exec', {{ method: 'POST', mode: 'no-cors' }})
+    
+    // ⚠️ 這裡也可以一併替換為您的 GAS 網址，做為手動立刻更新按鈕
+    fetch('https://script.google.com/macros/s/你的專屬GAS代碼/exec', {{ method: 'POST', mode: 'no-cors' }})
     .then(() => alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁。"))
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
-    .finally(() => {{ btn.innerText = "▶ 立刻重新執行"; btn.disabled = false; btn.style.opacity = "1"; }});
+    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
 }}
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
