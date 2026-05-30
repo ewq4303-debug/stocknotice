@@ -1253,7 +1253,18 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>股票監控儀表板</title>
-<style>{get_css()}</style>
+<style>
+{get_css()}
+/* 分頁系統專用 CSS */
+.tabs-container {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }}
+.tabs-container::-webkit-scrollbar {{ display: none; }}
+.tab-btn {{ padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }}
+.tab-btn:hover {{ background: #e0e0e0; }}
+.tab-btn.active {{ background: #1565c0; color: #fff; box-shadow: 0 2px 8px rgba(21,101,192,0.3); }}
+.tab-content {{ display: none; animation: fadeIn 0.3s ease-in-out; }}
+.tab-content.active {{ display: block; }}
+@keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(5px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+</style>
 </head>
 <body>
 <div class="container">
@@ -1261,20 +1272,54 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
     <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行</button>
   </div>
-  {market_section}
-  {rating_table}
-  <div class="section-header" style="margin-top: 30px;">追蹤個股分析</div>
-  <div class="app-layout">
-    <div class="sidebar desktop-only"><div class="sidebar-title">個股清單</div>{sidebar_items}</div>
-    <div class="main-content">{stock_cards}</div>
+  
+  <div class="tabs-container">
+      <button class="tab-btn active" onclick="switchTab('tab-market', this)">📈 大盤總覽</button>
+      <button class="tab-btn" onclick="switchTab('tab-rating', this)">⭐ 綜合評等與建議</button>
+      <button class="tab-btn" onclick="switchTab('tab-stocks', this)">📊 追蹤個股分析</button>
   </div>
+
+  <div id="tab-market" class="tab-content active">
+      {market_section}
+  </div>
+
+  <div id="tab-rating" class="tab-content">
+      {rating_table}
+  </div>
+
+  <div id="tab-stocks" class="tab-content">
+      <div class="app-layout">
+        <div class="sidebar desktop-only"><div class="sidebar-title">個股清單</div>{sidebar_items}</div>
+        <div class="main-content">{stock_cards}</div>
+      </div>
+  </div>
+  
 </div>
 <button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 {chart_scripts}
-function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 100); }}
+
+/* 重新計算圖表大小 (非常重要：解決 ECharts 隱藏時寬高為 0 的 bug) */
+function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 50); }}
+
+/* 分頁切換邏輯 */
+function switchTab(tabId, btnElement) {{
+    // 1. 移除所有按鈕的 active 狀態
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // 2. 將點擊的按鈕設為 active
+    btnElement.classList.add('active');
+    
+    // 3. 隱藏所有分頁內容
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    // 4. 顯示目標分頁內容
+    document.getElementById(tabId).classList.add('active');
+    
+    // 5. 切換分頁後，強制重新計算圖表尺寸
+    resizeAllCharts();
+}}
+
 function showStock(stockId) {{
     if (window.innerWidth <= 900) return;
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
@@ -1284,12 +1329,14 @@ function showStock(stockId) {{
     resizeAllCharts();
     window.scrollTo({{ top: document.querySelector('.app-layout').offsetTop - 20, behavior: 'smooth' }});
 }}
+
 function toggleMobile(stockId) {{
     const card = document.getElementById('card_' + stockId);
     const icon = document.getElementById('icon_' + stockId);
     if (card.classList.contains('mobile-expanded')) {{ card.classList.remove('mobile-expanded'); icon.innerText = '▶'; }}
     else {{ card.classList.add('mobile-expanded'); icon.innerText = '▼'; resizeAllCharts(); setTimeout(() => {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 150); }}
 }}
+
 function triggerAction() {{
     const btn = document.getElementById('runBtn');
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
@@ -1298,6 +1345,7 @@ function triggerAction() {{
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
     .finally(() => {{ btn.innerText = "▶ 立刻重新執行"; btn.disabled = false; btn.style.opacity = "1"; }});
 }}
+
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
 </script>
 </body>
