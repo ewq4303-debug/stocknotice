@@ -798,6 +798,16 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     # --- TDCC 多週變化表格 ---
     tdcc_hist = tdcc.get("history", [])
     tdcc_table_rows = ""
+    
+    # 【修正】獨立判斷邏輯，徹底解決字串 format 被 f-string 跳脫搞壞的問題
+    def get_diff_html(diff, kind):
+        if diff == 0: return ""
+        cls = "up" if diff > 0 else "down"
+        if kind == 'pct': return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({diff:+.2f}%)</span>'
+        elif kind == 'int': return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({diff:+,})</span>'
+        elif kind == 'float': return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({diff:+.1f})</span>'
+        return ""
+
     for i in range(len(tdcc_hist)):
         curr = tdcc_hist[i]
         prev_r = tdcc_hist[i+1] if i+1 < len(tdcc_hist) else curr
@@ -806,7 +816,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         h_diff = curr['total_holders'] - prev_r['total_holders']
         a_diff = curr.get('avg_lots',0) - prev_r.get('avg_lots',0)
         
-        # 【新增邏輯】找出當周四與週五的法人買賣加總 (即 TDCC 日期與前一天的加總)
+        # 找出當周四與週五的法人買賣加總 (TDCC 日期與前一天)
         date_str = curr.get('date', '')
         thu_fri_net = 0
         if date_str:
@@ -817,23 +827,24 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
                 thu_fri_net = inst_dict.get(fri_str, 0) + inst_dict.get(thu_str, 0)
             except Exception:
                 pass
-        
-        def get_diff_html(diff, fmt):
-            if diff == 0: return ""
-            cls = "up" if diff > 0 else "down"
-            return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({fmt.format(diff)})</span>'
 
+        # 將四五法人插在大戶與散戶之間
         tdcc_table_rows += f'''<tr>
             <td style="text-align:center;">{curr['date']}</td>
-            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, '{{:+.2f}}%')}</td>
-            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, '{{:+.2f}}%')}</td>
-            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, '{{:+,}}')}</td>
-            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, '{{:+.1f}}')}</td>
+            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, 'pct')}</td>
             <td style="text-align:center;" class="{'up' if thu_fri_net >= 0 else 'down'}">{thu_fri_net:+,.0f}</td>
+            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, 'pct')}</td>
+            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, 'int')}</td>
+            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, 'float')}</td>
         </tr>'''
         
     if not tdcc_table_rows:
         tdcc_table_rows = "<tr><td colspan='6' style='text-align:center;'>無集保資料</td></tr>"
+
+    # 【新增】抓取大戶與散戶的門檻張數
+    r_shares = tdcc.get("retail_threshold_shares", 0) / 1000
+    l_shares = tdcc.get("large_threshold_shares", 0) / 1000
+    threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
@@ -852,16 +863,16 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         </div>
 
         <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
-           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">大戶 >5千萬 / 散戶 <5百萬</span></h3>
+           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">{threshold_info}</span></h3>
            <div style="overflow-x: auto;">
              <table class="data-table" style="min-width: 600px; margin-bottom: 0;">
                <tr>
                  <th style="text-align: center;">日期</th>
                  <th style="text-align: center;">大戶比例</th>
+                 <th style="text-align: center;">四五法人(張)</th>
                  <th style="text-align: center;">散戶比例</th>
                  <th style="text-align: center;">總股東人數</th>
                  <th style="text-align: center;">平均每戶(張)</th>
-                 <th style="text-align: center;">四五法人(張)</th>
                </tr>
                {tdcc_table_rows}
              </table>
