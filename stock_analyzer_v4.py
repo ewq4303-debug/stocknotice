@@ -1505,7 +1505,7 @@ function manageStock(action, btn) {{
     btn.disabled = true;
 
     // ⚠️ ⚠️ ⚠️ 請確保這裡有換成您自己真實的 Google Apps Script 網址！
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec'; 
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbxkoROkZ-7UwQkzVxYXX3aq7HWVrv4UwghWyqPP8rItjbNRPebe4n9XaYqZLyDhpL0V/exec'; 
     
     fetch(gasUrl, {{
         method: 'POST',
