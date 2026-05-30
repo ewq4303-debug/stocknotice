@@ -1505,7 +1505,7 @@ function manageStock(action, btn) {{
     btn.disabled = true;
 
     // 您已經設定好的 GAS 網址
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbxkoROkZ-7UwQkzVxYXX3aq7HWVrv4UwghWyqPP8rItjbNRPebe4n9XaYqZLyDhpL0V/exec'; 
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec'; 
     
     fetch(gasUrl, {{
         method: 'POST',
