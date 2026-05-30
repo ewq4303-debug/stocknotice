@@ -250,8 +250,8 @@ def fetch_finmind(dataset: str, **params):
     except Exception:
         return []
 
-def get_institution_data(stock_id: str, days: int = 80):
-    start = (datetime.now() - timedelta(days=days+30)).strftime("%Y-%m-%d")
+def get_institution_data(stock_id: str, days: int = 120):
+    start = (datetime.now() - timedelta(days=days+60)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     
     raw = []
@@ -300,8 +300,8 @@ def get_institution_data(stock_id: str, days: int = 80):
         "history": history,
     }
 
-def get_margin_data(stock_id: str, days: int = 80):
-    start = (datetime.now() - timedelta(days=days+30)).strftime("%Y-%m-%d")
+def get_margin_data(stock_id: str, days: int = 120):
+    start = (datetime.now() - timedelta(days=days+60)).strftime("%Y-%m-%d")
     end = datetime.now().strftime("%Y-%m-%d")
     data = fetch_finmind("TaiwanStockMarginPurchaseShortSale", data_id=stock_id, start_date=start, end_date=end)
     
@@ -340,7 +340,7 @@ def get_margin_data(stock_id: str, days: int = 80):
 
 def get_borrowing_data(stock_id: str):
     end = now_tw().date()
-    start = end - timedelta(days=120)
+    start = end - timedelta(days=180)
     url = "https://api.finmindtrade.com/api/v4/data"
     params = {"dataset": "TaiwanDailyShortSaleBalances", "data_id": stock_id, "start_date": start.isoformat(), "end_date": end.isoformat()}
     headers = {"Authorization": f"Bearer {FINMIND_TOKEN}"} if FINMIND_TOKEN else {}
@@ -368,7 +368,7 @@ def get_borrowing_data(stock_id: str):
         if len(df) < n_days + 1: return 0
         return today_lots - int(df.iloc[-(n_days + 1)]["lots"])
 
-    return {"borrow_balance": today_lots, "borrow_change": diff_n_days_ago(1), "borrow_5d": diff_n_days_ago(5), "borrow_20d": diff_n_days_ago(20), "history": history[-80:]}
+    return {"borrow_balance": today_lots, "borrow_change": diff_n_days_ago(1), "borrow_5d": diff_n_days_ago(5), "borrow_20d": diff_n_days_ago(20), "history": history[-120:]}
 
 def get_tdcc_holding(stock_id: str, close_price: float):
     if close_price <= 0: close_price = 100
