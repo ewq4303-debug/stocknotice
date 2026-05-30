@@ -928,7 +928,7 @@ var dateFmt_{stock_id} = function(value, index) {{
 
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
 
-// 建立游標追蹤，用於智能 Tooltip
+// 建立游標追蹤，用於智能 Tooltip 判斷目前指著哪一張副圖
 var currentMouseY_{stock_id} = 0;
 chartK_{stock_id}.getZr().on('mousemove', function(e) {{
     currentMouseY_{stock_id} = e.offsetY;
@@ -941,8 +941,6 @@ chartK_{stock_id}.setOption({{
     {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '54%', textStyle: {{fontSize: 11, color: '#555'}} }},
     {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '75%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
-  
-  // 【修改重點】智能浮動提示框 Formatter，精簡資訊並四捨五入
   tooltip: {{ 
     trigger: 'axis', 
     axisPointer: {{ type: 'cross' }},
@@ -952,33 +950,42 @@ chartK_{stock_id}.setOption({{
       var date = params[0].axisValue;
       var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
       
-      var gridToShow = -1; 
-      if (yPct >= 52 && yPct < 75) gridToShow = 2;
-      else if (yPct >= 75) gridToShow = 3;
+      // 動態判定游標正在哪張圖表上
+      var hoveredGrid = 0; 
+      if (yPct >= 34 && yPct < 55) hoveredGrid = 1;
+      else if (yPct >= 55 && yPct < 77) hoveredGrid = 2;
+      else if (yPct >= 77) hoveredGrid = 3;
       
       params.forEach(function(p) {{
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
         var axIdx = p.axisIndex || 0;
-        // 永遠顯示 K線(0)、成交量(1)，並根據游標位置動態顯示法人(2)或融資(3)
-        if (axIdx === 0 || axIdx === 1 || axIdx === gridToShow) {{
+        
+        // 規則：K線、成交量永遠顯示。其他指標（包含MA20、ST、法人等）只有在游標指到它們時才顯示
+        if (isPrice) {{
           var val = p.data;
-          if (p.seriesName === 'K線') {{
-            html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
-                    '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
-                    '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
-                    '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
-          }} else {{
-            var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-            if (v == null || isNaN(v) || v === '') v = '-';
-            else v = Math.round(v).toLocaleString();
-            html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        }} else if (isVol) {{
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {{
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
           }}
+        }} else if (axIdx === hoveredGrid) {{
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') v = '-';
+          else v = Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
         }}
       }});
       html += '</div>';
       return html;
     }}
   }},
-  
   legend: [
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
     {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '54%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
@@ -997,7 +1004,6 @@ chartK_{stock_id}.setOption({{
     {{ type: 'category', gridIndex: 2, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
     {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
-  // 【修改重點】所有的 Y 軸標籤也一併四捨五入到個位數並加上千分位
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
     {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(value) {{ return value >= 10000 ? (value / 1000) + 'k' : Math.round(value).toLocaleString(); }} }}, splitLine: {{show: false}} }},
@@ -1013,8 +1019,11 @@ chartK_{stock_id}.setOption({{
   series: [
     {{ name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
     {{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
+    
+    // 【整合圖例重點】兩條線都命名為 'ST指標'，ECharts 圖例就會自動將其合併為一個
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
+    
     {{ name: '成交量(張)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
     
     {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
@@ -1107,7 +1116,7 @@ var taiexDateFmt = function(value, index) {{
 
 var chartTaiex = echarts.init(document.getElementById('taiex_kline'));
 
-// 建立大盤的游標追蹤
+// 大盤游標追蹤
 var currentMouseY_taiex = 0;
 chartTaiex.getZr().on('mousemove', function(e) {{
     currentMouseY_taiex = e.offsetY;
@@ -1130,15 +1139,17 @@ function renderTaiex() {{
   var totalAvailable = 92 - startTop; 
 
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
-  titles.push({{ text: '加權指數 (含 MA20, Supertrend)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
+  titles.push({{ text: '加權指數 (含 MA20, ST指標)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
   
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
   
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }});
   series.push({{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1.5, color: '#fbc02d'}} }});
-  series.push({{ name: 'ST指標(紅)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
-  series.push({{ name: 'ST指標(綠)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
+  
+  // 【整合圖例重點】兩條線都命名為 'ST指標'
+  series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
+  series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
   
   if(activeIdxs.length > 0) {{
     var eachBlock = totalAvailable / activeIdxs.length;
@@ -1176,7 +1187,6 @@ function renderTaiex() {{
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
         series.push({{ name: 'USD/TWD', type: 'line', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '#378ADD'}}, areaStyle: {{color: 'rgba(55,138,221,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 4) {{
-        // 唯獨融資市值比保留小數點，不四捨五入到個位數
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
         series.push({{ name: '融資市值比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '#D4537E'}}, areaStyle: {{color: 'rgba(212,83,126,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 5) {{
@@ -1194,8 +1204,6 @@ function renderTaiex() {{
 
   chartTaiex.setOption({{
     title: titles,
-    
-    // 【修改重點】大盤智能浮動提示框，動態判斷游標位置
     tooltip: {{ 
       trigger: 'axis', 
       axisPointer: {{ type: 'cross' }},
@@ -1205,50 +1213,54 @@ function renderTaiex() {{
         var date = params[0].axisValue;
         var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
         
-        var hoveredGrid = -1;
-        var volGridIdx = -1;
-        
+        var hoveredGrid = 0;
         if (activeIdxs.length > 0) {{
             var eachBlock = totalAvailable / activeIdxs.length;
             activeIdxs.forEach(function(val, idx) {{
                 var gridIdx = idx + 1;
-                if (val === 1) volGridIdx = gridIdx;
                 var blockTop = startTop + idx * eachBlock;
-                var blockBottom = blockTop + eachBlock;
-                if (yPct >= (blockTop - 2) && yPct <= (blockBottom + 2)) {{
+                if (yPct >= (blockTop - 2)) {{
                     hoveredGrid = gridIdx;
                 }}
             }});
         }}
         
         params.forEach(function(p) {{
+            var isPrice = (p.seriesName === '加權指數');
+            var isVol = (p.seriesName.indexOf('成交金額') !== -1);
             var axIdx = p.axisIndex || 0;
-            if (axIdx === 0 || axIdx === volGridIdx || axIdx === hoveredGrid) {{
+            
+            if (isPrice) {{
                 var val = p.data;
-                if (p.seriesName === '加權指數') {{
-                    html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
-                            '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
-                            '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
-                            '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
-                }} else {{
-                    var v = (Array.isArray(val) && p.seriesName !== '加權指數') ? (val.length > 1 ? val[1] : val[0]) : val;
-                    if (v == null || isNaN(v) || v === '') v = '-';
-                    else {{
-                        if (p.seriesName.indexOf('融資市值比') !== -1) {{
-                            v = parseFloat(v).toFixed(2) + '%';
-                        }} else {{
-                            v = Math.round(v).toLocaleString();
-                        }}
-                    }}
-                    html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+                html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                        '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                        '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                        '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+            }} else if (isVol) {{
+                var val = p.data;
+                var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+                if (v != null && !isNaN(v) && v !== '') {{
+                    html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
                 }}
+            }} else if (axIdx === hoveredGrid) {{
+                var val = p.data;
+                var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+                if (v == null || isNaN(v) || v === '') v = '-';
+                else {{
+                    if (p.seriesName.indexOf('融資市值比') !== -1) {{
+                        v = parseFloat(v).toFixed(2) + '%';
+                    }} else {{
+                        v = Math.round(v).toLocaleString();
+                    }}
+                }}
+                html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
             }}
         }});
         html += '</div>';
         return html;
       }}
     }},
-    legend: {{ data: ['MA20', 'ST指標(紅)', 'ST指標(綠)'], top: '1%', right: '5%', textStyle: {{fontSize: 10}}, itemWidth: 10, itemHeight: 10 }},
+    legend: {{ data: ['MA20', 'ST指標'], top: '1%', right: '5%', textStyle: {{fontSize: 10}}, itemWidth: 10, itemHeight: 10 }},
     axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
     grid: grids,
     xAxis: xAxes,
