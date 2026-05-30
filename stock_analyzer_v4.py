@@ -799,7 +799,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         
     if not tdcc_table_rows:
         tdcc_table_rows = "<tr><td colspan='5' style='text-align:center;'>無集保資料</td></tr>"
-return f"""
+    return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
         <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
