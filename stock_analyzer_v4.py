@@ -420,20 +420,23 @@ def get_tdcc_holding(stock_id: str, close_price: float):
     while cursor.weekday() != 4: cursor -= timedelta(days=1)
         
     results = []
-    for _ in range(8):
+results = []
+    # 改為抓 10 週，且拿掉原本的 break，以保留所有歷史資料
+    for _ in range(10):
         data = fetch_csv(cursor.strftime("%Y%m%d"))
         if data:
             results.append(data)
-            if len(results) >= 2: break
         cursor -= timedelta(days=7)
         
     if not results:
-        return {"retail_ratio": 0, "retail_change": 0, "large_ratio": 0, "large_change": 0, "big_holder_change": 0, "total_holders": 0, "holders_change": 0, "avg_lots": 0, "avg_lots_change": 0, "retail_threshold_shares": retail_shares, "large_threshold_shares": large_shares}
+        return {"retail_ratio": 0, "retail_change": 0, "large_ratio": 0, "large_change": 0, "big_holder_change": 0, "total_holders": 0, "holders_change": 0, "avg_lots": 0, "avg_lots_change": 0, "retail_threshold_shares": retail_shares, "large_threshold_shares": large_shares, "history": []}
         
+    # 計算所有歷史資料的平均張數
+    for r in results:
+        r["avg_lots"] = (r["total_shares"] / 1000) / r["total_holders"] if r["total_holders"] else 0
+
     latest = results[0]
     prev = results[1] if len(results) >= 2 else latest
-    avg_lots_latest = (latest["total_shares"] / 1000) / latest["total_holders"] if latest["total_holders"] else 0
-    avg_lots_prev = (prev["total_shares"] / 1000) / prev["total_holders"] if prev["total_holders"] else 0
     
     return {
         "retail_ratio": latest["retail_ratio"],
@@ -443,10 +446,11 @@ def get_tdcc_holding(stock_id: str, close_price: float):
         "big_holder_change": latest["large_ratio"] - prev["large_ratio"],
         "total_holders": latest["total_holders"],
         "holders_change": latest["total_holders"] - prev["total_holders"],
-        "avg_lots": avg_lots_latest,
-        "avg_lots_change": avg_lots_latest - avg_lots_prev,
+        "avg_lots": latest["avg_lots"],
+        "avg_lots_change": latest["avg_lots"] - prev["avg_lots"],
         "retail_threshold_shares": retail_shares,
-        "large_threshold_shares": large_shares
+        "large_threshold_shares": large_shares,
+        "history": results  # <== 將歷史陣列傳出
     }
 
 def _get(d, *keys, default=0.0):
@@ -770,7 +774,33 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     for n in news[:5]: news_html += f'<div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div><a href="{n.get("url", n.get("link", "#"))}" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">{n.get("title","")}</a></div>'
     if not news: news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
 
-    return f"""
+    # --- 新增：處理 TDCC 多週變化表格 ---
+    tdcc_hist = tdcc.get("history", [])
+    tdcc_table_rows = ""
+    for i in range(len(tdcc_hist)):
+        curr = tdcc_hist[i]
+        prev_r = tdcc_hist[i+1] if i+1 < len(tdcc_hist) else curr
+        l_diff = curr['large_ratio'] - prev_r['large_ratio']
+        r_diff = curr['retail_ratio'] - prev_r['retail_ratio']
+        h_diff = curr['total_holders'] - prev_r['total_holders']
+        a_diff = curr.get('avg_lots',0) - prev_r.get('avg_lots',0)
+        
+        def get_diff_html(diff, fmt):
+            if diff == 0: return ""
+            cls = "up" if diff > 0 else "down"
+            return f'<span class="{cls}" style="font-size:11px; margin-left:4px;">({fmt.format(diff)})</span>'
+
+        tdcc_table_rows += f"""<tr>
+            <td style="text-align:center;">{curr['date']}</td>
+            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, '{:+.2f}%')}</td>
+            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, '{:+.2f}%')}</td>
+            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, '{:+,}')}</td>
+            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, '{:+.1f}')}</td>
+        </tr>"""
+        
+    if not tdcc_table_rows:
+        tdcc_table_rows = "<tr><td colspan='5' style='text-align:center;'>無集保資料</td></tr>"
+return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
         <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
@@ -779,11 +809,16 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
       <div class="stock-body">
         <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
         
-        <div id="kline_{stock_id}" style="width: 100%; height: 350px; margin-bottom: 10px;"></div>
+        <div id="kline_{stock_id}" style="width: 100%; height: 350px; margin-bottom: 15px;"></div>
         
-        <div class="grid-2-col" style="margin-bottom: 15px; gap: 10px;">
-            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;"><div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">👥 三大法人買賣超(億)與累計</div><div id="inst_chart_{stock_id}" style="width: 100%; height: 200px;"></div></div>
-            <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff;"><div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">💰 融資/券/借券 增減(張)與餘額</div><div id="margin_chart_{stock_id}" style="width: 100%; height: 200px;"></div></div>
+        <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff; margin-bottom: 15px;">
+            <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">👥 三大法人買賣超(億)與累計</div>
+            <div id="inst_chart_{stock_id}" style="width: 100%; height: 250px;"></div>
+        </div>
+        
+        <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff; margin-bottom: 15px;">
+            <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">💰 融資/券/借券 增減(張)與餘額</div>
+            <div id="margin_chart_{stock_id}" style="width: 100%; height: 250px;"></div>
         </div>
         
         <div class="grid-2-col">
@@ -792,12 +827,18 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         </div>
 
         <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
-           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">以市場資金規模分級</span></h3>
-           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
-               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">大戶 (>5千萬, ≥{int(tdcc.get('large_threshold_shares',0)//1000)}張)</div><strong style="font-size: 15px;">{tdcc.get('large_ratio',0):.2f}%</strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('large_change',0)>=0 else 'down'}">{tdcc.get('large_change',0):+.2f}%</span>)</span></div>
-               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">散戶 (<5百萬, ≤{int(tdcc.get('retail_threshold_shares',0)//1000)}張)</div><strong style="font-size: 15px;">{tdcc.get('retail_ratio',0):.2f}%</strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('retail_change',0)>=0 else 'down'}">{tdcc.get('retail_change',0):+.2f}%</span>)</span></div>
-               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">總股東人數</div><strong style="font-size: 15px;">{tdcc.get('total_holders',0):,} <span style="font-size:12px; font-weight:normal;">人</span></strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('holders_change',0)>=0 else 'down'}">{tdcc.get('holders_change',0):+,}</span>)</span></div>
-               <div style="background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;"><div style="color:#666; font-size: 11px; margin-bottom: 2px;">平均每戶持股</div><strong style="font-size: 15px;">{tdcc.get('avg_lots',0):,.1f} <span style="font-size:12px; font-weight:normal;">張</span></strong> <span style="font-size: 12px; margin-left: 4px;">(較上週 <span class="{'up' if tdcc.get('avg_lots_change',0)>=0 else 'down'}">{tdcc.get('avg_lots_change',0):+.1f}</span>)</span></div>
+           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">大戶 >5千萬 / 散戶 <5百萬</span></h3>
+           <div style="overflow-x: auto;">
+             <table class="data-table" style="min-width: 500px; margin-bottom: 0;">
+               <tr>
+                 <th style="text-align: center;">日期</th>
+                 <th style="text-align: center;">大戶比例</th>
+                 <th style="text-align: center;">散戶比例</th>
+                 <th style="text-align: center;">總股東人數</th>
+                 <th style="text-align: center;">平均每戶(張)</th>
+               </tr>
+               {tdcc_table_rows}
+             </table>
            </div>
         </div>
 
@@ -900,18 +941,25 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
   var chartMargin = echarts.init(document.getElementById('margin_chart_{stock_id}'));
   chartMargin.setOption({{
     tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-    legend: {{ data: ['融資', '融券', '借券', '餘額(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
-    grid: {{ left: '15%', right: '15%', top: '25%', bottom: '15%' }},
+    legend: {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], textStyle: {{fontSize: 10}}, top: 0, itemWidth:10, itemHeight:10 }},
+    
+    /* 這裡稍微加大了 left 和 right，避免數字太大時被切到邊緣 */
+    grid: {{ left: '12%', right: '12%', top: '25%', bottom: '15%' }},
+    
     xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
     yAxis: [
-      {{ type: 'value', name: '增減', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-      {{ type: 'value', name: '餘額', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
+      {{ type: 'value', name: '增減(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,0,0,10]}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+      {{ type: 'value', name: '餘額(張)', nameTextStyle:{{fontSize:9, color:'#666', padding:[0,10,0,0]}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
     ],
     series: [
-      {{ name: '融資', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
-      {{ name: '融券', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
-      {{ name: '借券', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
-      {{ name: '餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }}
+      {{ name: '融資增減', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
+      {{ name: '融券增減', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
+      {{ name: '借券增減', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
+      
+      /* 新增：畫出各自三條的餘額線，皆對應右側 Y 軸 (yAxisIndex: 1) */
+      {{ name: '融資餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }},
+      {{ name: '融券餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['short_bal'])}, itemStyle: {{color: '#66BB6A'}}, smooth: true, showSymbol: false }},
+      {{ name: '借券餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['borrow_bal'])}, itemStyle: {{color: '#AB47BC'}}, smooth: true, showSymbol: false }}
     ]
   }});
   window.addEventListener('resize', function() {{ chartInst.resize(); chartMargin.resize(); }});
