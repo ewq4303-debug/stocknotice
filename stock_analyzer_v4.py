@@ -909,22 +909,22 @@ var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}')
 chartK_{stock_id}.setOption({{
   title: [
     {{ text: '日K線圖', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
-    {{ text: '成交量', left: '6%', top: '43%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '59%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '78%', textStyle: {{fontSize: 11, color: '#555'}} }}
+    {{ text: '成交量(張)', left: '6%', top: '35%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '54%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
   legend: [
-    {{ data: ['MA20', 'ST指標'], top: '2%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '59%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '78%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '54%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '6%', right: '8%', top: '5%', height: '38%' }},
-    {{ left: '6%', right: '8%', top: '46%', height: '12%' }},
-    {{ left: '6%', right: '8%', top: '63%', height: '14%' }},
-    {{ left: '6%', right: '8%', top: '82%', height: '14%' }}
+    {{ left: '6%', right: '8%', top: '5%', height: '28%' }},   // K線高度減少1/4
+    {{ left: '6%', right: '8%', top: '39%', height: '12%' }},  // 成交量
+    {{ left: '6%', right: '8%', top: '58%', height: '15%' }},  // 法人
+    {{ left: '6%', right: '8%', top: '80%', height: '15%' }}   // 融資
   ],
   xAxis: [
     {{ type: 'category', gridIndex: 0, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
@@ -934,7 +934,10 @@ chartK_{stock_id}.setOption({{
   ],
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
-    {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }},
+    
+    // 【修改】成交量 Y 軸加上 formatter，超過一萬自動加上 k
+    {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(value) {{ return value >= 10000 ? (value / 1000) + 'k' : value; }} }}, splitLine: {{show: false}} }},
+    
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
@@ -950,7 +953,8 @@ chartK_{stock_id}.setOption({{
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
     
-    {{ name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
+    // 【修改】名稱加上(張)，讓 Tooltip 提示更清楚
+    {{ name: '成交量(張)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
     
     {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
     {{ name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_trust', []))}, itemStyle: {{color: '#1D9E75'}} }},
