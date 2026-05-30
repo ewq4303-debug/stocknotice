@@ -787,7 +787,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     for n in news[:5]: news_html += f'<div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div><a href="{n.get("url", n.get("link", "#"))}" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">{n.get("title","")}</a></div>'
     if not news: news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
 
-    # --- 新增：處理 TDCC 多週變化表格 ---
+    # --- TDCC 多週變化表格 ---
     tdcc_hist = tdcc.get("history", [])
     tdcc_table_rows = ""
     for i in range(len(tdcc_hist)):
@@ -813,6 +813,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         
     if not tdcc_table_rows:
         tdcc_table_rows = "<tr><td colspan='5' style='text-align:center;'>無集保資料</td></tr>"
+
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
@@ -822,17 +823,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
       <div class="stock-body">
         <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
         
-        <div id="kline_{stock_id}" style="width: 100%; height: 350px; margin-bottom: 15px;"></div>
-        
-        <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff; margin-bottom: 15px;">
-            <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">👥 三大法人買賣超(億)與累計</div>
-            <div id="inst_chart_{stock_id}" style="width: 100%; height: 250px;"></div>
-        </div>
-        
-        <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; background: #fff; margin-bottom: 15px;">
-            <div style="font-size:12px; font-weight:bold; color:#555; text-align:center; margin-bottom: 5px;">💰 融資/券/借券 增減(張)與餘額</div>
-            <div id="margin_chart_{stock_id}" style="width: 100%; height: 250px;"></div>
-        </div>
+        <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
         <div class="grid-2-col">
           <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="{'up' if inst.get('foreign_today',0)>=0 else 'down'}">{inst.get('foreign_today',0):+,.0f}</td><td class="{'up' if inst.get('foreign_5d',0)>=0 else 'down'}">{inst.get('foreign_5d',0):+,.0f}</td><td class="{'up' if inst.get('foreign_20d',0)>=0 else 'down'}">{inst.get('foreign_20d',0):+,.0f}</td></tr><tr><td>投信</td><td class="{'up' if inst.get('trust_today',0)>=0 else 'down'}">{inst.get('trust_today',0):+,.0f}</td><td class="{'up' if inst.get('trust_5d',0)>=0 else 'down'}">{inst.get('trust_5d',0):+,.0f}</td><td class="{'up' if inst.get('trust_20d',0)>=0 else 'down'}">{inst.get('trust_20d',0):+,.0f}</td></tr><tr><td>自營</td><td class="{'up' if inst.get('dealer_today',0)>=0 else 'down'}">{inst.get('dealer_today',0):+,.0f}</td><td class="{'up' if inst.get('dealer_5d',0)>=0 else 'down'}">{inst.get('dealer_5d',0):+,.0f}</td><td class="{'up' if inst.get('dealer_20d',0)>=0 else 'down'}">{inst.get('dealer_20d',0):+,.0f}</td></tr><tr class="row-total"><td>合計</td><td class="{'up' if tt_today>=0 else 'down'}">{tt_today:+,.0f}</td><td class="{'up' if tt_5d>=0 else 'down'}">{tt_5d:+,.0f}</td><td class="{'up' if tt_20d>=0 else 'down'}">{tt_20d:+,.0f}</td></tr></table></div>
@@ -901,8 +892,7 @@ def generate_timeseries_section(market_data: dict):
 def generate_chart_scripts(stocks_data: dict, market_data: dict):
     scripts = []
     
-    for stock_id, data in stocks_data.items():
-        # 【修改】個股資料從 60 延長到 90 天
+for stock_id, data in stocks_data.items():
         df_tail = data["df"].tail(90)
         ind_dates = [d.strftime("%m-%d") for d in df_tail.index]
         ind_ohlc  = [[float(r["Open"]), float(r["Close"]), float(r["Low"]), float(r["High"])] for _, r in df_tail.iterrows()]
@@ -912,85 +902,70 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         st_down = [int(round(v)) if (d==-1 and pd.notna(v)) else None for v, d in zip(df_tail["ST"].tolist(), df_tail["ST_DIR"].tolist())]
         ind_vol_color = ["#ef5350" if r["Close"] >= r["Open"] else "#26a69a" for _, r in df_tail.iterrows()]
         
+        cd = data.get("chart_data", {})
+        
         scripts.append(f"""
 var chartK_{stock_id} = echarts.init(document.getElementById('kline_{stock_id}'));
 chartK_{stock_id}.setOption({{
   title: [
-    {{ text: '日K線圖', left: '10%', top: '3%', textStyle: {{fontSize: 12, color: '#555'}} }},
-    {{ text: '成交量', left: '10%', top: '74%', textStyle: {{fontSize: 11, color: '#555'}} }}
+    {{ text: '日K線圖', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
+    {{ text: '成交量', left: '6%', top: '43%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '59%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '78%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
   tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-  legend: {{ data: ['MA20', 'ST指標'], textStyle: {{fontSize: 10}}, top: '3%', right: '5%', itemWidth:10, itemHeight:10 }},
+  legend: [
+    {{ data: ['MA20', 'ST指標'], top: '2%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '59%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '78%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
+  ],
+  axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '10%', right: '5%', top: '10%', height: '60%' }}, 
-    {{ left: '10%', right: '5%', top: '79%', height: '12%' }}
+    {{ left: '6%', right: '8%', top: '5%', height: '38%' }},   // K線
+    {{ left: '6%', right: '8%', top: '46%', height: '12%' }},  // 成交量
+    {{ left: '6%', right: '8%', top: '63%', height: '14%' }},  // 法人
+    {{ left: '6%', right: '8%', top: '82%', height: '14%' }}   // 融資
   ],
   xAxis: [
-    {{ type: 'category', data: {json.dumps(ind_dates)}, scale: true, boundaryGap: true, axisLine: {{onZero: false}}, splitLine: {{show: false}}, min: 'dataMin', max: 'dataMax', axisLabel: {{show: false}} }},
-    {{ type: 'category', gridIndex: 1, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLine: {{onZero: false}}, axisTick: {{show: false}}, splitLine: {{show: false}}, axisLabel: {{fontSize: 9}} }}
+    {{ type: 'category', gridIndex: 0, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 1, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 2, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
+    {{ type: 'category', gridIndex: 3, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{fontSize: 10}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
-    {{ scale: true, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
-    {{ scale: true, gridIndex: 1, splitNumber: 2, axisLabel: {{show: false}}, axisLine: {{show: false}}, axisTick: {{show: false}}, splitLine: {{show: false}} }}
+    {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9}} }},
+    {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }},
+    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, position: 'right' }},
+    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale: true, position: 'right' }}
   ],
   dataZoom: [
-    {{ type: 'inside', xAxisIndex: [0, 1], start: 0, end: 100 }}, 
-    {{ show: true, xAxisIndex: [0, 1], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
+    {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }}, 
+    {{ show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }}
   ],
   series: [
-    {{ name: 'K線', type: 'candlestick', data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
-    {{ name: 'MA20', type: 'line', data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
-    {{ name: 'ST指標', type: 'line', data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
-    {{ name: 'ST指標', type: 'line', data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
-    {{ name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }}
+    {{ name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
+    {{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
+    {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
+    {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
+    
+    {{ name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
+    
+    {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
+    {{ name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_trust', []))}, itemStyle: {{color: '#1D9E75'}} }},
+    {{ name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_dealer', []))}, itemStyle: {{color: '#FF9800'}} }},
+    {{ name: '法人累計(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 3, data: {json.dumps(cd.get('inst_cum', []))}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }},
+    
+    {{ name: '融資增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('margin_diff', []))}, itemStyle: {{color: '#EF5350'}} }},
+    {{ name: '融券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('short_diff', []))}, itemStyle: {{color: '#66BB6A'}} }},
+    {{ name: '借券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('borrow_diff', []))}, itemStyle: {{color: '#AB47BC'}} }},
+    {{ name: '融資餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('margin_bal', []))}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }},
+    {{ name: '融券餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('short_bal', []))}, itemStyle: {{color: '#66BB6A'}}, smooth: true, showSymbol: false }},
+    {{ name: '借券餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('borrow_bal', []))}, itemStyle: {{color: '#AB47BC'}}, smooth: true, showSymbol: false }}
   ]
 }});
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
-""")
-        cd = data.get("chart_data", {})
-        if cd and cd.get("dates"):
-            scripts.append(f"""
-(function() {{
-  var chartInst = echarts.init(document.getElementById('inst_chart_{stock_id}'));
-  chartInst.setOption({{
-    title: {{ text: '三大法人買賣超(億)與累計', left: '15%', top: '5%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-    legend: {{ data: ['外資', '投信', '自營', '累計(右)'], textStyle: {{fontSize: 10}}, top: '5%', right: '15%', itemWidth:10, itemHeight:10 }},
-    grid: {{ left: '15%', right: '15%', top: '25%', bottom: '15%' }},
-    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
-    yAxis: [
-      {{ type: 'value', nameTextStyle:{{fontSize:9}}, axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-      {{ type: 'value', nameTextStyle:{{fontSize:9}}, axisLabel: {{fontSize: 9}}, splitLine: {{show: false}} }}
-    ],
-    series: [
-      {{ name: '外資', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_foreign'])}, itemStyle: {{color: '#378ADD'}} }},
-      {{ name: '投信', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_trust'])}, itemStyle: {{color: '#1D9E75'}} }},
-      {{ name: '自營', type: 'bar', stack: 'total', data: {json.dumps(cd['inst_dealer'])}, itemStyle: {{color: '#FF9800'}} }},
-      {{ name: '累計(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['inst_cum'])}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }}
-    ]
-  }});
-  var chartMargin = echarts.init(document.getElementById('margin_chart_{stock_id}'));
-  chartMargin.setOption({{
-    title: {{ text: '融資/券/借券 增減(張)與餘額', left: '12%', top: '5%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    tooltip: {{ trigger: 'axis', axisPointer: {{ type: 'cross' }} }},
-    legend: {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], textStyle: {{fontSize: 10}}, top: '5%', right: '12%', itemWidth:10, itemHeight:10 }},
-    grid: {{ left: '12%', right: '12%', top: '30%', bottom: '15%' }},
-    xAxis: {{ type: 'category', data: {json.dumps(cd['dates'])}, axisLabel: {{fontSize: 9}} }},
-    yAxis: [
-      {{ type: 'value', axisLabel: {{fontSize: 9}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-      {{ type: 'value', axisLabel: {{fontSize: 9}}, splitLine: {{show: false}}, scale:true }}
-    ],
-    series: [
-      {{ name: '融資增減', type: 'bar', data: {json.dumps(cd['margin_diff'])}, itemStyle: {{color: '#EF5350'}} }},
-      {{ name: '融券增減', type: 'bar', data: {json.dumps(cd['short_diff'])}, itemStyle: {{color: '#66BB6A'}} }},
-      {{ name: '借券增減', type: 'bar', data: {json.dumps(cd['borrow_diff'])}, itemStyle: {{color: '#AB47BC'}} }},
-      {{ name: '融資餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['margin_bal'])}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }},
-      {{ name: '融券餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['short_bal'])}, itemStyle: {{color: '#66BB6A'}}, smooth: true, showSymbol: false }},
-      {{ name: '借券餘額(右)', type: 'line', yAxisIndex: 1, data: {json.dumps(cd['borrow_bal'])}, itemStyle: {{color: '#AB47BC'}}, smooth: true, showSymbol: false }}
-    ]
-  }});
-  window.addEventListener('resize', function() {{ chartInst.resize(); chartMargin.resize(); }});
-}})();
 """)
             
     # ==========================
@@ -1349,8 +1324,8 @@ def process_single_stock(stock_id):
     if not stock_data: return None, None
     close_price = stock_data["latest"]["close"]
     
-    institution = get_institution_data(stock_id, days=80)
-    margin      = get_margin_data(stock_id, days=80)
+    institution = get_institution_data(stock_id, days=120)
+    margin      = get_margin_data(stock_id, days=120)
     borrow      = get_borrowing_data(stock_id)
     tdcc        = get_tdcc_holding(stock_id, close_price)
     news        = get_news(stock_id)
