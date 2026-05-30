@@ -892,7 +892,7 @@ def generate_timeseries_section(market_data: dict):
 def generate_chart_scripts(stocks_data: dict, market_data: dict):
     scripts = []
     
-for stock_id, data in stocks_data.items():
+    for stock_id, data in stocks_data.items():
         df_tail = data["df"].tail(90)
         ind_dates = [d.strftime("%m-%d") for d in df_tail.index]
         ind_ohlc  = [[float(r["Open"]), float(r["Close"]), float(r["Low"]), float(r["High"])] for _, r in df_tail.iterrows()]
@@ -921,10 +921,10 @@ chartK_{stock_id}.setOption({{
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '6%', right: '8%', top: '5%', height: '38%' }},   // K線
-    {{ left: '6%', right: '8%', top: '46%', height: '12%' }},  // 成交量
-    {{ left: '6%', right: '8%', top: '63%', height: '14%' }},  // 法人
-    {{ left: '6%', right: '8%', top: '82%', height: '14%' }}   // 融資
+    {{ left: '6%', right: '8%', top: '5%', height: '38%' }},
+    {{ left: '6%', right: '8%', top: '46%', height: '12%' }},
+    {{ left: '6%', right: '8%', top: '63%', height: '14%' }},
+    {{ left: '6%', right: '8%', top: '82%', height: '14%' }}
   ],
   xAxis: [
     {{ type: 'category', gridIndex: 0, data: {json.dumps(ind_dates)}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
@@ -967,7 +967,7 @@ chartK_{stock_id}.setOption({{
 }});
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 """)
-            
+
     # ==========================
     # 大盤綜合 JS 動態排版區塊
     # ==========================
@@ -978,7 +978,6 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
         taiex_vol = [round(d.get("money", 0) / 1e8, 1) for d in taiex]
         taiex_vol_color = ["#ef5350" if d["close"] >= d["open"] else "#26a69a" for d in taiex]
         
-        # 新增 MA20 與 Supertrend
         taiex_ma20 = [d.get("ma20") for d in taiex]
         taiex_st_up = [int(round(d["supertrend"])) if (d.get("supertrend_dir")==1 and pd.notna(d.get("supertrend"))) else None for d in taiex]
         taiex_st_down = [int(round(d["supertrend"])) if (d.get("supertrend_dir")==-1 and pd.notna(d.get("supertrend"))) else None for d in taiex]
@@ -1038,7 +1037,6 @@ function renderTaiex() {{
     {{ show: true, xAxisIndex: [0], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
   ];
 
-  // Grid 0: 主 K 線圖 (若下方都沒勾，則佔滿 85%)
   var kHeight = activeIdxs.length > 0 ? 35 : 85;
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
   titles.push({{ text: '加權指數 (含 MA20, Supertrend)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
@@ -1051,9 +1049,8 @@ function renderTaiex() {{
   series.push({{ name: 'ST指標(紅)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標(綠)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
 
-  // 下方動態指標分割區
   var startTop = 5 + kHeight + 2; 
-  var totalAvailable = 92 - startTop; // 留 8% 給底部 datazoom
+  var totalAvailable = 92 - startTop; 
   
   if(activeIdxs.length > 0) {{
     var eachBlock = totalAvailable / activeIdxs.length;
@@ -1115,13 +1112,10 @@ function renderTaiex() {{
     yAxis: yAxes,
     dataZoom: dataZooms,
     series: series
-  }}, true);  // true 代表完整覆蓋，避免舊資料殘留
+  }}, true);
 }}
 
-// 第一次渲染
 renderTaiex();
-
-// 綁定 Checkbox 事件
 document.querySelectorAll('#taiex_toggles input').forEach(function(cb) {{
   cb.addEventListener('change', renderTaiex);
 }});
