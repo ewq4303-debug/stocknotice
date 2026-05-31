@@ -642,34 +642,84 @@ def get_stock_name(stock_id: str):
         return resp.json()["data"][0]["stock_name"] 
     except: return stock_id
 
+import requests
+from datetime import datetime, timedelta
+
 def get_fundamentals(stock_id: str):
-    result = {"target_price": None, "eps": [], "gm": [], "rev": []}
+    result = {"trailing_pe": None, "forward_pe": None, "peg": None, "eps_ttm": None, "eps_growth": None, "revenue_growth": None, "dividend_yield": None, "roe": None, "target_price": None, "gross_margin": None, "eps": [], "gm": [], "rev": []}
+    
+    # 1. 抓取 yfinance 即時估值與目標價
     for suffix in (".TW", ".TWO"):
         try:
-            tk = yf.Ticker(f"{stock_id}{suffix}")
-            info = tk.info
-            if not info or len(info) < 5: continue
+            info = yf.Ticker(f"{stock_id}{suffix}").info
+            if info and len(info) > 5:
+                result["trailing_pe"]    = info.get("trailingPE")
+                result["forward_pe"]     = info.get("forwardPE")
+                result["peg"]            = info.get("trailingPegRatio") or info.get("pegRatio")
+                result["eps_ttm"]        = info.get("trailingEps") or info.get("epsTrailingTwelveMonths")
+                result["eps_growth"]     = info.get("earningsGrowth")
+                result["revenue_growth"] = info.get("revenueGrowth")
+                div_y                    = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
+                if div_y is not None: result["dividend_yield"] = div_y * 100 if div_y < 1 else div_y
+                result["roe"]            = info.get("returnOnEquity")
+                result["target_price"]   = info.get("targetMeanPrice") or info.get("targetMedianPrice")
+                result["gross_margin"]   = info.get("grossMargins")
+                break
+        except: pass
+
+    # 2. 透過 FinMind 抓取歷史月營收與財報
+    try:
+        today = datetime.now()
+        url = "https://api.finmindtrade.com/api/v4/data"
+        
+        # --- 月營收 (前24個月以算 YoY) ---
+        start_rev = (today - timedelta(days=730)).strftime("%Y-%m-%d")
+        rev_res = requests.get(url, params={"dataset": "TaiwanStockMonthRevenue", "data_id": stock_id, "start_date": start_rev}, timeout=10).json()
+        if rev_res.get("msg") == "success" and rev_res.get("data"):
+            import pandas as pd
+            df_rev = pd.DataFrame(rev_res["data"])
+            df_rev['date'] = pd.to_datetime(df_rev['date'])
+            df_rev = df_rev.sort_values('date').reset_index(drop=True)
+            df_rev['yoy'] = df_rev['revenue'].pct_change(periods=12) * 100
             
-            # 抓取目標價
-            result["target_price"] = info.get("targetMeanPrice") or info.get("targetMedianPrice")
+            last_6 = df_rev.tail(6).iloc[::-1]
+            for _, r in last_6.iterrows():
+                d_str = r['date'].strftime("%Y-%m")
+                rev_val = f"{r['revenue'] / 1e8:.2f}億" if pd.notna(r['revenue']) else "-"
+                result["rev"].append({"date": d_str, "rev": rev_val, "yoy": r['yoy'] if pd.notna(r['yoy']) else None})
 
-            try:
-                # 嘗試抓取季報 (yfinance 最多通常只有 4 季)
-                q_inc = tk.quarterly_income_stmt
-                if not q_inc.empty:
-                    for d in q_inc.columns[:5]:
-                        d_str = f"{d.year}Q{((d.month-1)//3)+1}"
-                        eps = q_inc.loc["Diluted EPS", d] if "Diluted EPS" in q_inc.index else (q_inc.loc["Basic EPS", d] if "Basic EPS" in q_inc.index else None)
-                        gp = q_inc.loc["Gross Profit", d] if "Gross Profit" in q_inc.index else None
-                        trev = q_inc.loc["Total Revenue", d] if "Total Revenue" in q_inc.index else None
-                        gm = (gp / trev * 100) if (gp is not None and trev is not None and trev != 0) else None
-
-                        result["eps"].append({"date": d_str, "eps": float(eps) if eps else None, "yoy": None}) # 缺乏 8 季資料無法算 YoY
-                        result["gm"].append({"date": d_str, "gm": float(gm) if gm else None})
-            except Exception as e:
-                pass
-            return result
-        except: continue
+        # --- 財報 (前36個月以算 EPS YoY) ---
+        start_fin = (today - timedelta(days=1095)).strftime("%Y-%m-%d")
+        fin_res = requests.get(url, params={"dataset": "TaiwanStockFinancialStatements", "data_id": stock_id, "start_date": start_fin}, timeout=10).json()
+        if fin_res.get("msg") == "success" and fin_res.get("data"):
+            import pandas as pd
+            df_fin = pd.DataFrame(fin_res["data"])
+            df_fin['date'] = pd.to_datetime(df_fin['date'])
+            df_pivot = df_fin.pivot_table(index='date', columns='type', values='value', aggfunc='first').sort_index()
+            
+            # EPS YoY
+            eps_col = [c for c in df_pivot.columns if 'EPS' in str(c).upper() or '每股盈餘' in str(c)]
+            if eps_col:
+                eps_series = df_pivot[eps_col[0]]
+                eps_yoy = eps_series.pct_change(periods=4) * 100
+                last_5_eps = eps_series.tail(5)[::-1]
+                for date_idx, val in last_5_eps.items():
+                    d_str = f"{date_idx.year}Q{((date_idx.month-1)//3)+1}"
+                    y_val = eps_yoy.loc[date_idx]
+                    result["eps"].append({"date": d_str, "eps": float(val) if pd.notna(val) else None, "yoy": float(y_val) if pd.notna(y_val) else None})
+            
+            # 毛利率
+            rev_cols = [c for c in df_pivot.columns if '營業收入' in str(c)]
+            gp_cols = [c for c in df_pivot.columns if '毛利' in str(c)]
+            if rev_cols and gp_cols:
+                gm_series = (df_pivot[gp_cols[0]] / df_pivot[rev_cols[0]]) * 100
+                last_5_gm = gm_series.tail(5)[::-1]
+                for date_idx, val in last_5_gm.items():
+                    d_str = f"{date_idx.year}Q{((date_idx.month-1)//3)+1}"
+                    result["gm"].append({"date": d_str, "gm": float(val) if pd.notna(val) else None})
+    except Exception as e:
+        print(f"    [Warning] FinMind 獲取失敗: {e}")
+        
     return result
 
 # =========================================================
@@ -786,9 +836,7 @@ def generate_rating_table(stocks_data: dict) -> str:
 
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
-    
-    # 讀取基本面資料
-    fund = data.get("fundamentals", {}) 
+    fund = data.get("fundamentals", {})
     
     c_cls = "up" if data.get("change_pct",0) >= 0 else "down"
     c_sign = "+" if data.get("change_pct",0) >= 0 else ""
@@ -809,7 +857,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
     tdcc_hist = tdcc.get("history", [])
     tdcc_table_rows = ""
-    
     def get_diff_html(diff, kind):
         if diff == 0: return ""
         cls = "up" if diff > 0 else "down"
@@ -834,93 +881,76 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
                 fri_str = dt.strftime("%Y%m%d")
                 thu_str = (dt - timedelta(days=1)).strftime("%Y%m%d")
                 thu_fri_net = inst_dict.get(fri_str, 0) + inst_dict.get(thu_str, 0)
-            except Exception:
-                pass
+            except: pass
 
-        tdcc_table_rows += f'''<tr>
-            <td style="text-align:center;">{curr['date']}</td>
-            <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, 'pct')}</td>
-            <td style="text-align:center;" class="{'up' if thu_fri_net >= 0 else 'down'}">{thu_fri_net:+,.0f}</td>
-            <td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, 'pct')}</td>
-            <td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, 'int')}</td>
-            <td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, 'float')}</td>
-        </tr>'''
+        tdcc_table_rows += f'''<tr><td style="text-align:center;">{curr['date']}</td><td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, 'pct')}</td><td style="text-align:center;" class="{'up' if thu_fri_net >= 0 else 'down'}">{thu_fri_net:+,.0f}</td><td style="text-align:center;">{curr['retail_ratio']:.2f}% {get_diff_html(r_diff, 'pct')}</td><td style="text-align:center;">{curr['total_holders']:,} {get_diff_html(h_diff, 'int')}</td><td style="text-align:center;">{curr.get('avg_lots',0):.1f} {get_diff_html(a_diff, 'float')}</td></tr>'''
         
-    if not tdcc_table_rows:
-        tdcc_table_rows = "<tr><td colspan='6' style='text-align:center;'>無集保資料</td></tr>"
+    if not tdcc_table_rows: tdcc_table_rows = "<tr><td colspan='6' style='text-align:center;'>無集保資料</td></tr>"
 
     r_shares = tdcc.get("retail_threshold_shares", 0) / 1000
     l_shares = tdcc.get("large_threshold_shares", 0) / 1000
     threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
-    # 【新排版：目標價與基本面表格】
+    # --- 處理基本面 UI ---
+    def fmt_pct(v): return f"{v*100:.2f}%" if pd.notna(v) and v is not None else "-"
+    def fmt_f(v): return f"{v:.2f}" if pd.notna(v) and v is not None else "-"
+    
     target_val = fund.get('target_price')
     target_price = f"${target_val:.2f}" if target_val else "-"
 
-    eps_data = fund.get("eps", [])
-    eps_rows = ""
+    # 1. 10項基本估值區塊
+    fund_10_html = f"""
+    <div style="display:flex; flex-wrap:wrap; gap:10px; background:#f8f9fa; padding:12px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:15px; font-size:13px;">
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">本益比(TTM)</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('trailing_pe'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">預估本益比</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('forward_pe'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">PEG</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('peg'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS(TTM)</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('eps_ttm'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS成長</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('eps_growth'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">營收成長</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('revenue_growth'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">毛利率</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('gross_margin'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">ROE</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('roe'))}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">殖利率</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('dividend_yield'))}%</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:var(--primary); font-size:11px;">法人目標價</span><span style="font-weight:bold; font-size:14px; color:var(--primary);">{target_price}</span></div>
+    </div>
+    """
+
+    # 2. 歷史財報 3大表格
+    eps_data, gm_data, rev_data = fund.get("eps", []), fund.get("gm", []), fund.get("rev", [])
+    eps_rows, gm_rows, rev_rows = "", "", ""
+    
     for i in range(5):
         if i < len(eps_data):
             d = eps_data[i]
-            eps_val = f"{d['eps']:.2f}" if d['eps'] is not None else "-"
-            yoy_val = f"{d['yoy']:.2f}%" if d['yoy'] is not None else "-"
-            yoy_cls = 'up' if d['yoy'] and d['yoy']>0 else ('down' if d['yoy'] and d['yoy']<0 else '')
-            eps_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{eps_val}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_val}</td></tr>"
-        else:
-            eps_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+            yoy_str = f"{d['yoy']:.2f}%" if d.get('yoy') is not None else "-"
+            yoy_cls = 'up' if d.get('yoy') and d['yoy']>0 else ('down' if d.get('yoy') and d['yoy']<0 else '')
+            eps_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{d['eps']:.2f}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_str}</td></tr>"
+        else: eps_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
 
-    gm_data = fund.get("gm", [])
-    gm_rows = ""
     for i in range(5):
         if i < len(gm_data):
             d = gm_data[i]
-            gm_val = f"{d['gm']:.2f}%" if d['gm'] is not None else "-"
-            gm_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{gm_val}</td></tr>"
-        else:
-            gm_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+            gm_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{d['gm']:.2f}%</td></tr>"
+        else: gm_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
 
-    rev_data = fund.get("rev", [])
-    rev_rows = ""
     for i in range(6):
         if i < len(rev_data):
             d = rev_data[i]
-            rev_val = f"{d['rev']}" if d['rev'] is not None else "-"
-            yoy_val = f"{d['yoy']:.2f}%" if d['yoy'] is not None else "-"
-            yoy_cls = 'up' if d['yoy'] and d['yoy']>0 else ('down' if d['yoy'] and d['yoy']<0 else '')
-            rev_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{rev_val}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_val}</td></tr>"
-        else:
-            rev_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+            yoy_str = f"{d['yoy']:.2f}%" if d.get('yoy') is not None else "-"
+            yoy_cls = 'up' if d.get('yoy') and d['yoy']>0 else ('down' if d.get('yoy') and d['yoy']<0 else '')
+            rev_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{d['rev']}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_str}</td></tr>"
+        else: rev_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
 
-    fund_html = f"""
-        <div style="margin-bottom: 15px; padding: 15px; background: #fdfdfd; border-radius: 8px; border: 1px solid #eee;">
-           <h3 style="margin:0 0 12px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
-               📈 基本面追蹤
-               <span style="font-size:11px; font-weight:normal; color:#888; background:#eee; padding:3px 8px; border-radius:10px;">註: yfinance API 缺乏台股月營收，且季報無提供歷史 YoY</span>
-           </h3>
-           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-               <div>
-                   <table class="data-table" style="width:100%; margin:0;">
-                       <tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 5 季 EPS 與 YoY</th></tr>
-                       <tr><th style="text-align:center; width:30%;">季度</th><th style="text-align:center; width:35%;">EPS</th><th style="text-align:center; width:35%;">YoY</th></tr>
-                       {eps_rows}
-                   </table>
-               </div>
-               <div>
-                   <table class="data-table" style="width:100%; margin:0;">
-                       <tr><th colspan="2" style="text-align:center; background:#f0f4f8;">近 5 季 毛利率</th></tr>
-                       <tr><th style="text-align:center; width:40%;">季度</th><th style="text-align:center; width:60%;">毛利率</th></tr>
-                       {gm_rows}
-                   </table>
-               </div>
-               <div>
-                   <table class="data-table" style="width:100%; margin:0;">
-                       <tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 6 個月 營收與 YoY</th></tr>
-                       <tr><th style="text-align:center; width:30%;">月份</th><th style="text-align:center; width:40%;">營收</th><th style="text-align:center; width:30%;">YoY</th></tr>
-                       {rev_rows}
-                   </table>
-               </div>
-           </div>
-        </div>
+    fund_tables_html = f"""
+    <div style="margin-bottom: 15px; padding: 15px; background: #fdfdfd; border-radius: 8px; border: 1px solid #eee;">
+       <h3 style="margin:0 0 12px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+           📈 基本面追蹤 <span style="font-size:11px; font-weight:normal; color:#888; background:#eee; padding:3px 8px; border-radius:10px;">資料來源: FinMind</span>
+       </h3>
+       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+           <div><table class="data-table" style="width:100%; margin:0;"><tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 5 季 EPS 與 YoY</th></tr><tr><th style="text-align:center;">季度</th><th style="text-align:center;">EPS</th><th style="text-align:center;">YoY</th></tr>{eps_rows}</table></div>
+           <div><table class="data-table" style="width:100%; margin:0;"><tr><th colspan="2" style="text-align:center; background:#f0f4f8;">近 5 季 毛利率</th></tr><tr><th style="text-align:center;">季度</th><th style="text-align:center;">毛利率</th></tr>{gm_rows}</table></div>
+           <div><table class="data-table" style="width:100%; margin:0;"><tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 6 個月 營收與 YoY</th></tr><tr><th style="text-align:center;">月份</th><th style="text-align:center;">營收</th><th style="text-align:center;">YoY</th></tr>{rev_rows}</table></div>
+       </div>
+    </div>
     """
 
     return f"""
@@ -933,7 +963,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
           <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
               <span style="font-size:12px; font-weight:bold; color:var(--primary);" title="法人目標價">🎯 {target_price}</span>
               <span class="mh-price {c_cls}">${close_price:,.2f}</span>
-              <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:16px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
+              <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除" style="color:#777; font-size:16px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
           </div>
         </div>
         <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
@@ -948,6 +978,8 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
                 <div style="font-size:15px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技{r.get('tech',0):g} / 籌{r.get('chip',0):g})</div>
             </div>
         </div>
+        
+        {fund_10_html}
         
         <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
@@ -973,7 +1005,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
            </div>
         </div>
 
-        {fund_html}
+        {fund_tables_html}
 
         <div class="grid-2-col">
           <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>{data.get('ai_tech','').replace(chr(10), '<br>')}</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">{data.get('ai_chip','').replace(chr(10), '<br>')}</div></div>
@@ -1740,7 +1772,7 @@ def process_single_stock(stock_id):
     news        = get_news(stock_id)
     name        = get_stock_name(stock_id)
     
-    # 【關鍵：執行剛剛寫好的基本面函數】
+    # 抓取基本面資料
     fund        = get_fundamentals(stock_id)
     
     df = stock_data["df"]
@@ -1757,7 +1789,7 @@ def process_single_stock(stock_id):
         
         i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
         
-        # 【修改：三大法人改為直接抓取原始「張數」】
+        # 三大法人：除以 1000 將股數轉換為「張數」
         f_amt = i_data["foreign"] / 1000
         t_amt = i_data["trust"] / 1000
         d_amt = i_data["dealer"] / 1000
@@ -1780,10 +1812,10 @@ def process_single_stock(stock_id):
         "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
         "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news,
         "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data,
-        "fundamentals": fund # 將基本面存入卡片資料中
+        "fundamentals": fund # 存入基本面
     }
     record["rating"] = calculate_stock_rating(record)
-    print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
+    print(f"    ✓ {stock_id} 評等: {record['rating']['rating']}")
     return stock_id, record
 
 def main():
