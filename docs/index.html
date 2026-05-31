@@ -110,7 +110,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
 }
 
-/* 分頁系統專用 CSS */
 .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
 .tabs-container::-webkit-scrollbar { display: none; }
 .tab-btn { padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
@@ -124,8 +123,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 <body>
 <div class="container">
   <div class="header" id="top">
-    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: 2026-05-31 13:01</div></div>
-    
+    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: 2026-05-31 13:12</div></div>
     <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
       <button id="runBtn" class="btn-run" onclick="triggerAction(this)">▶ 立刻重新執行 (抓取最新資料)</button>
     </div>
@@ -155,13 +153,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   </div>
 
   <div id="tab-rating" class="tab-content">
-      <div class="rating-section"><div class="rating-header"><div class="rating-title">📊 個股操作建議綜合評等</div><div class="rating-update">更新於 2026-05-31 13:01</div></div><div class="rating-grid"><div class="rating-col rating-col-strong-buy"><div class="rating-col-header"><span class="rating-col-label rating-label-strong-buy"><i class="ti ti-arrow-big-up-filled" style="font-size:11px;"></i>強力加碼</span><span class="rating-col-count">5</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2317 2317</span><span class="chip-change up">+9.89%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌8.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2330 台積電</span><span class="chip-change up">+2.61%</span></div><div class="chip-meta"><span class="chip-tag">技8</span><span class="chip-tag">籌8.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">8358 金居</span><span class="chip-change up">+9.95%</span></div><div class="chip-meta"><span class="chip-tag">技8</span><span class="chip-tag">籌7</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">5425 台半</span><span class="chip-change up">+1.75%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌4.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2421 建準</span><span class="chip-change up">+1.60%</span></div><div class="chip-meta"><span class="chip-tag">技7</span><span class="chip-tag">籌7</span></div></div></div><div class="rating-col rating-col-buy"><div class="rating-col-header"><span class="rating-col-label rating-label-buy"><i class="ti ti-arrow-up" style="font-size:11px;"></i>加碼</span><span class="rating-col-count">7</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3491 昇達科</span><span class="chip-change up">+10.00%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌7</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2375 凱美</span><span class="chip-change up">+3.10%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌3</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6223 旺矽</span><span class="chip-change up">+0.76%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌6</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6274 台燿</span><span class="chip-change up">+9.74%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌2.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2383 台光電</span><span class="chip-change up">+1.29%</span></div><div class="chip-meta"><span class="chip-tag">技4.5</span><span class="chip-tag">籌7.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2454 聯發科</span><span class="chip-change down">-2.27%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌3</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3037 欣興</span><span class="chip-change up">+2.93%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌4.5</span></div></div></div><div class="rating-col rating-col-neutral"><div class="rating-col-header"><span class="rating-col-label rating-label-neutral"><i class="ti ti-minus" style="font-size:11px;"></i>中性</span><span class="rating-col-count">7</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3711 日月光投控</span><span class="chip-change down">-2.55%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌0</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6415 矽力*-KY</span><span class="chip-change down">-3.23%</span></div><div class="chip-meta"><span class="chip-tag">技7</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3357 3357</span><span class="chip-change up">+1.41%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌0</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2327 國巨*</span><span class="chip-change down">-0.54%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">8042 金山電</span><span class="chip-change up">+1.98%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3008 大立光</span><span class="chip-change up">+2.63%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2368 金像電</span><span class="chip-change up">+1.15%</span></div><div class="chip-meta"><span class="chip-tag">技3.5</span><span class="chip-tag">籌4.5</span></div></div></div><div class="rating-col rating-col-sell"><div class="rating-col-header"><span class="rating-col-label rating-label-sell"><i class="ti ti-arrow-down" style="font-size:11px;"></i>減碼</span><span class="rating-col-count">0</span></div><div class="empty-hint">無</div></div><div class="rating-col rating-col-strong-sell"><div class="rating-col-header"><span class="rating-col-label rating-label-strong-sell"><i class="ti ti-arrow-big-down-filled" style="font-size:11px;"></i>強力減碼</span><span class="rating-col-count">1</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">9921 9921</span><span class="chip-change up">+2.21%</span></div><div class="chip-meta"><span class="chip-tag">技0</span><span class="chip-tag">籌0</span></div></div></div></div><details class="compact-legend"><summary>ℹ️ 點此查看評分邏輯與門檻</summary><div class="legend-content"><div class="legend-row"><span class="legend-badge l-tech">技術(10)</span><span>站月線(+1) / 月>季(+1) / 5>10(+1) / 創高(+1.5) / 量>5均(+1.5) / MACD紅(+2) / 5日量>20日量(+2)</span></div><div class="legend-row"><span class="legend-badge l-chip">籌碼(10)</span><span>外資3日(+1.5) / 投信3日(+1.5) / 同買(+1) / 融資減(+1.5) / 借券減(+1.5) / 大戶增(+3)</span></div><div class="legend-row"><span class="legend-badge l-total">總分門檻</span><span>≥14 強力加碼 | 10~13 加碼 | 6~9 觀望 | 3~5 減碼 | ≤2 強力減碼</span></div></div></details></div>
+      <div class="rating-section"><div class="rating-header"><div class="rating-title">📊 個股操作建議綜合評等</div><div class="rating-update">更新於 2026-05-31 13:12</div></div><div class="rating-grid"><div class="rating-col rating-col-strong-buy"><div class="rating-col-header"><span class="rating-col-label rating-label-strong-buy"><i class="ti ti-arrow-big-up-filled" style="font-size:11px;"></i>強力加碼</span><span class="rating-col-count">5</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2317 2317</span><span class="chip-change up">+9.89%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌8.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2330 台積電</span><span class="chip-change up">+2.61%</span></div><div class="chip-meta"><span class="chip-tag">技8</span><span class="chip-tag">籌8.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">8358 金居</span><span class="chip-change up">+9.95%</span></div><div class="chip-meta"><span class="chip-tag">技8</span><span class="chip-tag">籌7</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">5425 台半</span><span class="chip-change up">+1.75%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌4.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2421 建準</span><span class="chip-change up">+1.60%</span></div><div class="chip-meta"><span class="chip-tag">技7</span><span class="chip-tag">籌7</span></div></div></div><div class="rating-col rating-col-buy"><div class="rating-col-header"><span class="rating-col-label rating-label-buy"><i class="ti ti-arrow-up" style="font-size:11px;"></i>加碼</span><span class="rating-col-count">7</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3491 昇達科</span><span class="chip-change up">+10.00%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌7</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2375 凱美</span><span class="chip-change up">+3.10%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌3</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6274 台燿</span><span class="chip-change up">+9.74%</span></div><div class="chip-meta"><span class="chip-tag">技10</span><span class="chip-tag">籌2.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6223 旺矽</span><span class="chip-change up">+0.76%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌6</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2383 台光電</span><span class="chip-change up">+1.29%</span></div><div class="chip-meta"><span class="chip-tag">技4.5</span><span class="chip-tag">籌7.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2454 聯發科</span><span class="chip-change down">-2.27%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌3</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3037 欣興</span><span class="chip-change up">+2.93%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌4.5</span></div></div></div><div class="rating-col rating-col-neutral"><div class="rating-col-header"><span class="rating-col-label rating-label-neutral"><i class="ti ti-minus" style="font-size:11px;"></i>中性</span><span class="rating-col-count">7</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3711 日月光投控</span><span class="chip-change down">-2.55%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌0</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">6415 矽力*-KY</span><span class="chip-change down">-3.23%</span></div><div class="chip-meta"><span class="chip-tag">技7</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3357 3357</span><span class="chip-change up">+1.41%</span></div><div class="chip-meta"><span class="chip-tag">技8.5</span><span class="chip-tag">籌0</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2327 國巨*</span><span class="chip-change down">-0.54%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">8042 金山電</span><span class="chip-change up">+1.98%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">3008 大立光</span><span class="chip-change up">+2.63%</span></div><div class="chip-meta"><span class="chip-tag">技6.5</span><span class="chip-tag">籌1.5</span></div></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">2368 金像電</span><span class="chip-change up">+1.15%</span></div><div class="chip-meta"><span class="chip-tag">技3.5</span><span class="chip-tag">籌4.5</span></div></div></div><div class="rating-col rating-col-sell"><div class="rating-col-header"><span class="rating-col-label rating-label-sell"><i class="ti ti-arrow-down" style="font-size:11px;"></i>減碼</span><span class="rating-col-count">0</span></div><div class="empty-hint">無</div></div><div class="rating-col rating-col-strong-sell"><div class="rating-col-header"><span class="rating-col-label rating-label-strong-sell"><i class="ti ti-arrow-big-down-filled" style="font-size:11px;"></i>強力減碼</span><span class="rating-col-count">1</span></div><div class="stock-chip"><div class="chip-top"><span class="chip-name">9921 9921</span><span class="chip-change up">+2.21%</span></div><div class="chip-meta"><span class="chip-tag">技0</span><span class="chip-tag">籌1.5</span></div></div></div></div><details class="compact-legend"><summary>ℹ️ 點此查看評分邏輯與門檻</summary><div class="legend-content"><div class="legend-row"><span class="legend-badge l-tech">技術(10)</span><span>站月線(+1) / 月>季(+1) / 5>10(+1) / 創高(+1.5) / 量>5均(+1.5) / MACD紅(+2) / 5日量>20日量(+2)</span></div><div class="legend-row"><span class="legend-badge l-chip">籌碼(10)</span><span>外資3日(+1.5) / 投信3日(+1.5) / 同買(+1) / 融資減(+1.5) / 借券減(+1.5) / 大戶增(+3)</span></div><div class="legend-row"><span class="legend-badge l-total">總分門檻</span><span>≥14 強力加碼 | 10~13 加碼 | 6~9 觀望 | 3~5 減碼 | ≤2 強力減碼</span></div></div></details></div>
   </div>
 
   <div id="tab-stocks" class="tab-content">
+      <div class="mobile-only" style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 15px; border-radius:10px; border:0.5px solid var(--border); box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+         <span style="font-weight:bold; font-size:15px; color:var(--primary);">📝 個股管理</span>
+         <div style="display:flex; gap:6px;">
+            <input type="text" id="stockInputMobile" placeholder="輸入股號" style="width:80px; padding:6px 8px; border-radius:6px; border:1px solid #ccc; font-size:14px; outline:none;">
+            <button style="background:#4CAF50; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;" onclick="manageStock('add', null, 'stockInputMobile', this)">新增</button>
+         </div>
+      </div>
+      
       <div class="app-layout">
         <div class="sidebar desktop-only">
-            
             <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
                 <span>個股清單</span>
                 <div style="display:flex; gap:4px; font-weight:normal;">
@@ -170,238 +175,134 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
                 </div>
             </div>
             
-            
-        <div class="sidebar-item active" id="nav_2317" onclick="showStock('2317')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2317 2317</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+9.89%</span>
-                    <div onclick="confirmDelete(event, '2317', this)" title="刪除 2317" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item active" id="nav_2317" onclick="showStock('2317')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2317', this)" title="刪除 2317" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2317 2317</span><span class="up">+9.89%</span></div>
             <div class="nav-bottom"><span>⭐ 強力加碼</span><span>技10 / 籌8.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2330" onclick="showStock('2330')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2330 台積電</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+2.61%</span>
-                    <div onclick="confirmDelete(event, '2330', this)" title="刪除 2330" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2330" onclick="showStock('2330')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2330', this)" title="刪除 2330" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2330 台積電</span><span class="up">+2.61%</span></div>
             <div class="nav-bottom"><span>⭐ 強力加碼</span><span>技8 / 籌8.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_8358" onclick="showStock('8358')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>8358 金居</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+9.95%</span>
-                    <div onclick="confirmDelete(event, '8358', this)" title="刪除 8358" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_8358" onclick="showStock('8358')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '8358', this)" title="刪除 8358" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>8358 金居</span><span class="up">+9.95%</span></div>
             <div class="nav-bottom"><span>⭐ 強力加碼</span><span>技8 / 籌7</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_5425" onclick="showStock('5425')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>5425 台半</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.75%</span>
-                    <div onclick="confirmDelete(event, '5425', this)" title="刪除 5425" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_5425" onclick="showStock('5425')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '5425', this)" title="刪除 5425" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>5425 台半</span><span class="up">+1.75%</span></div>
             <div class="nav-bottom"><span>⭐ 強力加碼</span><span>技10 / 籌4.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2421" onclick="showStock('2421')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2421 建準</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.60%</span>
-                    <div onclick="confirmDelete(event, '2421', this)" title="刪除 2421" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2421" onclick="showStock('2421')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2421', this)" title="刪除 2421" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2421 建準</span><span class="up">+1.60%</span></div>
             <div class="nav-bottom"><span>⭐ 強力加碼</span><span>技7 / 籌7</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_3491" onclick="showStock('3491')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>3491 昇達科</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+10.00%</span>
-                    <div onclick="confirmDelete(event, '3491', this)" title="刪除 3491" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_3491" onclick="showStock('3491')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '3491', this)" title="刪除 3491" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>3491 昇達科</span><span class="up">+10.00%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技6.5 / 籌7</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2375" onclick="showStock('2375')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2375 凱美</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+3.10%</span>
-                    <div onclick="confirmDelete(event, '2375', this)" title="刪除 2375" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2375" onclick="showStock('2375')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2375', this)" title="刪除 2375" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2375 凱美</span><span class="up">+3.10%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技10 / 籌3</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_6223" onclick="showStock('6223')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>6223 旺矽</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+0.76%</span>
-                    <div onclick="confirmDelete(event, '6223', this)" title="刪除 6223" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
-            <div class="nav-bottom"><span>⭐ 加碼</span><span>技6.5 / 籌6</span></div>
-        </div>
-        
-        <div class="sidebar-item " id="nav_6274" onclick="showStock('6274')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>6274 台燿</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+9.74%</span>
-                    <div onclick="confirmDelete(event, '6274', this)" title="刪除 6274" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_6274" onclick="showStock('6274')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '6274', this)" title="刪除 6274" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>6274 台燿</span><span class="up">+9.74%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技10 / 籌2.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2383" onclick="showStock('2383')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2383 台光電</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.29%</span>
-                    <div onclick="confirmDelete(event, '2383', this)" title="刪除 2383" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_6223" onclick="showStock('6223')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '6223', this)" title="刪除 6223" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>6223 旺矽</span><span class="up">+0.76%</span></div>
+            <div class="nav-bottom"><span>⭐ 加碼</span><span>技6.5 / 籌6</span></div>
+        </div>
+        
+        <div class="sidebar-item " id="nav_2383" onclick="showStock('2383')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2383', this)" title="刪除 2383" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2383 台光電</span><span class="up">+1.29%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技4.5 / 籌7.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2454" onclick="showStock('2454')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2454 聯發科</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="down">-2.27%</span>
-                    <div onclick="confirmDelete(event, '2454', this)" title="刪除 2454" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2454" onclick="showStock('2454')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2454', this)" title="刪除 2454" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2454 聯發科</span><span class="down">-2.27%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技8.5 / 籌3</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_3037" onclick="showStock('3037')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>3037 欣興</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+2.93%</span>
-                    <div onclick="confirmDelete(event, '3037', this)" title="刪除 3037" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_3037" onclick="showStock('3037')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '3037', this)" title="刪除 3037" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>3037 欣興</span><span class="up">+2.93%</span></div>
             <div class="nav-bottom"><span>⭐ 加碼</span><span>技6.5 / 籌4.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_3711" onclick="showStock('3711')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>3711 日月光投控</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="down">-2.55%</span>
-                    <div onclick="confirmDelete(event, '3711', this)" title="刪除 3711" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_3711" onclick="showStock('3711')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '3711', this)" title="刪除 3711" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>3711 日月光投控</span><span class="down">-2.55%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技8.5 / 籌0</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_6415" onclick="showStock('6415')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>6415 矽力*-KY</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="down">-3.23%</span>
-                    <div onclick="confirmDelete(event, '6415', this)" title="刪除 6415" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_6415" onclick="showStock('6415')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '6415', this)" title="刪除 6415" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>6415 矽力*-KY</span><span class="down">-3.23%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技7 / 籌1.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_3357" onclick="showStock('3357')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>3357 3357</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.41%</span>
-                    <div onclick="confirmDelete(event, '3357', this)" title="刪除 3357" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_3357" onclick="showStock('3357')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '3357', this)" title="刪除 3357" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>3357 3357</span><span class="up">+1.41%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技8.5 / 籌0</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2327" onclick="showStock('2327')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2327 國巨*</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="down">-0.54%</span>
-                    <div onclick="confirmDelete(event, '2327', this)" title="刪除 2327" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2327" onclick="showStock('2327')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2327', this)" title="刪除 2327" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2327 國巨*</span><span class="down">-0.54%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技6.5 / 籌1.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_8042" onclick="showStock('8042')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>8042 金山電</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.98%</span>
-                    <div onclick="confirmDelete(event, '8042', this)" title="刪除 8042" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_8042" onclick="showStock('8042')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '8042', this)" title="刪除 8042" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>8042 金山電</span><span class="up">+1.98%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技6.5 / 籌1.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_3008" onclick="showStock('3008')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>3008 大立光</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+2.63%</span>
-                    <div onclick="confirmDelete(event, '3008', this)" title="刪除 3008" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_3008" onclick="showStock('3008')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '3008', this)" title="刪除 3008" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>3008 大立光</span><span class="up">+2.63%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技6.5 / 籌1.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_2368" onclick="showStock('2368')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>2368 金像電</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+1.15%</span>
-                    <div onclick="confirmDelete(event, '2368', this)" title="刪除 2368" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item " id="nav_2368" onclick="showStock('2368')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '2368', this)" title="刪除 2368" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>2368 金像電</span><span class="up">+1.15%</span></div>
             <div class="nav-bottom"><span>⭐ 中性觀望</span><span>技3.5 / 籌4.5</span></div>
         </div>
         
-        <div class="sidebar-item " id="nav_9921" onclick="showStock('9921')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>9921 9921</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="up">+2.21%</span>
-                    <div onclick="confirmDelete(event, '9921', this)" title="刪除 9921" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
-            <div class="nav-bottom"><span>⭐ 強力減碼</span><span>技0 / 籌0</span></div>
+        <div class="sidebar-item " id="nav_9921" onclick="showStock('9921')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '9921', this)" title="刪除 9921" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>9921 9921</span><span class="up">+2.21%</span></div>
+            <div class="nav-bottom"><span>⭐ 強力減碼</span><span>技0 / 籌1.5</span></div>
         </div>
         
         </div>
         <div class="main-content">
     <div class="stock-card active mobile-expanded" id="card_2317">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2317')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2317">▼</span>
-          <span class="mh-name">2317 2317</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$289.00 (+9.89%)</span>
-          <button onclick="confirmDelete(event, '2317', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2317')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2317', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2317">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2317">▼</span><span class="mh-name">2317 2317</span><span class="mh-price up">$289.00 (+9.89%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 強力加碼</span><span class="mh-score">技 10 / 籌 8.5</span></div>
       </div>
 
@@ -472,13 +373,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2330">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2330')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2330">▶</span>
-          <span class="mh-name">2330 台積電</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$2,355.00 (+2.61%)</span>
-          <button onclick="confirmDelete(event, '2330', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2330')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2330', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2330">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2330">▶</span><span class="mh-name">2330 台積電</span><span class="mh-price up">$2,355.00 (+2.61%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 強力加碼</span><span class="mh-score">技 8 / 籌 8.5</span></div>
       </div>
 
@@ -549,13 +447,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_8358">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('8358')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_8358">▶</span>
-          <span class="mh-name">8358 金居</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$608.00 (+9.95%)</span>
-          <button onclick="confirmDelete(event, '8358', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('8358')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '8358', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 8358">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_8358">▶</span><span class="mh-name">8358 金居</span><span class="mh-price up">$608.00 (+9.95%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 強力加碼</span><span class="mh-score">技 8 / 籌 7</span></div>
       </div>
 
@@ -626,13 +521,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_5425">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('5425')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_5425">▶</span>
-          <span class="mh-name">5425 台半</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$116.50 (+1.75%)</span>
-          <button onclick="confirmDelete(event, '5425', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('5425')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '5425', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 5425">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_5425">▶</span><span class="mh-name">5425 台半</span><span class="mh-price up">$116.50 (+1.75%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 強力加碼</span><span class="mh-score">技 10 / 籌 4.5</span></div>
       </div>
 
@@ -703,13 +595,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2421">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2421')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2421">▶</span>
-          <span class="mh-name">2421 建準</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$159.00 (+1.60%)</span>
-          <button onclick="confirmDelete(event, '2421', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2421')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2421', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2421">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2421">▶</span><span class="mh-name">2421 建準</span><span class="mh-price up">$159.00 (+1.60%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 強力加碼</span><span class="mh-score">技 7 / 籌 7</span></div>
       </div>
 
@@ -780,13 +669,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_3491">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('3491')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_3491">▶</span>
-          <span class="mh-name">3491 昇達科</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$2,200.00 (+10.00%)</span>
-          <button onclick="confirmDelete(event, '3491', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('3491')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '3491', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 3491">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_3491">▶</span><span class="mh-name">3491 昇達科</span><span class="mh-price up">$2,200.00 (+10.00%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 6.5 / 籌 7</span></div>
       </div>
 
@@ -857,13 +743,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2375">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2375')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2375">▶</span>
-          <span class="mh-name">2375 凱美</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$166.50 (+3.10%)</span>
-          <button onclick="confirmDelete(event, '2375', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2375')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2375', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2375">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2375">▶</span><span class="mh-name">2375 凱美</span><span class="mh-price up">$166.50 (+3.10%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 10 / 籌 3</span></div>
       </div>
 
@@ -932,92 +815,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         </div>
       </div>
     </div>
-    <div class="stock-card  " id="card_6223">
-      
-      <div class="mobile-header mobile-only" onclick="toggleMobile('6223')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_6223">▶</span>
-          <span class="mh-name">6223 旺矽</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$5,960.00 (+0.76%)</span>
-          <button onclick="confirmDelete(event, '6223', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
-        <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 6.5 / 籌 6</span></div>
-      </div>
-
-      <div class="stock-body">
-        <div class="card-header-desktop desktop-only"><h2>6223 旺矽 <span class="up">$5,960.00 (+0.76%)</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">加碼</span> (技術: 6.5 / 籌碼: 6)</div></div>
-        
-        <div id="kline_6223" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
-        
-        <div class="grid-2-col">
-          <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="down">-26</td><td class="down">-63</td><td class="up">+114</td></tr><tr><td>投信</td><td class="up">+26</td><td class="up">+76</td><td class="up">+844</td></tr><tr><td>自營</td><td class="up">+7</td><td class="up">+2</td><td class="down">-36</td></tr><tr class="row-total"><td>合計</td><td class="up">+7</td><td class="up">+15</td><td class="up">+922</td></tr></table></div>
-          <div><h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3><table class="data-table"><tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>融資</td><td>1,050</td><td class="down">-10</td><td class="down">-81</td><td class="down">-243</td></tr><tr><td>融券</td><td>12</td><td class="up">+7</td><td class="up">+4</td><td class="up">+10</td></tr><tr><td>借券</td><td>1,381</td><td class="up">+83</td><td class="up">+565</td><td class="up">+666</td></tr></table></div>
-        </div>
-
-        <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
-           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">大戶 >5千萬 (8張) / 散戶 <5百萬 (1張)</span></h3>
-           <div style="overflow-x: auto;">
-             <table class="data-table" style="min-width: 600px; margin-bottom: 0;">
-               <tr>
-                 <th style="text-align: center;">日期</th>
-                 <th style="text-align: center;">大戶比例</th>
-                 <th style="text-align: center;">四五法人(張)</th>
-                 <th style="text-align: center;">散戶比例</th>
-                 <th style="text-align: center;">總股東人數</th>
-                 <th style="text-align: center;">平均每戶(張)</th>
-               </tr>
-               <tr>
-            <td style="text-align:center;">20260529</td>
-            <td style="text-align:center;">92.44% <span class="up" style="font-size:11px; margin-left:4px;">(+0.10%)</span></td>
-            <td style="text-align:center;" class="down">-153</td>
-            <td style="text-align:center;">1.61% </td>
-            <td style="text-align:center;">49,862 <span class="up" style="font-size:11px; margin-left:4px;">(+435)</span></td>
-            <td style="text-align:center;">2.0 <span class="down" style="font-size:11px; margin-left:4px;">(-0.0)</span></td>
-        </tr><tr>
-            <td style="text-align:center;">20260522</td>
-            <td style="text-align:center;">92.34% <span class="down" style="font-size:11px; margin-left:4px;">(-0.25%)</span></td>
-            <td style="text-align:center;" class="down">-384</td>
-            <td style="text-align:center;">1.61% <span class="up" style="font-size:11px; margin-left:4px;">(+0.09%)</span></td>
-            <td style="text-align:center;">49,427 <span class="up" style="font-size:11px; margin-left:4px;">(+2,921)</span></td>
-            <td style="text-align:center;">2.0 <span class="down" style="font-size:11px; margin-left:4px;">(-0.1)</span></td>
-        </tr><tr>
-            <td style="text-align:center;">20260515</td>
-            <td style="text-align:center;">92.59% <span class="up" style="font-size:11px; margin-left:4px;">(+0.49%)</span></td>
-            <td style="text-align:center;" class="up">+244</td>
-            <td style="text-align:center;">1.52% <span class="down" style="font-size:11px; margin-left:4px;">(-0.17%)</span></td>
-            <td style="text-align:center;">46,506 <span class="down" style="font-size:11px; margin-left:4px;">(-3,383)</span></td>
-            <td style="text-align:center;">2.1 <span class="up" style="font-size:11px; margin-left:4px;">(+0.1)</span></td>
-        </tr><tr>
-            <td style="text-align:center;">20260508</td>
-            <td style="text-align:center;">92.10% </td>
-            <td style="text-align:center;" class="up">+448</td>
-            <td style="text-align:center;">1.69% </td>
-            <td style="text-align:center;">49,889 </td>
-            <td style="text-align:center;">2.0 </td>
-        </tr>
-             </table>
-           </div>
-        </div>
-
-        <div class="grid-2-col">
-          <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>配額用完</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">配額用完</div></div>
-          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;"><h4 style="color: #e65100;">🎯 AI 操作建議</h4><div>配額用完</div></div>
-        </div>
-
-        <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
-            <details><summary style="padding: 12px 15px; background: #fdfdfd; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; list-style: none; user-select: none;">📰 近期相關新聞 (2) <span style="float:right; font-size:12px; color:#aaa; font-weight:normal;">點擊展開 ▼</span></summary><div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;"><div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-28 21:52:03</div><a href="https://today.line.me/tw/v3/posts/list/article/gzKEkPN" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">討論牆 | 盤中速報 - 旺矽(6223)急拉3.77%報6600.0元，成交169張 - LINE TODAY</a></div><div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-28 09:01:50</div><a href="https://www.cmoney.tw/forum/article/179395524" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">6223 旺矽- AI需求增溫旺矽成買進標的-股市爆料同學會 - CMoney</a></div></div></details>
-        </div>
-      </div>
-    </div>
     <div class="stock-card  " id="card_6274">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('6274')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_6274">▶</span>
-          <span class="mh-name">6274 台燿</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$1,690.00 (+9.74%)</span>
-          <button onclick="confirmDelete(event, '6274', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('6274')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '6274', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 6274">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_6274">▶</span><span class="mh-name">6274 台燿</span><span class="mh-price up">$1,690.00 (+9.74%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 10 / 籌 2.5</span></div>
       </div>
 
@@ -1086,15 +889,86 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         </div>
       </div>
     </div>
+    <div class="stock-card  " id="card_6223">
+      
+      <div class="mobile-header mobile-only" onclick="toggleMobile('6223')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '6223', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 6223">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_6223">▶</span><span class="mh-name">6223 旺矽</span><span class="mh-price up">$5,960.00 (+0.76%)</span></div>
+        <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 6.5 / 籌 6</span></div>
+      </div>
+
+      <div class="stock-body">
+        <div class="card-header-desktop desktop-only"><h2>6223 旺矽 <span class="up">$5,960.00 (+0.76%)</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">加碼</span> (技術: 6.5 / 籌碼: 6)</div></div>
+        
+        <div id="kline_6223" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
+        
+        <div class="grid-2-col">
+          <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="down">-26</td><td class="down">-63</td><td class="up">+114</td></tr><tr><td>投信</td><td class="up">+26</td><td class="up">+76</td><td class="up">+844</td></tr><tr><td>自營</td><td class="up">+7</td><td class="up">+2</td><td class="down">-36</td></tr><tr class="row-total"><td>合計</td><td class="up">+7</td><td class="up">+15</td><td class="up">+922</td></tr></table></div>
+          <div><h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3><table class="data-table"><tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>融資</td><td>1,050</td><td class="down">-10</td><td class="down">-81</td><td class="down">-243</td></tr><tr><td>融券</td><td>12</td><td class="up">+7</td><td class="up">+4</td><td class="up">+10</td></tr><tr><td>借券</td><td>1,381</td><td class="up">+83</td><td class="up">+565</td><td class="up">+666</td></tr></table></div>
+        </div>
+
+        <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
+           <h3 style="margin:0 0 10px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 6px;">📊 大戶與散戶持股變動 (歷史多週) <span style="font-size:10px; font-weight:normal; color:#888; background:#eee; padding:2px 6px; border-radius:10px;">大戶 >5千萬 (8張) / 散戶 <5百萬 (1張)</span></h3>
+           <div style="overflow-x: auto;">
+             <table class="data-table" style="min-width: 600px; margin-bottom: 0;">
+               <tr>
+                 <th style="text-align: center;">日期</th>
+                 <th style="text-align: center;">大戶比例</th>
+                 <th style="text-align: center;">四五法人(張)</th>
+                 <th style="text-align: center;">散戶比例</th>
+                 <th style="text-align: center;">總股東人數</th>
+                 <th style="text-align: center;">平均每戶(張)</th>
+               </tr>
+               <tr>
+            <td style="text-align:center;">20260529</td>
+            <td style="text-align:center;">92.44% <span class="up" style="font-size:11px; margin-left:4px;">(+0.10%)</span></td>
+            <td style="text-align:center;" class="down">-153</td>
+            <td style="text-align:center;">1.61% </td>
+            <td style="text-align:center;">49,862 <span class="up" style="font-size:11px; margin-left:4px;">(+435)</span></td>
+            <td style="text-align:center;">2.0 <span class="down" style="font-size:11px; margin-left:4px;">(-0.0)</span></td>
+        </tr><tr>
+            <td style="text-align:center;">20260522</td>
+            <td style="text-align:center;">92.34% <span class="down" style="font-size:11px; margin-left:4px;">(-0.25%)</span></td>
+            <td style="text-align:center;" class="down">-384</td>
+            <td style="text-align:center;">1.61% <span class="up" style="font-size:11px; margin-left:4px;">(+0.09%)</span></td>
+            <td style="text-align:center;">49,427 <span class="up" style="font-size:11px; margin-left:4px;">(+2,921)</span></td>
+            <td style="text-align:center;">2.0 <span class="down" style="font-size:11px; margin-left:4px;">(-0.1)</span></td>
+        </tr><tr>
+            <td style="text-align:center;">20260515</td>
+            <td style="text-align:center;">92.59% <span class="up" style="font-size:11px; margin-left:4px;">(+0.49%)</span></td>
+            <td style="text-align:center;" class="up">+244</td>
+            <td style="text-align:center;">1.52% <span class="down" style="font-size:11px; margin-left:4px;">(-0.17%)</span></td>
+            <td style="text-align:center;">46,506 <span class="down" style="font-size:11px; margin-left:4px;">(-3,383)</span></td>
+            <td style="text-align:center;">2.1 <span class="up" style="font-size:11px; margin-left:4px;">(+0.1)</span></td>
+        </tr><tr>
+            <td style="text-align:center;">20260508</td>
+            <td style="text-align:center;">92.10% </td>
+            <td style="text-align:center;" class="up">+448</td>
+            <td style="text-align:center;">1.69% </td>
+            <td style="text-align:center;">49,889 </td>
+            <td style="text-align:center;">2.0 </td>
+        </tr>
+             </table>
+           </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>配額用完</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">配額用完</div></div>
+          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;"><h4 style="color: #e65100;">🎯 AI 操作建議</h4><div>配額用完</div></div>
+        </div>
+
+        <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
+            <details><summary style="padding: 12px 15px; background: #fdfdfd; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; list-style: none; user-select: none;">📰 近期相關新聞 (2) <span style="float:right; font-size:12px; color:#aaa; font-weight:normal;">點擊展開 ▼</span></summary><div style="padding: 0 15px 5px 15px; border-top: 1px solid #f0f0f0;"><div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-28 21:52:03</div><a href="https://today.line.me/tw/v3/posts/list/article/gzKEkPN" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">討論牆 | 盤中速報 - 旺矽(6223)急拉3.77%報6600.0元，成交169張 - LINE TODAY</a></div><div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">2026-05-28 09:01:50</div><a href="https://www.cmoney.tw/forum/article/179395524" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">6223 旺矽- AI需求增溫旺矽成買進標的-股市爆料同學會 - CMoney</a></div></div></details>
+        </div>
+      </div>
+    </div>
     <div class="stock-card  " id="card_2383">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2383')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2383">▶</span>
-          <span class="mh-name">2383 台光電</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$5,120.00 (+1.29%)</span>
-          <button onclick="confirmDelete(event, '2383', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2383')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2383', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2383">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2383">▶</span><span class="mh-name">2383 台光電</span><span class="mh-price up">$5,120.00 (+1.29%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 4.5 / 籌 7.5</span></div>
       </div>
 
@@ -1165,13 +1039,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2454">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2454')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2454">▶</span>
-          <span class="mh-name">2454 聯發科</span>
-          <span class="mh-price down" style="margin-left:auto; margin-right:10px;">$4,310.00 (-2.27%)</span>
-          <button onclick="confirmDelete(event, '2454', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2454')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2454', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2454">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2454">▶</span><span class="mh-name">2454 聯發科</span><span class="mh-price down">$4,310.00 (-2.27%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 8.5 / 籌 3</span></div>
       </div>
 
@@ -1242,13 +1113,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_3037">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('3037')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_3037">▶</span>
-          <span class="mh-name">3037 欣興</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$1,055.00 (+2.93%)</span>
-          <button onclick="confirmDelete(event, '3037', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('3037')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '3037', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 3037">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_3037">▶</span><span class="mh-name">3037 欣興</span><span class="mh-price up">$1,055.00 (+2.93%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 加碼</span><span class="mh-score">技 6.5 / 籌 4.5</span></div>
       </div>
 
@@ -1319,13 +1187,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_3711">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('3711')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_3711">▶</span>
-          <span class="mh-name">3711 日月光投控</span>
-          <span class="mh-price down" style="margin-left:auto; margin-right:10px;">$611.00 (-2.55%)</span>
-          <button onclick="confirmDelete(event, '3711', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('3711')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '3711', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 3711">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_3711">▶</span><span class="mh-name">3711 日月光投控</span><span class="mh-price down">$611.00 (-2.55%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 8.5 / 籌 0</span></div>
       </div>
 
@@ -1385,8 +1250,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
         </div>
 
         <div class="grid-2-col">
-          <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>目前股價拉回跌破5日線，但各期均線仍呈多頭排列，且Supertrend與MACD指標維持偏多趨勢，短期處於高檔震盪整理格局。</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">外資持續擴大賣超，投信亦逢高轉賣；融資今日大增、借券餘額同步攀升，大戶持股微幅流失，籌碼呈現散戶接盤與空方壓制的跡象。</div></div>
-          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;"><h4 style="color: #e65100;">🎯 AI 操作建議</h4><div>鑑於籌碼面轉弱，短期不宜追高。建議靜待股價回檔至10日線或20日線附近，待量縮止跌且法人賣壓減緩後，再行分批佈局。</div></div>
+          <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>分析失敗</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">分析失敗</div></div>
+          <div class="ai-box" style="border-left-color: #e65100; background: #fff3e0;"><h4 style="color: #e65100;">🎯 AI 操作建議</h4><div>分析失敗</div></div>
         </div>
 
         <div style="margin-top: 5px; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
@@ -1396,13 +1261,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_6415">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('6415')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_6415">▶</span>
-          <span class="mh-name">6415 矽力*-KY</span>
-          <span class="mh-price down" style="margin-left:auto; margin-right:10px;">$600.00 (-3.23%)</span>
-          <button onclick="confirmDelete(event, '6415', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('6415')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '6415', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 6415">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_6415">▶</span><span class="mh-name">6415 矽力*-KY</span><span class="mh-price down">$600.00 (-3.23%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 7 / 籌 1.5</span></div>
       </div>
 
@@ -1473,13 +1335,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_3357">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('3357')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_3357">▶</span>
-          <span class="mh-name">3357 3357</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$287.00 (+1.41%)</span>
-          <button onclick="confirmDelete(event, '3357', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('3357')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '3357', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 3357">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_3357">▶</span><span class="mh-name">3357 3357</span><span class="mh-price up">$287.00 (+1.41%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 8.5 / 籌 0</span></div>
       </div>
 
@@ -1550,13 +1409,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2327">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2327')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2327">▶</span>
-          <span class="mh-name">2327 國巨*</span>
-          <span class="mh-price down" style="margin-left:auto; margin-right:10px;">$738.00 (-0.54%)</span>
-          <button onclick="confirmDelete(event, '2327', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2327')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2327', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2327">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2327">▶</span><span class="mh-name">2327 國巨*</span><span class="mh-price down">$738.00 (-0.54%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 6.5 / 籌 1.5</span></div>
       </div>
 
@@ -1627,13 +1483,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_8042">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('8042')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_8042">▶</span>
-          <span class="mh-name">8042 金山電</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$154.50 (+1.98%)</span>
-          <button onclick="confirmDelete(event, '8042', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('8042')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '8042', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 8042">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_8042">▶</span><span class="mh-name">8042 金山電</span><span class="mh-price up">$154.50 (+1.98%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 6.5 / 籌 1.5</span></div>
       </div>
 
@@ -1704,13 +1557,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_3008">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('3008')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_3008">▶</span>
-          <span class="mh-name">3008 大立光</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$3,515.00 (+2.63%)</span>
-          <button onclick="confirmDelete(event, '3008', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('3008')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '3008', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 3008">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_3008">▶</span><span class="mh-name">3008 大立光</span><span class="mh-price up">$3,515.00 (+2.63%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 6.5 / 籌 1.5</span></div>
       </div>
 
@@ -1781,13 +1631,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_2368">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('2368')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_2368">▶</span>
-          <span class="mh-name">2368 金像電</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$1,320.00 (+1.15%)</span>
-          <button onclick="confirmDelete(event, '2368', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('2368')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '2368', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 2368">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_2368">▶</span><span class="mh-name">2368 金像電</span><span class="mh-price up">$1,320.00 (+1.15%)</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 中性觀望</span><span class="mh-score">技 3.5 / 籌 4.5</span></div>
       </div>
 
@@ -1858,24 +1705,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div>
     <div class="stock-card  " id="card_9921">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('9921')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_9921">▶</span>
-          <span class="mh-name">9921 9921</span>
-          <span class="mh-price up" style="margin-left:auto; margin-right:10px;">$69.30 (+2.21%)</span>
-          <button onclick="confirmDelete(event, '9921', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
-        <div class="mh-bottom"><span class="mh-rating">🌟 強力減碼</span><span class="mh-score">技 0 / 籌 0</span></div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('9921')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '9921', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 9921">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_9921">▶</span><span class="mh-name">9921 9921</span><span class="mh-price up">$69.30 (+2.21%)</span></div>
+        <div class="mh-bottom"><span class="mh-rating">🌟 強力減碼</span><span class="mh-score">技 0 / 籌 1.5</span></div>
       </div>
 
       <div class="stock-body">
-        <div class="card-header-desktop desktop-only"><h2>9921 9921 <span class="up">$69.30 (+2.21%)</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">強力減碼</span> (技術: 0 / 籌碼: 0)</div></div>
+        <div class="card-header-desktop desktop-only"><h2>9921 9921 <span class="up">$69.30 (+2.21%)</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">強力減碼</span> (技術: 0 / 籌碼: 1.5)</div></div>
         
         <div id="kline_9921" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
         <div class="grid-2-col">
           <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="up">+324</td><td class="down">-2,543</td><td class="down">-1,948</td></tr><tr><td>投信</td><td class="up">+0</td><td class="up">+0</td><td class="down">-6</td></tr><tr><td>自營</td><td class="up">+33</td><td class="down">-32</td><td class="down">-343</td></tr><tr class="row-total"><td>合計</td><td class="up">+357</td><td class="down">-2,575</td><td class="down">-2,297</td></tr></table></div>
-          <div><h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3><table class="data-table"><tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>融資</td><td>0</td><td class="up">+0</td><td class="up">+0</td><td class="up">+0</td></tr><tr><td>融券</td><td>0</td><td class="up">+0</td><td class="up">+0</td><td class="up">+0</td></tr><tr><td>借券</td><td>0</td><td class="up">+0</td><td class="up">+0</td><td class="up">+0</td></tr></table></div>
+          <div><h3 style="margin:0 0 10px 0; font-size:16px;">💰 融資 / 融券 / 借券 (張)</h3><table class="data-table"><tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>融資</td><td>2,057</td><td class="down">-17</td><td class="up">+142</td><td class="up">+270</td></tr><tr><td>融券</td><td>38</td><td class="up">+0</td><td class="up">+6</td><td class="up">+2</td></tr><tr><td>借券</td><td>10,940</td><td class="up">+82</td><td class="up">+728</td><td class="up">+2,665</td></tr></table></div>
         </div>
 
         <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
@@ -1935,7 +1779,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     </div></div>
       </div>
   </div>
-  
 </div>
 <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
 
@@ -2839,134 +2682,6 @@ chartK_2375.setOption({
 window.addEventListener('resize', function() { chartK_2375.resize(); });
 
 
-var dates_6223 = ["01-09", "01-12", "01-13", "01-14", "01-15", "01-16", "01-19", "01-20", "01-21", "01-22", "01-23", "01-26", "01-27", "01-28", "01-29", "01-30", "02-02", "02-03", "02-04", "02-05", "02-06", "02-09", "02-10", "02-11", "02-23", "02-24", "02-25", "02-26", "03-02", "03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29"];
-var state_6223 = { lastIdx: -1, lastMonth: null };
-
-var dateFmt_6223 = function(value, index) {
-  if (index <= state_6223.lastIdx) { state_6223.lastMonth = null; }
-  state_6223.lastIdx = index;
-  var currM = value.split('-')[0];
-  var currD = value.split('-')[1];
-  var isBoundary = false;
-  if (index === 0) isBoundary = true;
-  else if (dates_6223[index - 1].split('-')[0] !== currM) isBoundary = true;
-  if (state_6223.lastMonth !== null && state_6223.lastMonth !== currM) isBoundary = true;
-  if (state_6223.lastMonth === null) isBoundary = true;
-  state_6223.lastMonth = currM;
-  return isBoundary ? (currM + '/' + currD) : currD;
-};
-
-var chartK_6223 = echarts.init(document.getElementById('kline_6223'));
-
-var currentMouseY_6223 = 0;
-chartK_6223.getZr().on('mousemove', function(e) {
-    currentMouseY_6223 = e.offsetY;
-});
-
-chartK_6223.setOption({
-  title: [
-    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#555'} },
-    { text: '三大法人買賣超(億)與累計', left: '6%', top: '51%', textStyle: {fontSize: 11, color: '#555'} },
-    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {fontSize: 11, color: '#555'} }
-  ],
-  tooltip: { 
-    trigger: 'axis', 
-    axisPointer: { type: 'cross' },
-    formatter: function(params) {
-      var h = chartK_6223.getHeight();
-      var yPct = (currentMouseY_6223 / h) * 100;
-      var date = params[0].axisValue;
-      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
-      
-      var hoveredGrid = 0; 
-      if (yPct >= 51 && yPct < 75) hoveredGrid = 1;
-      else if (yPct >= 75) hoveredGrid = 2;
-      
-      params.forEach(function(p) {
-        var isPrice = (p.seriesName === 'K線');
-        var isVol = (p.seriesName === '成交量(張)');
-        var axIdx = p.axisIndex || 0;
-        
-        if (isPrice) {
-          var val = p.data;
-          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
-                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
-                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
-                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
-        } else if (isVol) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v != null && !isNaN(v) && v !== '') {
-              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
-          }
-        } else if (axIdx === hoveredGrid) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v == null || isNaN(v) || v === '') return;
-          v = Math.round(v).toLocaleString();
-          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
-        }
-      });
-      html += '</div>';
-      return html;
-    }
-  },
-  legend: [
-    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 },
-    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '51%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 },
-    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 }
-  ],
-  axisPointer: { link: {xAxisIndex: 'all'} },
-  // 【修改重點】K線與成交量整合為 Grid 0，總共僅 3 個 Grid，大幅增加高度
-  grid: [
-    { left: '6%', right: '8%', top: '5%', height: '40%' },
-    { left: '6%', right: '8%', top: '55%', height: '16%' },
-    { left: '6%', right: '8%', top: '80%', height: '16%' }
-  ],
-  xAxis: [
-    { type: 'category', gridIndex: 0, data: dates_6223, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#666', formatter: dateFmt_6223, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false}, axisTick: {show: true} },
-    { type: 'category', gridIndex: 1, data: dates_6223, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false}, axisTick: {show: false} },
-    { type: 'category', gridIndex: 2, data: dates_6223, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#666', formatter: dateFmt_6223, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false}, axisTick: {show: true} }
-  ],
-  yAxis: [
-    { scale: true, gridIndex: 0, splitArea: {show: true}, splitLine: {lineStyle: {color: '#eee'}}, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }} },
-    // 【修改重點】這是疊加在 K 線圖上的成交量隱藏 Y 軸，強制設定最大值將柱體壓在底端
-    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 4, 100); } },
-    
-    { type: 'value', gridIndex: 1, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#eee'}} },
-    { type: 'value', gridIndex: 1, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
-    { type: 'value', gridIndex: 2, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#eee'}} },
-    { type: 'value', gridIndex: 2, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' }
-  ],
-  dataZoom: [
-    { type: 'inside', xAxisIndex: [0, 1, 2], start: 0, end: 100 }, 
-    { show: true, xAxisIndex: [0, 1, 2], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }
-  ],
-  series: [
-    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[2165.0, 2230.0, 2025.0, 2230.0], [2305.0, 2200.0, 2155.0, 2320.0], [2300.0, 2275.0, 2215.0, 2300.0], [2285.0, 2345.0, 2250.0, 2365.0], [2335.0, 2230.0, 2200.0, 2335.0], [2265.0, 2300.0, 2245.0, 2320.0], [2310.0, 2315.0, 2245.0, 2325.0], [2290.0, 2450.0, 2275.0, 2475.0], [2385.0, 2460.0, 2370.0, 2495.0], [2540.0, 2415.0, 2365.0, 2585.0], [2435.0, 2545.0, 2370.0, 2550.0], [2550.0, 2585.0, 2495.0, 2610.0], [2710.0, 2735.0, 2700.0, 2805.0], [2740.0, 2655.0, 2610.0, 2770.0], [2695.0, 2595.0, 2585.0, 2720.0], [2575.0, 2515.0, 2515.0, 2685.0], [2500.0, 2630.0, 2485.0, 2670.0], [2750.0, 2845.0, 2750.0, 2875.0], [2840.0, 2750.0, 2695.0, 2855.0], [2730.0, 2750.0, 2700.0, 2850.0], [2750.0, 2670.0, 2640.0, 2760.0], [2805.0, 2775.0, 2770.0, 2895.0], [2750.0, 2785.0, 2690.0, 2820.0], [2805.0, 2790.0, 2790.0, 2850.0], [2840.0, 2805.0, 2680.0, 2865.0], [2805.0, 2650.0, 2645.0, 2805.0], [2650.0, 2680.0, 2530.0, 2685.0], [2710.0, 2945.0, 2665.0, 2945.0], [2830.0, 2800.0, 2800.0, 2970.0], [2925.0, 2855.0, 2825.0, 2940.0], [2770.0, 2660.0, 2640.0, 2845.0], [2885.0, 2845.0, 2790.0, 2885.0], [2810.0, 2965.0, 2800.0, 2995.0], [2715.0, 2720.0, 2670.0, 2785.0], [2900.0, 2990.0, 2870.0, 2990.0], [3130.0, 3285.0, 3130.0, 3285.0], [3300.0, 3610.0, 3300.0, 3610.0], [3600.0, 3550.0, 3520.0, 3635.0], [3645.0, 3565.0, 3530.0, 3680.0], [3610.0, 3580.0, 3570.0, 3700.0], [3640.0, 3735.0, 3640.0, 3870.0], [3660.0, 3665.0, 3650.0, 3865.0], [3665.0, 3860.0, 3650.0, 3910.0], [3745.0, 3715.0, 3635.0, 3845.0], [3850.0, 3670.0, 3660.0, 3940.0], [3850.0, 3750.0, 3690.0, 3850.0], [3825.0, 3655.0, 3640.0, 3850.0], [3455.0, 3665.0, 3455.0, 3695.0], [3620.0, 3735.0, 3580.0, 3735.0], [3740.0, 3595.0, 3465.0, 3780.0], [3900.0, 3950.0, 3790.0, 3950.0], [4050.0, 3765.0, 3750.0, 4050.0], [3820.0, 3920.0, 3805.0, 3965.0], [4155.0, 4310.0, 4135.0, 4310.0], [4500.0, 4470.0, 4330.0, 4560.0], [4595.0, 4620.0, 4510.0, 4800.0], [4560.0, 4545.0, 4450.0, 4675.0], [4655.0, 4560.0, 4520.0, 4760.0], [4650.0, 4605.0, 4540.0, 4825.0], [4700.0, 4915.0, 4630.0, 4935.0], [5155.0, 5195.0, 5040.0, 5405.0], [5370.0, 5135.0, 5110.0, 5395.0], [5110.0, 4940.0, 4830.0, 5110.0], [4980.0, 4825.0, 4825.0, 5065.0], [4895.0, 4790.0, 4635.0, 5040.0], [4850.0, 4650.0, 4630.0, 4995.0], [4740.0, 4880.0, 4605.0, 4915.0], [4950.0, 4880.0, 4770.0, 4985.0], [4870.0, 4945.0, 4785.0, 4970.0], [5000.0, 4925.0, 4835.0, 5040.0], [5005.0, 5165.0, 4910.0, 5200.0], [5150.0, 5000.0, 4865.0, 5150.0], [5095.0, 4950.0, 4850.0, 5115.0], [4965.0, 5030.0, 4865.0, 5050.0], [4930.0, 5025.0, 4930.0, 5370.0], [4860.0, 4985.0, 4710.0, 5125.0], [5315.0, 5480.0, 5250.0, 5480.0], [5490.0, 5720.0, 5315.0, 5820.0], [6290.0, 6290.0, 6290.0, 6290.0], [6280.0, 5895.0, 5895.0, 6665.0], [6000.0, 6135.0, 5895.0, 6245.0], [6250.0, 5730.0, 5695.0, 6275.0], [5800.0, 5680.0, 5680.0, 6015.0], [6160.0, 5650.0, 5530.0, 6160.0], [5880.0, 6035.0, 5765.0, 6035.0], [6240.0, 6200.0, 6115.0, 6465.0], [6425.0, 6240.0, 6120.0, 6425.0], [6400.0, 6390.0, 6280.0, 6645.0], [6390.0, 5915.0, 5855.0, 6450.0], [6165.0, 5960.0, 5870.0, 6200.0]], itemStyle: {color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'} },
-    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2254.0, 2248.25, 2243.25, 2242.0, 2238.75, 2241.75, 2247.25, 2254.5, 2264.75, 2273.25, 2285.25, 2296.5, 2321.75, 2341.25, 2358.5, 2371.25, 2395.25, 2430.0, 2459.75, 2491.25, 2513.25, 2542.0, 2567.5, 2589.75, 2618.5, 2636.0, 2654.25, 2679.0, 2696.0, 2718.0, 2723.75, 2736.75, 2748.25, 2751.5, 2771.25, 2809.75, 2858.75, 2894.0, 2934.75, 2976.25, 3029.5, 3074.0, 3127.75, 3174.0, 3217.25, 3272.25, 3321.0, 3357.0, 3403.75, 3440.75, 3505.25, 3551.25, 3599.0, 3678.5, 3752.5, 3819.25, 3866.0, 3916.5, 3968.5, 4035.25, 4108.25, 4181.75, 4235.75, 4291.25, 4347.25, 4392.25, 4453.5, 4514.25, 4574.75, 4641.25, 4702.0, 4763.75, 4815.25, 4851.25, 4879.0, 4897.25, 4944.0, 5002.0, 5086.25, 5135.25, 5182.25, 5212.0, 5249.0, 5290.25, 5352.5, 5430.0, 5498.0, 5573.5, 5622.0, 5673.75], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#fbc02d'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2059, 2059, 2059, 2059, 2059, 2059, 2059, 2059, 2065, 2078, 2078, 2148, 2322, 2322, 2322, 2322, 2322, 2333, 2333, 2333, 2333, 2346, 2346, 2372, 2372, 2372, 2372, 2372, 2385, 2390, 2390, 2390, 2390, 2390, 2390, 2588, 2800, 2953, 2998, 3048, 3140, 3140, 3146, 3146, 3146, 3146, 3146, 3146, 3146, 3146, 3165, 3176, 3176, 3465, 3688, 3875, 3875, 3875, 3909, 3987, 4360, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4409, 4556, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5226, 5226, 5226], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ef5350', type: 'dashed'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#26a69a', type: 'dashed'} },
-    
-    // 【修改重點】成交量對應到同一個 xAxis(0)，並綁定新的隱藏 yAxis(1) 達成疊加效果
-    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [2345, 1999, 1931, 1778, 1701, 1415, 886, 2186, 1933, 1594, 1297, 1218, 1614, 1396, 1074, 1676, 1786, 1928, 1660, 1545, 1061, 1287, 1024, 764, 1185, 1779, 3238, 3036, 1777, 1710, 1368, 1048, 1369, 1153, 1159, 909, 2461, 1125, 734, 1053, 1223, 1010, 2357, 1251, 1281, 1517, 1450, 1047, 785, 1142, 1409, 1143, 701, 905, 1136, 999, 665, 711, 977, 1175, 1433, 1243, 2132, 1364, 1747, 1339, 1471, 1043, 930, 1146, 1257, 1197, 1232, 886, 1610, 2038, 866, 2908, 496, 2070, 1496, 1616, 987, 1180, 1184, 825, 728, 810, 953, 7075], itemStyle: {color: function(params) { return ["#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a"][params.dataIndex]; } } },
-    
-    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-0.19, -2.73, 5.25, 4.78, -1.65, 6.85, 1.34, 3.15, -6.61, -6.28, 5.38, 3.58, 12.36, -4.89, -0.55, -7.16, -0.92, 7.09, -1.21, 0.93, -1.59, 3.28, 4.14, 4.42, 2.2, -9.62, 17.78, -5.99, -5.37, 4.95, 0.68, 3.11, 3.89, -10.84, 3.06, 3.28, 5.86, -0.98, 3.32, -7.02, -1.61, -2.82, -7.73, -7.23, -5.84, 6.92, -8.77, -0.3, 3.7, -1.91, 5.66, -12.65, 3.18, -2.78, -3.01, -2.55, -4.48, -2.0, 1.31, 0.04, -7.13, -14.16, -22.53, 0.9, 5.18, 9.18, 5.43, 0.1, 12.41, -0.87, -2.08, -10.52, 9.26, 7.51, -5.74, 7.51, 0.93, -2.8, -3.47, 15.19, -7.48, 14.82, 4.6, -9.51, -10.0, 2.7, 1.11, 1.15, -6.88, -1.55], itemStyle: {color: '#378ADD'} },
-    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-6.29, -1.72, 6.35, 1.71, -8.57, 2.12, -0.13, 3.09, 10.23, -1.91, -0.36, -1.45, -0.3, -3.96, -2.11, 0.69, -0.14, 5.08, -10.09, -0.45, -1.39, -0.74, -5.25, -0.67, -0.84, -10.32, -19.52, 2.95, 0.96, 3.63, 0.4, 2.62, 5.14, 2.61, 6.01, 3.84, 5.11, 2.74, 0.46, 0.16, 4.89, -0.5, 1.81, 0.6, 5.03, 8.03, -3.95, 0.95, 1.83, -1.09, 8.26, 0.63, 0.98, 3.21, 1.34, -1.25, 0.99, 1.13, -3.68, 2.7, 6.59, 3.29, -4.18, -6.3, -2.52, -7.4, 4.13, -1.63, -0.11, 0.25, 6.33, -0.25, 1.14, 3.93, 15.93, -14.26, 0.05, 19.01, -1.95, 9.2, 11.35, -1.83, -1.76, -4.76, 1.35, 1.86, 0.84, 2.39, -1.83, 1.55], itemStyle: {color: '#1D9E75'} },
-    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.82, -0.89, -0.05, 0.34, -0.88, 0.18, -0.14, -0.36, 0.63, -0.28, 1.06, -0.15, 0.14, -0.39, -0.44, 0.14, -0.38, -0.13, -1.93, 0.26, -0.53, 0.52, -0.41, -0.4, -0.88, 1.27, 3.86, 1.07, -1.72, 0.04, -0.94, 0.49, 1.15, -1.21, 0.1, -0.3, -3.13, -0.05, -0.86, 0.84, -0.55, -0.51, 0.36, 0.05, -0.59, 0.22, 0.67, 0.34, -0.41, -1.52, -0.05, 0.46, -0.38, -0.46, -0.35, -0.39, -0.45, 0.18, -0.5, 1.1, -0.12, 0.89, 0.36, 1.31, 2.01, -1.11, 1.02, 0.62, 0.2, -0.14, 2.72, 0.75, -0.47, 0.56, 0.32, 1.71, 3.84, -1.6, 2.09, -6.9, -0.79, -3.46, -2.53, 0.8, -0.14, 0.22, -0.59, 0.86, -0.78, 0.43], itemStyle: {color: '#FF9800'} },
-    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [-5.66, -10.99, 0.56, 7.39, -3.71, 5.43, 6.5, 12.38, 16.63, 8.16, 14.24, 16.23, 28.43, 19.18, 16.07, 9.75, 8.3, 20.34, 7.11, 7.85, 4.34, 7.41, 5.89, 9.24, 9.72, -8.96, -6.84, -8.8, -14.94, -6.32, -6.17, 0.04, 10.22, 0.77, 9.94, 16.77, 24.61, 26.32, 29.25, 23.23, 25.97, 22.13, 16.57, 10.0, 8.6, 23.77, 11.72, 12.71, 17.83, 13.31, 27.18, 15.63, 19.41, 19.39, 17.37, 13.18, 9.24, 8.55, 5.67, 9.52, 8.86, -1.11, -27.45, -31.54, -26.88, -26.21, -15.63, -16.55, -4.05, -4.81, 2.15, -7.86, 2.07, 14.08, 24.58, 19.56, 24.38, 38.99, 35.66, 53.14, 56.22, 65.75, 66.07, 52.6, 43.81, 48.59, 49.95, 54.35, 44.87, 45.3], itemStyle: {color: '#E91E63'}, smooth: true, showSymbol: false },
-    
-    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [238, -169, -116, -57, 28, -91, -2, -14, -37, 48, 50, -1, -113, 0, -9, 106, -112, -61, 60, -68, -32, 46, 17, -5, 7, 115, 151, -50, 119, -254, -7, -99, -63, 6, -19, 3, 32, -47, -29, 83, 3, 27, 25, -10, 4, 14, -12, -9, -44, -18, -20, 7, 1, 74, 43, -37, 17, -19, 22, 101, 66, -11, 60, -1, -54, 22, 46, 13, -38, 40, 128, 47, -60, -85, -64, 31, -10, 127, 13, -124, 40, -87, -50, 20, -88, -29, -40, -11, 9, -10], itemStyle: {color: '#EF5350'} },
-    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [4, -6, 6, 6, -8, 7, -5, 7, -3, -4, 7, -2, -9, -6, -4, -2, 1, -11, -7, -1, -2, 1, -2, -1, -2, 32, -9, -6, -18, 14, 9, -31, -1, -17, 10, 6, -3, -8, -2, -3, -1, 0, -12, -8, -3, 1, -1, 35, 5, -6, -36, -6, 1, 7, -11, -40, 0, 0, 0, 5, -3, 0, -1, 2, -2, -1, 1, 1, 0, 0, 0, 0, 1, 0, 2, -2, 5, -3, 6, -5, 2, 8, -6, -4, 2, 0, 0, -2, -1, 7], itemStyle: {color: '#66BB6A'} },
-    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-24, 52, -180, -45, 52, 36, 3, -72, 65, 63, -69, -29, -29, -79, -39, 6, 1, -41, -41, -23, -32, -16, -68, -37, 41, -30, 72, 6, -18, -178, -5, -7, -156, 30, -11, -33, -32, 14, -41, -10, 16, 36, 212, 32, -10, 24, -3, -5, -42, -7, -31, 7, -11, -13, 0, 13, 9, 3, -11, -8, 20, 19, 18, 23, -19, -46, 38, 70, 19, -18, 12, 25, -28, 9, 35, -11, -3, 23, -20, -45, 0, 12, 1, 18, 73, 53, 91, 178, 160, 83], itemStyle: {color: '#AB47BC'} },
-    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1565, 1396, 1280, 1223, 1251, 1160, 1158, 1144, 1107, 1155, 1205, 1204, 1091, 1091, 1082, 1188, 1076, 1015, 1075, 1007, 975, 1021, 1038, 1033, 1040, 1155, 1306, 1256, 1375, 1121, 1114, 1015, 952, 958, 939, 942, 974, 927, 898, 981, 984, 1011, 1036, 1026, 1030, 1044, 1032, 1023, 979, 961, 941, 948, 949, 1023, 1066, 1029, 1046, 1027, 1049, 1150, 1216, 1205, 1265, 1264, 1210, 1232, 1278, 1291, 1253, 1293, 1421, 1468, 1408, 1323, 1259, 1290, 1280, 1407, 1420, 1296, 1336, 1249, 1199, 1219, 1131, 1102, 1062, 1051, 1060, 1050], itemStyle: {color: '#EF5350'}, smooth: true, showSymbol: false },
-    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [142, 136, 142, 148, 140, 147, 142, 149, 146, 142, 149, 147, 138, 132, 128, 126, 127, 116, 109, 108, 106, 107, 105, 104, 102, 134, 125, 119, 101, 115, 124, 93, 92, 75, 85, 91, 88, 80, 78, 75, 74, 74, 62, 54, 51, 52, 51, 86, 91, 85, 49, 43, 44, 51, 40, 0, 0, 0, 0, 5, 2, 2, 1, 3, 1, 0, 1, 2, 2, 2, 2, 2, 3, 3, 5, 3, 8, 5, 11, 6, 8, 16, 10, 6, 8, 8, 8, 6, 5, 12], itemStyle: {color: '#66BB6A'}, smooth: true, showSymbol: false },
-    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1260, 1312, 1132, 1087, 1139, 1175, 1178, 1106, 1171, 1234, 1165, 1136, 1107, 1028, 989, 995, 996, 955, 914, 891, 859, 843, 775, 738, 779, 749, 821, 827, 809, 631, 626, 619, 463, 493, 482, 449, 417, 431, 390, 380, 396, 432, 644, 676, 666, 690, 687, 682, 640, 633, 602, 609, 598, 585, 585, 598, 607, 610, 599, 591, 611, 630, 648, 671, 652, 606, 644, 714, 733, 715, 727, 752, 724, 733, 768, 757, 754, 777, 757, 712, 712, 724, 725, 743, 816, 869, 960, 1138, 1298, 1381], itemStyle: {color: '#AB47BC'}, smooth: true, showSymbol: false }
-  ]
-});
-window.addEventListener('resize', function() { chartK_6223.resize(); });
-
-
 var dates_6274 = ["01-09", "01-12", "01-13", "01-14", "01-15", "01-16", "01-19", "01-20", "01-21", "01-22", "01-23", "01-26", "01-27", "01-28", "01-29", "01-30", "02-02", "02-03", "02-04", "02-05", "02-06", "02-09", "02-10", "02-11", "02-23", "02-24", "02-25", "02-26", "03-02", "03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29"];
 var state_6274 = { lastIdx: -1, lastMonth: null };
 
@@ -3093,6 +2808,134 @@ chartK_6274.setOption({
   ]
 });
 window.addEventListener('resize', function() { chartK_6274.resize(); });
+
+
+var dates_6223 = ["01-09", "01-12", "01-13", "01-14", "01-15", "01-16", "01-19", "01-20", "01-21", "01-22", "01-23", "01-26", "01-27", "01-28", "01-29", "01-30", "02-02", "02-03", "02-04", "02-05", "02-06", "02-09", "02-10", "02-11", "02-23", "02-24", "02-25", "02-26", "03-02", "03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29"];
+var state_6223 = { lastIdx: -1, lastMonth: null };
+
+var dateFmt_6223 = function(value, index) {
+  if (index <= state_6223.lastIdx) { state_6223.lastMonth = null; }
+  state_6223.lastIdx = index;
+  var currM = value.split('-')[0];
+  var currD = value.split('-')[1];
+  var isBoundary = false;
+  if (index === 0) isBoundary = true;
+  else if (dates_6223[index - 1].split('-')[0] !== currM) isBoundary = true;
+  if (state_6223.lastMonth !== null && state_6223.lastMonth !== currM) isBoundary = true;
+  if (state_6223.lastMonth === null) isBoundary = true;
+  state_6223.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
+};
+
+var chartK_6223 = echarts.init(document.getElementById('kline_6223'));
+
+var currentMouseY_6223 = 0;
+chartK_6223.getZr().on('mousemove', function(e) {
+    currentMouseY_6223 = e.offsetY;
+});
+
+chartK_6223.setOption({
+  title: [
+    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#555'} },
+    { text: '三大法人買賣超(億)與累計', left: '6%', top: '51%', textStyle: {fontSize: 11, color: '#555'} },
+    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {fontSize: 11, color: '#555'} }
+  ],
+  tooltip: { 
+    trigger: 'axis', 
+    axisPointer: { type: 'cross' },
+    formatter: function(params) {
+      var h = chartK_6223.getHeight();
+      var yPct = (currentMouseY_6223 / h) * 100;
+      var date = params[0].axisValue;
+      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
+      
+      var hoveredGrid = 0; 
+      if (yPct >= 51 && yPct < 75) hoveredGrid = 1;
+      else if (yPct >= 75) hoveredGrid = 2;
+      
+      params.forEach(function(p) {
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
+        var axIdx = p.axisIndex || 0;
+        
+        if (isPrice) {
+          var val = p.data;
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        } else if (isVol) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
+          }
+        } else if (axIdx === hoveredGrid) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') return;
+          v = Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+  },
+  legend: [
+    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 },
+    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '51%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 },
+    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {fontSize: 10}, itemWidth:10, itemHeight:10 }
+  ],
+  axisPointer: { link: {xAxisIndex: 'all'} },
+  // 【修改重點】K線與成交量整合為 Grid 0，總共僅 3 個 Grid，大幅增加高度
+  grid: [
+    { left: '6%', right: '8%', top: '5%', height: '40%' },
+    { left: '6%', right: '8%', top: '55%', height: '16%' },
+    { left: '6%', right: '8%', top: '80%', height: '16%' }
+  ],
+  xAxis: [
+    { type: 'category', gridIndex: 0, data: dates_6223, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#666', formatter: dateFmt_6223, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false}, axisTick: {show: true} },
+    { type: 'category', gridIndex: 1, data: dates_6223, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 2, data: dates_6223, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#666', formatter: dateFmt_6223, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false}, axisTick: {show: true} }
+  ],
+  yAxis: [
+    { scale: true, gridIndex: 0, splitArea: {show: true}, splitLine: {lineStyle: {color: '#eee'}}, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }} },
+    // 【修改重點】這是疊加在 K 線圖上的成交量隱藏 Y 軸，強制設定最大值將柱體壓在底端
+    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 4, 100); } },
+    
+    { type: 'value', gridIndex: 1, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#eee'}} },
+    { type: 'value', gridIndex: 1, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
+    { type: 'value', gridIndex: 2, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#eee'}} },
+    { type: 'value', gridIndex: 2, axisLabel: {fontSize: 9, formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' }
+  ],
+  dataZoom: [
+    { type: 'inside', xAxisIndex: [0, 1, 2], start: 0, end: 100 }, 
+    { show: true, xAxisIndex: [0, 1, 2], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }
+  ],
+  series: [
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[2165.0, 2230.0, 2025.0, 2230.0], [2305.0, 2200.0, 2155.0, 2320.0], [2300.0, 2275.0, 2215.0, 2300.0], [2285.0, 2345.0, 2250.0, 2365.0], [2335.0, 2230.0, 2200.0, 2335.0], [2265.0, 2300.0, 2245.0, 2320.0], [2310.0, 2315.0, 2245.0, 2325.0], [2290.0, 2450.0, 2275.0, 2475.0], [2385.0, 2460.0, 2370.0, 2495.0], [2540.0, 2415.0, 2365.0, 2585.0], [2435.0, 2545.0, 2370.0, 2550.0], [2550.0, 2585.0, 2495.0, 2610.0], [2710.0, 2735.0, 2700.0, 2805.0], [2740.0, 2655.0, 2610.0, 2770.0], [2695.0, 2595.0, 2585.0, 2720.0], [2575.0, 2515.0, 2515.0, 2685.0], [2500.0, 2630.0, 2485.0, 2670.0], [2750.0, 2845.0, 2750.0, 2875.0], [2840.0, 2750.0, 2695.0, 2855.0], [2730.0, 2750.0, 2700.0, 2850.0], [2750.0, 2670.0, 2640.0, 2760.0], [2805.0, 2775.0, 2770.0, 2895.0], [2750.0, 2785.0, 2690.0, 2820.0], [2805.0, 2790.0, 2790.0, 2850.0], [2840.0, 2805.0, 2680.0, 2865.0], [2805.0, 2650.0, 2645.0, 2805.0], [2650.0, 2680.0, 2530.0, 2685.0], [2710.0, 2945.0, 2665.0, 2945.0], [2830.0, 2800.0, 2800.0, 2970.0], [2925.0, 2855.0, 2825.0, 2940.0], [2770.0, 2660.0, 2640.0, 2845.0], [2885.0, 2845.0, 2790.0, 2885.0], [2810.0, 2965.0, 2800.0, 2995.0], [2715.0, 2720.0, 2670.0, 2785.0], [2900.0, 2990.0, 2870.0, 2990.0], [3130.0, 3285.0, 3130.0, 3285.0], [3300.0, 3610.0, 3300.0, 3610.0], [3600.0, 3550.0, 3520.0, 3635.0], [3645.0, 3565.0, 3530.0, 3680.0], [3610.0, 3580.0, 3570.0, 3700.0], [3640.0, 3735.0, 3640.0, 3870.0], [3660.0, 3665.0, 3650.0, 3865.0], [3665.0, 3860.0, 3650.0, 3910.0], [3745.0, 3715.0, 3635.0, 3845.0], [3850.0, 3670.0, 3660.0, 3940.0], [3850.0, 3750.0, 3690.0, 3850.0], [3825.0, 3655.0, 3640.0, 3850.0], [3455.0, 3665.0, 3455.0, 3695.0], [3620.0, 3735.0, 3580.0, 3735.0], [3740.0, 3595.0, 3465.0, 3780.0], [3900.0, 3950.0, 3790.0, 3950.0], [4050.0, 3765.0, 3750.0, 4050.0], [3820.0, 3920.0, 3805.0, 3965.0], [4155.0, 4310.0, 4135.0, 4310.0], [4500.0, 4470.0, 4330.0, 4560.0], [4595.0, 4620.0, 4510.0, 4800.0], [4560.0, 4545.0, 4450.0, 4675.0], [4655.0, 4560.0, 4520.0, 4760.0], [4650.0, 4605.0, 4540.0, 4825.0], [4700.0, 4915.0, 4630.0, 4935.0], [5155.0, 5195.0, 5040.0, 5405.0], [5370.0, 5135.0, 5110.0, 5395.0], [5110.0, 4940.0, 4830.0, 5110.0], [4980.0, 4825.0, 4825.0, 5065.0], [4895.0, 4790.0, 4635.0, 5040.0], [4850.0, 4650.0, 4630.0, 4995.0], [4740.0, 4880.0, 4605.0, 4915.0], [4950.0, 4880.0, 4770.0, 4985.0], [4870.0, 4945.0, 4785.0, 4970.0], [5000.0, 4925.0, 4835.0, 5040.0], [5005.0, 5165.0, 4910.0, 5200.0], [5150.0, 5000.0, 4865.0, 5150.0], [5095.0, 4950.0, 4850.0, 5115.0], [4965.0, 5030.0, 4865.0, 5050.0], [4930.0, 5025.0, 4930.0, 5370.0], [4860.0, 4985.0, 4710.0, 5125.0], [5315.0, 5480.0, 5250.0, 5480.0], [5490.0, 5720.0, 5315.0, 5820.0], [6290.0, 6290.0, 6290.0, 6290.0], [6280.0, 5895.0, 5895.0, 6665.0], [6000.0, 6135.0, 5895.0, 6245.0], [6250.0, 5730.0, 5695.0, 6275.0], [5800.0, 5680.0, 5680.0, 6015.0], [6160.0, 5650.0, 5530.0, 6160.0], [5880.0, 6035.0, 5765.0, 6035.0], [6240.0, 6200.0, 6115.0, 6465.0], [6425.0, 6240.0, 6120.0, 6425.0], [6400.0, 6390.0, 6280.0, 6645.0], [6390.0, 5915.0, 5855.0, 6450.0], [6165.0, 5960.0, 5870.0, 6200.0]], itemStyle: {color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'} },
+    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2254.0, 2248.25, 2243.25, 2242.0, 2238.75, 2241.75, 2247.25, 2254.5, 2264.75, 2273.25, 2285.25, 2296.5, 2321.75, 2341.25, 2358.5, 2371.25, 2395.25, 2430.0, 2459.75, 2491.25, 2513.25, 2542.0, 2567.5, 2589.75, 2618.5, 2636.0, 2654.25, 2679.0, 2696.0, 2718.0, 2723.75, 2736.75, 2748.25, 2751.5, 2771.25, 2809.75, 2858.75, 2894.0, 2934.75, 2976.25, 3029.5, 3074.0, 3127.75, 3174.0, 3217.25, 3272.25, 3321.0, 3357.0, 3403.75, 3440.75, 3505.25, 3551.25, 3599.0, 3678.5, 3752.5, 3819.25, 3866.0, 3916.5, 3968.5, 4035.25, 4108.25, 4181.75, 4235.75, 4291.25, 4347.25, 4392.25, 4453.5, 4514.25, 4574.75, 4641.25, 4702.0, 4763.75, 4815.25, 4851.25, 4879.0, 4897.25, 4944.0, 5002.0, 5086.25, 5135.25, 5182.25, 5212.0, 5249.0, 5290.25, 5352.5, 5430.0, 5498.0, 5573.5, 5622.0, 5673.75], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#fbc02d'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2059, 2059, 2059, 2059, 2059, 2059, 2059, 2059, 2065, 2078, 2078, 2148, 2322, 2322, 2322, 2322, 2322, 2333, 2333, 2333, 2333, 2346, 2346, 2372, 2372, 2372, 2372, 2372, 2385, 2390, 2390, 2390, 2390, 2390, 2390, 2588, 2800, 2953, 2998, 3048, 3140, 3140, 3146, 3146, 3146, 3146, 3146, 3146, 3146, 3146, 3165, 3176, 3176, 3465, 3688, 3875, 3875, 3875, 3909, 3987, 4360, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4390, 4409, 4556, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5209, 5226, 5226, 5226], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ef5350', type: 'dashed'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#26a69a', type: 'dashed'} },
+    
+    // 【修改重點】成交量對應到同一個 xAxis(0)，並綁定新的隱藏 yAxis(1) 達成疊加效果
+    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [2345, 1999, 1931, 1778, 1701, 1415, 886, 2186, 1933, 1594, 1297, 1218, 1614, 1396, 1074, 1676, 1786, 1928, 1660, 1545, 1061, 1287, 1024, 764, 1185, 1779, 3238, 3036, 1777, 1710, 1368, 1048, 1369, 1153, 1159, 909, 2461, 1125, 734, 1053, 1223, 1010, 2357, 1251, 1281, 1517, 1450, 1047, 785, 1142, 1409, 1143, 701, 905, 1136, 999, 665, 711, 977, 1175, 1433, 1243, 2132, 1364, 1747, 1339, 1471, 1043, 930, 1146, 1257, 1197, 1232, 886, 1610, 2038, 866, 2908, 496, 2070, 1496, 1616, 987, 1180, 1184, 825, 728, 810, 953, 7075], itemStyle: {color: function(params) { return ["#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#ef5350", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#ef5350", "#26a69a", "#26a69a", "#26a69a", "#26a69a", "#26a69a"][params.dataIndex]; } } },
+    
+    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-0.19, -2.73, 5.25, 4.78, -1.65, 6.85, 1.34, 3.15, -6.61, -6.28, 5.38, 3.58, 12.36, -4.89, -0.55, -7.16, -0.92, 7.09, -1.21, 0.93, -1.59, 3.28, 4.14, 4.42, 2.2, -9.62, 17.78, -5.99, -5.37, 4.95, 0.68, 3.11, 3.89, -10.84, 3.06, 3.28, 5.86, -0.98, 3.32, -7.02, -1.61, -2.82, -7.73, -7.23, -5.84, 6.92, -8.77, -0.3, 3.7, -1.91, 5.66, -12.65, 3.18, -2.78, -3.01, -2.55, -4.48, -2.0, 1.31, 0.04, -7.13, -14.16, -22.53, 0.9, 5.18, 9.18, 5.43, 0.1, 12.41, -0.87, -2.08, -10.52, 9.26, 7.51, -5.74, 7.51, 0.93, -2.8, -3.47, 15.19, -7.48, 14.82, 4.6, -9.51, -10.0, 2.7, 1.11, 1.15, -6.88, -1.55], itemStyle: {color: '#378ADD'} },
+    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-6.29, -1.72, 6.35, 1.71, -8.57, 2.12, -0.13, 3.09, 10.23, -1.91, -0.36, -1.45, -0.3, -3.96, -2.11, 0.69, -0.14, 5.08, -10.09, -0.45, -1.39, -0.74, -5.25, -0.67, -0.84, -10.32, -19.52, 2.95, 0.96, 3.63, 0.4, 2.62, 5.14, 2.61, 6.01, 3.84, 5.11, 2.74, 0.46, 0.16, 4.89, -0.5, 1.81, 0.6, 5.03, 8.03, -3.95, 0.95, 1.83, -1.09, 8.26, 0.63, 0.98, 3.21, 1.34, -1.25, 0.99, 1.13, -3.68, 2.7, 6.59, 3.29, -4.18, -6.3, -2.52, -7.4, 4.13, -1.63, -0.11, 0.25, 6.33, -0.25, 1.14, 3.93, 15.93, -14.26, 0.05, 19.01, -1.95, 9.2, 11.35, -1.83, -1.76, -4.76, 1.35, 1.86, 0.84, 2.39, -1.83, 1.55], itemStyle: {color: '#1D9E75'} },
+    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.82, -0.89, -0.05, 0.34, -0.88, 0.18, -0.14, -0.36, 0.63, -0.28, 1.06, -0.15, 0.14, -0.39, -0.44, 0.14, -0.38, -0.13, -1.93, 0.26, -0.53, 0.52, -0.41, -0.4, -0.88, 1.27, 3.86, 1.07, -1.72, 0.04, -0.94, 0.49, 1.15, -1.21, 0.1, -0.3, -3.13, -0.05, -0.86, 0.84, -0.55, -0.51, 0.36, 0.05, -0.59, 0.22, 0.67, 0.34, -0.41, -1.52, -0.05, 0.46, -0.38, -0.46, -0.35, -0.39, -0.45, 0.18, -0.5, 1.1, -0.12, 0.89, 0.36, 1.31, 2.01, -1.11, 1.02, 0.62, 0.2, -0.14, 2.72, 0.75, -0.47, 0.56, 0.32, 1.71, 3.84, -1.6, 2.09, -6.9, -0.79, -3.46, -2.53, 0.8, -0.14, 0.22, -0.59, 0.86, -0.78, 0.43], itemStyle: {color: '#FF9800'} },
+    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [-5.66, -10.99, 0.56, 7.39, -3.71, 5.43, 6.5, 12.38, 16.63, 8.16, 14.24, 16.23, 28.43, 19.18, 16.07, 9.75, 8.3, 20.34, 7.11, 7.85, 4.34, 7.41, 5.89, 9.24, 9.72, -8.96, -6.84, -8.8, -14.94, -6.32, -6.17, 0.04, 10.22, 0.77, 9.94, 16.77, 24.61, 26.32, 29.25, 23.23, 25.97, 22.13, 16.57, 10.0, 8.6, 23.77, 11.72, 12.71, 17.83, 13.31, 27.18, 15.63, 19.41, 19.39, 17.37, 13.18, 9.24, 8.55, 5.67, 9.52, 8.86, -1.11, -27.45, -31.54, -26.88, -26.21, -15.63, -16.55, -4.05, -4.81, 2.15, -7.86, 2.07, 14.08, 24.58, 19.56, 24.38, 38.99, 35.66, 53.14, 56.22, 65.75, 66.07, 52.6, 43.81, 48.59, 49.95, 54.35, 44.87, 45.3], itemStyle: {color: '#E91E63'}, smooth: true, showSymbol: false },
+    
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [238, -169, -116, -57, 28, -91, -2, -14, -37, 48, 50, -1, -113, 0, -9, 106, -112, -61, 60, -68, -32, 46, 17, -5, 7, 115, 151, -50, 119, -254, -7, -99, -63, 6, -19, 3, 32, -47, -29, 83, 3, 27, 25, -10, 4, 14, -12, -9, -44, -18, -20, 7, 1, 74, 43, -37, 17, -19, 22, 101, 66, -11, 60, -1, -54, 22, 46, 13, -38, 40, 128, 47, -60, -85, -64, 31, -10, 127, 13, -124, 40, -87, -50, 20, -88, -29, -40, -11, 9, -10], itemStyle: {color: '#EF5350'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [4, -6, 6, 6, -8, 7, -5, 7, -3, -4, 7, -2, -9, -6, -4, -2, 1, -11, -7, -1, -2, 1, -2, -1, -2, 32, -9, -6, -18, 14, 9, -31, -1, -17, 10, 6, -3, -8, -2, -3, -1, 0, -12, -8, -3, 1, -1, 35, 5, -6, -36, -6, 1, 7, -11, -40, 0, 0, 0, 5, -3, 0, -1, 2, -2, -1, 1, 1, 0, 0, 0, 0, 1, 0, 2, -2, 5, -3, 6, -5, 2, 8, -6, -4, 2, 0, 0, -2, -1, 7], itemStyle: {color: '#66BB6A'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-24, 52, -180, -45, 52, 36, 3, -72, 65, 63, -69, -29, -29, -79, -39, 6, 1, -41, -41, -23, -32, -16, -68, -37, 41, -30, 72, 6, -18, -178, -5, -7, -156, 30, -11, -33, -32, 14, -41, -10, 16, 36, 212, 32, -10, 24, -3, -5, -42, -7, -31, 7, -11, -13, 0, 13, 9, 3, -11, -8, 20, 19, 18, 23, -19, -46, 38, 70, 19, -18, 12, 25, -28, 9, 35, -11, -3, 23, -20, -45, 0, 12, 1, 18, 73, 53, 91, 178, 160, 83], itemStyle: {color: '#AB47BC'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1565, 1396, 1280, 1223, 1251, 1160, 1158, 1144, 1107, 1155, 1205, 1204, 1091, 1091, 1082, 1188, 1076, 1015, 1075, 1007, 975, 1021, 1038, 1033, 1040, 1155, 1306, 1256, 1375, 1121, 1114, 1015, 952, 958, 939, 942, 974, 927, 898, 981, 984, 1011, 1036, 1026, 1030, 1044, 1032, 1023, 979, 961, 941, 948, 949, 1023, 1066, 1029, 1046, 1027, 1049, 1150, 1216, 1205, 1265, 1264, 1210, 1232, 1278, 1291, 1253, 1293, 1421, 1468, 1408, 1323, 1259, 1290, 1280, 1407, 1420, 1296, 1336, 1249, 1199, 1219, 1131, 1102, 1062, 1051, 1060, 1050], itemStyle: {color: '#EF5350'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [142, 136, 142, 148, 140, 147, 142, 149, 146, 142, 149, 147, 138, 132, 128, 126, 127, 116, 109, 108, 106, 107, 105, 104, 102, 134, 125, 119, 101, 115, 124, 93, 92, 75, 85, 91, 88, 80, 78, 75, 74, 74, 62, 54, 51, 52, 51, 86, 91, 85, 49, 43, 44, 51, 40, 0, 0, 0, 0, 5, 2, 2, 1, 3, 1, 0, 1, 2, 2, 2, 2, 2, 3, 3, 5, 3, 8, 5, 11, 6, 8, 16, 10, 6, 8, 8, 8, 6, 5, 12], itemStyle: {color: '#66BB6A'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1260, 1312, 1132, 1087, 1139, 1175, 1178, 1106, 1171, 1234, 1165, 1136, 1107, 1028, 989, 995, 996, 955, 914, 891, 859, 843, 775, 738, 779, 749, 821, 827, 809, 631, 626, 619, 463, 493, 482, 449, 417, 431, 390, 380, 396, 432, 644, 676, 666, 690, 687, 682, 640, 633, 602, 609, 598, 585, 585, 598, 607, 610, 599, 591, 611, 630, 648, 671, 652, 606, 644, 714, 733, 715, 727, 752, 724, 733, 768, 757, 754, 777, 757, 712, 712, 724, 725, 743, 816, 869, 960, 1138, 1298, 1381], itemStyle: {color: '#AB47BC'}, smooth: true, showSymbol: false }
+  ]
+});
+window.addEventListener('resize', function() { chartK_6223.resize(); });
 
 
 var dates_2383 = ["01-09", "01-12", "01-13", "01-14", "01-15", "01-16", "01-19", "01-20", "01-21", "01-22", "01-23", "01-26", "01-27", "01-28", "01-29", "01-30", "02-02", "02-03", "02-04", "02-05", "02-06", "02-09", "02-10", "02-11", "02-23", "02-24", "02-25", "02-26", "03-02", "03-03", "03-04", "03-05", "03-06", "03-09", "03-10", "03-11", "03-12", "03-13", "03-16", "03-17", "03-18", "03-19", "03-20", "03-23", "03-24", "03-25", "03-26", "03-27", "03-30", "03-31", "04-01", "04-02", "04-07", "04-08", "04-09", "04-10", "04-13", "04-14", "04-15", "04-16", "04-17", "04-20", "04-21", "04-22", "04-23", "04-24", "04-27", "04-28", "04-29", "04-30", "05-04", "05-05", "05-06", "05-07", "05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29"];
@@ -4492,12 +4335,12 @@ chartK_9921.setOption({
     { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.0, 0.0, 0.03, 0.0, -0.0, 0.02, 0.01, -0.01, 0.01, 0.02, 0.03, 0.01, 0.0, 0.05, 0.01, -0.02, -0.02, 0.01, 0.01, 0.01, -0.0, -0.0, 0.02, 0.01, 0.02, 0.0, 0.03, 0.01, 0.02, 0.0, -0.01, -0.01, 0.0, -0.02, -0.01, 0.0, -0.0, -0.0, -0.0, 0.01, 0.01, 0.01, 0.01, -0.01, 0.0, 0.01, 0.0, 0.0, 0.01, 0.0, 0.02, 0.0, 0.02, 0.03, 0.0, 0.0, -0.0, 0.01, 0.02, -0.0, 0.02, 0.01, -0.0, 0.02, -0.01, -0.02, -0.03, -0.01, -0.01, -0.01, 0.01, -0.0, 0.0, -0.0, -0.01, 0.01, 0.01, -0.03, -0.07, -0.02, -0.08, 0.01, -0.01, -0.02, -0.01, 0.01, 0.01, -0.05, -0.01, 0.02], itemStyle: {color: '#FF9800'} },
     { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [-0.32, -0.33, -0.51, 0.38, 0.53, 1.5, 2.05, 2.73, 3.04, 3.77, 3.94, 4.52, 5.05, 4.42, 4.7, 3.92, 4.41, 5.09, 4.93, 5.09, 3.33, 2.95, 2.62, 2.83, 2.0, 1.73, 1.4, 1.03, 1.18, 1.2, 1.15, 1.65, 1.88, 2.51, 2.79, 2.51, 2.66, 2.63, 3.66, 3.57, 3.28, 2.64, 3.1, 3.5, 3.16, 3.37, 3.15, 3.15, 3.34, 3.43, 3.22, 3.16, 3.04, 3.02, 2.47, 2.54, 2.81, 3.07, 3.12, 3.75, 3.17, 3.25, 3.23, 3.42, 2.97, 2.55, 2.58, 2.58, 2.58, 3.09, 3.41, 3.31, 3.44, 3.34, 2.75, 3.14, 3.34, 4.08, 3.82, 4.46, 3.53, 3.48, 3.33, 3.51, 3.38, 3.06, 2.27, 1.36, 1.4, 1.65], itemStyle: {color: '#E91E63'}, smooth: true, showSymbol: false },
     
-    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#EF5350'} },
-    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#66BB6A'} },
-    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#AB47BC'} },
-    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#EF5350'}, smooth: true, showSymbol: false },
-    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#66BB6A'}, smooth: true, showSymbol: false },
-    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#AB47BC'}, smooth: true, showSymbol: false }
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-6, 3, 102, -120, 9, -43, 140, 24, -58, 11, 4, -5, -27, 68, 5, 7, 21, 23, -35, 3, 35, -11, 2, -27, 58, 30, 27, -26, 12, 43, 0, -29, -83, -15, -30, 62, 20, -8, -50, -1, 65, 14, 8, -5, -23, 29, 23, -7, 13, 38, 20, -19, -52, -2, 7, 13, -16, -14, -5, 5, 94, -26, -39, 7, -1, 22, 21, -5, 8, -47, 16, 68, 7, 18, 26, -15, 440, 73, -31, 12, 5, -302, -90, -132, 33, 42, 87, 20, 10, -17], itemStyle: {color: '#EF5350'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [21, -29, 44, 6, -24, -28, 2, -59, -16, 7, -3, 2, 4, 0, 0, 8, 1, 2, 3, -1, -23, 4, 0, 21, -27, 2, 3, 0, 5, -9, 0, 20, -4, -17, 14, -2, 1, 0, 17, -17, 5, 6, 6, 8, -9, 5, 0, -10, 0, -3, -11, 0, -9, -7, -59, -17, 0, 0, 0, 2, 0, 4, 5, -1, -6, 30, 4, 9, 9, -20, 7, 0, 2, 1, -4, 15, 1, -4, -6, -6, -8, -1, 0, 0, -1, 2, -4, -19, 27, 0], itemStyle: {color: '#66BB6A'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [72, -2, 84, -288, 56, -67, 51, -129, 45, -205, -25, 15, -251, 87, 12, 70, 59, -33, -85, -10, 210, 81, 24, -164, 151, 30, 161, 104, -153, 229, 111, 6, 62, 421, -95, 14, 100, 52, 637, -4, -342, 39, 110, 95, 29, -178, 100, 7, 29, 29, 73, 67, 211, 192, 181, 59, 316, 13, -307, 20, -37, -26, -71, 13, 137, 250, 199, 100, 155, 322, 330, 292, 234, 172, 493, 269, 194, 296, 148, -470, -239, -60, 224, 50, 4, -135, 305, 328, 148, 82], itemStyle: {color: '#AB47BC'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1520, 1523, 1625, 1505, 1514, 1471, 1611, 1635, 1577, 1588, 1592, 1587, 1560, 1628, 1633, 1640, 1661, 1684, 1649, 1652, 1687, 1676, 1678, 1651, 1709, 1739, 1766, 1740, 1752, 1795, 1795, 1766, 1683, 1668, 1638, 1700, 1720, 1712, 1662, 1661, 1726, 1740, 1748, 1743, 1720, 1749, 1772, 1765, 1778, 1816, 1836, 1817, 1765, 1763, 1770, 1783, 1767, 1753, 1748, 1753, 1847, 1821, 1782, 1789, 1788, 1810, 1831, 1826, 1834, 1787, 1803, 1871, 1878, 1896, 1922, 1907, 2347, 2420, 2389, 2401, 2406, 2104, 2014, 1882, 1915, 1957, 2044, 2064, 2074, 2057], itemStyle: {color: '#EF5350'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [188, 159, 203, 209, 185, 157, 159, 100, 84, 91, 88, 90, 94, 94, 94, 102, 103, 105, 108, 107, 84, 88, 88, 109, 82, 84, 87, 87, 92, 83, 83, 103, 99, 82, 96, 94, 95, 95, 112, 95, 100, 106, 112, 120, 111, 116, 116, 106, 106, 103, 92, 92, 83, 76, 17, 0, 0, 0, 0, 2, 2, 6, 11, 10, 4, 34, 38, 47, 56, 36, 43, 43, 45, 46, 42, 57, 58, 54, 48, 42, 34, 33, 33, 33, 32, 34, 30, 11, 38, 38], itemStyle: {color: '#66BB6A'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [5129, 5127, 5211, 4923, 4979, 4912, 4963, 4834, 4879, 4674, 4649, 4664, 4413, 4500, 4512, 4582, 4641, 4608, 4523, 4513, 4723, 4804, 4828, 4664, 4815, 4845, 5006, 5110, 4957, 5186, 5297, 5303, 5365, 5786, 5691, 5705, 5805, 5857, 6494, 6490, 6148, 6187, 6297, 6392, 6421, 6243, 6343, 6350, 6379, 6408, 6481, 6548, 6759, 6951, 7132, 7191, 7507, 7520, 7213, 7233, 7196, 7170, 7099, 7112, 7249, 7499, 7698, 7798, 7953, 8275, 8605, 8897, 9131, 9303, 9796, 10065, 10259, 10555, 10703, 10233, 9994, 9934, 10158, 10208, 10212, 10077, 10382, 10710, 10858, 10940], itemStyle: {color: '#AB47BC'}, smooth: true, showSymbol: false }
   ]
 });
 window.addEventListener('resize', function() { chartK_9921.resize(); });
@@ -4676,7 +4519,6 @@ document.querySelectorAll('#taiex_toggles input').forEach(function(cb) {
 window.addEventListener('resize', function() { chartTaiex.resize(); });
 
 
-// 刪除確認視窗
 function confirmDelete(event, stockId, btn) {
     event.stopPropagation(); 
     if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {
@@ -4684,7 +4526,33 @@ function confirmDelete(event, stockId, btn) {
     }
 }
 
-// 【修改重點：修正傳入參數錯誤導致的當機，並完美處理按鈕狀態】
+function showCountdownToast(message, totalSeconds) {
+    let existing = document.getElementById('custom-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.id = 'custom-toast';
+    toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(30,30,30,0.95); color:#fff; padding:20px 30px; border-radius:12px; z-index:9999; font-size:16px; box-shadow:0 8px 24px rgba(0,0,0,0.3); text-align:center; min-width:280px; backdrop-filter:blur(5px); border:1px solid #444;";
+    document.body.appendChild(toast);
+
+    let secondsLeft = totalSeconds;
+    const updateText = () => {
+        toast.innerHTML = `<div style="margin-bottom:10px; line-height:1.5;">${message}</div><div style="font-size:36px; font-weight:900; color:#4CAF50; font-variant-numeric:tabular-nums; margin:5px 0;">${secondsLeft}</div><div style="font-size:13px; color:#aaa;">秒後自動重新整理...</div>`;
+    };
+    
+    updateText();
+    const timer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(timer);
+            toast.innerHTML = "<div style='font-size:18px; font-weight:bold; color:#4CAF50;'>🔄 重新整理中...</div>";
+            window.location.reload();
+        } else {
+            updateText();
+        }
+    }, 1000);
+}
+
 function manageStock(action, stockIdOverride, inputId, btn) {
     let stockId = stockIdOverride;
     if (!stockId) {
@@ -4693,6 +4561,9 @@ function manageStock(action, stockIdOverride, inputId, btn) {
     }
     if (!stockId) { alert("請輸入股票代號！"); return; }
     
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec'; 
+    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
+
     let originalText = "";
     if (btn) {
         originalText = btn.innerText;
@@ -4700,9 +4571,6 @@ function manageStock(action, stockIdOverride, inputId, btn) {
         btn.disabled = true;
     }
 
-    // 您設定好的專屬 GAS 網址
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec'; 
-    
     fetch(gasUrl, {
         method: 'POST',
         body: JSON.stringify({ action: action, stock: stockId }),
@@ -4711,26 +4579,27 @@ function manageStock(action, stockIdOverride, inputId, btn) {
     .then(response => response.text())
     .then(text => {
         if (text.includes("Error")) {
-            alert("❌ GAS 伺服器內部錯誤：\n" + text);
+            alert("❌ 伺服器內部錯誤：\n" + text);
+            if (btn) { btn.innerText = originalText; btn.disabled = false; }
         } else if (text.includes("Success") || text.includes("No changes")) {
-            alert("✅ 指令發送成功！\n系統正在更新資料，網頁將在 2 分 30 秒後自動重新整理。");
-            if(action === 'add' && document.getElementById('stockInput')) {
-                document.getElementById('stockInput').value = '';
+            
+            if(action === 'add') {
+                if (document.getElementById('stockInput')) document.getElementById('stockInput').value = '';
+                if (document.getElementById('stockInputMobile')) document.getElementById('stockInputMobile').value = '';
             }
-            // 設定 150 秒後自動重整頁面
-            setTimeout(() => { window.location.reload(); }, 150000);
+            
+            // 【修復重點：改為 catch(e => console.log(e)) 徹底避開 f-string 解析報錯】
+            fetch(triggerUrl, { method: 'POST', mode: 'no-cors' }).catch(e => console.log(e));
+            showCountdownToast(`✅ 股票 ${stockId} 已${action==='add'?'新增':'刪除'}！<br>系統已自動觸發重新抓取資料`, 150);
+
         } else {
-            alert("⚠️ 收到未知回應，請確認 GAS 權限已設為「所有人」。");
+            alert("⚠️ 收到未知回應，請確認權限設定。");
+            if (btn) { btn.innerText = originalText; btn.disabled = false; }
         }
     })
     .catch(err => {
         alert("❌ 網路請求失敗：" + err.message);
-    })
-    .finally(() => {
-        if (btn) {
-            btn.innerText = originalText;
-            btn.disabled = false;
-        }
+        if (btn) { btn.innerText = originalText; btn.disabled = false; }
     });
 }
 
@@ -4765,12 +4634,11 @@ function triggerAction(btn) {
     const originalText = btn.innerText;
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
     
-    // 大盤手動更新的 GAS 網址
-    fetch('https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec', { method: 'POST', mode: 'no-cors' })
+    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
+    
+    fetch(triggerUrl, { method: 'POST', mode: 'no-cors' })
     .then(() => {
-        alert("✅ 重新執行指令已發送！\n系統正在抓取最新資料，網頁將在 2 分 30 秒後自動重新整理。");
-        // 設定 150 秒後自動重整頁面
-        setTimeout(() => { window.location.reload(); }, 150000);
+        showCountdownToast("✅ 重新執行指令已發送！<br>系統正在抓取最新資料", 150);
     })
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
     .finally(() => { btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; });
