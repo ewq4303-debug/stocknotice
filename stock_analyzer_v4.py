@@ -1412,7 +1412,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
         stock_cards += generate_stock_card(stock_id, data, is_first)
         r = data["rating"]
         
-        # 【修改重點：電腦版深灰色 ✖，絕對定位在右上角】
         sidebar_items += f'''
         <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')" style="position:relative; padding-right:24px;">
             <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
@@ -1432,7 +1431,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <title>股票監控儀表板</title>
 <style>
 {get_css()}
-/* 分頁系統專用 CSS */
 .tabs-container {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }}
 .tabs-container::-webkit-scrollbar {{ display: none; }}
 .tab-btn {{ padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }}
@@ -1497,7 +1495,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
-// 刪除確認視窗
 function confirmDelete(event, stockId, btn) {{
     event.stopPropagation(); 
     if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {{
@@ -1505,9 +1502,6 @@ function confirmDelete(event, stockId, btn) {{
     }}
 }}
 
-/* ======================================================== */
-/* 【專屬功能：精緻倒數計時器 (Toast UI)】                      */
-/* ======================================================== */
 function showCountdownToast(message, totalSeconds) {{
     let existing = document.getElementById('custom-toast');
     if (existing) existing.remove();
@@ -1570,9 +1564,9 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
                 if (document.getElementById('stockInputMobile')) document.getElementById('stockInputMobile').value = '';
             }}
             
-            // 【修改重點：送出新增/刪除後，立即在背景觸發重新執行腳本，並呼叫計時器】
-            fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(()=>{});
-            showCountdownToast(`✅ 股票 ${stockId} 已${action==='add'?'新增':'刪除'}！<br>系統已自動觸發重新抓取資料`, 150);
+            // 【修復重點：改為 catch(e => console.log(e)) 徹底避開 f-string 解析報錯】
+            fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(e => console.log(e));
+            showCountdownToast(`✅ 股票 ${{stockId}} 已${{action==='add'?'新增':'刪除'}}！<br>系統已自動觸發重新抓取資料`, 150);
 
         }} else {{
             alert("⚠️ 收到未知回應，請確認權限設定。");
@@ -1618,7 +1612,6 @@ function triggerAction(btn) {{
     
     const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
     
-    // 【修改重點：呼叫計時器】
     fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }})
     .then(() => {{
         showCountdownToast("✅ 重新執行指令已發送！<br>系統正在抓取最新資料", 150);
