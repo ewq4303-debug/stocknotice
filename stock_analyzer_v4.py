@@ -843,10 +843,15 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')" style="position:relative; padding-right:40px;">
-        <div onclick="confirmDelete(event, '{stock_id}', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 {stock_id}">✖</div>
-
-        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
+        <div class="mh-top" style="display:flex; align-items:center;">
+          <span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span>
+          <span class="mh-name">{stock_id} {data.get('name','')}</span>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+              <span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span>
+              <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:16px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
+          </div>
+        </div>
         <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
       </div>
 
@@ -1412,10 +1417,16 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
         stock_cards += generate_stock_card(stock_id, data, is_first)
         r = data["rating"]
         
+        # 【修改重點：側邊欄清單改用 Flexbox 排版，讓 ✖ 自動緊貼漲跌幅不重疊】
         sidebar_items += f'''
-        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')" style="position:relative; padding-right:24px;">
-            <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
-            <div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div>
+        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')">
+            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>{stock_id} {data.get("name","")}</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span>
+                    <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:14px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
+                </div>
+            </div>
             <div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div>
         </div>
         '''
@@ -1431,6 +1442,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <title>股票監控儀表板</title>
 <style>
 {get_css()}
+/* 分頁系統專用 CSS */
 .tabs-container {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }}
 .tabs-container::-webkit-scrollbar {{ display: none; }}
 .tab-btn {{ padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }}
@@ -1465,16 +1477,9 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   </div>
 
   <div id="tab-stocks" class="tab-content">
-      <div class="mobile-only" style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 15px; border-radius:10px; border:0.5px solid var(--border); box-shadow:0 2px 4px rgba(0,0,0,0.02);">
-         <span style="font-weight:bold; font-size:15px; color:var(--primary);">📝 個股管理</span>
-         <div style="display:flex; gap:6px;">
-            <input type="text" id="stockInputMobile" placeholder="輸入股號" style="width:80px; padding:6px 8px; border-radius:6px; border:1px solid #ccc; font-size:14px; outline:none;">
-            <button style="background:#4CAF50; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;" onclick="manageStock('add', null, 'stockInputMobile', this)">新增</button>
-         </div>
-      </div>
-      
       <div class="app-layout">
         <div class="sidebar desktop-only">
+            
             <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
                 <span>個股清單</span>
                 <div style="display:flex; gap:4px; font-weight:normal;">
@@ -1482,6 +1487,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
                     <button style="background:#4CAF50; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="manageStock('add', null, 'stockInput', this)">新增</button>
                 </div>
             </div>
+            
             {sidebar_items}
         </div>
         <div class="main-content">{stock_cards}</div>
@@ -1495,6 +1501,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
+// 刪除確認視窗
 function confirmDelete(event, stockId, btn) {{
     event.stopPropagation(); 
     if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {{
@@ -1502,6 +1509,9 @@ function confirmDelete(event, stockId, btn) {{
     }}
 }}
 
+/* ======================================================== */
+/* 【專屬功能：精緻倒數計時器 (字串相加版，避開 f-string 錯誤)】 */
+/* ======================================================== */
 function showCountdownToast(message, totalSeconds) {{
     let existing = document.getElementById('custom-toast');
     if (existing) existing.remove();
@@ -1513,7 +1523,7 @@ function showCountdownToast(message, totalSeconds) {{
 
     let secondsLeft = totalSeconds;
     const updateText = () => {{
-        toast.innerHTML = `<div style="margin-bottom:10px; line-height:1.5;">${{message}}</div><div style="font-size:36px; font-weight:900; color:#4CAF50; font-variant-numeric:tabular-nums; margin:5px 0;">${{secondsLeft}}</div><div style="font-size:13px; color:#aaa;">秒後自動重新整理...</div>`;
+        toast.innerHTML = '<div style="margin-bottom:10px; line-height:1.5;">' + message + '</div><div style="font-size:36px; font-weight:900; color:#4CAF50; font-variant-numeric:tabular-nums; margin:5px 0;">' + secondsLeft + '</div><div style="font-size:13px; color:#aaa;">秒後自動重新整理...</div>';
     }};
     
     updateText();
@@ -1544,7 +1554,7 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
     if (btn) {{
         originalText = btn.innerText;
         btn.innerText = "⏳";
-        btn.disabled = true;
+        btn.style.pointerEvents = "none";
     }}
 
     fetch(gasUrl, {{
@@ -1556,26 +1566,27 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
     .then(text => {{
         if (text.includes("Error")) {{
             alert("❌ 伺服器內部錯誤：\\n" + text);
-            if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
+            if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }}
         }} else if (text.includes("Success") || text.includes("No changes")) {{
             
-            if(action === 'add') {{
-                if (document.getElementById('stockInput')) document.getElementById('stockInput').value = '';
-                if (document.getElementById('stockInputMobile')) document.getElementById('stockInputMobile').value = '';
+            if(action === 'add' && document.getElementById('stockInput')) {{
+                document.getElementById('stockInput').value = '';
             }}
             
-            // 【修復重點：改為 catch(e => console.log(e)) 徹底避開 f-string 解析報錯】
             fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(e => console.log(e));
-            showCountdownToast(`✅ 股票 ${{stockId}} 已${{action==='add'?'新增':'刪除'}}！<br>系統已自動觸發重新抓取資料`, 150);
+            
+            // 【修復重點：捨棄反引號與${}，改用傳統字串相加】
+            let actionStr = (action === 'add') ? '新增' : '刪除';
+            showCountdownToast("✅ 股票 " + stockId + " 已" + actionStr + "！<br>系統已自動觸發重新抓取資料", 150);
 
         }} else {{
             alert("⚠️ 收到未知回應，請確認權限設定。");
-            if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
+            if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }}
         }}
     }})
     .catch(err => {{
         alert("❌ 網路請求失敗：" + err.message);
-        if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
+        if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }}
     }});
 }}
 
@@ -1608,7 +1619,9 @@ function toggleMobile(stockId) {{
 
 function triggerAction(btn) {{
     const originalText = btn.innerText;
-    btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
+    btn.innerText = "⏳ 觸發中..."; 
+    btn.style.pointerEvents = "none";
+    btn.style.opacity = "0.7";
     
     const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
     
@@ -1617,7 +1630,7 @@ function triggerAction(btn) {{
         showCountdownToast("✅ 重新執行指令已發送！<br>系統正在抓取最新資料", 150);
     }})
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
-    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
+    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.style.pointerEvents = "auto"; btn.style.opacity = "1"; }});
 }}
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
