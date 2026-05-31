@@ -909,7 +909,6 @@ def generate_market_section(market_data: dict):
             <span>加權指數與市場指標綜合研判 (近 90 個交易日)</span>
             <div style="font-size:12px; font-weight:normal; display:flex; gap:12px; align-items:center; background:#f8f9fa; padding:4px 10px; border-radius:6px; border:1px solid #eee;" id="taiex_toggles">
                 <span style="color:#888;">顯示指標：</span>
-                <label style="cursor:pointer;"><input type="checkbox" checked value="1"> 成交量</label>
                 <label style="cursor:pointer;"><input type="checkbox" checked value="2"> 散戶多空</label>
                 <label style="cursor:pointer;"><input type="checkbox" checked value="3"> USD/TWD</label>
                 <label style="cursor:pointer;"><input type="checkbox" checked value="4"> 融資市值比</label>
@@ -944,17 +943,13 @@ var state_{stock_id} = {{ lastIdx: -1, lastMonth: null }};
 var dateFmt_{stock_id} = function(value, index) {{
   if (index <= state_{stock_id}.lastIdx) {{ state_{stock_id}.lastMonth = null; }}
   state_{stock_id}.lastIdx = index;
-  
   var currM = value.split('-')[0];
   var currD = value.split('-')[1];
   var isBoundary = false;
-  
   if (index === 0) isBoundary = true;
   else if (dates_{stock_id}[index - 1].split('-')[0] !== currM) isBoundary = true;
-  
   if (state_{stock_id}.lastMonth !== null && state_{stock_id}.lastMonth !== currM) isBoundary = true;
   if (state_{stock_id}.lastMonth === null) isBoundary = true;
-  
   state_{stock_id}.lastMonth = currM;
   return isBoundary ? (currM + '/' + currD) : currD;
 }};
@@ -968,10 +963,9 @@ chartK_{stock_id}.getZr().on('mousemove', function(e) {{
 
 chartK_{stock_id}.setOption({{
   title: [
-    {{ text: '日K線圖', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
-    {{ text: '成交量(張)', left: '6%', top: '33%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '54%', textStyle: {{fontSize: 11, color: '#555'}} }},
-    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '75%', textStyle: {{fontSize: 11, color: '#555'}} }}
+    {{ text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
+    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '51%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
   tooltip: {{ 
     trigger: 'axis', 
@@ -983,9 +977,8 @@ chartK_{stock_id}.setOption({{
       var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
       
       var hoveredGrid = 0; 
-      if (yPct >= 34 && yPct < 55) hoveredGrid = 1;
-      else if (yPct >= 55 && yPct < 77) hoveredGrid = 2;
-      else if (yPct >= 77) hoveredGrid = 3;
+      if (yPct >= 51 && yPct < 75) hoveredGrid = 1;
+      else if (yPct >= 75) hoveredGrid = 2;
       
       params.forEach(function(p) {{
         var isPrice = (p.seriesName === 'K線');
@@ -1007,7 +1000,7 @@ chartK_{stock_id}.setOption({{
         }} else if (axIdx === hoveredGrid) {{
           var val = p.data;
           var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v == null || isNaN(v) || v === '') return; // 【防空值】ST 為空時跳過不顯示
+          if (v == null || isNaN(v) || v === '') return;
           v = Math.round(v).toLocaleString();
           html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
         }}
@@ -1018,60 +1011,62 @@ chartK_{stock_id}.setOption({{
   }},
   legend: [
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '54%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '75%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '51%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
+  // 【修改重點】K線與成交量整合為 Grid 0，總共僅 3 個 Grid，大幅增加高度
   grid: [
-    {{ left: '6%', right: '8%', top: '5%', height: '25%' }},
-    {{ left: '6%', right: '8%', top: '37%', height: '14%' }},
-    {{ left: '6%', right: '8%', top: '58%', height: '14%' }},
-    {{ left: '6%', right: '8%', top: '79%', height: '14%' }}
+    {{ left: '6%', right: '8%', top: '5%', height: '40%' }},
+    {{ left: '6%', right: '8%', top: '55%', height: '16%' }},
+    {{ left: '6%', right: '8%', top: '80%', height: '16%' }}
   ],
   xAxis: [
     {{ type: 'category', gridIndex: 0, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }},
     {{ type: 'category', gridIndex: 1, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    {{ type: 'category', gridIndex: 2, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: false}}, axisLine: {{onZero: false}}, axisTick: {{show: false}} }},
-    {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
+    {{ type: 'category', gridIndex: 2, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
-    {{ scale: true, gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(value) {{ return value >= 10000 ? (value / 1000) + 'k' : Math.round(value).toLocaleString(); }} }}, splitLine: {{show: false}} }},
+    // 【修改重點】這是疊加在 K 線圖上的成交量隱藏 Y 軸，強制設定最大值將柱體壓在底端
+    {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }},
+    
+    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
-    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }}
+    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }}
   ],
   dataZoom: [
-    {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }}, 
-    {{ show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }}
+    {{ type: 'inside', xAxisIndex: [0, 1, 2], start: 0, end: 100 }}, 
+    {{ show: true, xAxisIndex: [0, 1, 2], type: 'slider', bottom: 0, start: 0, end: 100, height: 15 }}
   ],
   series: [
     {{ name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }},
     {{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1, color: '#fbc02d'}} }},
-    
-    // 【修改】這裡兩者名稱皆設為 ST指標，確保圖例完美合併
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
     
-    {{ name: '成交量(張)', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
-    {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
-    {{ name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_trust', []))}, itemStyle: {{color: '#1D9E75'}} }},
-    {{ name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 2, yAxisIndex: 2, data: {json.dumps(cd.get('inst_dealer', []))}, itemStyle: {{color: '#FF9800'}} }},
-    {{ name: '法人累計(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 3, data: {json.dumps(cd.get('inst_cum', []))}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }},
-    {{ name: '融資增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('margin_diff', []))}, itemStyle: {{color: '#EF5350'}} }},
-    {{ name: '融券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('short_diff', []))}, itemStyle: {{color: '#66BB6A'}} }},
-    {{ name: '借券增減', type: 'bar', xAxisIndex: 3, yAxisIndex: 4, data: {json.dumps(cd.get('borrow_diff', []))}, itemStyle: {{color: '#AB47BC'}} }},
-    {{ name: '融資餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('margin_bal', []))}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }},
-    {{ name: '融券餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('short_bal', []))}, itemStyle: {{color: '#66BB6A'}}, smooth: true, showSymbol: false }},
-    {{ name: '借券餘額(右)', type: 'line', xAxisIndex: 3, yAxisIndex: 5, data: {json.dumps(cd.get('borrow_bal', []))}, itemStyle: {{color: '#AB47BC'}}, smooth: true, showSymbol: false }}
+    // 【修改重點】成交量對應到同一個 xAxis(0)，並綁定新的隱藏 yAxis(1) 達成疊加效果
+    {{ name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
+    
+    {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
+    {{ name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: {json.dumps(cd.get('inst_trust', []))}, itemStyle: {{color: '#1D9E75'}} }},
+    {{ name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: {json.dumps(cd.get('inst_dealer', []))}, itemStyle: {{color: '#FF9800'}} }},
+    {{ name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: {json.dumps(cd.get('inst_cum', []))}, itemStyle: {{color: '#E91E63'}}, smooth: true, showSymbol: false }},
+    
+    {{ name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: {json.dumps(cd.get('margin_diff', []))}, itemStyle: {{color: '#EF5350'}} }},
+    {{ name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: {json.dumps(cd.get('short_diff', []))}, itemStyle: {{color: '#66BB6A'}} }},
+    {{ name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: {json.dumps(cd.get('borrow_diff', []))}, itemStyle: {{color: '#AB47BC'}} }},
+    {{ name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('margin_bal', []))}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }},
+    {{ name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('short_bal', []))}, itemStyle: {{color: '#66BB6A'}}, smooth: true, showSymbol: false }},
+    {{ name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('borrow_bal', []))}, itemStyle: {{color: '#AB47BC'}}, smooth: true, showSymbol: false }}
   ]
 }});
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 """)
 
     # ==========================
-    # 大盤綜合 JS 動態排版區塊
+    # 大盤綜合 JS 動態排版區塊 (同步優化)
     # ==========================
     taiex = market_data.get("taiex", [])
     if taiex and len(taiex) > 0:
@@ -1161,22 +1156,26 @@ function renderTaiex() {{
     {{ show: true, xAxisIndex: [0], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
   ];
 
-  var kHeight = activeIdxs.length > 0 ? 33 : 85;
-  var startTop = 5 + kHeight + 6; 
-  var totalAvailable = 92 - startTop; 
-
+  var kHeight = activeIdxs.length > 0 ? 40 : 85;
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
-  titles.push({{ text: '加權指數 (含 MA20, ST指標)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
+  titles.push({{ text: '加權指數 (含 MA20, ST指標, 成交金額)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
   
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
+  
+  // 大盤 Grid 0 Y軸 (Price 與隱藏的 Vol)
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
+  yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }});
   
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }});
   series.push({{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1.5, color: '#fbc02d'}} }});
-  
-  // 【修改】大盤也將名字統稱為 ST指標 以合併圖例
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
+  
+  // 成交金額疊加在 K 線底端
+  series.push({{ name: '成交金額(億)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: {json.dumps(taiex_vol)}, itemStyle: {{color: function(params){{ return ({json.dumps(taiex_ohlc)}[params.dataIndex][1] >= {json.dumps(taiex_ohlc)}[params.dataIndex][0]) ? '#ef5350' : '#26a69a'; }} }} }});
+
+  var startTop = 5 + kHeight + 8; 
+  var totalAvailable = 92 - startTop; 
   
   if(activeIdxs.length > 0) {{
     var eachBlock = totalAvailable / activeIdxs.length;
@@ -1186,7 +1185,6 @@ function renderTaiex() {{
       var gridIdx = idx + 1;
       
       var titleText = '';
-      if(val===1) titleText = '成交金額(億)';
       if(val===2) titleText = '散戶多空比(%)';
       if(val===3) titleText = 'USD/TWD';
       if(val===4) titleText = '融資市值比(%)';
@@ -1200,27 +1198,23 @@ function renderTaiex() {{
       
       var isLast = (idx === activeIdxs.length - 1);
       xAxes.push({{ type: 'category', gridIndex: gridIdx, data: taiexDates, boundaryGap: true, axisLabel: {{show: isLast, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: isLast}} }});
-      
       dataZooms[0].xAxisIndex.push(gridIdx);
       dataZooms[1].xAxisIndex.push(gridIdx);
 
-      if(val === 1) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(value) {{ return value >= 10000 ? (value / 1000) + 'k' : Math.round(value).toLocaleString(); }} }}, splitLine: {{show: false}} }});
-        series.push({{ name: '成交金額(億)', type: 'bar', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(taiex_vol)}, itemStyle: {{color: function(params){{ return ({json.dumps(taiex_ohlc)}[params.dataIndex][1] >= {json.dumps(taiex_ohlc)}[params.dataIndex][0]) ? '#ef5350' : '#26a69a'; }} }} }});
-      }} else if(val === 2) {{
+      if(val === 2) {{
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
-        series.push({{ name: '散戶多空比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(retail_aligned)}, itemStyle: {{color: '#EF5350'}}, areaStyle: {{color: 'rgba(239,83,80,0.1)'}}, smooth: true, showSymbol: false }});
+        series.push({{ name: '散戶多空比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(retail_aligned)}, itemStyle: {{color: '#EF5350'}}, areaStyle: {{color: 'rgba(239,83,80,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 3) {{
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
-        series.push({{ name: 'USD/TWD', type: 'line', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '#378ADD'}}, areaStyle: {{color: 'rgba(55,138,221,0.1)'}}, smooth: true, showSymbol: false }});
+        series.push({{ name: 'USD/TWD', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '#378ADD'}}, areaStyle: {{color: 'rgba(55,138,221,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 4) {{
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
-        series.push({{ name: '融資市值比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: gridIdx, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '#D4537E'}}, areaStyle: {{color: 'rgba(212,83,126,0.1)'}}, smooth: true, showSymbol: false }});
+        series.push({{ name: '融資市值比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '#D4537E'}}, areaStyle: {{color: 'rgba(212,83,126,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 5) {{
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
         yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}}, position: 'right' }});
-        var leftY = yAxes.length - 2;
         var rightY = yAxes.length - 1;
+        var leftY = yAxes.length - 2;
         series.push({{ name: '外資現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_f_aligned)}, itemStyle: {{color: '#378ADD'}} }});
         series.push({{ name: '投信現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_t_aligned)}, itemStyle: {{color: '#1D9E75'}} }});
         series.push({{ name: '自營現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_d_aligned)}, itemStyle: {{color: '#FF9800'}} }});
@@ -1246,9 +1240,7 @@ function renderTaiex() {{
             activeIdxs.forEach(function(val, idx) {{
                 var gridIdx = idx + 1;
                 var blockTop = startTop + idx * eachBlock;
-                if (yPct >= (blockTop - 2)) {{
-                    hoveredGrid = gridIdx;
-                }}
+                if (yPct >= (blockTop - 2)) hoveredGrid = gridIdx;
             }});
         }}
         
@@ -1272,13 +1264,10 @@ function renderTaiex() {{
             }} else if (axIdx === hoveredGrid) {{
                 var val = p.data;
                 var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-                if (v == null || isNaN(v) || v === '') return; // 【防空值】ST 為空時跳過
+                if (v == null || isNaN(v) || v === '') return;
                 else {{
-                    if (p.seriesName.indexOf('融資市值比') !== -1) {{
-                        v = parseFloat(v).toFixed(2) + '%';
-                    }} else {{
-                        v = Math.round(v).toLocaleString();
-                    }}
+                    if (p.seriesName.indexOf('融資市值比') !== -1) v = parseFloat(v).toFixed(2) + '%';
+                    else v = Math.round(v).toLocaleString();
                 }}
                 html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
             }}
@@ -1287,7 +1276,6 @@ function renderTaiex() {{
         return html;
       }}
     }},
-    // 【修改】大盤圖例修改為純 ST指標
     legend: {{ data: ['MA20', 'ST指標'], top: '1%', right: '5%', textStyle: {{fontSize: 10}}, itemWidth: 10, itemHeight: 10 }},
     axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
     grid: grids,
@@ -1438,7 +1426,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <title>股票監控儀表板</title>
 <style>
 {get_css()}
-/* 分頁系統專用 CSS */
 .tabs-container {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }}
 .tabs-container::-webkit-scrollbar {{ display: none; }}
 .tab-btn {{ padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }}
@@ -1453,15 +1440,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <div class="container">
   <div class="header" id="top">
     <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
-    
-    <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
-      <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
-        <input type="text" id="stockInput" placeholder="輸入股號 (如 2330)" style="padding:6px 12px; border-radius:6px; border:1px solid #ccc; width:130px; font-size:14px;">
-        <button class="btn-run" style="background:#4CAF50; border-color:#388E3C; padding:6px 12px;" onclick="manageStock('add', this)">➕ 新增</button>
-        <button class="btn-run" style="background:#F44336; border-color:#D32F2F; padding:6px 12px;" onclick="manageStock('remove', this)">🗑️ 刪除</button>
-      </div>
-      <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行 (抓取最新資料)</button>
-    </div>
+    <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行 (抓最新資料)</button>
   </div>
   
   <div class="tabs-container">
@@ -1479,12 +1458,17 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   </div>
 
   <div id="tab-stocks" class="tab-content">
+      <div style="margin-bottom: 15px; padding: 15px 20px; background: #fff; border-radius: 12px; border: 0.5px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+         <span style="font-weight: bold; color: var(--primary); font-size: 15px;">📝 管理追蹤清單：</span>
+         <input type="text" id="stockInput" placeholder="輸入股號 (如 2330)" style="padding:8px 12px; border-radius:6px; border:1px solid #ccc; width:150px; font-size:14px; outline:none;">
+         <button class="btn-run" style="background:#4CAF50; border-color:#388E3C; padding:8px 16px;" onclick="manageStock('add', this)">➕ 新增個股</button>
+         <button class="btn-run" style="background:#F44336; border-color:#D32F2F; padding:8px 16px;" onclick="manageStock('remove', this)">🗑️ 刪除個股</button>
+      </div>
       <div class="app-layout">
         <div class="sidebar desktop-only"><div class="sidebar-title">個股清單</div>{sidebar_items}</div>
         <div class="main-content">{stock_cards}</div>
       </div>
   </div>
-  
 </div>
 <button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
 
@@ -1493,9 +1477,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
-/* ======================================================== */
-/* 【智慧偵錯版：拔除 no-cors 並加入詳細錯誤訊息解析】          */
-/* ======================================================== */
 function manageStock(action, btn) {{
     const stockId = document.getElementById('stockInput').value.trim();
     if (!stockId) {{ alert("請先輸入股票代號！"); return; }}
@@ -1504,8 +1485,8 @@ function manageStock(action, btn) {{
     btn.innerText = "⏳ 處理中...";
     btn.disabled = true;
 
-    // 您已經設定好的 GAS 網址
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec'; 
+    // ⚠️ 確保這裡是您專屬的 GAS 網址
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec'; 
     
     fetch(gasUrl, {{
         method: 'POST',
@@ -1514,18 +1495,17 @@ function manageStock(action, btn) {{
     }})
     .then(response => response.text())
     .then(text => {{
-        // 解析 GAS 傳回來的真實錯誤
         if (text.includes("Error")) {{
-            alert("❌ GAS 伺服器內部錯誤：\\n" + text + "\\n\\n👉 請檢查您 GAS 程式碼中的「GitHub Token」、「帳號名稱」是否輸入正確！");
+            alert("❌ GAS 伺服器內部錯誤：\\n" + text + "\\n\\n👉 請檢查您 GAS 程式碼中的「GitHub Token」、「帳號名稱」是否正確！");
         }} else if (text.includes("Success") || text.includes("No changes")) {{
             alert("✅ 指令發送成功！\\n系統正在更新股票清單並重新抓取資料，請等待約 2 分鐘後重新整理網頁。");
             document.getElementById('stockInput').value = '';
         }} else {{
-            alert("⚠️ 收到未知網頁回應：\\n\\n這代表您的 GAS 沒有設定為「所有人」。\\n👉 請回到 GAS，重新點擊「新增部署作業」，並務必將最下方的「誰可以存取」設為「所有人 (Anyone)」！");
+            alert("⚠️ 收到未知網頁回應：\\n代表您的 GAS 沒有設定為「所有人」。\\n👉 請回到 GAS，重新「新增部署作業」，並將誰可以存取設為「所有人 (Anyone)」！");
         }}
     }})
     .catch(err => {{
-        alert("❌ 網路請求完全失敗！\\n錯誤訊息：" + err.message + "\\n\\n【請檢查】\\n您可能在 GAS 中只按了存檔，卻「忘記發布新版本」。\\n👉 請回到 GAS -> 點擊右上角「部署」-> 選擇「新增部署作業」，部署一個全新的版本！");
+        alert("❌ 網路請求失敗！\\n錯誤訊息：" + err.message + "\\n\\n【請檢查】您可能在 GAS 中只按了存檔，卻忘記發布新版本。\\n👉 請回到 GAS -> 點擊「新增部署作業」！");
     }})
     .finally(() => {{
         btn.innerText = originalText;
@@ -1564,10 +1544,11 @@ function triggerAction() {{
     const btn = document.getElementById('runBtn');
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
     
+    // ⚠️ 如果大盤重新執行有另外的 GAS，也可以在這裡改
     fetch('https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec', {{ method: 'POST', mode: 'no-cors' }})
     .then(() => alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁。"))
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
-    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
+    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
 }}
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
