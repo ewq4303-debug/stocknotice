@@ -1417,16 +1417,10 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
         stock_cards += generate_stock_card(stock_id, data, is_first)
         r = data["rating"]
         
-        # 【修改重點：側邊欄清單改用 Flexbox 排版，讓 ✖ 自動緊貼漲跌幅不重疊】
         sidebar_items += f'''
-        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>{stock_id} {data.get("name","")}</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span>
-                    <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:14px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div>
             <div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div>
         </div>
         '''
@@ -1501,7 +1495,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
-// 刪除確認視窗
 function confirmDelete(event, stockId, btn) {{
     event.stopPropagation(); 
     if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {{
@@ -1509,9 +1502,6 @@ function confirmDelete(event, stockId, btn) {{
     }}
 }}
 
-/* ======================================================== */
-/* 【專屬功能：精緻倒數計時器 (字串相加版，避開 f-string 錯誤)】 */
-/* ======================================================== */
 function showCountdownToast(message, totalSeconds) {{
     let existing = document.getElementById('custom-toast');
     if (existing) existing.remove();
@@ -1573,9 +1563,9 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
                 document.getElementById('stockInput').value = '';
             }}
             
+            // 【修改重點 2：徹底移除空的 {{}} 以免造成 f-string 崩潰】
             fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(e => console.log(e));
             
-            // 【修復重點：捨棄反引號與${}，改用傳統字串相加】
             let actionStr = (action === 'add') ? '新增' : '刪除';
             showCountdownToast("✅ 股票 " + stockId + " 已" + actionStr + "！<br>系統已自動觸發重新抓取資料", 150);
 
