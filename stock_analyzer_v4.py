@@ -843,13 +843,10 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span>
-          <span class="mh-name">{stock_id} {data.get('name','')}</span>
-          <span class="mh-price {c_cls}" style="margin-left:auto; margin-right:10px;">${close_price:,.2f} ({change_str})</span>
-          <button onclick="confirmDelete(event, '{stock_id}', this)" style="background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '{stock_id}', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 {stock_id}">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
       </div>
 
@@ -1415,16 +1412,11 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
         stock_cards += generate_stock_card(stock_id, data, is_first)
         r = data["rating"]
         
-        # 【修改重點：側邊欄清單使用 Flexbox 排版，讓 ✖ 乖乖靠著漲跌幅】
+        # 【修改重點：電腦版深灰色 ✖，絕對定位在右上角】
         sidebar_items += f'''
-        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')">
-            <div class="nav-top" style="display:flex; justify-content:space-between; align-items:center;">
-                <span>{stock_id} {data.get("name","")}</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span>
-                    <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#d32f2f; font-size:13px; opacity:0.5; cursor:pointer; font-weight:normal;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✖</div>
-                </div>
-            </div>
+        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="position:absolute; top:8px; right:8px; width:20px; height:20px; text-align:center; line-height:20px; border-radius:4px; color:#777; font-size:13px; font-weight:bold; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#333'; this.style.background='#eee';" onmouseout="this.style.color='#777'; this.style.background='transparent';">✖</div>
+            <div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div>
             <div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div>
         </div>
         '''
@@ -1455,7 +1447,6 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <div class="container">
   <div class="header" id="top">
     <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
-    
     <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
       <button id="runBtn" class="btn-run" onclick="triggerAction(this)">▶ 立刻重新執行 (抓取最新資料)</button>
     </div>
@@ -1476,9 +1467,16 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   </div>
 
   <div id="tab-stocks" class="tab-content">
+      <div class="mobile-only" style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 15px; border-radius:10px; border:0.5px solid var(--border); box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+         <span style="font-weight:bold; font-size:15px; color:var(--primary);">📝 個股管理</span>
+         <div style="display:flex; gap:6px;">
+            <input type="text" id="stockInputMobile" placeholder="輸入股號" style="width:80px; padding:6px 8px; border-radius:6px; border:1px solid #ccc; font-size:14px; outline:none;">
+            <button style="background:#4CAF50; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;" onclick="manageStock('add', null, 'stockInputMobile', this)">新增</button>
+         </div>
+      </div>
+      
       <div class="app-layout">
         <div class="sidebar desktop-only">
-            
             <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
                 <span>個股清單</span>
                 <div style="display:flex; gap:4px; font-weight:normal;">
@@ -1486,13 +1484,11 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
                     <button style="background:#4CAF50; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="manageStock('add', null, 'stockInput', this)">新增</button>
                 </div>
             </div>
-            
             {sidebar_items}
         </div>
         <div class="main-content">{stock_cards}</div>
       </div>
   </div>
-  
 </div>
 <button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
 
@@ -1509,7 +1505,36 @@ function confirmDelete(event, stockId, btn) {{
     }}
 }}
 
-// 【修改重點：修正傳入參數錯誤導致的當機，並完美處理按鈕狀態】
+/* ======================================================== */
+/* 【專屬功能：精緻倒數計時器 (Toast UI)】                      */
+/* ======================================================== */
+function showCountdownToast(message, totalSeconds) {{
+    let existing = document.getElementById('custom-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.id = 'custom-toast';
+    toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(30,30,30,0.95); color:#fff; padding:20px 30px; border-radius:12px; z-index:9999; font-size:16px; box-shadow:0 8px 24px rgba(0,0,0,0.3); text-align:center; min-width:280px; backdrop-filter:blur(5px); border:1px solid #444;";
+    document.body.appendChild(toast);
+
+    let secondsLeft = totalSeconds;
+    const updateText = () => {{
+        toast.innerHTML = `<div style="margin-bottom:10px; line-height:1.5;">${{message}}</div><div style="font-size:36px; font-weight:900; color:#4CAF50; font-variant-numeric:tabular-nums; margin:5px 0;">${{secondsLeft}}</div><div style="font-size:13px; color:#aaa;">秒後自動重新整理...</div>`;
+    }};
+    
+    updateText();
+    const timer = setInterval(() => {{
+        secondsLeft--;
+        if (secondsLeft <= 0) {{
+            clearInterval(timer);
+            toast.innerHTML = "<div style='font-size:18px; font-weight:bold; color:#4CAF50;'>🔄 重新整理中...</div>";
+            window.location.reload();
+        }} else {{
+            updateText();
+        }}
+    }}, 1000);
+}}
+
 function manageStock(action, stockIdOverride, inputId, btn) {{
     let stockId = stockIdOverride;
     if (!stockId) {{
@@ -1518,6 +1543,9 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
     }}
     if (!stockId) {{ alert("請輸入股票代號！"); return; }}
     
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec'; 
+    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
+
     let originalText = "";
     if (btn) {{
         originalText = btn.innerText;
@@ -1525,9 +1553,6 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
         btn.disabled = true;
     }}
 
-    // 您設定好的專屬 GAS 網址
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec'; 
-    
     fetch(gasUrl, {{
         method: 'POST',
         body: JSON.stringify({{ action: action, stock: stockId }}),
@@ -1536,26 +1561,27 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
     .then(response => response.text())
     .then(text => {{
         if (text.includes("Error")) {{
-            alert("❌ GAS 伺服器內部錯誤：\\n" + text);
+            alert("❌ 伺服器內部錯誤：\\n" + text);
+            if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
         }} else if (text.includes("Success") || text.includes("No changes")) {{
-            alert("✅ 指令發送成功！\\n系統正在更新資料，網頁將在 2 分 30 秒後自動重新整理。");
-            if(action === 'add' && document.getElementById('stockInput')) {{
-                document.getElementById('stockInput').value = '';
+            
+            if(action === 'add') {{
+                if (document.getElementById('stockInput')) document.getElementById('stockInput').value = '';
+                if (document.getElementById('stockInputMobile')) document.getElementById('stockInputMobile').value = '';
             }}
-            // 設定 150 秒後自動重整頁面
-            setTimeout(() => {{ window.location.reload(); }}, 150000);
+            
+            // 【修改重點：送出新增/刪除後，立即在背景觸發重新執行腳本，並呼叫計時器】
+            fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(()=>{});
+            showCountdownToast(`✅ 股票 ${stockId} 已${action==='add'?'新增':'刪除'}！<br>系統已自動觸發重新抓取資料`, 150);
+
         }} else {{
-            alert("⚠️ 收到未知回應，請確認 GAS 權限已設為「所有人」。");
+            alert("⚠️ 收到未知回應，請確認權限設定。");
+            if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
         }}
     }})
     .catch(err => {{
         alert("❌ 網路請求失敗：" + err.message);
-    }})
-    .finally(() => {{
-        if (btn) {{
-            btn.innerText = originalText;
-            btn.disabled = false;
-        }}
+        if (btn) {{ btn.innerText = originalText; btn.disabled = false; }}
     }});
 }}
 
@@ -1590,12 +1616,12 @@ function triggerAction(btn) {{
     const originalText = btn.innerText;
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
     
-    // 大盤手動更新的 GAS 網址
-    fetch('https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec', {{ method: 'POST', mode: 'no-cors' }})
+    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
+    
+    // 【修改重點：呼叫計時器】
+    fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }})
     .then(() => {{
-        alert("✅ 重新執行指令已發送！\\n系統正在抓取最新資料，網頁將在 2 分 30 秒後自動重新整理。");
-        // 設定 150 秒後自動重整頁面
-        setTimeout(() => {{ window.location.reload(); }}, 150000);
+        showCountdownToast("✅ 重新執行指令已發送！<br>系統正在抓取最新資料", 150);
     }})
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
     .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
