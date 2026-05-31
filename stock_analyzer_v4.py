@@ -779,7 +779,10 @@ def generate_rating_table(stocks_data: dict) -> str:
 
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
-    fund = data.get("fundamentals", {}) # 【新增】取得基本面資料
+    
+    # 【關鍵修復：取出剛剛存入的基本面資料】
+    fund = data.get("fundamentals", {}) 
+    
     c_cls = "up" if data.get("change_pct",0) >= 0 else "down"
     c_sign = "+" if data.get("change_pct",0) >= 0 else ""
     change_str = f"{c_sign}{data.get('change_pct',0):.2f}%"
@@ -843,7 +846,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     l_shares = tdcc.get("large_threshold_shares", 0) / 1000
     threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
-    # 【新增】格式化基本面資料 UI
+    # 【關鍵修復：排版與產生基本面 HTML 區塊】
     def fmt_pct(v): return f"{v*100:.2f}%" if pd.notna(v) and v is not None else "-"
     def fmt_f(v): return f"{v:.2f}" if pd.notna(v) and v is not None else "-"
     def fmt_p(v): return f"${v:.2f}" if pd.notna(v) and v is not None else "-"
@@ -877,24 +880,17 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       
-      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
-        <div class="mh-top" style="display:flex; align-items:center;">
-          <span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span>
-          <span class="mh-name">{stock_id} {data.get('name','')}</span>
-          <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
-              <span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span>
-              <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:16px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
-          </div>
-        </div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')" style="position:relative; padding-right:40px;">
+        <div onclick="confirmDelete(event, '{stock_id}', this)" style="position:absolute; top:12px; right:15px; color:#777; font-size:16px; font-weight:bold; padding:0 8px; z-index:10; cursor:pointer;" title="刪除 {stock_id}">✖</div>
+
+        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
       </div>
 
       <div class="stock-body">
         <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
         
-        {fund_html}
-        
-        <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
+        {fund_html} <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
         <div class="grid-2-col">
           <div><h3 style="margin:0 0 10px 0; font-size:16px;">👥 三大法人買賣超 (張)</h3><table class="data-table"><tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr><tr><td>外資</td><td class="{'up' if inst.get('foreign_today',0)>=0 else 'down'}">{inst.get('foreign_today',0):+,.0f}</td><td class="{'up' if inst.get('foreign_5d',0)>=0 else 'down'}">{inst.get('foreign_5d',0):+,.0f}</td><td class="{'up' if inst.get('foreign_20d',0)>=0 else 'down'}">{inst.get('foreign_20d',0):+,.0f}</td></tr><tr><td>投信</td><td class="{'up' if inst.get('trust_today',0)>=0 else 'down'}">{inst.get('trust_today',0):+,.0f}</td><td class="{'up' if inst.get('trust_5d',0)>=0 else 'down'}">{inst.get('trust_5d',0):+,.0f}</td><td class="{'up' if inst.get('trust_20d',0)>=0 else 'down'}">{inst.get('trust_20d',0):+,.0f}</td></tr><tr><td>自營</td><td class="{'up' if inst.get('dealer_today',0)>=0 else 'down'}">{inst.get('dealer_today',0):+,.0f}</td><td class="{'up' if inst.get('dealer_5d',0)>=0 else 'down'}">{inst.get('dealer_5d',0):+,.0f}</td><td class="{'up' if inst.get('dealer_20d',0)>=0 else 'down'}">{inst.get('dealer_20d',0):+,.0f}</td></tr><tr class="row-total"><td>合計</td><td class="{'up' if tt_today>=0 else 'down'}">{tt_today:+,.0f}</td><td class="{'up' if tt_5d>=0 else 'down'}">{tt_5d:+,.0f}</td><td class="{'up' if tt_20d>=0 else 'down'}">{tt_20d:+,.0f}</td></tr></table></div>
@@ -1683,7 +1679,7 @@ def process_single_stock(stock_id):
     news        = get_news(stock_id)
     name        = get_stock_name(stock_id)
     
-    # 【新增】抓取基本面資料
+    # 【關鍵修復：抓取基本面並存入變數】
     fund        = get_fundamentals(stock_id)
     
     df = stock_data["df"]
@@ -1700,7 +1696,7 @@ def process_single_stock(stock_id):
         
         i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
         
-        # 【修改】原本是計算金額 (億)，現在直接抓取原始張數
+        # 三大法人改為直接抓取原始張數
         f_amt = i_data["foreign"] / 1000
         t_amt = i_data["trust"] / 1000
         d_amt = i_data["dealer"] / 1000
@@ -1723,7 +1719,7 @@ def process_single_stock(stock_id):
         "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
         "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news,
         "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data,
-        "fundamentals": fund # 【新增】將基本面存入 record
+        "fundamentals": fund # 【關鍵修復：確保基本面資料傳遞給網頁產生器】
     }
     record["rating"] = calculate_stock_rating(record)
     print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
