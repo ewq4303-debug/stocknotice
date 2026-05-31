@@ -643,24 +643,31 @@ def get_stock_name(stock_id: str):
     except: return stock_id
 
 def get_fundamentals(stock_id: str):
-    result = {"trailing_pe": None, "forward_pe": None, "peg": None, "eps_ttm": None, "eps_forward": None, "eps_growth": None, "revenue_growth": None, "market_cap": None, "dividend_yield": None, "roe": None, "target_price": None, "gross_margin": None}
+    result = {"target_price": None, "eps": [], "gm": [], "rev": []}
     for suffix in (".TW", ".TWO"):
         try:
-            info = yf.Ticker(f"{stock_id}{suffix}").info
+            tk = yf.Ticker(f"{stock_id}{suffix}")
+            info = tk.info
             if not info or len(info) < 5: continue
-            result["trailing_pe"]    = info.get("trailingPE")
-            result["forward_pe"]     = info.get("forwardPE")
-            result["peg"]            = info.get("trailingPegRatio") or info.get("pegRatio")
-            result["eps_ttm"]        = info.get("trailingEps") or info.get("epsTrailingTwelveMonths")
-            result["eps_forward"]    = info.get("forwardEps")
-            result["eps_growth"]     = info.get("earningsGrowth")
-            result["revenue_growth"] = info.get("revenueGrowth")
-            result["market_cap"]     = info.get("marketCap")
-            div_y                    = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
-            if div_y is not None: result["dividend_yield"] = div_y * 100 if div_y < 1 else div_y
-            result["roe"]            = info.get("returnOnEquity")
-            result["target_price"]   = info.get("targetMeanPrice") or info.get("targetMedianPrice")
-            result["gross_margin"]   = info.get("grossMargins")
+            
+            # 抓取目標價
+            result["target_price"] = info.get("targetMeanPrice") or info.get("targetMedianPrice")
+
+            try:
+                # 嘗試抓取季報 (yfinance 最多通常只有 4 季)
+                q_inc = tk.quarterly_income_stmt
+                if not q_inc.empty:
+                    for d in q_inc.columns[:5]:
+                        d_str = f"{d.year}Q{((d.month-1)//3)+1}"
+                        eps = q_inc.loc["Diluted EPS", d] if "Diluted EPS" in q_inc.index else (q_inc.loc["Basic EPS", d] if "Basic EPS" in q_inc.index else None)
+                        gp = q_inc.loc["Gross Profit", d] if "Gross Profit" in q_inc.index else None
+                        trev = q_inc.loc["Total Revenue", d] if "Total Revenue" in q_inc.index else None
+                        gm = (gp / trev * 100) if (gp is not None and trev is not None and trev != 0) else None
+
+                        result["eps"].append({"date": d_str, "eps": float(eps) if eps else None, "yoy": None}) # 缺乏 8 季資料無法算 YoY
+                        result["gm"].append({"date": d_str, "gm": float(gm) if gm else None})
+            except Exception as e:
+                pass
             return result
         except: continue
     return result
@@ -780,7 +787,7 @@ def generate_rating_table(stocks_data: dict) -> str:
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
     
-    # 【關鍵：讀取剛剛存起來的基本面資料】
+    # 讀取基本面資料
     fund = data.get("fundamentals", {}) 
     
     c_cls = "up" if data.get("change_pct",0) >= 0 else "down"
@@ -846,35 +853,74 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     l_shares = tdcc.get("large_threshold_shares", 0) / 1000
     threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
-    # 【關鍵：格式化基本面資料 UI】
-    def fmt_pct(v): return f"{v*100:.2f}%" if pd.notna(v) and v is not None else "-"
-    def fmt_f(v): return f"{v:.2f}" if pd.notna(v) and v is not None else "-"
-    def fmt_p(v): return f"${v:.2f}" if pd.notna(v) and v is not None else "-"
-    
-    pe_t = fmt_f(fund.get('trailing_pe'))
-    pe_f = fmt_f(fund.get('forward_pe'))
-    peg = fmt_f(fund.get('peg'))
-    eps = fmt_f(fund.get('eps_ttm'))
-    eps_g = fmt_pct(fund.get('eps_growth'))
-    rev_g = fmt_pct(fund.get('revenue_growth'))
-    gm = fmt_pct(fund.get('gross_margin'))
-    roe = fmt_pct(fund.get('roe'))
-    div = fmt_f(fund.get('dividend_yield')) + "%" if fund.get('dividend_yield') else "-"
-    target = fmt_p(fund.get('target_price'))
-    
+    # 【新排版：目標價與基本面表格】
+    target_val = fund.get('target_price')
+    target_price = f"${target_val:.2f}" if target_val else "-"
+
+    eps_data = fund.get("eps", [])
+    eps_rows = ""
+    for i in range(5):
+        if i < len(eps_data):
+            d = eps_data[i]
+            eps_val = f"{d['eps']:.2f}" if d['eps'] is not None else "-"
+            yoy_val = f"{d['yoy']:.2f}%" if d['yoy'] is not None else "-"
+            yoy_cls = 'up' if d['yoy'] and d['yoy']>0 else ('down' if d['yoy'] and d['yoy']<0 else '')
+            eps_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{eps_val}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_val}</td></tr>"
+        else:
+            eps_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+
+    gm_data = fund.get("gm", [])
+    gm_rows = ""
+    for i in range(5):
+        if i < len(gm_data):
+            d = gm_data[i]
+            gm_val = f"{d['gm']:.2f}%" if d['gm'] is not None else "-"
+            gm_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{gm_val}</td></tr>"
+        else:
+            gm_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+
+    rev_data = fund.get("rev", [])
+    rev_rows = ""
+    for i in range(6):
+        if i < len(rev_data):
+            d = rev_data[i]
+            rev_val = f"{d['rev']}" if d['rev'] is not None else "-"
+            yoy_val = f"{d['yoy']:.2f}%" if d['yoy'] is not None else "-"
+            yoy_cls = 'up' if d['yoy'] and d['yoy']>0 else ('down' if d['yoy'] and d['yoy']<0 else '')
+            rev_rows += f"<tr><td style='text-align:center;'>{d['date']}</td><td style='text-align:center;'>{rev_val}</td><td style='text-align:center;' class='{yoy_cls}'>{yoy_val}</td></tr>"
+        else:
+            rev_rows += "<tr><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td><td style='text-align:center; color:#ccc;'>-</td></tr>"
+
     fund_html = f"""
-    <div style="display:flex; flex-wrap:wrap; gap:10px; background:#f8f9fa; padding:12px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:15px; font-size:13px;">
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">本益比(TTM)</span><span style="font-weight:bold; font-size:14px;">{pe_t}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">預估本益比</span><span style="font-weight:bold; font-size:14px;">{pe_f}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">PEG</span><span style="font-weight:bold; font-size:14px;">{peg}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS(TTM)</span><span style="font-weight:bold; font-size:14px;">{eps}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS成長</span><span style="font-weight:bold; font-size:14px;">{eps_g}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">營收成長</span><span style="font-weight:bold; font-size:14px;">{rev_g}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">毛利率</span><span style="font-weight:bold; font-size:14px;">{gm}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">ROE</span><span style="font-weight:bold; font-size:14px;">{roe}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">殖利率</span><span style="font-weight:bold; font-size:14px;">{div}</span></div>
-        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:var(--primary); font-size:11px;">法人目標價</span><span style="font-weight:bold; font-size:14px; color:var(--primary);">{target}</span></div>
-    </div>
+        <div style="margin-bottom: 15px; padding: 15px; background: #fdfdfd; border-radius: 8px; border: 1px solid #eee;">
+           <h3 style="margin:0 0 12px 0; font-size:14px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+               📈 基本面追蹤
+               <span style="font-size:11px; font-weight:normal; color:#888; background:#eee; padding:3px 8px; border-radius:10px;">註: yfinance API 缺乏台股月營收，且季報無提供歷史 YoY</span>
+           </h3>
+           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+               <div>
+                   <table class="data-table" style="width:100%; margin:0;">
+                       <tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 5 季 EPS 與 YoY</th></tr>
+                       <tr><th style="text-align:center; width:30%;">季度</th><th style="text-align:center; width:35%;">EPS</th><th style="text-align:center; width:35%;">YoY</th></tr>
+                       {eps_rows}
+                   </table>
+               </div>
+               <div>
+                   <table class="data-table" style="width:100%; margin:0;">
+                       <tr><th colspan="2" style="text-align:center; background:#f0f4f8;">近 5 季 毛利率</th></tr>
+                       <tr><th style="text-align:center; width:40%;">季度</th><th style="text-align:center; width:60%;">毛利率</th></tr>
+                       {gm_rows}
+                   </table>
+               </div>
+               <div>
+                   <table class="data-table" style="width:100%; margin:0;">
+                       <tr><th colspan="3" style="text-align:center; background:#f0f4f8;">近 6 個月 營收與 YoY</th></tr>
+                       <tr><th style="text-align:center; width:30%;">月份</th><th style="text-align:center; width:40%;">營收</th><th style="text-align:center; width:30%;">YoY</th></tr>
+                       {rev_rows}
+                   </table>
+               </div>
+           </div>
+        </div>
     """
 
     return f"""
@@ -884,8 +930,9 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         <div class="mh-top" style="display:flex; align-items:center;">
           <span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span>
           <span class="mh-name">{stock_id} {data.get('name','')}</span>
-          <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
-              <span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+              <span style="font-size:12px; font-weight:bold; color:var(--primary);" title="法人目標價">🎯 {target_price}</span>
+              <span class="mh-price {c_cls}">${close_price:,.2f}</span>
               <div onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}" style="color:#777; font-size:16px; font-weight:bold; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#777'">✖</div>
           </div>
         </div>
@@ -893,9 +940,14 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
       </div>
 
       <div class="stock-body">
-        <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
         
-        {fund_html}
+        <div class="card-header-desktop desktop-only" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <div style="font-size:15px; font-weight:bold; color:#555;">🎯 法人目標價: <span style="font-size:18px; color:var(--primary);">{target_price}</span></div>
+                <div style="font-size:15px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技{r.get('tech',0):g} / 籌{r.get('chip',0):g})</div>
+            </div>
+        </div>
         
         <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
@@ -920,6 +972,8 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
              </table>
            </div>
         </div>
+
+        {fund_html}
 
         <div class="grid-2-col">
           <div class="ai-box"><h4>🧠 AI 技術與籌碼分析</h4><div>{data.get('ai_tech','').replace(chr(10), '<br>')}</div><div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">{data.get('ai_chip','').replace(chr(10), '<br>')}</div></div>
@@ -1686,7 +1740,7 @@ def process_single_stock(stock_id):
     news        = get_news(stock_id)
     name        = get_stock_name(stock_id)
     
-    # 【關鍵：抓取基本面並存入】
+    # 【關鍵：執行剛剛寫好的基本面函數】
     fund        = get_fundamentals(stock_id)
     
     df = stock_data["df"]
@@ -1703,7 +1757,7 @@ def process_single_stock(stock_id):
         
         i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
         
-        # 三大法人改為直接抓取原始張數
+        # 【修改：三大法人改為直接抓取原始「張數」】
         f_amt = i_data["foreign"] / 1000
         t_amt = i_data["trust"] / 1000
         d_amt = i_data["dealer"] / 1000
@@ -1726,7 +1780,7 @@ def process_single_stock(stock_id):
         "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
         "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news,
         "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data,
-        "fundamentals": fund # 【關鍵：確保基本面資料傳遞給網頁產生器】
+        "fundamentals": fund # 將基本面存入卡片資料中
     }
     record["rating"] = calculate_stock_rating(record)
     print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
