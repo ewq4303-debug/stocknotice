@@ -787,7 +787,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     for n in news[:5]: news_html += f'<div style="padding:10px 0; border-bottom:1px dashed #eee;"><div style="font-size:11px; color:#999; margin-bottom:4px;">{n.get("date","")}</div><a href="{n.get("url", n.get("link", "#"))}" target="_blank" style="font-size:13px; font-weight:500; color:#333; text-decoration:none; display:block;">{n.get("title","")}</a></div>'
     if not news: news_html = "<div style='padding:10px 0; color:#999; font-size:12px;'>近期無相關新聞</div>"
 
-    # 【新增邏輯】建立法人日資料的字典，方便查找當週四、五的資料 (單位：張)
     inst_history = inst.get("history", [])
     inst_dict = {}
     for d in inst_history:
@@ -795,11 +794,9 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         net_lots = (d.get("foreign", 0) + d.get("trust", 0) + d.get("dealer", 0)) / 1000
         inst_dict[date_key] = net_lots
 
-    # --- TDCC 多週變化表格 ---
     tdcc_hist = tdcc.get("history", [])
     tdcc_table_rows = ""
     
-    # 【修正】獨立判斷邏輯，徹底解決字串 format 被 f-string 跳脫搞壞的問題
     def get_diff_html(diff, kind):
         if diff == 0: return ""
         cls = "up" if diff > 0 else "down"
@@ -816,7 +813,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         h_diff = curr['total_holders'] - prev_r['total_holders']
         a_diff = curr.get('avg_lots',0) - prev_r.get('avg_lots',0)
         
-        # 找出當周四與週五的法人買賣加總 (TDCC 日期與前一天)
         date_str = curr.get('date', '')
         thu_fri_net = 0
         if date_str:
@@ -828,7 +824,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
             except Exception:
                 pass
 
-        # 將四五法人插在大戶與散戶之間
         tdcc_table_rows += f'''<tr>
             <td style="text-align:center;">{curr['date']}</td>
             <td style="text-align:center;">{curr['large_ratio']:.2f}% {get_diff_html(l_diff, 'pct')}</td>
@@ -841,19 +836,24 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     if not tdcc_table_rows:
         tdcc_table_rows = "<tr><td colspan='6' style='text-align:center;'>無集保資料</td></tr>"
 
-    # 【新增】抓取大戶與散戶的門檻張數
     r_shares = tdcc.get("retail_threshold_shares", 0) / 1000
     l_shares = tdcc.get("large_threshold_shares", 0) / 1000
     threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
-      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
-        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
+      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')" style="position:relative;">
+        
+        <button onclick="confirmDelete(event, '{stock_id}')" style="position:absolute; top:12px; right:15px; background:#ffebee; border:1px solid #ffcdd2; color:#d32f2f; font-size:12px; padding:2px 8px; border-radius:4px; z-index:10; cursor:pointer;">刪除</button>
+
+        <div class="mh-top" style="padding-right:45px;"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
         <div class="mh-bottom"><span class="mh-rating">🌟 {r.get('rating','')}</span><span class="mh-score">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
       </div>
       <div class="stock-body">
-        <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
+        <div class="card-header-desktop desktop-only">
+          <h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2>
+          <div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div>
+        </div>
         
         <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
@@ -889,7 +889,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         </div>
       </div>
     </div>"""
-
+    
 def generate_market_section(market_data: dict):
     taiex = market_data["taiex"]
     if not taiex: return "<p>大盤資料載入中...</p>"
@@ -1413,7 +1413,15 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     for stock_id, data in stocks_data.items():
         stock_cards += generate_stock_card(stock_id, data, is_first)
         r = data["rating"]
-        sidebar_items += f'<div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock(\'{stock_id}\')"><div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div><div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div></div>'
+        
+        # 【修改：加入右上角的 ✖ 刪除按鈕，並加上防誤觸設計】
+        sidebar_items += f'''
+        <div class="sidebar-item {"active" if is_first else ""}" id="nav_{stock_id}" onclick="showStock('{stock_id}')" style="position:relative; padding-right:24px;">
+            <div onclick="confirmDelete(event, '{stock_id}')" style="position:absolute; top:8px; right:8px; width:20px; height:20px; line-height:18px; text-align:center; border-radius:4px; background:#ffebee; color:#d32f2f; font-size:12px; cursor:pointer; opacity:0.6; transition:0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'" title="刪除 {stock_id}">✖</div>
+            <div class="nav-top"><span>{stock_id} {data.get("name","")}</span><span class="{"up" if data.get("change_pct",0)>=0 else "down"}">{data.get("change_pct",0):+.2f}%</span></div>
+            <div class="nav-bottom"><span>⭐ {r.get("rating","")}</span><span>技{r.get("tech",0):g} / 籌{r.get("chip",0):g}</span></div>
+        </div>
+        '''
         is_first = False
         
     chart_scripts = generate_chart_scripts(stocks_data, market_data)
@@ -1426,6 +1434,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <title>股票監控儀表板</title>
 <style>
 {get_css()}
+/* 分頁系統專用 CSS */
 .tabs-container {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }}
 .tabs-container::-webkit-scrollbar {{ display: none; }}
 .tab-btn {{ padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; background: #f8f9fa; color: #555; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }}
@@ -1440,7 +1449,10 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <div class="container">
   <div class="header" id="top">
     <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新: {update_time}</div></div>
-    <button id="runBtn" class="btn-run" onclick="triggerAction()">▶ 立刻重新執行 (抓最新資料)</button>
+    
+    <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+      <button id="runBtn" class="btn-run" onclick="triggerAction(this)">▶ 立刻重新執行 (抓取最新資料)</button>
+    </div>
   </div>
   
   <div class="tabs-container">
@@ -1458,17 +1470,32 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
   </div>
 
   <div id="tab-stocks" class="tab-content">
-      <div style="margin-bottom: 15px; padding: 15px 20px; background: #fff; border-radius: 12px; border: 0.5px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
-         <span style="font-weight: bold; color: var(--primary); font-size: 15px;">📝 管理追蹤清單：</span>
-         <input type="text" id="stockInput" placeholder="輸入股號 (如 2330)" style="padding:8px 12px; border-radius:6px; border:1px solid #ccc; width:150px; font-size:14px; outline:none;">
-         <button class="btn-run" style="background:#4CAF50; border-color:#388E3C; padding:8px 16px;" onclick="manageStock('add', this)">➕ 新增個股</button>
-         <button class="btn-run" style="background:#F44336; border-color:#D32F2F; padding:8px 16px;" onclick="manageStock('remove', this)">🗑️ 刪除個股</button>
+      
+      <div class="mobile-only" style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 15px; border-radius:10px; border:0.5px solid var(--border); box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+         <span style="font-weight:bold; font-size:15px; color:var(--primary);">📝 個股管理</span>
+         <div style="display:flex; gap:6px;">
+            <input type="text" id="stockInputMobile" placeholder="輸入股號" style="width:80px; padding:6px 8px; border-radius:6px; border:1px solid #ccc; font-size:14px; outline:none;">
+            <button style="background:#4CAF50; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;" onclick="manageStock('add', null, 'stockInputMobile')">新增</button>
+         </div>
       </div>
+      
       <div class="app-layout">
-        <div class="sidebar desktop-only"><div class="sidebar-title">個股清單</div>{sidebar_items}</div>
+        <div class="sidebar desktop-only">
+            
+            <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
+                <span>個股清單</span>
+                <div style="display:flex; gap:4px; font-weight:normal;">
+                    <input type="text" id="stockInput" placeholder="股號" style="width:65px; padding:4px 6px; border-radius:4px; border:1px solid #ccc; font-size:13px; outline:none;">
+                    <button style="background:#4CAF50; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="manageStock('add', null, 'stockInput')">新增</button>
+                </div>
+            </div>
+            
+            {sidebar_items}
+        </div>
         <div class="main-content">{stock_cards}</div>
       </div>
   </div>
+  
 </div>
 <button id="backToTop" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}});" style="display:none; position:fixed; bottom:30px; right:30px; background:#1565c0; color:#fff; border:none; border-radius:50px; padding:10px 18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:9999; font-weight:bold;">↑ 返回頂部</button>
 
@@ -1477,17 +1504,32 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
-function manageStock(action, btn) {{
-    const stockId = document.getElementById('stockInput').value.trim();
-    if (!stockId) {{ alert("請先輸入股票代號！"); return; }}
-    
-    const originalText = btn.innerText;
-    btn.innerText = "⏳ 處理中...";
-    btn.disabled = true;
+// 刪除確認視窗
+function confirmDelete(event, stockId) {{
+    event.stopPropagation(); // 防止觸發切換卡片
+    if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {{
+        manageStock('remove', stockId, null);
+    }}
+}}
 
-    // ⚠️ 確保這裡是您專屬的 GAS 網址
+// 處理新增或刪除
+function manageStock(action, stockIdOverride, inputId) {{
+    let stockId = stockIdOverride;
+    if (!stockId) {{
+        const inputField = document.getElementById(inputId || 'stockInput');
+        if (inputField) stockId = inputField.value.trim();
+    }}
+    if (!stockId) {{ alert("請輸入股票代號！"); return; }}
+    
+    // ⚠️ 請確保這是您專屬的 GAS 網址
     const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec'; 
     
+    // 建立臨時 Toast 提示
+    const toast = document.createElement("div");
+    toast.innerText = "⏳ 正在處理指令，請稍候...";
+    toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:8px; z-index:9999;";
+    document.body.appendChild(toast);
+
     fetch(gasUrl, {{
         method: 'POST',
         body: JSON.stringify({{ action: action, stock: stockId }}),
@@ -1495,21 +1537,26 @@ function manageStock(action, btn) {{
     }})
     .then(response => response.text())
     .then(text => {{
+        document.body.removeChild(toast);
         if (text.includes("Error")) {{
-            alert("❌ GAS 伺服器內部錯誤：\\n" + text + "\\n\\n👉 請檢查您 GAS 程式碼中的「GitHub Token」、「帳號名稱」是否正確！");
+            alert("❌ GAS 伺服器內部錯誤：\\n" + text);
         }} else if (text.includes("Success") || text.includes("No changes")) {{
-            alert("✅ 指令發送成功！\\n系統正在更新股票清單並重新抓取資料，請等待約 2 分鐘後重新整理網頁。");
-            document.getElementById('stockInput').value = '';
+            alert("✅ 指令發送成功！\\n系統正在更新資料，網頁將在 2 分 30 秒後自動重新整理。");
+            if(action === 'add') {{
+                if (document.getElementById('stockInput')) document.getElementById('stockInput').value = '';
+                if (document.getElementById('stockInputMobile')) document.getElementById('stockInputMobile').value = '';
+            }}
+            
+            // 【修改重點：2分30秒 (150,000 毫秒) 後自動重新整理頁面】
+            setTimeout(() => {{ window.location.reload(); }}, 150000);
+            
         }} else {{
-            alert("⚠️ 收到未知網頁回應：\\n代表您的 GAS 沒有設定為「所有人」。\\n👉 請回到 GAS，重新「新增部署作業」，並將誰可以存取設為「所有人 (Anyone)」！");
+            alert("⚠️ 收到未知網頁回應：\\n代表您的 GAS 沒有設定為「所有人」。");
         }}
     }})
     .catch(err => {{
-        alert("❌ 網路請求失敗！\\n錯誤訊息：" + err.message + "\\n\\n【請檢查】您可能在 GAS 中只按了存檔，卻忘記發布新版本。\\n👉 請回到 GAS -> 點擊「新增部署作業」！");
-    }})
-    .finally(() => {{
-        btn.innerText = originalText;
-        btn.disabled = false;
+        if(document.body.contains(toast)) document.body.removeChild(toast);
+        alert("❌ 網路請求失敗：" + err.message);
     }});
 }}
 
@@ -1540,15 +1587,20 @@ function toggleMobile(stockId) {{
     else {{ card.classList.add('mobile-expanded'); icon.innerText = '▼'; resizeAllCharts(); setTimeout(() => {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 150); }}
 }}
 
-function triggerAction() {{
-    const btn = document.getElementById('runBtn');
+function triggerAction(btn) {{
+    const originalText = btn.innerText;
     btn.innerText = "⏳ 觸發中..."; btn.disabled = true; btn.style.opacity = "0.7";
     
-    // ⚠️ 如果大盤重新執行有另外的 GAS，也可以在這裡改
+    // ⚠️ 若需要手動觸發 GitHub Action 更新大盤，請確保這是您的 GAS
     fetch('https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec', {{ method: 'POST', mode: 'no-cors' }})
-    .then(() => alert("✅ 指令已發送！請等待約 1~2 分鐘後重新整理網頁。"))
+    .then(() => {{
+        alert("✅ 重新執行指令已發送！\\n系統正在抓取最新資料，網頁將在 2 分 30 秒後自動重新整理。");
+        
+        // 【修改重點：2分30秒 (150,000 毫秒) 後自動重新整理頁面】
+        setTimeout(() => {{ window.location.reload(); }}, 150000);
+    }})
     .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
-    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
+    .finally(() => {{ btn.innerText = "▶ 立刻重新執行 (抓取最新資料)"; btn.disabled = false; btn.style.opacity = "1"; }});
 }}
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
