@@ -643,7 +643,7 @@ def get_stock_name(stock_id: str):
     except: return stock_id
 
 def get_fundamentals(stock_id: str):
-    result = {"trailing_pe": None, "forward_pe": None, "peg": None, "eps_ttm": None, "eps_forward": None, "eps_growth": None, "revenue_growth": None, "market_cap": None, "dividend_yield": None, "roe": None}
+    result = {"trailing_pe": None, "forward_pe": None, "peg": None, "eps_ttm": None, "eps_forward": None, "eps_growth": None, "revenue_growth": None, "market_cap": None, "dividend_yield": None, "roe": None, "target_price": None, "gross_margin": None}
     for suffix in (".TW", ".TWO"):
         try:
             info = yf.Ticker(f"{stock_id}{suffix}").info
@@ -659,6 +659,8 @@ def get_fundamentals(stock_id: str):
             div_y                    = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
             if div_y is not None: result["dividend_yield"] = div_y * 100 if div_y < 1 else div_y
             result["roe"]            = info.get("returnOnEquity")
+            result["target_price"]   = info.get("targetMeanPrice") or info.get("targetMedianPrice")
+            result["gross_margin"]   = info.get("grossMargins")
             return result
         except: continue
     return result
@@ -777,6 +779,7 @@ def generate_rating_table(stocks_data: dict) -> str:
 
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
+    fund = data.get("fundamentals", {}) # 【新增】取得基本面資料
     c_cls = "up" if data.get("change_pct",0) >= 0 else "down"
     c_sign = "+" if data.get("change_pct",0) >= 0 else ""
     change_str = f"{c_sign}{data.get('change_pct',0):.2f}%"
@@ -840,6 +843,37 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     l_shares = tdcc.get("large_threshold_shares", 0) / 1000
     threshold_info = f"大戶 >5千萬 ({l_shares:,.0f}張) / 散戶 <5百萬 ({r_shares:,.0f}張)"
 
+    # 【新增】格式化基本面資料 UI
+    def fmt_pct(v): return f"{v*100:.2f}%" if pd.notna(v) and v is not None else "-"
+    def fmt_f(v): return f"{v:.2f}" if pd.notna(v) and v is not None else "-"
+    def fmt_p(v): return f"${v:.2f}" if pd.notna(v) and v is not None else "-"
+    
+    pe_t = fmt_f(fund.get('trailing_pe'))
+    pe_f = fmt_f(fund.get('forward_pe'))
+    peg = fmt_f(fund.get('peg'))
+    eps = fmt_f(fund.get('eps_ttm'))
+    eps_g = fmt_pct(fund.get('eps_growth'))
+    rev_g = fmt_pct(fund.get('revenue_growth'))
+    gm = fmt_pct(fund.get('gross_margin'))
+    roe = fmt_pct(fund.get('roe'))
+    div = fmt_f(fund.get('dividend_yield')) + "%" if fund.get('dividend_yield') else "-"
+    target = fmt_p(fund.get('target_price'))
+    
+    fund_html = f"""
+    <div style="display:flex; flex-wrap:wrap; gap:10px; background:#f8f9fa; padding:12px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:15px; font-size:13px;">
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">本益比(TTM)</span><span style="font-weight:bold; font-size:14px;">{pe_t}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">預估本益比</span><span style="font-weight:bold; font-size:14px;">{pe_f}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">PEG</span><span style="font-weight:bold; font-size:14px;">{peg}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS(TTM)</span><span style="font-weight:bold; font-size:14px;">{eps}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS成長</span><span style="font-weight:bold; font-size:14px;">{eps_g}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">營收成長</span><span style="font-weight:bold; font-size:14px;">{rev_g}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">毛利率</span><span style="font-weight:bold; font-size:14px;">{gm}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">ROE</span><span style="font-weight:bold; font-size:14px;">{roe}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">殖利率</span><span style="font-weight:bold; font-size:14px;">{div}</span></div>
+        <div style="flex: 1 1 100px; display:flex; flex-direction:column;"><span style="color:var(--primary); font-size:11px;">法人目標價</span><span style="font-weight:bold; font-size:14px; color:var(--primary);">{target}</span></div>
+    </div>
+    """
+
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
       
@@ -857,6 +891,8 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
       <div class="stock-body">
         <div class="card-header-desktop desktop-only"><h2>{stock_id} {data.get('name','')} <span class="{c_cls}">${close_price:,.2f} ({change_str})</span></h2><div style="font-size:16px; font-weight:bold;">綜合評等: <span style="color:var(--primary);">{r.get('rating','')}</span> (技術: {r.get('tech',0):g} / 籌碼: {r.get('chip',0):g})</div></div>
+        
+        {fund_html}
         
         <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
@@ -967,7 +1003,8 @@ chartK_{stock_id}.getZr().on('mousemove', function(e) {{
 chartK_{stock_id}.setOption({{
   title: [
     {{ text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '#555'}} }},
-    {{ text: '三大法人買賣超(億)與累計', left: '6%', top: '51%', textStyle: {{fontSize: 11, color: '#555'}} }},
+    // 【修改】標題改為三大法人買賣超(張)
+    {{ text: '三大法人買賣超(張)與累計', left: '6%', top: '51%', textStyle: {{fontSize: 11, color: '#555'}} }},
     {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '76%', textStyle: {{fontSize: 11, color: '#555'}} }}
   ],
   tooltip: {{ 
@@ -1018,7 +1055,6 @@ chartK_{stock_id}.setOption({{
     {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '76%', right: '8%', textStyle: {{fontSize: 10}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
-  // 【修改重點】K線與成交量整合為 Grid 0，總共僅 3 個 Grid，大幅增加高度
   grid: [
     {{ left: '6%', right: '8%', top: '5%', height: '40%' }},
     {{ left: '6%', right: '8%', top: '55%', height: '16%' }},
@@ -1031,7 +1067,6 @@ chartK_{stock_id}.setOption({{
   ],
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
-    // 【修改重點】這是疊加在 K 線圖上的成交量隱藏 Y 軸，強制設定最大值將柱體壓在底端
     {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }},
     
     {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
@@ -1049,7 +1084,6 @@ chartK_{stock_id}.setOption({{
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }},
     {{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }},
     
-    // 【修改重點】成交量對應到同一個 xAxis(0)，並綁定新的隱藏 yAxis(1) 達成疊加效果
     {{ name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: {json.dumps(ind_vol)}, itemStyle: {{color: function(params) {{ return {json.dumps(ind_vol_color)}[params.dataIndex]; }} }} }},
     
     {{ name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: {json.dumps(cd.get('inst_foreign', []))}, itemStyle: {{color: '#378ADD'}} }},
@@ -1069,7 +1103,7 @@ window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 """)
 
     # ==========================
-    # 大盤綜合 JS 動態排版區塊 (同步優化)
+    # 大盤綜合 JS 動態排版區塊 (保持不變)
     # ==========================
     taiex = market_data.get("taiex", [])
     if taiex and len(taiex) > 0:
@@ -1165,7 +1199,6 @@ function renderTaiex() {{
   
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
   
-  // 大盤 Grid 0 Y軸 (Price 與隱藏的 Vol)
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
   yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }});
   
@@ -1174,7 +1207,6 @@ function renderTaiex() {{
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_up)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#ef5350', type: 'dashed'}} }});
   series.push({{ name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_st_down)}, smooth: false, showSymbol: false, lineStyle: {{width: 1.5, color: '#26a69a', type: 'dashed'}} }});
   
-  // 成交金額疊加在 K 線底端
   series.push({{ name: '成交金額(億)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: {json.dumps(taiex_vol)}, itemStyle: {{color: function(params){{ return ({json.dumps(taiex_ohlc)}[params.dataIndex][1] >= {json.dumps(taiex_ohlc)}[params.dataIndex][0]) ? '#ef5350' : '#26a69a'; }} }} }});
 
   var startTop = 5 + kHeight + 8; 
@@ -1651,6 +1683,9 @@ def process_single_stock(stock_id):
     news        = get_news(stock_id)
     name        = get_stock_name(stock_id)
     
+    # 【新增】抓取基本面資料
+    fund        = get_fundamentals(stock_id)
+    
     df = stock_data["df"]
     inst_hist = {d["date"]: d for d in institution.get("history", [])}
     marg_hist = {d["date"]: d for d in margin.get("history", [])}
@@ -1664,7 +1699,12 @@ def process_single_stock(stock_id):
         chart_data["dates"].append(d_short)
         
         i_data = inst_hist.get(d_str, {"foreign":0, "trust":0, "dealer":0})
-        f_amt, t_amt, d_amt = (i_data["foreign"]*price)/1e8, (i_data["trust"]*price)/1e8, (i_data["dealer"]*price)/1e8
+        
+        # 【修改】原本是計算金額 (億)，現在直接抓取原始張數
+        f_amt = i_data["foreign"] / 1000
+        t_amt = i_data["trust"] / 1000
+        d_amt = i_data["dealer"] / 1000
+        
         cum_inst += (f_amt + t_amt + d_amt)
         chart_data["inst_foreign"].append(round(f_amt, 2)); chart_data["inst_trust"].append(round(t_amt, 2)); chart_data["inst_dealer"].append(round(d_amt, 2)); chart_data["inst_cum"].append(round(cum_inst, 2))
         
@@ -1682,7 +1722,8 @@ def process_single_stock(stock_id):
     record = {
         "latest": stock_data["latest"], "prev": stock_data["prev"], "df": stock_data["df"], "indicators": stock_data["indicators"],
         "institution": institution, "margin": margin, "borrow": borrow, "tdcc": tdcc, "news": news,
-        "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data
+        "change_pct": change_pct, "ai_tech": ai_tech, "ai_chip": ai_chip, "ai_oper": ai_oper, "name": name, "chart_data": chart_data,
+        "fundamentals": fund # 【新增】將基本面存入 record
     }
     record["rating"] = calculate_stock_rating(record)
     print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
