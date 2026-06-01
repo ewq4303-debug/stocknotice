@@ -1003,7 +1003,8 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     <div class="stock-card {'active' if is_first else ''}" id="card_{stock_id}">
 
       <div class="sc-body">
-        <div class="sc-header">
+        <div class="sc-header" onclick="toggleCard('{stock_id}')">
+          <span class="chevron mobile-only" id="chev_{stock_id}">▶</span>
           <div><div class="sc-id">{stock_id}</div>
             <div class="sc-name">{data.get('name','')} <span class="sc-price {c_cls}">${close_price:,.2f} <span style="font-size:13px">({change_str})</span></span></div></div>
           <div class="sc-meta">
@@ -1013,60 +1014,75 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
           </div>
         </div>
 
-        {fund_strip}
+        <div class="sc-detail">
+          {fund_strip}
 
-        <div id="kline_{stock_id}" class="chart-box" style="height:710px;"></div>
+          <div id="kline_{stock_id}" class="chart-box" style="height:710px;"></div>
 
-        <div class="grid-2">
-          <div>
-            <div class="subhead">三大法人買賣超（張）</div>
-            <table class="dtable">
-              <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-              <tr><td>外資</td>{inst_cell(inst.get('foreign_today',0))}{inst_cell(inst.get('foreign_5d',0))}{inst_cell(inst.get('foreign_20d',0))}</tr>
-              <tr><td>投信</td>{inst_cell(inst.get('trust_today',0))}{inst_cell(inst.get('trust_5d',0))}{inst_cell(inst.get('trust_20d',0))}</tr>
-              <tr><td>自營</td>{inst_cell(inst.get('dealer_today',0))}{inst_cell(inst.get('dealer_5d',0))}{inst_cell(inst.get('dealer_20d',0))}</tr>
-              <tr class="row-total"><td>合計</td>{inst_cell(tt_today)}{inst_cell(tt_5d)}{inst_cell(tt_20d)}</tr>
-            </table>
-          </div>
-          <div>
-            <div class="subhead">融資 / 融券 / 借券（張）</div>
-            <table class="dtable">
-              <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
-              <tr><td>融資</td><td>{margin.get('margin_balance',0):,}</td>{marg_cell(margin.get('margin_change',0))}{marg_cell(margin.get('margin_5d',0))}{marg_cell(margin.get('margin_20d',0))}</tr>
-              <tr><td>融券</td><td>{margin.get('short_balance',0):,}</td>{marg_cell(margin.get('short_change',0))}{marg_cell(margin.get('short_5d',0))}{marg_cell(margin.get('short_20d',0))}</tr>
-              <tr><td>借券</td><td>{borrow.get('borrow_balance',0):,}</td>{marg_cell(borrow.get('borrow_change',0))}{marg_cell(borrow.get('borrow_5d',0))}{marg_cell(borrow.get('borrow_20d',0))}</tr>
-            </table>
-          </div>
+          <details class="fold" open>
+            <summary>三大法人 / 融資融券</summary>
+            <div class="grid-2">
+              <div>
+                <div class="subhead">三大法人買賣超（張）</div>
+                <table class="dtable">
+                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>外資</td>{inst_cell(inst.get('foreign_today',0))}{inst_cell(inst.get('foreign_5d',0))}{inst_cell(inst.get('foreign_20d',0))}</tr>
+                  <tr><td>投信</td>{inst_cell(inst.get('trust_today',0))}{inst_cell(inst.get('trust_5d',0))}{inst_cell(inst.get('trust_20d',0))}</tr>
+                  <tr><td>自營</td>{inst_cell(inst.get('dealer_today',0))}{inst_cell(inst.get('dealer_5d',0))}{inst_cell(inst.get('dealer_20d',0))}</tr>
+                  <tr class="row-total"><td>合計</td>{inst_cell(tt_today)}{inst_cell(tt_5d)}{inst_cell(tt_20d)}</tr>
+                </table>
+              </div>
+              <div>
+                <div class="subhead">融資 / 融券 / 借券（張）</div>
+                <table class="dtable">
+                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>融資</td><td>{margin.get('margin_balance',0):,}</td>{marg_cell(margin.get('margin_change',0))}{marg_cell(margin.get('margin_5d',0))}{marg_cell(margin.get('margin_20d',0))}</tr>
+                  <tr><td>融券</td><td>{margin.get('short_balance',0):,}</td>{marg_cell(margin.get('short_change',0))}{marg_cell(margin.get('short_5d',0))}{marg_cell(margin.get('short_20d',0))}</tr>
+                  <tr><td>借券</td><td>{borrow.get('borrow_balance',0):,}</td>{marg_cell(borrow.get('borrow_change',0))}{marg_cell(borrow.get('borrow_5d',0))}{marg_cell(borrow.get('borrow_20d',0))}</tr>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>大戶與散戶持股變動</summary>
+            <div class="tdcc-scroll">
+              <table class="dtable" style="min-width:620px">
+                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
+                {tdcc_table_rows}
+              </table>
+            </div>
+            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">{threshold_info}</div>
+          </details>
+
+          <details class="fold" open>
+            <summary>基本面追蹤</summary>
+            <div class="fund-tables">
+              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr>{eps_rows}</table></div>
+              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr>{rev_rows}</table></div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>AI 分析與建議</summary>
+            <div class="ai-grid">
+              <div class="ai-box">
+                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
+                <div class="ai-text">{data.get('ai_tech','').replace(chr(10), '<br>')}</div>
+                <div class="ai-text ai-divider">{data.get('ai_chip','').replace(chr(10), '<br>')}</div>
+              </div>
+              <div class="ai-box oper">
+                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
+                <div class="ai-text">{data.get('ai_oper','').replace(chr(10), '<br>')}</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="news">
+            <summary><span>近期相關新聞（{len(news[:5])}）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list">{news_html}</div>
+          </details>
         </div>
-
-        <div class="panel">
-          <div class="panel-head">大戶與散戶持股變動 · 歷史多週 <span class="src-pill">{threshold_info}</span></div>
-          <div class="tdcc-scroll">
-            <table class="dtable" style="min-width:620px">
-              <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
-              {tdcc_table_rows}
-            </table>
-          </div>
-        </div>
-
-        {fund_tables}
-
-        <div class="ai-grid">
-          <div class="ai-box">
-            <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-            <div class="ai-text">{data.get('ai_tech','').replace(chr(10), '<br>')}</div>
-            <div class="ai-text ai-divider">{data.get('ai_chip','').replace(chr(10), '<br>')}</div>
-          </div>
-          <div class="ai-box oper">
-            <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-            <div class="ai-text">{data.get('ai_oper','').replace(chr(10), '<br>')}</div>
-          </div>
-        </div>
-
-        <details class="news" style="margin-top:16px">
-          <summary><span>近期相關新聞（{len(news[:5])}）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">點擊展開 ▾</span></summary>
-          <div class="news-list">{news_html}</div>
-        </details>
       </div>
     </div>"""
 
@@ -1224,9 +1240,9 @@ chartK_{stock_id}.setOption({{
   }},
   legend: [
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '46%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '63%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資占比', '投信占比', '自營占比'], top: '80%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['外資占比', '投信占比', '自營占比'], top: '82%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
@@ -1738,6 +1754,20 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 .mh-bottom{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-2);padding-left:20px}
 .mh-score{font-family:var(--mono)}
 
+/* FOLD (collapsible sections) */
+.fold{border:1px solid var(--line);border-radius:11px;margin-bottom:12px;overflow:hidden}
+.fold>summary{padding:11px 14px;background:var(--surface-2);cursor:pointer;font-size:12.5px;font-weight:700;color:var(--ink-2);
+  list-style:none;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::after{content:"▾";font-size:11px;color:var(--ink-3);transition:.2s}
+.fold:not([open])>summary::after{transform:rotate(-90deg)}
+.fold>summary:hover{color:var(--accent-2)}
+.fold>div,.fold>.grid-2,.fold>.fund-tables,.fold>.ai-grid,.fold>.tdcc-scroll{padding:14px}
+
+/* CHEVRON for mobile accordion */
+.chevron{font-size:10px;color:var(--accent);margin-right:8px;transition:.2s;flex-shrink:0}
+.stock-card.expanded .chevron{transform:rotate(90deg)}
+
 @media(max-width:980px){
   .metrics{grid-template-columns:repeat(2,1fr)}
   .fund-strip{grid-template-columns:repeat(3,1fr)}
@@ -1747,8 +1777,15 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
   .main-content{width:100%}
   .desktop-only{display:none !important}
   .mobile-only{display:flex}
-  .stock-card{display:block;margin-bottom:12px}
-  .sc-body{padding:14px;border-top:1px solid var(--line);background:var(--surface-2)}
+  .stock-card{display:block;margin-bottom:8px;border-radius:11px}
+  .sc-body{padding:0}
+  .sc-header{padding:14px;cursor:pointer;border-radius:11px}
+  .sc-detail{display:none;padding:14px;padding-top:0;border-top:1px solid var(--line);background:var(--surface-2)}
+  .stock-card.expanded .sc-detail{display:block}
+  .sc-meta{gap:14px;flex-wrap:wrap}
+  .sc-name{font-size:17px}
+  .fold>summary{padding:9px 12px;font-size:11.5px}
+  .fold>div,.fold>.grid-2,.fold>.fund-tables,.fold>.ai-grid,.fold>.tdcc-scroll{padding:10px}
 }
 """
 
@@ -1823,6 +1860,23 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 {chart_scripts}
+
+function toggleCard(stockId) {{
+    if (window.innerWidth > 980) return;
+    var cards = document.querySelectorAll('.stock-card');
+    cards.forEach(function(c) {{
+        if (c.id === 'card_' + stockId) {{
+            c.classList.toggle('expanded');
+        }} else {{
+            c.classList.remove('expanded');
+        }}
+    }});
+    var card = document.getElementById('card_' + stockId);
+    if (card && card.classList.contains('expanded')) {{
+        resizeAllCharts();
+        setTimeout(function() {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 100);
+    }}
+}}
 
 function confirmDelete(event, stockId, btn) {{
     event.stopPropagation();
