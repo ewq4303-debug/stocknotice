@@ -982,9 +982,10 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     def marg_cell(v): return f'<td class="{"up" if v>=0 else "down"}">{v:+,}</td>'
 
     return f"""
-    <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
+    <div class="stock-card {'active' if is_first else ''}" id="card_{stock_id}">
+
       <div class="sc-body">
-        <div class="sc-header desktop-only">
+        <div class="sc-header">
           <div><div class="sc-id">{stock_id}</div>
             <div class="sc-name">{data.get('name','')} <span class="sc-price {c_cls}">${close_price:,.2f} <span style="font-size:13px">({change_str})</span></span></div></div>
           <div class="sc-meta">
@@ -996,7 +997,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
         {fund_strip}
 
-        <div id="kline_{stock_id}" class="chart-box" style="height:950px;"></div>
+        <div id="kline_{stock_id}" class="chart-box" style="height:710px;"></div>
 
         <div class="grid-2">
           <div>
@@ -1076,16 +1077,15 @@ def generate_market_section(market_data: dict):
       <div class="metric {'up' if trust>0 else 'down'}"><div class="label">投信（億）</div><div class="value num {'up' if trust>0 else 'down'}">{trust:+.1f}</div></div>
     </div>
     <div class="card">
-      <div class="card-title"><span>加權指數與市場指標綜合研判 · 近 90 個交易日</span>
-        <div class="toggles" id="taiex_toggles"><span class="lab">顯示指標</span>
+      <div class="card-title"><span>加權指數與市場指標綜合研判 · 近 90 個交易日</span></div>
+      <div id="taiex_kline" class="chart-box" style="height:640px;"></div>
+      <div class="toggles" id="taiex_toggles" style="margin-top:10px;"><span class="lab">顯示指標</span>
           <label><input type="checkbox" checked value="2">散戶多空</label>
-          <label><input type="checkbox" checked value="3">USD/TWD</label>
-          <label><input type="checkbox" checked value="4">融資市值比</label>
+          <label><input type="checkbox" value="3">USD/TWD</label>
+          <label><input type="checkbox" value="4">融資市值比</label>
           <label><input type="checkbox" checked value="5">三大法人</label>
           <label><input type="checkbox" checked value="6">法人成交比重</label>
         </div>
-      </div>
-      <div id="taiex_kline" class="chart-box" style="height:850px;"></div>
     </div>"""
 
 def generate_timeseries_section(market_data: dict):
@@ -1147,9 +1147,9 @@ chartK_{stock_id}.getZr().on('mousemove', function(e) {{
 chartK_{stock_id}.setOption({{
   title: [
     {{ text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '{T["title"]}'}} }},
-    {{ text: '三大法人買賣超(張)與累計', left: '6%', top: '48%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
-    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '66%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
-    {{ text: '法人成交比重(%)', left: '6%', top: '84%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }}
+    {{ text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
+    {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
+    {{ text: '法人成交比重(%)', left: '6%', top: '80%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }}
   ],
   tooltip: {{
     trigger: 'axis',
@@ -1163,9 +1163,9 @@ chartK_{stock_id}.setOption({{
       var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
 
       var hoveredGrid = 0;
-      if (yPct >= 48 && yPct < 66) hoveredGrid = 1;
-      else if (yPct >= 66 && yPct < 84) hoveredGrid = 2;
-      else if (yPct >= 84) hoveredGrid = 3;
+      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
+      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
+      else if (yPct >= 80) hoveredGrid = 3;
 
       params.forEach(function(p) {{
         var isPrice = (p.seriesName === 'K線');
@@ -1198,16 +1198,16 @@ chartK_{stock_id}.setOption({{
   }},
   legend: [
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '66%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資占比', '投信占比', '自營占比'], top: '84%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '46%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '63%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
+    {{ data: ['外資占比', '投信占比', '自營占比'], top: '80%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
-    {{ left: '6%', right: '8%', top: '4%', height: '38%' }},
-    {{ left: '6%', right: '8%', top: '52%', height: '12%' }},
-    {{ left: '6%', right: '8%', top: '70%', height: '12%' }},
-    {{ left: '6%', right: '8%', top: '88%', height: '10%' }}
+    {{ left: '6%', right: '8%', top: '4%', height: '36%' }},
+    {{ left: '6%', right: '8%', top: '50%', height: '11%' }},
+    {{ left: '6%', right: '8%', top: '67%', height: '11%' }},
+    {{ left: '6%', right: '8%', top: '84%', height: '9%' }}
   ],
   xAxis: [
     {{ type: 'category', gridIndex: 0, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '{T["axis_label"]}', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false, lineStyle: {{color: '{T["axis_line"]}'}}}}, axisTick: {{show: true}} }},
@@ -1217,7 +1217,7 @@ chartK_{stock_id}.setOption({{
   ],
   yAxis: [
     {{ scale: true, gridIndex: 0, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
-    {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }},
+    {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 6, 100); }} }},
     {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
     {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
@@ -1226,7 +1226,7 @@ chartK_{stock_id}.setOption({{
   ],
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }},
-    {{ show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 0, start: 0, end: 100, height: 15, borderColor: '{T["dz_border"]}', fillerColor: '{T["dz_filler"]}', handleStyle: {{color: '{T["dz_handle"]}'}}, textStyle: {{color: '{T["dz_text"]}'}}, dataBackground: {{lineStyle: {{color: '{T["dz_bg_line"]}'}}, areaStyle: {{color: '{T["dz_bg_area"]}'}}}} }}
+    {{ show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '{T["dz_border"]}', fillerColor: '{T["dz_filler"]}', handleStyle: {{color: '{T["dz_handle"]}'}}, textStyle: {{color: '{T["dz_text"]}'}}, dataBackground: {{lineStyle: {{color: '{T["dz_bg_line"]}'}}, areaStyle: {{color: '{T["dz_bg_area"]}'}}}} }}
   ],
   series: [
     {{ name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(ind_ohlc)}, itemStyle: {{color: '{T["up"]}', color0: '{T["down"]}', borderColor: '{T["up"]}', borderColor0: '{T["down"]}'}} }},
@@ -1362,7 +1362,7 @@ function renderTaiex() {{
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '{T["axis_label"]}', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false, lineStyle: {{color: '{T["axis_line"]}'}}}}, axisTick: {{show: true}} }});
 
   yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 10, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
-  yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }});
+  yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 6, 100); }} }});
 
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '{T["up"]}', color0: '{T["down"]}', borderColor: '{T["up"]}', borderColor0: '{T["down"]}'}} }});
   series.push({{ name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ma20)}, smooth: true, showSymbol: false, lineStyle: {{width: 1.5, color: '{T["ma"]}'}} }});
@@ -1703,7 +1703,6 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
 /* MOBILE */
 .mobile-only{display:none} .desktop-only{display:block}
-.mobile-header{position:relative;padding:15px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .mh-del{position:absolute;top:12px;right:15px;color:var(--ink-3);font-size:15px;font-weight:bold;padding:0 8px;z-index:10;cursor:pointer}
 .mh-top{display:flex;align-items:center;font-size:15px;font-weight:700;padding-right:30px}
 .mh-icon{margin-right:8px;color:var(--accent);font-size:11px}
@@ -1722,8 +1721,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
   .desktop-only{display:none !important}
   .mobile-only{display:flex}
   .stock-card{display:block;margin-bottom:12px}
-  .sc-body{display:none;padding:14px;border-top:1px solid var(--line);background:var(--surface-2)}
-  .stock-card.mobile-expanded .sc-body{display:block}
+  .sc-body{padding:14px;border-top:1px solid var(--line);background:var(--surface-2)}
 }
 """
 
