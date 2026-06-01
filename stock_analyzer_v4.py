@@ -576,6 +576,31 @@ def get_market_overview():
         retail.append({"date": date, "retail_ratio": round((retail_net / total_oi) * 100, 2)})
     retail = retail[-90:]
 
+    # 台指期 / 選擇權 未平倉口數增減
+    def _compute_oi_changes(raw_data):
+        by_date = {}
+        for r in raw_data:
+            date = r.get("date", "")
+            name = r.get("institutional_investors", r.get("name", ""))
+            long_oi = float(r.get("long_open_interest_balance_volume", 0))
+            short_oi = float(r.get("short_open_interest_balance_volume", 0))
+            net = long_oi - short_oi
+            if date not in by_date:
+                by_date[date] = {"foreign": 0, "trust": 0}
+            if "外資" in name:
+                by_date[date]["foreign"] += net
+            elif "投信" in name:
+                by_date[date]["trust"] += net
+        dates_sorted = sorted(by_date.keys())
+        if len(dates_sorted) < 2:
+            return {"foreign_change": 0, "trust_change": 0}
+        latest, prev = by_date[dates_sorted[-1]], by_date[dates_sorted[-2]]
+        return {"foreign_change": int(latest["foreign"] - prev["foreign"]), "trust_change": int(latest["trust"] - prev["trust"])}
+
+    tx_oi = _compute_oi_changes(futures)
+    txo_raw = fetch_finmind("TaiwanFuturesInstitutionalInvestors", data_id="TXO", start_date=start, end_date=end)
+    txo_oi = _compute_oi_changes(txo_raw)
+
     margin_raw = fetch_finmind("TaiwanStockTotalMarginPurchaseShortSale", start_date=start, end_date=end)
     total_margin = []
     if margin_raw:
@@ -584,7 +609,7 @@ def get_market_overview():
         if not margin_df.empty:
             total_margin = [{"date": str(r["date"]), "TodayBalance": int(float(r["TodayBalance"]))} for _, r in margin_df.sort_values("date").tail(90).iterrows()]
 
-    return {"taiex": taiex_data, "institution": institution, "futures": futures, "usd_twd": usd_twd, "retail": retail, "total_margin": total_margin}
+    return {"taiex": taiex_data, "institution": institution, "futures": futures, "usd_twd": usd_twd, "retail": retail, "total_margin": total_margin, "tx_oi": tx_oi, "txo_oi": txo_oi}
 
 def get_usd_twd_rate(days: int = 150):
     result = []
@@ -944,8 +969,8 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
       <div class="fund-cell"><div class="k">殖利率</div><div class="v">{div_str}</div></div>
     </div>"""
 
-    eps_data, gm_data, rev_data = fund.get("eps", []), fund.get("gm", []), fund.get("rev", [])
-    eps_rows, gm_rows, rev_rows = "", "", ""
+    eps_data, rev_data = fund.get("eps", []), fund.get("rev", [])
+    eps_rows, rev_rows = "", ""
 
     for i in range(5):
         if i < len(eps_data):
@@ -954,12 +979,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
             yoy_cls = 'up' if d.get('yoy') and d['yoy']>0 else ('down' if d.get('yoy') and d['yoy']<0 else '')
             eps_rows += f"<tr><td>{d['date']}</td><td>{d['eps']:.2f}</td><td class='{yoy_cls}'>{yoy_str}</td></tr>"
         else: eps_rows += "<tr><td style='color:var(--ink-3);'>-</td><td style='color:var(--ink-3);'>-</td><td style='color:var(--ink-3);'>-</td></tr>"
-
-    for i in range(5):
-        if i < len(gm_data):
-            d = gm_data[i]
-            gm_rows += f"<tr><td>{d['date']}</td><td>{d['gm']:.2f}%</td></tr>"
-        else: gm_rows += "<tr><td style='color:var(--ink-3);'>-</td><td style='color:var(--ink-3);'>-</td></tr>"
 
     for i in range(6):
         if i < len(rev_data):
@@ -973,7 +992,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
       <div class="panel-head">基本面追蹤 <span class="src-pill">資料來源 · FinMind</span></div>
       <div class="fund-tables">
         <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr>{eps_rows}</table></div>
-        <div class="mini-table"><div class="cap">近 5 季 毛利率</div><table class="dtable"><tr><th>季度</th><th>毛利率</th></tr>{gm_rows}</table></div>
         <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr>{rev_rows}</table></div>
       </div>
     </div>"""
@@ -1067,14 +1085,22 @@ def generate_market_section(market_data: dict):
     foreign = _get(inst_latest, "Foreign_Investor_diff", "foreign_investor_diff") / 100_000_000
     trust   = _get(inst_latest, "Investment_Trust_diff", "investment_trust_diff") / 100_000_000
 
+    tx_oi, txo_oi = market_data.get("tx_oi", {}), market_data.get("txo_oi", {})
+    tx_f, tx_t = tx_oi.get("foreign_change", 0), tx_oi.get("trust_change", 0)
+    txo_f, txo_t = txo_oi.get("foreign_change", 0), txo_oi.get("trust_change", 0)
+
+    def oi_cls(v): return "up" if v >= 0 else "down"
+
     return f"""<div class="section-head"><span class="eyebrow">Market</span><h2>大盤總覽</h2></div>
     <div class="metrics">
       <div class="metric accent"><div class="label">加權指數</div><div class="value num {change_class}">{close:,.2f}</div>
         <div class="change {change_class}"><span class="chip chip-{change_class}">{arrow} {change:+.2f}</span><span class="num">{change_pct:+.2f}%</span></div></div>
       <div class="metric"><div class="label">成交金額（億）</div><div class="value num">{money_b:,.0f}</div>
         <div class="change {'up' if money_diff>=0 else 'down'}"><span class="chip chip-{'up' if money_diff>=0 else 'down'}">{'▲' if money_diff>=0 else '▼'} {money_diff:+,.0f}</span><span class="num">{money_pct:+.2f}%</span></div></div>
-      <div class="metric {'up' if foreign>0 else 'down'}"><div class="label">外資（億）</div><div class="value num {'up' if foreign>0 else 'down'}">{foreign:+.1f}</div></div>
-      <div class="metric {'up' if trust>0 else 'down'}"><div class="label">投信（億）</div><div class="value num {'up' if trust>0 else 'down'}">{trust:+.1f}</div></div>
+      <div class="metric {'up' if foreign>0 else 'down'}"><div class="label">外資（億）</div><div class="value num {'up' if foreign>0 else 'down'}">{foreign:+.1f}</div>
+        <div class="oi-sub"><span>台指期 <span class="num {oi_cls(tx_f)}">{tx_f:+,}</span> 口</span><span>選擇權 <span class="num {oi_cls(txo_f)}">{txo_f:+,}</span> 口</span></div></div>
+      <div class="metric {'up' if trust>0 else 'down'}"><div class="label">投信（億）</div><div class="value num {'up' if trust>0 else 'down'}">{trust:+.1f}</div>
+        <div class="oi-sub"><span>台指期 <span class="num {oi_cls(tx_t)}">{tx_t:+,}</span> 口</span><span>選擇權 <span class="num {oi_cls(txo_t)}">{txo_t:+,}</span> 口</span></div></div>
     </div>
     <div class="card">
       <div class="card-title"><span>加權指數與市場指標綜合研判 · 近 90 個交易日</span></div>
@@ -1094,11 +1120,11 @@ def generate_timeseries_section(market_data: dict):
 # ECharts 深色配色常數
 THEME = {
     "up": "#ff525b", "down": "#1ed992", "ma": "#e0a83c",
-    "axis_label": "#5d6675", "axis_line": "#2a323e", "split_line": "#171e29",
+    "axis_label": "#8b95a5", "axis_line": "#2a323e", "split_line": "#171e29",
     "title": "#8b95a5", "legend": "#8b95a5",
     "tooltip_bg": "rgba(10,14,21,.95)", "tooltip_border": "#1e2632", "tooltip_text": "#dde3ec",
     "dz_border": "#1e2632", "dz_filler": "rgba(77,127,255,.18)", "dz_handle": "#4d7fff",
-    "dz_text": "#5d6675", "dz_bg_line": "#2a323e", "dz_bg_area": "#151b24",
+    "dz_text": "#8b95a5", "dz_bg_line": "#2a323e", "dz_bg_area": "#151b24",
     "blue": "#4d7fff", "green": "#1ed992", "orange": "#e0a83c",
     "pink": "#ff5cae", "purple": "#b07bff", "rose": "#d98ab5",
 }
@@ -1216,13 +1242,13 @@ chartK_{stock_id}.setOption({{
     {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '{T["axis_label"]}', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false, lineStyle: {{color: '{T["axis_line"]}'}}}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
-    {{ scale: true, gridIndex: 0, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
+    {{ scale: true, gridIndex: 0, splitNumber: 5, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
     {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 6, 100); }} }},
-    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
-    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
-    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
-    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
-    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }}
+    {{ type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
+    {{ type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
+    {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
+    {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
+    {{ type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }}
   ],
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }},
@@ -1361,7 +1387,7 @@ function renderTaiex() {{
 
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '{T["axis_label"]}', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false, lineStyle: {{color: '{T["axis_line"]}'}}}}, axisTick: {{show: true}} }});
 
-  yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 10, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
+  yAxes.push({{ scale: true, gridIndex: 0, splitNumber: 5, splitArea: {{show: false}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}}, axisLabel: {{fontSize: 10, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
   yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 6, 100); }} }});
 
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '{T["up"]}', color0: '{T["down"]}', borderColor: '{T["up"]}', borderColor0: '{T["down"]}'}} }});
@@ -1399,17 +1425,17 @@ function renderTaiex() {{
       dataZooms[1].xAxisIndex.push(gridIdx);
 
       if(val === 2) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
         series.push({{ name: '散戶多空比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(retail_aligned)}, itemStyle: {{color: '{T["up"]}'}}, areaStyle: {{color: 'rgba(255,82,91,0.10)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 3) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
         series.push({{ name: 'USD/TWD', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '{T["blue"]}'}}, areaStyle: {{color: 'rgba(77,127,255,0.10)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 4) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
         series.push({{ name: '融資市值比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '{T["rose"]}'}}, areaStyle: {{color: 'rgba(217,138,181,0.10)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 5) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}}, position: 'right' }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}}, position: 'right' }});
         var rightY = yAxes.length - 1;
         var leftY = yAxes.length - 2;
         series.push({{ name: '外資現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_f_aligned)}, itemStyle: {{color: '{T["blue"]}'}} }});
@@ -1417,7 +1443,7 @@ function renderTaiex() {{
         series.push({{ name: '自營現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_d_aligned)}, itemStyle: {{color: '{T["orange"]}'}} }});
         series.push({{ name: '外資期貨', type: 'line', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(fut_aligned)}, itemStyle: {{color: '{T["up"]}'}}, smooth: true, showSymbol: false }});
       }} else if(val === 6) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
         var rightY = yAxes.length - 1;
         series.push({{ name: '外資占比', type: 'bar', stack: 'ratio', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(f_ratio_aligned)}, itemStyle: {{color: '{T["blue"]}'}} }});
         series.push({{ name: '投信占比', type: 'bar', stack: 'ratio', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(t_ratio_aligned)}, itemStyle: {{color: '{T["green"]}'}} }});
@@ -1573,6 +1599,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 .metric .value{font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1}
 .metric .change{font-size:11.5px;font-weight:600;margin-top:7px;display:inline-flex;align-items:center;gap:5px}
 .metric .chip{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:5px;font-size:10.5px}
+.oi-sub{display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--ink-2)}
 .chip-up{background:var(--up-soft);color:var(--up)} .chip-down{background:var(--down-soft);color:var(--down)}
 
 /* RATING */
