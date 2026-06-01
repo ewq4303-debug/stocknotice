@@ -897,20 +897,19 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     
     target_val = fund.get('target_price')
     target_price = f"${target_val:.2f}" if target_val else "-"
+    
+    div_val = fund.get('dividend_yield')
+    div_str = f"{div_val:.2f}%" if pd.notna(div_val) and div_val is not None else "-"
 
-    # 1. 10項基本估值區塊
-    fund_10_html = f"""
+    # 1. 精簡為 6 項基本估值區塊
+    fund_6_html = f"""
     <div style="display:flex; flex-wrap:wrap; gap:10px; background:#f8f9fa; padding:12px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:15px; font-size:13px;">
         <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">本益比(TTM)</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('trailing_pe'))}</span></div>
         <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">預估本益比</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('forward_pe'))}</span></div>
         <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">PEG</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('peg'))}</span></div>
         <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS(TTM)</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('eps_ttm'))}</span></div>
-        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">EPS成長</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('eps_growth'))}</span></div>
-        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">營收成長</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('revenue_growth'))}</span></div>
-        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">毛利率</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('gross_margin'))}</span></div>
         <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">ROE</span><span style="font-weight:bold; font-size:14px;">{fmt_pct(fund.get('roe'))}</span></div>
-        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">殖利率</span><span style="font-weight:bold; font-size:14px;">{fmt_f(fund.get('dividend_yield'))}%</span></div>
-        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:var(--primary); font-size:11px;">法人目標價</span><span style="font-weight:bold; font-size:14px; color:var(--primary);">{target_price}</span></div>
+        <div style="flex:1 1 100px; display:flex; flex-direction:column;"><span style="color:#777; font-size:11px;">殖利率</span><span style="font-weight:bold; font-size:14px;">{div_str}</span></div>
     </div>
     """
 
@@ -979,7 +978,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
             </div>
         </div>
         
-        {fund_10_html}
+        {fund_6_html}
         
         <div id="kline_{stock_id}" style="width: 100%; height: 800px; margin-bottom: 15px;"></div>
         
