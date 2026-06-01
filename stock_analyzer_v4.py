@@ -983,13 +983,6 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
     return f"""
     <div class="stock-card {'active' if is_first else ''} {'mobile-expanded' if is_first else ''}" id="card_{stock_id}">
-
-      <div class="mobile-header mobile-only" onclick="toggleMobile('{stock_id}')">
-        <div class="mh-del" onclick="confirmDelete(event, '{stock_id}', this)" title="刪除 {stock_id}">✖</div>
-        <div class="mh-top"><span class="mh-icon" id="icon_{stock_id}">{"▼" if is_first else "▶"}</span><span class="mh-name">{stock_id} {data.get('name','')}</span><span class="mh-price {c_cls}">${close_price:,.2f} ({change_str})</span></div>
-        <div class="mh-bottom"><span class="rbadge {rk}">★ {r.get('rating','')}</span><span class="mh-score num">技 {r.get('tech',0):g} / 籌 {r.get('chip',0):g}</span></div>
-      </div>
-
       <div class="sc-body">
         <div class="sc-header desktop-only">
           <div><div class="sc-id">{stock_id}</div>
