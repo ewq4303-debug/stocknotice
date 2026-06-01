@@ -1039,7 +1039,7 @@ def generate_market_section(market_data: dict):
                 <label style="cursor:pointer;"><input type="checkbox" checked value="6"> 法人成交比重</label>
             </div>
         </div>
-        <div id="taiex_kline" style="width:100%;height:850px;"></div>
+        <div id="taiex_kline" style="width:100%;height:1000px;"></div>
     </div>"""
     
 def generate_timeseries_section(market_data: dict):
@@ -1155,14 +1155,17 @@ chartK_{stock_id}.setOption({{
     {{ type: 'category', gridIndex: 3, data: dates_{stock_id}, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: dateFmt_{stock_id}, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }}
   ],
   yAxis: [
-    {{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
+    /* 【修改重點：全部加上 splitNumber 控制 Y軸刻度數量，避免擠在一起】 */
+    {{ scale: true, gridIndex: 0, splitNumber: 5, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }},
     {{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }},
     
-    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-    {{ type: 'value', gridIndex: 1, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
-    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
-    {{ type: 'value', gridIndex: 2, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
-    {{ type: 'value', gridIndex: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }}
+    {{ type: 'value', gridIndex: 1, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+    {{ type: 'value', gridIndex: 1, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
+    
+    {{ type: 'value', gridIndex: 2, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }},
+    {{ type: 'value', gridIndex: 2, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
+    
+    {{ type: 'value', gridIndex: 3, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '#eee'}}}} }}
   ],
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }}, 
@@ -1196,6 +1199,9 @@ chartK_{stock_id}.setOption({{
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 """)
 
+    # ==========================
+    # 大盤動態排版區塊
+    # ==========================
     taiex = market_data.get("taiex", [])
     if taiex and len(taiex) > 0:
         taiex_dates = [d["date"][-5:] for d in taiex]
@@ -1296,13 +1302,14 @@ function renderTaiex() {{
     {{ show: true, xAxisIndex: [0], type: 'slider', bottom: 5, start: 0, end: 100, height: 15 }}
   ];
 
-  var kHeight = activeIdxs.length > 0 ? 40 : 85;
+  /* 【修改重點：縮減 K線高度，將空間分給下方指標】 */
+  var kHeight = activeIdxs.length > 0 ? 26 : 85; 
   grids.push({{ left: '8%', right: '5%', top: '5%', height: kHeight + '%' }});
   titles.push({{ text: '加權指數 (含 MA20, ST指標, 成交金額)', left: '8%', top: '1%', textStyle: {{ fontSize: 13, color: '#333' }} }});
   
   xAxes.push({{ type: 'category', gridIndex: 0, data: taiexDates, boundaryGap: true, axisLabel: {{show: true, fontSize: 10, color: '#666', formatter: taiexDateFmt, showMinLabel: true, showMaxLabel: true}}, axisLine: {{onZero: false}}, axisTick: {{show: true}} }});
   
-  yAxes.push({{ scale: true, gridIndex: 0, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
+  yAxes.push({{ scale: true, gridIndex: 0, splitNumber: 5, splitArea: {{show: true}}, splitLine: {{lineStyle: {{color: '#eee'}}}}, axisLabel: {{fontSize: 10, formatter: function(v){{ return Math.round(v).toLocaleString(); }}}} }});
   yAxes.push({{ scale: true, gridIndex: 0, show: false, max: function(v) {{ return Math.max(v.max * 4, 100); }} }});
   
   series.push({{ name: '加權指數', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: {json.dumps(taiex_ohlc)}, itemStyle: {{color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a'}} }});
@@ -1339,18 +1346,19 @@ function renderTaiex() {{
       dataZooms[0].xAxisIndex.push(gridIdx);
       dataZooms[1].xAxisIndex.push(gridIdx);
 
+      /* 【修改重點：全部加上 splitNumber 控制 Y軸刻度數量】 */
       if(val === 2) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
         series.push({{ name: '散戶多空比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(retail_aligned)}, itemStyle: {{color: '#EF5350'}}, areaStyle: {{color: 'rgba(239,83,80,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 3) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
         series.push({{ name: 'USD/TWD', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(fx_aligned)}, itemStyle: {{color: '#378ADD'}}, areaStyle: {{color: 'rgba(55,138,221,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 4) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return parseFloat(v).toFixed(2) + '%'; }} }}, splitLine: {{show: false}} }});
         series.push({{ name: '融資市值比(%)', type: 'line', xAxisIndex: gridIdx, yAxisIndex: yAxes.length - 1, data: {json.dumps(margin_aligned)}, itemStyle: {{color: '#D4537E'}}, areaStyle: {{color: 'rgba(212,83,126,0.1)'}}, smooth: true, showSymbol: false }});
       }} else if(val === 5) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}}, position: 'right' }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v).toLocaleString(); }} }}, splitLine: {{show: false}}, position: 'right' }});
         var rightY = yAxes.length - 1;
         var leftY = yAxes.length - 2;
         series.push({{ name: '外資現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_f_aligned)}, itemStyle: {{color: '#378ADD'}} }});
@@ -1358,7 +1366,7 @@ function renderTaiex() {{
         series.push({{ name: '自營現貨', type: 'bar', stack: 'inst', xAxisIndex: gridIdx, yAxisIndex: leftY, data: {json.dumps(inst_d_aligned)}, itemStyle: {{color: '#FF9800'}} }});
         series.push({{ name: '外資期貨', type: 'line', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(fut_aligned)}, itemStyle: {{color: '#EF5350'}}, smooth: true, showSymbol: false }});
       }} else if(val === 6) {{
-        yAxes.push({{ scale: true, gridIndex: gridIdx, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
+        yAxes.push({{ scale: true, gridIndex: gridIdx, splitNumber: 3, axisLabel: {{fontSize: 9, formatter: function(v){{ return Math.round(v) + '%'; }} }}, splitLine: {{show: false}} }});
         var rightY = yAxes.length - 1;
         series.push({{ name: '外資占比', type: 'bar', stack: 'ratio', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(f_ratio_aligned)}, itemStyle: {{color: '#378ADD'}} }});
         series.push({{ name: '投信占比', type: 'bar', stack: 'ratio', xAxisIndex: gridIdx, yAxisIndex: rightY, data: {json.dumps(t_ratio_aligned)}, itemStyle: {{color: '#1D9E75'}} }});
