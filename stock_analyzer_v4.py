@@ -1906,7 +1906,7 @@ function manageStock(action, stockIdOverride, inputId, btn) {{
     let stockId = stockIdOverride;
     if (!stockId) {{ const inputField = document.getElementById(inputId); if (inputField) stockId = inputField.value.trim(); }}
     if (!stockId) {{ alert("請輸入股票代號！"); return; }}
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbzgqDD47YdJ7xt0ylMYrC5HudhRtKR5dnFBX3w_xBCdJAu9kV7GkZPRkWQzMsH59dg/exec';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec';
     const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
     let originalText = "";
     if (btn) {{ originalText = btn.innerText; btn.innerText = "⏳"; btn.style.pointerEvents = "none"; }}
