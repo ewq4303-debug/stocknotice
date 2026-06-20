@@ -421,16 +421,45 @@ def get_tdcc_holding(stock_id: str, close_price: float):
             return None
         except: return None
 
-    today = datetime.now()
-    cursor = today
-    while cursor.weekday() != 4: cursor -= timedelta(days=1)
+    def list_available_dates():
+        """向 GitHub API 列出 tdcc_history/ 內實際存在的快照日期 (新到舊)。
+        集保資料日期不一定落在週五 (例如遇假日會是週四)，
+        故直接讀目錄而非用固定週幾推算，避免漏抓最新一筆。"""
+        api_url = "https://api.github.com/repos/ewq4303-debug/stocknotice/contents/tdcc_history?ref=main"
+        try:
+            r = requests.get(api_url, timeout=15, headers={"Accept": "application/vnd.github+json"})
+            if r.status_code != 200: return []
+            dates = []
+            for item in r.json():
+                name = item.get("name", "")
+                if name.endswith(".csv"):
+                    stem = name[:-4]
+                    if len(stem) == 8 and stem.isdigit():
+                        dates.append(stem)
+            return sorted(dates, reverse=True)
+        except: return []
 
     results = []
-    for _ in range(10):
-        data = fetch_csv(cursor.strftime("%Y%m%d"))
-        if data:
-            results.append(data)
-        cursor -= timedelta(days=7)
+    avail_dates = list_available_dates()
+    if avail_dates:
+        for date_str in avail_dates[:10]:
+            data = fetch_csv(date_str)
+            if data:
+                results.append(data)
+    else:
+        # 後備：API 失敗時，以最近的週五為基準每週往回推。
+        # 集保資料日期可能落在週五或週四(遇假日)，故每週依序試 週五→週四→週三，
+        # 取第一個抓到的，避免像 20260618(週四) 這種非週五的快照被漏掉。
+        friday = datetime.now()
+        while friday.weekday() != 4: friday -= timedelta(days=1)
+        for _ in range(12):
+            if len(results) >= 10: break
+            for offset in (0, 1, 2):  # 週五, 週四, 週三
+                data = fetch_csv((friday - timedelta(days=offset)).strftime("%Y%m%d"))
+                if data:
+                    results.append(data)
+                    break
+            friday -= timedelta(days=7)
 
     if not results:
         return {"retail_ratio": 0, "retail_change": 0, "large_ratio": 0, "large_change": 0, "big_holder_change": 0, "total_holders": 0, "holders_change": 0, "avg_lots": 0, "avg_lots_change": 0, "retail_threshold_shares": retail_shares, "large_threshold_shares": large_shares, "history": []}
