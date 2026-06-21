@@ -1,0 +1,37 @@
+/* ===== 庫存與持股比例頁 ===== */
+.inv-updated{font-size:11px;color:var(--ink-3);font-family:var(--mono);font-weight:500}
+
+.inv-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.inv-summary .metric{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px 13px;position:relative;overflow:hidden}
+.inv-summary .metric::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ink-3);opacity:.6}
+.inv-summary .metric.accent::before{background:linear-gradient(var(--accent),#5fd3ff);opacity:1}
+.inv-summary .metric.up::before{background:var(--up)} .inv-summary .metric.down::before{background:var(--down)}
+.inv-summary .label{font-size:10px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.inv-summary .value{font-size:20px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.inv-summary .sub{font-size:11.5px;font-weight:600;margin-top:7px}
+
+.inv-grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+.inv-pie{width:100%;height:340px}
+.inv-table-card{overflow-x:auto}
+.inv-table{width:100%;font-size:12px;border-collapse:collapse;min-width:640px}
+.inv-table th{font-size:10px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;
+  text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.inv-table th:first-child,.inv-table th:nth-child(2){text-align:left}
+.inv-table td{padding:9px 10px;border-bottom:1px solid var(--line-2);text-align:right;white-space:nowrap}
+.inv-table td:first-child,.inv-table td:nth-child(2){text-align:left}
+.inv-table tr:hover td{background:var(--surface-2)}
+.inv-code{font-family:var(--mono);font-weight:600;color:var(--accent-2)}
+.inv-name{font-weight:600}
+.inv-num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.inv-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.inv-wbar{position:relative;min-width:90px}
+.inv-wbar-track{height:6px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-top:4px}
+.inv-wbar-fill{height:100%;border-radius:4px}
+.inv-empty{text-align:center;color:var(--ink-3);font-size:12.5px;padding:40px 0}
+
+@media(max-width:880px){
+  .inv-summary{grid-template-columns:repeat(2,1fr)}
+  .inv-grid{grid-template-columns:1fr}
+  .inv-pie{height:300px}
+}

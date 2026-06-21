@@ -1852,6 +1852,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="inventory.css">
 <style>
 {get_css()}
 </style>
@@ -1867,6 +1868,20 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
       <button class="tab-btn active" onclick="switchTab('tab-market', this)">大盤總覽</button>
       <button class="tab-btn" onclick="switchTab('tab-rating', this)">綜合評等</button>
       <button class="tab-btn" onclick="switchTab('tab-stocks', this)">追蹤個股分析</button>
+      <button class="tab-btn" id="tabbtn-inventory" onclick="switchTab('tab-inventory', this)">庫存與持股比例</button>
+  </div>
+
+  <div id="tab-inventory" class="tab-content">
+    <div class="section-head"><span class="eyebrow">Portfolio</span><h2>庫存與持股比例</h2><span class="inv-updated" id="invUpdated"></span></div>
+    <div id="invSummary" class="inv-summary"></div>
+    <div class="inv-grid">
+      <div class="card"><div class="card-title"><span>持股比例</span></div><div id="invPie" class="inv-pie"></div></div>
+      <div class="card inv-table-card"><div class="card-title"><span>庫存明細</span></div><div id="invTableWrap"></div></div>
+    </div>
+    <div id="invFuturesCard" class="card inv-table-card" style="display:none">
+      <div class="card-title"><span>期貨留倉</span><span class="inv-updated" id="invFutPnl"></span></div>
+      <div id="invFuturesWrap"></div>
+    </div>
   </div>
 
   <div id="tab-market" class="tab-content active">{market_section}</div>
@@ -1993,6 +2008,7 @@ function triggerAction(btn) {{
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
 </script>
+<script src="inventory.js"></script>
 </body>
 </html>"""
 
