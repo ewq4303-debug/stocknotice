@@ -182,5 +182,32 @@
       "pnl_pct": 33.98,
       "weight": 2.26
     }
+  ],
+  "total_futures_pnl": 139000,
+  "futures": [
+    {
+      "name": "小型大立光期 202607",
+      "side": "買進",
+      "lots": 1,
+      "avg_price": 5200,
+      "price": 5285,
+      "pnl": 8500
+    },
+    {
+      "name": "小型聯發科期 202607",
+      "side": "買進",
+      "lots": 1,
+      "avg_price": 4405,
+      "price": 4475,
+      "pnl": 7000
+    },
+    {
+      "name": "小型國巨期 202607",
+      "side": "買進",
+      "lots": 11,
+      "avg_price": 982.72,
+      "price": 1095,
+      "pnl": 123500
+    }
   ]
 }

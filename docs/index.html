@@ -271,29 +271,15 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
   </div>
 
   <div id="tab-inventory" class="tab-content">
-    <div class="section-head"><span class="eyebrow">Portfolio</span><h2>庫存與持股比例</h2></div>
-    <div class="inv-upload card">
-      <div class="card-title"><span>上傳券商庫存截圖</span><span class="inv-updated" id="invUpdated"></span></div>
-      <div class="inv-token-row">
-        <input type="password" id="invToken" placeholder="GitHub Token（需 repo / contents 寫入權限，僅存在本機瀏覽器）">
-        <button class="inv-btn ghost" id="invSaveToken" onclick="invSaveToken()">儲存 Token</button>
-      </div>
-      <div class="inv-drop" id="invDrop">
-        <input type="file" id="invFile" accept="image/*" style="display:none">
-        <div class="inv-drop-inner" onclick="document.getElementById('invFile').click()">
-          <div class="inv-drop-icon">🖼️</div>
-          <div class="inv-drop-text">點此或拖曳券商庫存截圖到這裡</div>
-          <div class="inv-drop-sub">支援各家券商 App / 網頁庫存頁截圖（PNG / JPG）</div>
-        </div>
-        <img id="invPreview" class="inv-preview" style="display:none" alt="預覽">
-      </div>
-      <button class="inv-btn primary" id="invUploadBtn" onclick="invUpload(this)" disabled>上傳並自動辨識</button>
-      <div class="inv-hint" id="invHint"></div>
-    </div>
+    <div class="section-head"><span class="eyebrow">Portfolio</span><h2>庫存與持股比例</h2><span class="inv-updated" id="invUpdated"></span></div>
     <div id="invSummary" class="inv-summary"></div>
     <div class="inv-grid">
       <div class="card"><div class="card-title"><span>持股比例</span></div><div id="invPie" class="inv-pie"></div></div>
       <div class="card inv-table-card"><div class="card-title"><span>庫存明細</span></div><div id="invTableWrap"></div></div>
+    </div>
+    <div id="invFuturesCard" class="card inv-table-card" style="display:none">
+      <div class="card-title"><span>期貨留倉</span><span class="inv-updated" id="invFutPnl"></span></div>
+      <div id="invFuturesWrap"></div>
     </div>
   </div>
 
