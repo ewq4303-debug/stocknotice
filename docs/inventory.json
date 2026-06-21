@@ -1,9 +1,186 @@
 {
-  "updated_at": null,
+  "updated_at": "2026-06-21 14:40",
   "currency": "TWD",
-  "total_cost": 0,
-  "total_market_value": 0,
-  "total_pnl": 0,
-  "total_pnl_pct": null,
-  "holdings": []
+  "total_cost": 1617944,
+  "total_market_value": 1862110,
+  "total_pnl": 237133,
+  "total_pnl_pct": 14.66,
+  "holdings": [
+    {
+      "stock_id": "00631L",
+      "name": "元大台灣50正2",
+      "shares": 4000,
+      "avg_cost": 33.73,
+      "price": 38.33,
+      "market_value": 153320,
+      "pnl": 18044,
+      "pnl_pct": 13.37,
+      "weight": 8.23
+    },
+    {
+      "stock_id": "00735",
+      "name": "國泰臺韓科技",
+      "shares": 2000,
+      "avg_cost": 105.91,
+      "price": 118.4,
+      "market_value": 236800,
+      "pnl": 24407,
+      "pnl_pct": 11.52,
+      "weight": 12.72
+    },
+    {
+      "stock_id": "00981A",
+      "name": "主動統一台股增長",
+      "shares": 3000,
+      "avg_cost": 28.8,
+      "price": 31.5,
+      "market_value": 94500,
+      "pnl": 7871,
+      "pnl_pct": 9.1,
+      "weight": 5.07
+    },
+    {
+      "stock_id": "00982A",
+      "name": "主動統一全球創新",
+      "shares": 5000,
+      "avg_cost": 20.21,
+      "price": 22.96,
+      "market_value": 114800,
+      "pnl": 13492,
+      "pnl_pct": 13.35,
+      "weight": 6.17
+    },
+    {
+      "stock_id": "2375",
+      "name": "凱美",
+      "shares": 400,
+      "avg_cost": 172.93,
+      "price": 219.0,
+      "market_value": 87600,
+      "pnl": 18043,
+      "pnl_pct": 26.08,
+      "weight": 4.7
+    },
+    {
+      "stock_id": "2481",
+      "name": "強茂",
+      "shares": 370,
+      "avg_cost": 147.89,
+      "price": 160.0,
+      "market_value": 59200,
+      "pnl": 4218,
+      "pnl_pct": 7.7,
+      "weight": 3.18
+    },
+    {
+      "stock_id": "3026",
+      "name": "禾伸堂",
+      "shares": 85,
+      "avg_cost": 770.71,
+      "price": 902.0,
+      "market_value": 76670,
+      "pnl": 10821,
+      "pnl_pct": 16.51,
+      "weight": 4.12
+    },
+    {
+      "stock_id": "3037",
+      "name": "欣興",
+      "shares": 110,
+      "avg_cost": 871.52,
+      "price": 968.0,
+      "market_value": 106480,
+      "pnl": 10142,
+      "pnl_pct": 10.57,
+      "weight": 5.72
+    },
+    {
+      "stock_id": "3357",
+      "name": "臺慶科",
+      "shares": 1000,
+      "avg_cost": 312.59,
+      "price": 348.0,
+      "market_value": 348000,
+      "pnl": 33871,
+      "pnl_pct": 10.83,
+      "weight": 18.69
+    },
+    {
+      "stock_id": "3675",
+      "name": "德微",
+      "shares": 80,
+      "avg_cost": 374.73,
+      "price": 368.5,
+      "market_value": 29480,
+      "pnl": -628,
+      "pnl_pct": -2.09,
+      "weight": 1.58
+    },
+    {
+      "stock_id": "3711",
+      "name": "日月光投控",
+      "shares": 100,
+      "avg_cost": 542.24,
+      "price": 613.0,
+      "market_value": 61300,
+      "pnl": 6806,
+      "pnl_pct": 12.55,
+      "weight": 3.29
+    },
+    {
+      "stock_id": "5425",
+      "name": "台半",
+      "shares": 1000,
+      "avg_cost": 103.88,
+      "price": 118.5,
+      "market_value": 118500,
+      "pnl": 14096,
+      "pnl_pct": 13.56,
+      "weight": 6.36
+    },
+    {
+      "stock_id": "6223",
+      "name": "旺矽",
+      "shares": 24,
+      "avg_cost": 5406.29,
+      "price": 6415.0,
+      "market_value": 153960,
+      "pnl": 23529,
+      "pnl_pct": 18.13,
+      "weight": 8.27
+    },
+    {
+      "stock_id": "6274",
+      "name": "台燿",
+      "shares": 50,
+      "avg_cost": 1495.44,
+      "price": 1835.0,
+      "market_value": 91750,
+      "pnl": 16572,
+      "pnl_pct": 22.16,
+      "weight": 4.93
+    },
+    {
+      "stock_id": "8042",
+      "name": "金山電",
+      "shares": 450,
+      "avg_cost": 138.04,
+      "price": 195.0,
+      "market_value": 87750,
+      "pnl": 25244,
+      "pnl_pct": 40.63,
+      "weight": 4.71
+    },
+    {
+      "stock_id": "8358",
+      "name": "金居",
+      "shares": 60,
+      "avg_cost": 520.15,
+      "price": 700.0,
+      "market_value": 42000,
+      "pnl": 10605,
+      "pnl_pct": 33.98,
+      "weight": 2.26
+    }
+  ]
 }
