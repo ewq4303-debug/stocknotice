@@ -185,12 +185,17 @@
   ],
   "total_futures_pnl": 139000,
   "futures_account": {
-    "equity": null,
-    "initial_margin": null,
-    "maintenance_margin": null,
+    "equity": 878590,
+    "equity_total": 878590,
+    "floating_pnl": 139000,
+    "risk_indicator": 269,
+    "initial_margin": 326890,
+    "maintenance_margin": 250616,
+    "available_margin": 551700,
+    "surplus_margin": 551700,
     "margin_rate_initial": 0.135,
     "margin_rate_maintenance": 0.1035,
-    "note": "權益數與保證金請填實際帳戶數值；未填時，保證金依契約價值估算（股票期貨級距1：原始13.5%／維持10.35%）"
+    "note": "數值取自券商「權益數查詢」；風險指標為券商定義（權益總值÷原始保證金）。權益數 878,590 已含入金 160,000。"
   },
   "futures": [
     {

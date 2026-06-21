@@ -95,11 +95,11 @@
     renderFutures(data);
   }
 
-  function riskLevel(ri) {
-    if (ri == null) return { color: '#8b95a5', label: '待輸入權益數' };
-    if (ri >= 130) return { color: '#1ed992', label: '充足' };
-    if (ri >= 100) return { color: '#e0a83c', label: '注意（已低於原始）' };
-    if (ri > 25) return { color: '#ff8a4d', label: '追繳警戒' };
+  function futRiskLevel(equity, initial, maint) {
+    if (equity == null) return { color: '#8b95a5', label: '待輸入權益數' };
+    if (initial && equity >= initial) return { color: '#1ed992', label: '充足' };
+    if (maint && equity >= maint) return { color: '#e0a83c', label: '注意（低於原始保證金）' };
+    if (maint && equity >= maint * 0.25) return { color: '#ff8a4d', label: '追繳（低於維持保證金）' };
     return { color: '#ff525b', label: '強制平倉風險' };
   }
 
@@ -133,9 +133,12 @@
     const initMargin = isEstInit ? totEstInit : acc.initial_margin;
     const maintMargin = isEstMaint ? totEstMaint : acc.maintenance_margin;
     const equity = (acc.equity != null) ? acc.equity : null;
-    const ri = (equity != null && maintMargin) ? (equity / maintMargin * 100) : null;
-    const surplus = (equity != null) ? (equity - initMargin) : null;
-    const lv = riskLevel(ri);
+    const ri = (acc.risk_indicator != null) ? acc.risk_indicator
+      : (equity != null && maintMargin) ? (equity / maintMargin * 100) : null;
+    const riBasis = (acc.risk_indicator != null) ? '券商提供' : '權益數 ÷ 維持保證金（估）';
+    const available = (acc.available_margin != null) ? acc.available_margin : (equity != null ? equity - initMargin : null);
+    const surplus = (acc.surplus_margin != null) ? acc.surplus_margin : (equity != null ? equity - initMargin : null);
+    const lv = futRiskLevel(equity, initMargin, maintMargin);
 
     const rk = (label, value, sub, vcolor) =>
       `<div class="rk"><div class="label">${label}</div>
@@ -143,17 +146,18 @@
         ${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
 
     let panel =
-      `<div class="rk span2"><div class="label">風險指標（權益數 ÷ 維持保證金）</div>
-        <div class="value inv-num" style="color:${lv.color}">${ri == null ? '—' : ri.toFixed(0) + '%'}
+      `<div class="rk span2"><div class="label">風險指標（${riBasis}）</div>
+        <div class="value inv-num" style="color:${lv.color}">${ri == null ? '—' : Math.round(ri) + '%'}
           <span class="rk-badge" style="background:${lv.color}">${lv.label}</span></div>
-        <div class="rk-bar"><div class="rk-bar-fill" style="width:${ri == null ? 0 : Math.min(ri, 200) / 200 * 100}%;background:${lv.color}"></div></div></div>`;
+        <div class="rk-bar"><div class="rk-bar-fill" style="width:${ri == null ? 0 : Math.min(ri, 300) / 300 * 100}%;background:${lv.color}"></div></div></div>`;
     panel += rk('權益數', equity == null ? '請提供' : fmt(equity, 0), equity == null ? '貼期貨權益截圖或給我數字' : '', equity == null ? '#8b95a5' : '');
     panel += rk('原始保證金' + (isEstInit ? '（估）' : ''), fmt(initMargin, 0), '');
     panel += rk('維持保證金' + (isEstMaint ? '（估）' : ''), fmt(maintMargin, 0), '');
-    panel += rk('超額保證金（可動用）', surplus == null ? '—' : signStr(surplus, 0),
-      surplus == null ? '' : (surplus >= 0 ? '權益 ≥ 原始保證金' : '已低於原始保證金'), surplus == null ? '' : (surplus >= 0 ? '#1ed992' : '#ff525b'));
-    panel += rk('契約總值（名目）', fmt(totNotional, 0), '槓桿約 ' + (equity ? (totNotional / equity).toFixed(1) + 'x' : '—'));
-    panel += `<div class="inv-risk-note">⚠️ 風險指標 ≤ 25% 期貨商將強制平倉；權益數 < 維持保證金即需追繳保證金。${(isEstInit || isEstMaint) ? '目前保證金為依契約價值估算（股票期貨級距1），實際金額以券商為準。' : ''}</div>`;
+    panel += rk('可動用(出金)保證金', available == null ? '—' : fmt(available, 0), '', available == null ? '' : (available >= 0 ? '#1ed992' : '#ff525b'));
+    panel += rk('超額/追繳保證金', surplus == null ? '—' : signStr(surplus, 0),
+      surplus == null ? '' : (surplus >= 0 ? '超額（可出金）' : '需追繳'), surplus == null ? '' : (surplus >= 0 ? '#1ed992' : '#ff525b'));
+    panel += rk('契約總值（名目）', fmt(totNotional, 0), '槓桿約 ' + (equity ? (totNotional / equity).toFixed(2) + 'x' : '—'));
+    panel += `<div class="inv-risk-note">⚠️ 權益數 < 維持保證金即需追繳；依規定風險指標過低（約 ≤ 25%）期貨商將強制平倉。${(isEstInit || isEstMaint) ? '部分保證金為依契約價值估算（股票期貨級距1），實際以券商為準。' : '保證金與風險指標數值取自券商。'}</div>`;
     $('invFutRisk').innerHTML = panel;
 
     // ---- 留倉明細（含名目價值）----
