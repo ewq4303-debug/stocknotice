@@ -1852,6 +1852,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="inventory.css">
 <style>
 {get_css()}
 </style>
@@ -1867,6 +1868,34 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
       <button class="tab-btn active" onclick="switchTab('tab-market', this)">大盤總覽</button>
       <button class="tab-btn" onclick="switchTab('tab-rating', this)">綜合評等</button>
       <button class="tab-btn" onclick="switchTab('tab-stocks', this)">追蹤個股分析</button>
+      <button class="tab-btn" id="tabbtn-inventory" onclick="switchTab('tab-inventory', this)">庫存與持股比例</button>
+  </div>
+
+  <div id="tab-inventory" class="tab-content">
+    <div class="section-head"><span class="eyebrow">Portfolio</span><h2>庫存與持股比例</h2></div>
+    <div class="inv-upload card">
+      <div class="card-title"><span>上傳券商庫存截圖</span><span class="inv-updated" id="invUpdated"></span></div>
+      <div class="inv-token-row">
+        <input type="password" id="invToken" placeholder="GitHub Token（需 repo / contents 寫入權限，僅存在本機瀏覽器）">
+        <button class="inv-btn ghost" id="invSaveToken" onclick="invSaveToken()">儲存 Token</button>
+      </div>
+      <div class="inv-drop" id="invDrop">
+        <input type="file" id="invFile" accept="image/*" style="display:none">
+        <div class="inv-drop-inner" onclick="document.getElementById('invFile').click()">
+          <div class="inv-drop-icon">🖼️</div>
+          <div class="inv-drop-text">點此或拖曳券商庫存截圖到這裡</div>
+          <div class="inv-drop-sub">支援各家券商 App / 網頁庫存頁截圖（PNG / JPG）</div>
+        </div>
+        <img id="invPreview" class="inv-preview" style="display:none" alt="預覽">
+      </div>
+      <button class="inv-btn primary" id="invUploadBtn" onclick="invUpload(this)" disabled>上傳並自動辨識</button>
+      <div class="inv-hint" id="invHint"></div>
+    </div>
+    <div id="invSummary" class="inv-summary"></div>
+    <div class="inv-grid">
+      <div class="card"><div class="card-title"><span>持股比例</span></div><div id="invPie" class="inv-pie"></div></div>
+      <div class="card inv-table-card"><div class="card-title"><span>庫存明細</span></div><div id="invTableWrap"></div></div>
+    </div>
   </div>
 
   <div id="tab-market" class="tab-content active">{market_section}</div>
@@ -1993,6 +2022,7 @@ function triggerAction(btn) {{
 
 window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
 </script>
+<script src="inventory.js"></script>
 </body>
 </html>"""
 
