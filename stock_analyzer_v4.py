@@ -1878,9 +1878,10 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
       <div class="card"><div class="card-title"><span>持股比例</span></div><div id="invPie" class="inv-pie"></div></div>
       <div class="card inv-table-card"><div class="card-title"><span>庫存明細</span></div><div id="invTableWrap"></div></div>
     </div>
-    <div id="invFuturesCard" class="card inv-table-card" style="display:none">
-      <div class="card-title"><span>期貨留倉</span><span class="inv-updated" id="invFutPnl"></span></div>
-      <div id="invFuturesWrap"></div>
+    <div id="invFuturesCard" class="card" style="display:none">
+      <div class="card-title"><span>期貨留倉 · 風險控管</span><span class="inv-updated" id="invFutPnl"></span></div>
+      <div id="invFutRisk" class="inv-risk"></div>
+      <div class="inv-table-card" id="invFuturesWrap"></div>
     </div>
   </div>
 

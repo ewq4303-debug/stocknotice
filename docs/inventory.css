@@ -30,6 +30,19 @@
 .inv-wbar-fill{height:100%;border-radius:4px}
 .inv-empty{text-align:center;color:var(--ink-3);font-size:12.5px;padding:40px 0}
 
+/* 期貨風險控管面板 */
+.inv-risk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 14px}
+.inv-risk .rk{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.inv-risk .rk.span2{grid-column:span 2}
+.inv-risk .rk .label{font-size:10px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.inv-risk .rk .value{font-size:18px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.inv-risk .rk .sub{font-size:11px;margin-top:5px;color:var(--ink-2)}
+.rk-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;color:#0a0e15}
+.rk-bar{height:7px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-top:9px}
+.rk-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.inv-risk-note{grid-column:1/-1;font-size:11px;color:var(--ink-3);line-height:1.5}
+@media(max-width:880px){.inv-risk{grid-template-columns:repeat(2,1fr)}.inv-risk .rk.span2{grid-column:span 2}}
+
 @media(max-width:880px){
   .inv-summary{grid-template-columns:repeat(2,1fr)}
   .inv-grid{grid-template-columns:1fr}

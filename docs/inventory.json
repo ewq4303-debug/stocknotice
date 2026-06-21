@@ -184,11 +184,20 @@
     }
   ],
   "total_futures_pnl": 139000,
+  "futures_account": {
+    "equity": null,
+    "initial_margin": null,
+    "maintenance_margin": null,
+    "margin_rate_initial": 0.135,
+    "margin_rate_maintenance": 0.1035,
+    "note": "權益數與保證金請填實際帳戶數值；未填時，保證金依契約價值估算（股票期貨級距1：原始13.5%／維持10.35%）"
+  },
   "futures": [
     {
       "name": "小型大立光期 202607",
       "side": "買進",
       "lots": 1,
+      "multiplier": 100,
       "avg_price": 5200,
       "price": 5285,
       "pnl": 8500
@@ -197,6 +206,7 @@
       "name": "小型聯發科期 202607",
       "side": "買進",
       "lots": 1,
+      "multiplier": 100,
       "avg_price": 4405,
       "price": 4475,
       "pnl": 7000
@@ -205,6 +215,7 @@
       "name": "小型國巨期 202607",
       "side": "買進",
       "lots": 11,
+      "multiplier": 100,
       "avg_price": 982.72,
       "price": 1095,
       "pnl": 123500

@@ -95,17 +95,70 @@
     renderFutures(data);
   }
 
+  function riskLevel(ri) {
+    if (ri == null) return { color: '#8b95a5', label: '待輸入權益數' };
+    if (ri >= 130) return { color: '#1ed992', label: '充足' };
+    if (ri >= 100) return { color: '#e0a83c', label: '注意（已低於原始）' };
+    if (ri > 25) return { color: '#ff8a4d', label: '追繳警戒' };
+    return { color: '#ff525b', label: '強制平倉風險' };
+  }
+
   function renderFutures(data) {
     const card = $('invFuturesCard');
     const futures = (data && Array.isArray(data.futures)) ? data.futures : [];
     if (!futures.length) { card.style.display = 'none'; return; }
     card.style.display = '';
 
-    const totPnl = (data.total_futures_pnl != null) ? data.total_futures_pnl : futures.reduce((s, f) => s + (f.pnl || 0), 0);
-    $('invFutPnl').innerHTML = '未平倉損益合計 <span class="inv-num ' + signCls(totPnl) + '">' + signStr(totPnl, 0) + '</span>';
+    const acc = (data && data.futures_account) ? data.futures_account : {};
+    const rInit = (acc.margin_rate_initial != null) ? acc.margin_rate_initial : 0.135;
+    const rMaint = (acc.margin_rate_maintenance != null) ? acc.margin_rate_maintenance : 0.1035;
 
+    let totNotional = 0, totEstInit = 0, totEstMaint = 0, totPnl = 0;
+    const enriched = futures.map((f) => {
+      const mult = f.multiplier || 100;
+      const notional = (f.price || 0) * mult * (f.lots || 0);
+      totNotional += notional;
+      totEstInit += notional * rInit;
+      totEstMaint += notional * rMaint;
+      totPnl += (f.pnl || 0);
+      return { f, notional };
+    });
+
+    const totFutPnl = (data.total_futures_pnl != null) ? data.total_futures_pnl : totPnl;
+    $('invFutPnl').innerHTML = '未平倉損益合計 <span class="inv-num ' + signCls(totFutPnl) + '">' + signStr(totFutPnl, 0) + '</span>';
+
+    // ---- 風險控管面板 ----
+    const isEstInit = (acc.initial_margin == null);
+    const isEstMaint = (acc.maintenance_margin == null);
+    const initMargin = isEstInit ? totEstInit : acc.initial_margin;
+    const maintMargin = isEstMaint ? totEstMaint : acc.maintenance_margin;
+    const equity = (acc.equity != null) ? acc.equity : null;
+    const ri = (equity != null && maintMargin) ? (equity / maintMargin * 100) : null;
+    const surplus = (equity != null) ? (equity - initMargin) : null;
+    const lv = riskLevel(ri);
+
+    const rk = (label, value, sub, vcolor) =>
+      `<div class="rk"><div class="label">${label}</div>
+        <div class="value inv-num"${vcolor ? ` style="color:${vcolor}"` : ''}>${value}</div>
+        ${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
+
+    let panel =
+      `<div class="rk span2"><div class="label">風險指標（權益數 ÷ 維持保證金）</div>
+        <div class="value inv-num" style="color:${lv.color}">${ri == null ? '—' : ri.toFixed(0) + '%'}
+          <span class="rk-badge" style="background:${lv.color}">${lv.label}</span></div>
+        <div class="rk-bar"><div class="rk-bar-fill" style="width:${ri == null ? 0 : Math.min(ri, 200) / 200 * 100}%;background:${lv.color}"></div></div></div>`;
+    panel += rk('權益數', equity == null ? '請提供' : fmt(equity, 0), equity == null ? '貼期貨權益截圖或給我數字' : '', equity == null ? '#8b95a5' : '');
+    panel += rk('原始保證金' + (isEstInit ? '（估）' : ''), fmt(initMargin, 0), '');
+    panel += rk('維持保證金' + (isEstMaint ? '（估）' : ''), fmt(maintMargin, 0), '');
+    panel += rk('超額保證金（可動用）', surplus == null ? '—' : signStr(surplus, 0),
+      surplus == null ? '' : (surplus >= 0 ? '權益 ≥ 原始保證金' : '已低於原始保證金'), surplus == null ? '' : (surplus >= 0 ? '#1ed992' : '#ff525b'));
+    panel += rk('契約總值（名目）', fmt(totNotional, 0), '槓桿約 ' + (equity ? (totNotional / equity).toFixed(1) + 'x' : '—'));
+    panel += `<div class="inv-risk-note">⚠️ 風險指標 ≤ 25% 期貨商將強制平倉；權益數 < 維持保證金即需追繳保證金。${(isEstInit || isEstMaint) ? '目前保證金為依契約價值估算（股票期貨級距1），實際金額以券商為準。' : ''}</div>`;
+    $('invFutRisk').innerHTML = panel;
+
+    // ---- 留倉明細（含名目價值）----
     let rows = '';
-    futures.forEach((f) => {
+    enriched.forEach(({ f, notional }) => {
       rows +=
         `<tr>
           <td class="inv-name">${f.name || '—'}</td>
@@ -113,12 +166,13 @@
           <td class="inv-num">${fmt(f.lots, 0)}</td>
           <td class="inv-num">${fmt(f.avg_price, 2)}</td>
           <td class="inv-num">${fmt(f.price, 2)}</td>
+          <td class="inv-num">${fmt(notional, 0)}</td>
           <td class="inv-num ${signCls(f.pnl)}">${signStr(f.pnl, 0)}</td>
         </tr>`;
     });
     $('invFuturesWrap').innerHTML =
       `<table class="inv-table"><thead><tr>
-        <th>商品</th><th>買賣</th><th>口數</th><th>成交均價</th><th>即時價</th><th>未平倉損益</th>
+        <th>商品</th><th>買賣</th><th>口數</th><th>成交均價</th><th>即時價</th><th>名目價值</th><th>未平倉損益</th>
       </tr></thead><tbody>${rows}</tbody></table>`;
   }
 
