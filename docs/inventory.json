@@ -184,11 +184,25 @@
     }
   ],
   "total_futures_pnl": 139000,
+  "futures_account": {
+    "equity": 878590,
+    "equity_total": 878590,
+    "floating_pnl": 139000,
+    "risk_indicator": 269,
+    "initial_margin": 326890,
+    "maintenance_margin": 250616,
+    "available_margin": 551700,
+    "surplus_margin": 551700,
+    "margin_rate_initial": 0.135,
+    "margin_rate_maintenance": 0.1035,
+    "note": "數值取自券商「權益數查詢」；風險指標為券商定義（權益總值÷原始保證金）。權益數 878,590 已含入金 160,000。"
+  },
   "futures": [
     {
       "name": "小型大立光期 202607",
       "side": "買進",
       "lots": 1,
+      "multiplier": 100,
       "avg_price": 5200,
       "price": 5285,
       "pnl": 8500
@@ -197,6 +211,7 @@
       "name": "小型聯發科期 202607",
       "side": "買進",
       "lots": 1,
+      "multiplier": 100,
       "avg_price": 4405,
       "price": 4475,
       "pnl": 7000
@@ -205,6 +220,7 @@
       "name": "小型國巨期 202607",
       "side": "買進",
       "lots": 11,
+      "multiplier": 100,
       "avg_price": 982.72,
       "price": 1095,
       "pnl": 123500
