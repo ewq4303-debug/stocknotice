@@ -851,23 +851,32 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict, institution
 def calculate_stock_rating(data: dict) -> dict:
     ind, inst, margin, borrow, tdcc, latest = data.get("indicators",{}), data.get("institution",{}), data.get("margin",{}), data.get("borrow",{}), data.get("tdcc",{}), data.get("latest",{})
     tech = 0.0
-    close, ma20, ma60, ma5, ma10 = latest.get("close",0), ind.get("ma20",0), ind.get("ma60",0), ind.get("ma5",0), ind.get("ma10",0)
-    if close > ma20 > 0: tech += 1
-    if ma20 > ma60 > 0: tech += 1
-    if ma5 > ma10 > 0: tech += 1
-    if ind.get("high_20",0) > 0 and close >= ind.get("high_20",0)*0.97: tech += 1.5
-    if latest.get("volume",0) > ind.get("vol_ma5",0) > 0: tech += 1.5
-    if ind.get("macd_hist",0) > 0: tech += 2
-    if ind.get("vol_ma5",0) > ind.get("vol_ma20",0) > 0: tech += 2
-
     chip = 0.0
+    details = []
+
+    def add(bucket, label, passed, points):
+        nonlocal tech, chip
+        earned = points if passed else 0
+        if bucket == "tech": tech += earned
+        else: chip += earned
+        details.append({"bucket": bucket, "label": label, "points": points, "earned": earned, "passed": bool(passed)})
+
+    close, ma20, ma60, ma5, ma10 = latest.get("close",0), ind.get("ma20",0), ind.get("ma60",0), ind.get("ma5",0), ind.get("ma10",0)
+    add("tech", "站上月線", close > ma20 > 0, 1)
+    add("tech", "月線高於季線", ma20 > ma60 > 0, 1)
+    add("tech", "5日線高於10日線", ma5 > ma10 > 0, 1)
+    add("tech", "接近20日高點", ind.get("high_20",0) > 0 and close >= ind.get("high_20",0)*0.97, 1.5)
+    add("tech", "量能高於5日均量", latest.get("volume",0) > ind.get("vol_ma5",0) > 0, 1.5)
+    add("tech", "MACD紅柱", ind.get("macd_hist",0) > 0, 2)
+    add("tech", "5日均量高於20日均量", ind.get("vol_ma5",0) > ind.get("vol_ma20",0) > 0, 2)
+
     last3 = inst.get("history", [])[-3:]
-    if sum(h.get("foreign",0) for h in last3) > 0: chip += 1.5
-    if sum(h.get("trust",0) for h in last3) > 0: chip += 1.5
-    if inst.get("foreign_today",0) > 0 and inst.get("trust_today",0) > 0: chip += 1
-    if margin.get("margin_change",0) < 0: chip += 1.5
-    if borrow.get("borrow_change",0) < 0: chip += 1.5
-    if tdcc.get("large_change",0) > 0: chip += 3
+    add("chip", "外資3日買超", sum(h.get("foreign",0) for h in last3) > 0, 1.5)
+    add("chip", "投信3日買超", sum(h.get("trust",0) for h in last3) > 0, 1.5)
+    add("chip", "外資投信同買", inst.get("foreign_today",0) > 0 and inst.get("trust_today",0) > 0, 1)
+    add("chip", "融資減少", margin.get("margin_change",0) < 0, 1.5)
+    add("chip", "借券減少", borrow.get("borrow_change",0) < 0, 1.5)
+    add("chip", "集保大戶增加", tdcc.get("large_change",0) > 0, 3)
 
     total = tech + chip
     if total >= 14: rating, rk = "強力加碼", "strong-buy"
@@ -875,11 +884,38 @@ def calculate_stock_rating(data: dict) -> dict:
     elif total >= 6: rating, rk = "中性觀望", "neutral"
     elif total >= 3: rating, rk = "減碼", "sell"
     else: rating, rk = "強力減碼", "strong-sell"
-    return {"tech": round(tech,1), "chip": round(chip,1), "total": round(total,1), "rating": rating, "rating_key": rk}
+    return {"tech": round(tech,1), "chip": round(chip,1), "total": round(total,1), "rating": rating, "rating_key": rk, "details": details, "previous_rating": data.get("previous_rating")}
 
 # =========================================================
 # HTML 生成 (深色終端版)
 # =========================================================
+
+
+def latest_date(rows, key="date"):
+    vals = [str(r.get(key, "")) for r in rows or [] if r.get(key)]
+    return max(vals) if vals else "無資料"
+
+def generate_data_status_panel(stocks_data: dict, market_data: dict, update_time: str) -> str:
+    stock_count = len(stocks_data)
+    tdcc_dates = []
+    inst_dates = []
+    for data in stocks_data.values():
+        tdcc_dates.extend([h.get("date", "") for h in data.get("tdcc", {}).get("history", []) if h.get("date")])
+        inst_dates.extend([h.get("date", "") for h in data.get("institution", {}).get("history", []) if h.get("date")])
+    items = [
+        ("頁面產生", update_time, "Python batch"),
+        ("追蹤個股", f"{stock_count} 檔", "stocks.txt / GAS"),
+        ("大盤行情", latest_date(market_data.get("taiex", [])), "FinMind / yfinance"),
+        ("三大法人", max(inst_dates) if inst_dates else latest_date(market_data.get("institution", [])), "FinMind"),
+        ("集保快照", max(tdcc_dates) if tdcc_dates else "無資料", "tdcc_history"),
+        ("庫存資料", "由 inventory.json 載入", "前端即時檢查"),
+    ]
+    cards = "".join([f'<div class="status-card"><div class="k">{label}</div><div class="v">{value}</div><div class="src">{src}</div></div>' for label, value, src in items])
+    return f'''<div class="status-panel card">
+      <div class="card-title"><span>資料新鮮度與來源狀態</span><span class="src-pill">避免不同來源更新時間混淆</span></div>
+      <div class="status-grid">{cards}</div>
+      <div class="status-note">提示：庫存頁會另外讀取 inventory.json；若該檔 updated_at 與頁面產生時間不同，請以各資料卡時間為準。</div>
+    </div>'''
 
 def generate_rating_table(stocks_data: dict) -> str:
     groups = {
@@ -893,7 +929,7 @@ def generate_rating_table(stocks_data: dict) -> str:
         r = data.get("rating", {})
         key = r.get("rating_key", "neutral")
         if key in groups:
-            groups[key]["stocks"].append({"stock_id": sid, "name": data.get("name",""), "change": data.get("change_pct",0), "tech": r.get("tech",0), "chip": r.get("chip",0), "total": r.get("total",0)})
+            groups[key]["stocks"].append({"stock_id": sid, "name": data.get("name",""), "change": data.get("change_pct",0), "tech": r.get("tech",0), "chip": r.get("chip",0), "total": r.get("total",0), "details": r.get("details", []), "previous_rating": r.get("previous_rating")})
     for g in groups.values():
         g["stocks"].sort(key=lambda s: -s["total"])
 
@@ -1028,6 +1064,14 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     def inst_cell(v): return f'<td class="{"up" if v>=0 else "down"}">{v:+,.0f}</td>'
     def marg_cell(v): return f'<td class="{"up" if v>=0 else "down"}">{v:+,}</td>'
 
+    detail_rows = ""
+    for d in r.get("details", []):
+        bucket = "技術" if d.get("bucket") == "tech" else "籌碼"
+        status = "✓" if d.get("passed") else "—"
+        status_cls = "up" if d.get("passed") else ""
+        detail_rows += f"<tr><td>{bucket}</td><td>{d.get('label','')}</td><td>{d.get('points',0):g}</td><td class='{status_cls}'>{status} {d.get('earned',0):g}</td></tr>"
+    previous_rating = r.get("previous_rating") or "尚無前次評等"
+
     return f"""
     <div class="stock-card {'active' if is_first else ''}" id="card_{stock_id}">
 
@@ -1045,6 +1089,14 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
         <div class="sc-detail">
           {fund_strip}
+
+          <details class="fold rating-detail" open>
+            <summary>評分明細與變化</summary>
+            <div>
+              <div class="rating-summary"><span>本次：<b>{r.get('rating','')}</b></span><span>前次：{previous_rating}</span><span>總分：{r.get('total',0):g}</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr>{detail_rows}</table>
+            </div>
+          </details>
 
           <div id="kline_{stock_id}" class="chart-box" style="height:710px;"></div>
 
@@ -1647,6 +1699,14 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 .oi-sub{display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--ink-2)}
 .chip-up{background:var(--up-soft);color:var(--up)} .chip-down{background:var(--down-soft);color:var(--down)}
 
+/* STATUS */
+.status-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.status-card{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.status-card .k{font-size:10px;color:var(--ink-3);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.status-card .v{font-size:14px;font-weight:700;margin-top:5px;font-family:var(--mono)}
+.status-card .src{font-size:10.5px;color:var(--ink-3);margin-top:5px}
+.status-note{font-size:11px;color:var(--ink-3);margin-top:10px;line-height:1.5}
+
 /* RATING */
 .rating-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
 .rating-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--line)}
@@ -1666,7 +1726,11 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 .schip-top{display:flex;justify-content:space-between;align-items:baseline}
 .schip-name{font-size:12px;font-weight:600}
 .schip-chg{font-size:11px;font-weight:600;font-family:var(--mono)}
-.schip-meta{display:flex;gap:6px;margin-top:5px}
+.schip-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.rating-chip summary{list-style:none;cursor:pointer}
+.rating-chip summary::-webkit-details-marker{display:none}
+.rating-reason{font-size:10.5px;color:var(--ink-2);line-height:1.55;margin-top:7px;border-top:1px dashed var(--line);padding-top:7px}
+.rating-summary{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-bottom:10px}
 .tag{font-size:9.5px;font-weight:600;padding:1px 6px;border-radius:5px;background:var(--surface);color:var(--ink-2)}
 .tag.t{background:rgba(77,127,255,.14);color:#7f9fff} .tag.c{background:var(--down-soft);color:var(--down)}
 .empty{font-size:11px;color:var(--ink-3);text-align:center;padding:14px 0}
@@ -1799,6 +1863,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
 @media(max-width:980px){
   .metrics{grid-template-columns:repeat(2,1fr)}
+  .status-grid{grid-template-columns:repeat(2,1fr)}
   .fund-strip{grid-template-columns:repeat(3,1fr)}
   .grid-2,.ai-grid{grid-template-columns:1fr}
   .rating-grid{grid-template-columns:repeat(2,1fr)}
@@ -1821,6 +1886,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 def generate_html(stocks_data: dict, market_data: dict) -> str:
     update_time = now_tw().strftime("%Y-%m-%d %H:%M")
     market_section = generate_market_section(market_data)
+    status_panel = generate_data_status_panel(stocks_data, market_data, update_time)
     rating_table = generate_rating_table(stocks_data)
 
     sidebar_items = ""
@@ -1885,7 +1951,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
     </div>
   </div>
 
-  <div id="tab-market" class="tab-content active">{market_section}</div>
+  <div id="tab-market" class="tab-content active">{status_panel}{market_section}</div>
   <div id="tab-rating" class="tab-content">{rating_table}</div>
 
   <div id="tab-stocks" class="tab-content">
@@ -1906,109 +1972,12 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <script>
 {chart_scripts}
 
-function toggleCard(stockId) {{
-    if (window.innerWidth > 980) return;
-    var cards = document.querySelectorAll('.stock-card');
-    cards.forEach(function(c) {{
-        if (c.id === 'card_' + stockId) {{
-            c.classList.toggle('expanded');
-        }} else {{
-            c.classList.remove('expanded');
-        }}
-    }});
-    var card = document.getElementById('card_' + stockId);
-    if (card && card.classList.contains('expanded')) {{
-        resizeAllCharts();
-        setTimeout(function() {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 100);
-    }}
-}}
-
-function confirmDelete(event, stockId, btn) {{
-    event.stopPropagation();
-    if (confirm("確定要取消追蹤 " + stockId + " 嗎？")) {{ manageStock('remove', stockId, null, btn); }}
-}}
-
-function showCountdownToast(message, totalSeconds) {{
-    let existing = document.getElementById('custom-toast');
-    if (existing) existing.remove();
-    const toast = document.createElement("div");
-    toast.id = 'custom-toast';
-    toast.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(10,14,21,.96);color:#dde3ec;padding:20px 30px;border-radius:12px;z-index:9999;font-size:16px;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center;min-width:280px;backdrop-filter:blur(6px);border:1px solid #1e2632;";
-    document.body.appendChild(toast);
-    let secondsLeft = totalSeconds;
-    const updateText = () => {{
-        toast.innerHTML = '<div style="margin-bottom:10px;line-height:1.5;">' + message + '</div><div style="font-size:36px;font-weight:900;color:#1ed992;font-variant-numeric:tabular-nums;margin:5px 0;">' + secondsLeft + '</div><div style="font-size:13px;color:#8b95a5;">秒後自動重新整理...</div>';
-    }};
-    updateText();
-    const timer = setInterval(() => {{
-        secondsLeft--;
-        if (secondsLeft <= 0) {{ clearInterval(timer); toast.innerHTML = "<div style='font-size:18px;font-weight:bold;color:#1ed992;'>🔄 重新整理中...</div>"; window.location.reload(); }}
-        else {{ updateText(); }}
-    }}, 1000);
-}}
-
-function manageStock(action, stockIdOverride, inputId, btn) {{
-    let stockId = stockIdOverride;
-    if (!stockId) {{ const inputField = document.getElementById(inputId); if (inputField) stockId = inputField.value.trim(); }}
-    if (!stockId) {{ alert("請輸入股票代號！"); return; }}
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec';
-    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
-    let originalText = "";
-    if (btn) {{ originalText = btn.innerText; btn.innerText = "⏳"; btn.style.pointerEvents = "none"; }}
-    fetch(gasUrl, {{ method: 'POST', body: JSON.stringify({{ action: action, stock: stockId }}), headers: {{ "Content-Type": "text/plain;charset=utf-8" }} }})
-    .then(response => response.text())
-    .then(text => {{
-        if (text.includes("Error")) {{ alert("❌ 伺服器內部錯誤：\\n" + text); if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }} }}
-        else if (text.includes("Success") || text.includes("No changes")) {{
-            if(action === 'add' && document.getElementById('stockInput')) {{ document.getElementById('stockInput').value = ''; }}
-            fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }}).catch(e => console.log(e));
-            let actionStr = (action === 'add') ? '新增' : '刪除';
-            showCountdownToast("✅ 股票 " + stockId + " 已" + actionStr + "！<br>系統已自動觸發重新抓取資料", 150);
-        }} else {{ alert("⚠️ 收到未知回應，請確認權限設定。"); if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }} }}
-    }})
-    .catch(err => {{ alert("❌ 網路請求失敗：" + err.message); if (btn) {{ btn.innerText = originalText; btn.style.pointerEvents = "auto"; }} }});
-}}
-
-function resizeAllCharts() {{ setTimeout(() => {{ window.dispatchEvent(new Event('resize')); }}, 50); }}
-
-function switchTab(tabId, btnElement) {{
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    btnElement.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    resizeAllCharts();
-}}
-
-function showStock(stockId) {{
-    if (window.innerWidth <= 980) return;
-    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.stock-card').forEach(el => el.classList.remove('active'));
-    document.getElementById('nav_' + stockId).classList.add('active');
-    document.getElementById('card_' + stockId).classList.add('active');
-    resizeAllCharts();
-    window.scrollTo({{ top: document.querySelector('.app-layout').offsetTop - 20, behavior: 'smooth' }});
-}}
-
-function toggleMobile(stockId) {{
-    const card = document.getElementById('card_' + stockId);
-    const icon = document.getElementById('icon_' + stockId);
-    if (card.classList.contains('mobile-expanded')) {{ card.classList.remove('mobile-expanded'); icon.innerText = '▶'; }}
-    else {{ card.classList.add('mobile-expanded'); icon.innerText = '▼'; resizeAllCharts(); setTimeout(() => {{ card.scrollIntoView({{ behavior: 'smooth', block: 'start' }}); }}, 150); }}
-}}
-
-function triggerAction(btn) {{
-    const originalText = btn.innerText;
-    btn.innerText = "⏳ 觸發中...";
-    btn.style.pointerEvents = "none"; btn.style.opacity = "0.7";
-    const triggerUrl = 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec';
-    fetch(triggerUrl, {{ method: 'POST', mode: 'no-cors' }})
-    .then(() => {{ showCountdownToast("✅ 重新執行指令已發送！<br>系統正在抓取最新資料", 150); }})
-    .catch(err => alert("❌ 發生錯誤，請檢查網路。"))
-    .finally(() => {{ btn.innerText = "⟳ 重新抓取最新資料"; btn.style.pointerEvents = "auto"; btn.style.opacity = "1"; }});
-}}
-
-window.onscroll = function() {{ document.getElementById('backToTop').style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? 'block' : 'none'; }};
+window.DASHBOARD_CONFIG = {{
+  gasUrl: 'https://script.google.com/macros/s/AKfycbyH5tWwcZoqHACX5yZx5xFBnPgiLFMUEvru4SL64IPyuPQckLl5N1yjUIJ3ADBm70VU/exec',
+  triggerUrl: 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec'
+}};
 </script>
+<script src="app.js?v=20260629"></script>
 <script src="inventory.js?v=20260622"></script>
 </body>
 </html>"""
