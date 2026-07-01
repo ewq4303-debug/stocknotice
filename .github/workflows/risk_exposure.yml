@@ -1,0 +1,64 @@
+name: Daily Futures Risk Exposure
+
+on:
+  schedule:
+    - cron: '10 6 * * 1-5'  # 台灣時間交易日 14:10 (UTC+8)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  risk_exposure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Skip Taiwan market holidays
+        id: twse_day
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timedelta, timezone
+          import requests
+          tw = datetime.now(timezone(timedelta(hours=8)))
+          open_day = tw.weekday() < 5
+          try:
+              url = f"https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?date={tw.year}&response=json"
+              data = requests.get(url, timeout=10).json().get('data', [])
+              holidays = {str(row[0]).replace('/', '') for row in data if row}
+              roc = f"{tw.year-1911}{tw:%m%d}"
+              if roc in holidays:
+                  open_day = False
+          except Exception:
+              pass
+          print(f"open={str(open_day).lower()}")
+          import os
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f"open={str(open_day).lower()}\n")
+          PY
+
+      - name: Calculate risk exposure
+        if: steps.twse_day.outputs.open == 'true' || github.event_name == 'workflow_dispatch'
+        run: python risk_exposure.py
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+
+      - name: Commit risk report
+        if: steps.twse_day.outputs.open == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/risk.json
+          if git diff --staged --quiet; then
+            echo "No risk.json changes"
+          else
+            git commit -m "Update futures risk exposure"
+            git push
+          fi

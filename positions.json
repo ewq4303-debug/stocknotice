@@ -1,0 +1,23 @@
+{
+  "as_of": "2026-05-31",
+  "account_equity": {
+    "securities_nav": 0,
+    "futures_equity": 835083,
+    "futures_maintenance_margin": 251096,
+    "futures_initial_margin": 327560
+  },
+  "spot": [
+    {"symbol": "3711", "name": "日月光投控", "shares": 300},
+    {"symbol": "6510", "name": "精測", "shares": 0}
+  ],
+  "stock_futures": [
+    {"symbol": "2408", "name": "南亞科期", "contracts": 1, "kind": "standard"},
+    {"symbol": "3034", "name": "小聯發科", "contracts": 1, "kind": "mini"},
+    {"symbol": "TXF", "name": "微台", "contracts": 2, "kind": "micro_index"}
+  ],
+  "multiplier_checks": [
+    {"kind": "standard", "entry_price": 194.0, "exit_price": 218.5, "contracts": 1, "realized_pnl": 49000},
+    {"kind": "mini", "entry_price": 2240, "exit_price": 3375, "contracts": 1, "realized_pnl": 113500},
+    {"kind": "micro_index", "entry_price": 0, "exit_price": 1218, "contracts": 1, "realized_pnl": 12180}
+  ]
+}

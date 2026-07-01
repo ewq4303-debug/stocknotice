@@ -1919,6 +1919,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="inventory.css?v=20260622">
+<link rel="stylesheet" href="risk.css?v=20260630">
 <style>
 {get_css()}
 </style>
@@ -1935,6 +1936,7 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
       <button class="tab-btn" onclick="switchTab('tab-rating', this)">綜合評等</button>
       <button class="tab-btn" onclick="switchTab('tab-stocks', this)">追蹤個股分析</button>
       <button class="tab-btn" id="tabbtn-inventory" onclick="switchTab('tab-inventory', this)">庫存與持股比例</button>
+      <button class="tab-btn" onclick="switchTab('tab-risk', this)">期貨風險曝險</button>
   </div>
 
   <div id="tab-inventory" class="tab-content">
@@ -1950,6 +1952,8 @@ def generate_html(stocks_data: dict, market_data: dict) -> str:
       <div class="inv-table-card" id="invFuturesWrap"></div>
     </div>
   </div>
+
+  <div id="tab-risk" class="tab-content"><div id="riskRoot"></div></div>
 
   <div id="tab-market" class="tab-content active">{status_panel}{market_section}</div>
   <div id="tab-rating" class="tab-content">{rating_table}</div>
@@ -1979,6 +1983,7 @@ window.DASHBOARD_CONFIG = {{
 </script>
 <script src="app.js?v=20260629"></script>
 <script src="inventory.js?v=20260622"></script>
+<script src="risk.js?v=20260630"></script>
 </body>
 </html>"""
 
