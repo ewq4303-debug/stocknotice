@@ -9,38 +9,97 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 0,
-    "net_notional": 0,
-    "nlr_gross": 0.0,
-    "nlr_net": 0.0,
-    "verdict": "OK"
+    "gross_notional": 2029218,
+    "net_notional": 2029218,
+    "nlr_gross": 2.43,
+    "nlr_net": 2.43,
+    "verdict": "WATCH"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": 0,
-      "dpnl_pct_equity": 0.0,
-      "futures_equity_after": 835083,
+      "dpnl_total": -160735,
+      "dpnl_pct_equity": -0.1925,
+      "futures_equity_after": 695438,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": 0,
-      "dpnl_pct_equity": 0.0,
-      "futures_equity_after": 835083,
+      "dpnl_total": -321470,
+      "dpnl_pct_equity": -0.385,
+      "futures_equity_after": 555793,
       "verdict": "SAFE"
     }
   ],
-  "top_contributors": [],
+  "top_contributors": [
+    {
+      "symbol": "2408",
+      "name": "南亞科期",
+      "asset_type": "futures",
+      "kind": "standard",
+      "signed_notional": 842000,
+      "price": 421.0,
+      "beta": 1.0,
+      "beta_source": "member_default",
+      "dpnl_at_-20pct": -168400
+    },
+    {
+      "symbol": "TXF",
+      "name": "微台",
+      "asset_type": "futures",
+      "kind": "micro_index",
+      "signed_notional": 922518,
+      "price": 46125.91015625,
+      "beta": 0.5427,
+      "beta_source": "rolling_60d",
+      "dpnl_at_-20pct": -100130
+    },
+    {
+      "symbol": "3711",
+      "name": "日月光投控",
+      "asset_type": "spot",
+      "signed_notional": 210900,
+      "price": 703.0,
+      "beta": 1.0,
+      "beta_source": "member_default",
+      "dpnl_at_-20pct": -42180
+    },
+    {
+      "symbol": "3034",
+      "name": "小聯發科",
+      "asset_type": "futures",
+      "kind": "mini",
+      "signed_notional": 53800,
+      "price": 538.0,
+      "beta": 1.0,
+      "beta_source": "member_default",
+      "dpnl_at_-20pct": -10760
+    },
+    {
+      "symbol": "6510",
+      "name": "精測",
+      "asset_type": "spot",
+      "signed_notional": 0,
+      "price": 3285.0,
+      "beta": 1.0,
+      "beta_source": "member_default",
+      "dpnl_at_-20pct": 0
+    }
+  ],
   "data_quality": {
-    "missing_prices": [
-      "2408",
-      "3034",
-      "3711",
-      "6510",
-      "TAIEX"
-    ],
+    "missing_prices": [],
     "missing_beta": [],
-    "basket_members_loaded": []
+    "basket_members_loaded": [
+      "2344",
+      "2383",
+      "2408",
+      "2449",
+      "3034",
+      "3661",
+      "3711",
+      "6239",
+      "6510",
+      "8054"
+    ]
   }
 }
