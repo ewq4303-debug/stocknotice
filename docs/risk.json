@@ -1,0 +1,46 @@
+{
+  "as_of": "2026-05-31",
+  "equity": {
+    "combined": 835083,
+    "securities": 0,
+    "futures": 835083,
+    "futures_maint_margin": 251096,
+    "futures_init_margin": 327560,
+    "equity_partial": true
+  },
+  "leverage": {
+    "gross_notional": 0,
+    "net_notional": 0,
+    "nlr_gross": 0.0,
+    "nlr_net": 0.0,
+    "verdict": "OK"
+  },
+  "stress": [
+    {
+      "shock": -0.1,
+      "dpnl_total": 0,
+      "dpnl_pct_equity": 0.0,
+      "futures_equity_after": 835083,
+      "verdict": "SAFE"
+    },
+    {
+      "shock": -0.2,
+      "dpnl_total": 0,
+      "dpnl_pct_equity": 0.0,
+      "futures_equity_after": 835083,
+      "verdict": "SAFE"
+    }
+  ],
+  "top_contributors": [],
+  "data_quality": {
+    "missing_prices": [
+      "2408",
+      "3034",
+      "3711",
+      "6510",
+      "TAIEX"
+    ],
+    "missing_beta": [],
+    "basket_members_loaded": []
+  }
+}
