@@ -181,9 +181,17 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
 /* SIDEBAR + STOCK CARD */
 .app-layout{display:flex;gap:16px;align-items:flex-start}
-.sidebar{width:280px;flex-shrink:0;position:sticky;top:20px;display:flex;flex-direction:column;gap:8px}
+.sidebar{width:280px;flex-shrink:0;position:sticky;top:20px;display:flex;flex-direction:column;gap:8px;
+  max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;padding-right:6px;scrollbar-width:thin;
+  scrollbar-color:var(--accent-dim) transparent}
+.sidebar.desktop-only{display:flex}
+.sidebar::-webkit-scrollbar{width:7px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:999px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 .sidebar-title{font-size:12px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.08em;
-  padding:2px 2px 4px;display:flex;justify-content:space-between;align-items:center}
+  padding:2px 2px 8px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;
+  background:linear-gradient(180deg,var(--bg) 0%,rgba(10,14,21,.96) 72%,rgba(10,14,21,0) 100%)}
 .side-add{display:flex;gap:5px}
 .side-add input{width:62px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;font-size:12px;font-family:var(--mono);
   outline:none;background:var(--surface-2);color:var(--ink);transition:.16s}
