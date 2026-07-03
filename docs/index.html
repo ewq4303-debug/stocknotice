@@ -282,7 +282,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
       <button class="tab-btn" onclick="switchTab('tab-rating', this)">綜合評等</button>
       <button class="tab-btn" onclick="switchTab('tab-stocks', this)">追蹤個股分析</button>
       <button class="tab-btn" id="tabbtn-inventory" onclick="switchTab('tab-inventory', this)">庫存與持股比例</button>
-      <button class="tab-btn" onclick="switchTab('tab-risk', this)">期貨風險曝險</button>
+      <button class="tab-btn" data-tab-target="tab-risk" onclick="switchTab('tab-risk', this); if (window.renderRiskCharts) window.renderRiskCharts();">期貨風險曝險</button>
   </div>
 
   <div id="tab-inventory" class="tab-content">
@@ -6806,6 +6806,6 @@ window.DASHBOARD_CONFIG = {
 </script>
 <script src="app.js?v=20260629"></script>
 <script src="inventory.js?v=20260622"></script>
-<script src="risk.js?v=20260630"></script>
+<script src="risk.js?v=20260703"></script>
 </body>
 </html>
