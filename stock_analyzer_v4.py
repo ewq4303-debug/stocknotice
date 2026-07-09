@@ -848,8 +848,60 @@ def generate_ai_analysis(stock_id: str, stock_name: str, data: dict, institution
 # 評等計算
 # =========================================================
 
+RATING_LEVELS = [("strong-buy","強力加碼"), ("buy","加碼"), ("neutral","中性觀望"), ("sell","減碼"), ("strong-sell","強力減碼")]
+BASE_MAX = 19.0  # tech 10 + chip 9
+
+def calculate_fundamental_score(fund: dict) -> dict:
+    """基本面五項檢查:三態訊號 (+1/0/-1),惡化倒扣;資料不足標 N/A 不計分。分數獨立於日頻總分,僅以 Tilt 介入檔位。"""
+    fund = fund or {}
+    score, max_pts, n_available, details = 0.0, 0.0, 0, []
+
+    def mean(xs): return sum(xs) / len(xs)
+
+    def add(label, points, sig, na):
+        nonlocal score, max_pts, n_available
+        earned = 0.0
+        if not na:
+            earned = points * sig
+            score += earned; max_pts += points; n_available += 1
+        details.append({"bucket": "fund", "label": label, "points": points, "earned": earned, "passed": (not na) and sig > 0, "na": bool(na)})
+
+    rev_yoys = [r["yoy"] for r in (fund.get("rev") or []) if r.get("yoy") is not None]
+    if rev_yoys:
+        y = rev_yoys[0]
+        add("最新月營收YoY", 1.5, 1 if y > 0 else (-1 if y < -10 else 0), False)
+    else: add("最新月營收YoY", 1.5, 0, True)
+
+    if len(rev_yoys) >= 6:
+        recent, prior = mean(rev_yoys[0:3]), mean(rev_yoys[3:6])
+        add("營收YoY動能(3m vs 3m)", 1.0, 1 if recent > prior else (-1 if recent < 0 else 0), False)
+    else: add("營收YoY動能(3m vs 3m)", 1.0, 0, True)
+
+    eps_yoys = [e["yoy"] for e in (fund.get("eps") or []) if e.get("yoy") is not None]
+    if eps_yoys:
+        add("最新季EPS YoY", 1.5, 1 if eps_yoys[0] > 0 else -1, False)
+    else: add("最新季EPS YoY", 1.5, 0, True)
+
+    gms = [g["gm"] for g in (fund.get("gm") or []) if g.get("gm") is not None]
+    if len(gms) >= 4:
+        base = mean(gms[1:4])
+        add("毛利率趨勢(vs前3季均)", 1.0, 1 if gms[0] > base + 0.5 else (-1 if gms[0] < base - 1.0 else 0), False)
+    else: add("毛利率趨勢(vs前3季均)", 1.0, 0, True)
+
+    tpe, fpe = fund.get("trailing_pe"), fund.get("forward_pe")
+    if tpe is not None and fpe is not None and tpe > 0 and fpe > 0:
+        add("Forward PE vs Trailing", 1.0, 1 if fpe < tpe * 0.95 else (-1 if fpe > tpe * 1.15 else 0), False)
+    else: add("Forward PE vs Trailing", 1.0, 0, True)
+
+    fund_ratio = (score / max_pts) if max_pts > 0 else 0.0
+    tilt = 0
+    if n_available >= 3 and max_pts > 0:
+        if fund_ratio >= 0.60: tilt = 1
+        elif fund_ratio <= -0.40: tilt = -1
+    return {"score": round(score,1), "max_pts": round(max_pts,1), "n_available": n_available, "tilt": tilt, "details": details}
+
 def calculate_stock_rating(data: dict) -> dict:
-    ind, inst, margin, borrow, tdcc, latest = data.get("indicators",{}), data.get("institution",{}), data.get("margin",{}), data.get("borrow",{}), data.get("tdcc",{}), data.get("latest",{})
+    ind, inst, margin, borrow, tdcc, latest, prev = data.get("indicators",{}), data.get("institution",{}), data.get("margin",{}), data.get("borrow",{}), data.get("tdcc",{}), data.get("latest",{}), data.get("prev",{})
     tech = 0.0
     chip = 0.0
     details = []
@@ -861,14 +913,16 @@ def calculate_stock_rating(data: dict) -> dict:
         else: chip += earned
         details.append({"bucket": bucket, "label": label, "points": points, "earned": earned, "passed": bool(passed)})
 
-    close, ma20, ma60, ma5, ma10 = latest.get("close",0), ind.get("ma20",0), ind.get("ma60",0), ind.get("ma5",0), ind.get("ma10",0)
+    close, prev_close, volume = latest.get("close",0), prev.get("close",0), latest.get("volume",0)
+    ma20, ma60, ma5, ma10 = ind.get("ma20",0), ind.get("ma60",0), ind.get("ma5",0), ind.get("ma10",0)
+    vol_ma5, vol_ma20 = ind.get("vol_ma5",0), ind.get("vol_ma20",0)
     add("tech", "站上月線", close > ma20 > 0, 1)
     add("tech", "月線高於季線", ma20 > ma60 > 0, 1)
     add("tech", "5日線高於10日線", ma5 > ma10 > 0, 1)
     add("tech", "接近20日高點", ind.get("high_20",0) > 0 and close >= ind.get("high_20",0)*0.97, 1.5)
-    add("tech", "量能高於5日均量", latest.get("volume",0) > ind.get("vol_ma5",0) > 0, 1.5)
+    add("tech", "價漲且量增(量>5日均量)", prev_close > 0 and close > prev_close and volume > vol_ma5 > 0, 1.5)
     add("tech", "MACD紅柱", ind.get("macd_hist",0) > 0, 2)
-    add("tech", "5日均量高於20日均量", ind.get("vol_ma5",0) > ind.get("vol_ma20",0) > 0, 2)
+    add("tech", "趨勢向上且量能擴張(5日均量>20日均量)", vol_ma5 > vol_ma20 > 0 and close > ma20 > 0, 2)
 
     last3 = inst.get("history", [])[-3:]
     add("chip", "外資3日買超", sum(h.get("foreign",0) for h in last3) > 0, 1.5)
@@ -876,15 +930,24 @@ def calculate_stock_rating(data: dict) -> dict:
     add("chip", "外資投信同買", inst.get("foreign_today",0) > 0 and inst.get("trust_today",0) > 0, 1)
     add("chip", "融資減少", margin.get("margin_change",0) < 0, 1.5)
     add("chip", "借券減少", borrow.get("borrow_change",0) < 0, 1.5)
-    add("chip", "集保大戶增加", tdcc.get("large_change",0) > 0, 3)
+    add("chip", "集保大戶增加", tdcc.get("large_change",0) > 0.1, 2)
 
     total = tech + chip
-    if total >= 14: rating, rk = "強力加碼", "strong-buy"
-    elif total >= 10: rating, rk = "加碼", "buy"
-    elif total >= 6: rating, rk = "中性觀望", "neutral"
-    elif total >= 3: rating, rk = "減碼", "sell"
-    else: rating, rk = "強力減碼", "strong-sell"
-    return {"tech": round(tech,1), "chip": round(chip,1), "total": round(total,1), "rating": rating, "rating_key": rk, "details": details, "previous_rating": data.get("previous_rating")}
+    ratio = total / BASE_MAX
+    if   ratio >= 0.70: base_idx = 0
+    elif ratio >= 0.50: base_idx = 1
+    elif ratio >= 0.30: base_idx = 2
+    elif ratio >= 0.15: base_idx = 3
+    else:               base_idx = 4
+
+    fund_result = calculate_fundamental_score(data.get("fundamentals") or {})
+    final_idx = min(4, max(0, base_idx - fund_result["tilt"]))   # tilt 只有一檔力量
+    rk, rating = RATING_LEVELS[final_idx]
+
+    details.extend(fund_result["details"])
+    return {"tech": round(tech,1), "chip": round(chip,1), "total": round(total,1), "ratio": round(total/BASE_MAX*100,1),
+            "fund": fund_result["score"], "fund_max": fund_result["max_pts"], "fund_n": fund_result["n_available"], "fund_tilt": fund_result["tilt"],
+            "base_idx": base_idx, "rating": rating, "rating_key": rk, "details": details, "previous_rating": data.get("previous_rating")}
 
 # =========================================================
 # HTML 生成 (深色終端版)
@@ -929,7 +992,7 @@ def generate_rating_table(stocks_data: dict) -> str:
         r = data.get("rating", {})
         key = r.get("rating_key", "neutral")
         if key in groups:
-            groups[key]["stocks"].append({"stock_id": sid, "name": data.get("name",""), "change": data.get("change_pct",0), "tech": r.get("tech",0), "chip": r.get("chip",0), "total": r.get("total",0), "details": r.get("details", []), "previous_rating": r.get("previous_rating")})
+            groups[key]["stocks"].append({"stock_id": sid, "name": data.get("name",""), "change": data.get("change_pct",0), "tech": r.get("tech",0), "chip": r.get("chip",0), "total": r.get("total",0), "fund": r.get("fund",0), "fund_max": r.get("fund_max",0), "fund_tilt": r.get("fund_tilt",0), "details": r.get("details", []), "previous_rating": r.get("previous_rating")})
     for g in groups.values():
         g["stocks"].sort(key=lambda s: -s["total"])
 
@@ -940,7 +1003,14 @@ def generate_rating_table(stocks_data: dict) -> str:
         for s in stocks:
             cls = "up" if s["change"] >= 0 else "down"
             sign = "+" if s["change"] >= 0 else ""
-            chips_html += f'<div class="schip"><div class="schip-top"><span class="schip-name">{s["stock_id"]} {s["name"]}</span><span class="schip-chg {cls}">{sign}{s["change"]:.2f}%</span></div><div class="schip-meta"><span class="tag t">技 {s["tech"]:g}</span><span class="tag c">籌 {s["chip"]:g}</span></div></div>'
+            if s["fund_max"] > 0:
+                fund_tag = f'<span class="tag f {"fp" if s["fund"] >= 0 else "fn"}">基 {s["fund"]:+g}</span>'
+            else:
+                fund_tag = '<span class="tag f fna">基 N/A</span>'
+            tilt_tag = ""
+            if s["fund_tilt"] > 0: tilt_tag = '<span class="tbadge tup">▲基本面</span>'
+            elif s["fund_tilt"] < 0: tilt_tag = '<span class="tbadge tdn">▼基本面</span>'
+            chips_html += f'<div class="schip"><div class="schip-top"><span class="schip-name">{s["stock_id"]} {s["name"]}</span><span class="schip-chg {cls}">{sign}{s["change"]:.2f}%</span></div><div class="schip-meta"><span class="tag t">技 {s["tech"]:g}</span><span class="tag c">籌 {s["chip"]:g}</span>{fund_tag}{tilt_tag}</div></div>'
         if not stocks: chips_html = '<div class="empty">無</div>'
         cols_html += f'<div class="rcol" data-k="{g["k"]}"><div class="rcol-head"><span class="rcol-label">{g["label"]}</span><span class="rcol-count">{len(stocks)}</span></div>{chips_html}</div>'
 
@@ -948,9 +1018,11 @@ def generate_rating_table(stocks_data: dict) -> str:
   <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 {now_tw().strftime("%Y-%m-%d %H:%M")}</span></div>
   <div class="rating-grid">{cols_html}</div>
   <details class="legend"><summary>評分邏輯與門檻</summary><div class="legend-body">
-    <div class="legend-row"><span class="lbadge t">技術 10</span><span>站月線 +1 · 月&gt;季 +1 · 5&gt;10 +1 · 創高 +1.5 · 量&gt;5均 +1.5 · MACD 紅 +2 · 5日量&gt;20日量 +2</span></div>
-    <div class="legend-row"><span class="lbadge c">籌碼 10</span><span>外資3日 +1.5 · 投信3日 +1.5 · 同買 +1 · 融資減 +1.5 · 借券減 +1.5 · 大戶增 +3</span></div>
-    <div class="legend-row"><span class="lbadge tt">總分門檻</span><span>≥14 強力加碼 · 10–13 加碼 · 6–9 觀望 · 3–5 減碼 · ≤2 強力減碼</span></div>
+    <div class="legend-row"><span class="lbadge t">技術 10</span><span>站月線 +1 · 月&gt;季 +1 · 5&gt;10 +1 · 近20日高 +1.5 · 價漲且量&gt;5均 +1.5 · MACD 紅 +2 · 趨勢向上且5日量&gt;20日量 +2（量能兩項均需價格方向配合）</span></div>
+    <div class="legend-row"><span class="lbadge c">籌碼 9</span><span>外資3日 +1.5 · 投信3日 +1.5 · 同買 +1 · 融資減 +1.5 · 借券減 +1.5 · 大戶增&gt;0.1pp +2</span></div>
+    <div class="legend-row"><span class="lbadge tt">日頻檔位</span><span>日頻分數 =（技+籌）/ 19 比例制：≥70% 強力加碼 · ≥50% 加碼 · ≥30% 中性觀望 · ≥15% 減碼 · &lt;15% 強力減碼</span></div>
+    <div class="legend-row"><span class="lbadge f">基本面 Tilt</span><span>五項檢查（月營收YoY · 營收動能 · 季EPS YoY · 毛利率趨勢 · Forward PE）三態計分（+1/0/−1，惡化倒扣、缺值 N/A 不計）；可用項 ≥3 且比率 ≥+60% 升一檔 ▲、≤−40% 降一檔 ▼。基本面分數獨立顯示，永不加進日頻總分。</span></div>
+    <div class="legend-row"><span class="lbadge tt">最終評等</span><span>日頻檔位 ± 基本面 Tilt（最多一檔，不超出五檔範圍）</span></div>
   </div></details>
 </div>"""
 
@@ -1065,12 +1137,34 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     def marg_cell(v): return f'<td class="{"up" if v>=0 else "down"}">{v:+,}</td>'
 
     detail_rows = ""
+    bucket_names = {"tech": "技術面", "chip": "籌碼面", "fund": "基本面"}
+    bucket_short = {"tech": "技術", "chip": "籌碼", "fund": "基本"}
+    last_bucket = None
     for d in r.get("details", []):
-        bucket = "技術" if d.get("bucket") == "tech" else "籌碼"
-        status = "✓" if d.get("passed") else "—"
-        status_cls = "up" if d.get("passed") else ""
-        detail_rows += f"<tr><td>{bucket}</td><td>{d.get('label','')}</td><td>{d.get('points',0):g}</td><td class='{status_cls}'>{status} {d.get('earned',0):g}</td></tr>"
+        b = d.get("bucket")
+        if b != last_bucket:
+            detail_rows += f"<tr class='bucket-head'><td colspan='4'>{bucket_names.get(b, b)}</td></tr>"
+            last_bucket = b
+        bucket = bucket_short.get(b, b)
+        earned = d.get('earned', 0)
+        if d.get("na"):
+            detail_rows += f"<tr class='na-row'><td>{bucket}</td><td>{d.get('label','')}</td><td>{d.get('points',0):g}</td><td>資料不足</td></tr>"
+        elif earned < 0:
+            detail_rows += f"<tr><td>{bucket}</td><td>{d.get('label','')}</td><td>{d.get('points',0):g}</td><td class='fneg'>−{abs(earned):g}</td></tr>"
+        else:
+            status = "✓" if earned > 0 else "✗"
+            status_cls = "up" if earned > 0 else ""
+            detail_rows += f"<tr><td>{bucket}</td><td>{d.get('label','')}</td><td>{d.get('points',0):g}</td><td class='{status_cls}'>{status} {earned:g}</td></tr>"
     previous_rating = r.get("previous_rating") or "尚無前次評等"
+
+    tilt, base_idx = r.get("fund_tilt", 0), r.get("base_idx", 0)
+    tilt_mark = "▲" if tilt > 0 else ("▼" if tilt < 0 else "—")
+    tilt_badge = ""
+    if tilt != 0:
+        saturated = (base_idx == 0 and tilt > 0) or (base_idx == 4 and tilt < 0)
+        note = "（已達檔位上限）" if saturated else ""
+        tilt_badge = f'<span class="tbadge {"tup" if tilt > 0 else "tdn"}">{"▲" if tilt > 0 else "▼"}基本面{note}</span>'
+    fund_str = f"{r.get('fund',0):+g} / {r.get('fund_max',0):g}（{r.get('fund_n',0)}項）" if r.get('fund_max',0) > 0 else "N/A"
 
     return f"""
     <div class="stock-card {'active' if is_first else ''}" id="card_{stock_id}">
@@ -1082,7 +1176,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
             <div class="sc-name">{data.get('name','')} <span class="sc-price {c_cls}">${close_price:,.2f} <span style="font-size:13px">({change_str})</span></span></div></div>
           <div class="sc-meta">
             <div class="block"><div class="k">法人目標價</div><div class="v target">{target_price}</div></div>
-            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge {rk}">★ {r.get('rating','')}</span></div></div>
+            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge {rk}">★ {r.get('rating','')}</span>{tilt_badge}</div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">{r.get('tech',0):g} / {r.get('chip',0):g}</div></div>
           </div>
         </div>
@@ -1093,7 +1187,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
           <details class="fold rating-detail" open>
             <summary>評分明細與變化</summary>
             <div>
-              <div class="rating-summary"><span>本次：<b>{r.get('rating','')}</b></span><span>前次：{previous_rating}</span><span>總分：{r.get('total',0):g}</span></div>
+              <div class="rating-summary"><span>本次：<b>{r.get('rating','')}</b></span><span>前次：{previous_rating}</span><span>總分：{r.get('total',0):g}</span><span>基本面：{fund_str} · Tilt {tilt_mark}</span></div>
               <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr>{detail_rows}</table>
             </div>
           </details>
@@ -1743,6 +1837,16 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 .legend-row{display:flex;gap:10px;align-items:flex-start;line-height:1.5}
 .lbadge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap}
 .lbadge.t{background:rgba(77,127,255,.14);color:#7f9fff} .lbadge.c{background:var(--down-soft);color:var(--down)} .lbadge.tt{background:rgba(224,168,60,.15);color:var(--gold)}
+.lbadge.f{background:rgba(176,123,255,.15);color:#b07bff}
+
+/* v2: 基本面分數與 Tilt */
+.tag.f.fp{background:var(--up-soft);color:var(--up)} .tag.f.fn{background:var(--down-soft);color:var(--down)}
+.tag.f.fna{background:var(--surface);color:var(--ink-3)}
+.tbadge{display:inline-flex;align-items:center;gap:2px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:5px;margin-left:4px;white-space:nowrap;vertical-align:middle}
+.tbadge.tup{background:var(--up-soft);color:var(--up)} .tbadge.tdn{background:var(--down-soft);color:var(--down)}
+.dtable tr.bucket-head td{background:var(--surface-2);color:var(--ink-2);font-size:10.5px;font-weight:700;font-family:var(--sans);text-align:left}
+.dtable td.fneg{color:var(--down)}
+.dtable tr.na-row td{color:var(--ink-3)}
 
 /* DATA TABLE */
 .dtable{width:100%;font-size:12px;border-collapse:collapse}
@@ -2068,7 +2172,9 @@ def process_single_stock(stock_id):
         "fundamentals": fund
     }
     record["rating"] = calculate_stock_rating(record)
-    print(f"    ✓ {stock_id} 評等: {record['rating']['rating']} (技{record['rating']['tech']:g}/籌{record['rating']['chip']:g})")
+    rt = record["rating"]
+    tilt_str = f"{rt['fund_tilt']:+d}" if rt['fund_tilt'] else "0"
+    print(f"    ✓ {stock_id} 評等: {rt['rating']} (技{rt['tech']:g}/籌{rt['chip']:g}/基{rt['fund']:+g} tilt {tilt_str})")
     return stock_id, record
 
 def main():
