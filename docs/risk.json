@@ -9,25 +9,25 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 2121710,
-    "net_notional": 2121710,
-    "nlr_gross": 2.5407,
-    "nlr_net": 2.5407,
+    "gross_notional": 2042382,
+    "net_notional": 2042382,
+    "nlr_gross": 2.4457,
+    "nlr_net": 2.4457,
     "verdict": "WATCH"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -166128,
-      "dpnl_pct_equity": -0.1989,
-      "futures_equity_after": 689445,
+      "dpnl_total": -157831,
+      "dpnl_pct_equity": -0.189,
+      "futures_equity_after": 697712,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -332256,
-      "dpnl_pct_equity": -0.3979,
-      "futures_equity_after": 543807,
+      "dpnl_total": -315662,
+      "dpnl_pct_equity": -0.378,
+      "futures_equity_after": 560341,
       "verdict": "SAFE"
     }
   ],
@@ -37,50 +37,50 @@
       "name": "南亞科期",
       "asset_type": "futures",
       "kind": "standard",
-      "signed_notional": 962000,
-      "price": 481.0,
+      "signed_notional": 878000,
+      "price": 439.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -192400
+      "dpnl_at_-20pct": -175600
     },
     {
       "symbol": "TXF",
       "name": "微台",
       "asset_type": "futures",
       "kind": "micro_index",
-      "signed_notional": 907610,
-      "price": 45380.51953125,
-      "beta": 0.4927,
+      "signed_notional": 912632,
+      "price": 45631.58984375,
+      "beta": 0.4915,
       "beta_source": "rolling_60d",
-      "dpnl_at_-20pct": -89436
+      "dpnl_at_-20pct": -89712
     },
     {
       "symbol": "3711",
       "name": "日月光投控",
       "asset_type": "spot",
-      "signed_notional": 204900,
-      "price": 683.0,
+      "signed_notional": 204600,
+      "price": 682.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -40980
+      "dpnl_at_-20pct": -40920
     },
     {
       "symbol": "3034",
       "name": "小聯發科",
       "asset_type": "futures",
       "kind": "mini",
-      "signed_notional": 47200,
-      "price": 472.0,
+      "signed_notional": 47150,
+      "price": 471.5,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -9440
+      "dpnl_at_-20pct": -9430
     },
     {
       "symbol": "6510",
       "name": "精測",
       "asset_type": "spot",
       "signed_notional": 0,
-      "price": 2810.0,
+      "price": 2680.0,
       "beta": 1.0,
       "beta_source": "member_default",
       "dpnl_at_-20pct": 0
