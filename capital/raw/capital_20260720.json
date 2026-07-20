@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T23:02:31",
+  "generated_at": "2026-07-20T23:05:09",
   "skcom_dll": "C:\\SKCOM\\x64\\SKCOM.dll",
   "accounts": [
     {
@@ -309,30 +309,30 @@
   "futures_rights": [
     {
       "balance": "244290",
-      "floating_pl": "9250",
+      "floating_pl": "10950",
       "realized_fee": "1050",
       "tax": "189",
       "premium_withheld": "0",
       "premium_paid": "0",
-      "equity": "253540",
-      "excess_margin": "94540",
+      "equity": "255240",
+      "excess_margin": "96240",
       "deposit_withdraw": "0",
       "buy_market_value": "0",
       "sell_market_value": "0",
       "futures_closed_pl": "47360",
-      "intraday_unrealized": "9250",
+      "intraday_unrealized": "10950",
       "initial_margin": "190800",
       "maintenance_margin": "146400",
       "position_initial_margin": "159000",
       "position_maintenance_margin": "122000",
       "order_margin": "31800",
-      "excess_best_margin": "94540",
-      "option_total_value": "253540",
+      "excess_best_margin": "96240",
+      "option_total_value": "255240",
       "fee_withheld": "0",
       "initial_margin_2": "0",
       "yesterday_balance": "198169",
       "option_combo_extra_margin": "",
-      "maintenance_ratio": "159",
+      "maintenance_ratio": "161",
       "currency": "NTD",
       "full_initial_margin": "159000",
       "full_maintenance_margin": "122000",
@@ -342,7 +342,7 @@
       "available_balance": "53490",
       "full_cash_available": "53490",
       "securities_value": "0",
-      "risk_index": "179",
+      "risk_index": "177",
       "option_expiry_diff": "0",
       "option_expiry_loss": "0",
       "futures_expiry_pl": "0",
@@ -515,7 +515,7 @@
     },
     "futures_rights": {
       "TF_52f92b59": [
-        "244290,9250,1050,189,0,0,253540,94540,0,0,0,47360,9250,190800,146400,159000,122000,31800,94540,253540,0,0,198169,,159,NTD,159000,122000,53490,0,0,53490,53490,0,179,0,0,0,0,LOGIN_ID,TF_52f92b59"
+        "244290,10950,1050,189,0,0,255240,96240,0,0,0,47360,10950,190800,146400,159000,122000,31800,96240,255240,0,0,198169,,161,NTD,159000,122000,53490,0,0,53490,53490,0,177,0,0,0,0,LOGIN_ID,TF_52f92b59"
       ]
     }
   },
