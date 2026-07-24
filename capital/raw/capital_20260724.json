@@ -1,0 +1,165 @@
+{
+  "generated_at": "2026-07-24T16:49:03",
+  "skcom_dll": "C:\\SKCOM\\x64\\SKCOM.dll",
+  "accounts": [
+    {
+      "market": "OS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "OSn_d7f8bd44",
+      "full_account": "OS_4fa5a681"
+    },
+    {
+      "market": "",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "XXn_cea777ba",
+      "full_account": "XX_461bb16b"
+    },
+    {
+      "market": "TS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "TSn_ed837618",
+      "full_account": "TS_55977ef5"
+    },
+    {
+      "market": "TF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    },
+    {
+      "market": "OF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    }
+  ],
+  "stock_inventory": [
+    {
+      "stock_no": "RequestRealBalanceReport result JSON data error"
+    }
+  ],
+  "futures_open_interest": [
+    {
+      "market": "RequestOpenInterest result JSON data error"
+    }
+  ],
+  "futures_rights": [
+    {
+      "balance": "RequestFutureRight result JSON data error"
+    }
+  ],
+  "bank_balance": {
+    "status": "ok",
+    "has_account_link": true,
+    "balance": "560173",
+    "withdrawable": "560173",
+    "today_buyable": "560173"
+  },
+  "t3_settlement": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "currencies": [
+        {
+          "currency": "臺幣",
+          "T": {
+            "trade_date": "1150724",
+            "settle_date": "1150728",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150723",
+            "settle_date": "1150727",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1150722",
+            "settle_date": "1150724",
+            "amount": -58360
+          }
+        },
+        {
+          "currency": "人民幣",
+          "T": {
+            "trade_date": "1150724",
+            "settle_date": "1150728",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150723",
+            "settle_date": "1150727",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1150722",
+            "settle_date": "1150724",
+            "amount": 0
+          }
+        }
+      ]
+    }
+  },
+  "ipa_block": {
+    "TS_55977ef5": {
+      "status": "no_account_link_or_message",
+      "message": "-1"
+    }
+  },
+  "order_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "no_data",
+      "rows": []
+    }
+  },
+  "fulfill_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "no_data",
+      "rows": []
+    }
+  },
+  "raw": {
+    "order_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "M003"
+    },
+    "fulfill_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "M003"
+    },
+    "bank_balance": "true,560173,560173,560173.",
+    "t3_settlement": {
+      "TS_55977ef5": "1150724,1150728,0,1150723,1150727,0,1150722,1150724,-58360,臺幣;1150724,1150728,0,1150723,1150727,0,1150722,1150724,0,人民幣;"
+    },
+    "ipa_block": {
+      "TS_55977ef5": "-1"
+    },
+    "stock_inventory": {
+      "TS_55977ef5": [
+        "RequestRealBalanceReport result JSON data error"
+      ]
+    },
+    "futures_open_interest": {
+      "TF_52f92b59": [
+        "RequestOpenInterest result JSON data error"
+      ]
+    },
+    "futures_rights": {
+      "TF_52f92b59": [
+        "RequestFutureRight result JSON data error"
+      ]
+    }
+  },
+  "redacted": true
+}
