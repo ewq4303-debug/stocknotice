@@ -1,0 +1,173 @@
+{
+  "generated_at": "2026-07-27T17:13:53",
+  "skcom_dll": "C:\\SKCOM\\x64\\SKCOM.dll",
+  "accounts": [
+    {
+      "market": "OS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "OSn_d7f8bd44",
+      "full_account": "OS_4fa5a681"
+    },
+    {
+      "market": "",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "XXn_cea777ba",
+      "full_account": "XX_461bb16b"
+    },
+    {
+      "market": "TS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "TSn_ed837618",
+      "full_account": "TS_55977ef5"
+    },
+    {
+      "market": "TF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    },
+    {
+      "market": "OF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    }
+  ],
+  "stock_inventory": [
+    {
+      "stock_no": "RequestRealBalanceReport result JSON data error"
+    }
+  ],
+  "futures_open_interest": [
+    {
+      "market": "RequestOpenInterest result JSON data error"
+    }
+  ],
+  "futures_rights": [
+    {
+      "balance": "RequestFutureRight result JSON data error"
+    }
+  ],
+  "bank_balance": {
+    "status": "ok",
+    "has_account_link": true,
+    "balance": "560173",
+    "withdrawable": "560173",
+    "today_buyable": "560173"
+  },
+  "t3_settlement": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "currencies": [
+        {
+          "currency": "臺幣",
+          "T": {
+            "trade_date": "1150727",
+            "settle_date": "1150729",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150724",
+            "settle_date": "1150728",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1150723",
+            "settle_date": "1150727",
+            "amount": 0
+          }
+        },
+        {
+          "currency": "人民幣",
+          "T": {
+            "trade_date": "1150727",
+            "settle_date": "1150729",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150724",
+            "settle_date": "1150728",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1150723",
+            "settle_date": "1150727",
+            "amount": 0
+          }
+        }
+      ]
+    }
+  },
+  "ipa_block": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "blockable": "560173",
+      "blocked": "0",
+      "ordered": "0"
+    }
+  },
+  "order_report": {
+    "TS_55977ef5": {
+      "status": "query_error",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "ok",
+      "rows": [
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,b3696,2315605199500,2315605199500,2,20260727,115114,20260727,20260727,QEFH6,FIQEF,202608,0,,0,0,S,,,0,2,600.0000,600.0000,1,1,1,0,O,A,N,u,1,,0954,,0.0000,0,600.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260727,115747,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,115114217,,,0,0,,QEFH6,,,"
+      ]
+    }
+  },
+  "fulfill_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "ok",
+      "rows": [
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,b3696,0000012544,20260727,115747,20260727,QEFH6,FIQEF,202608,0,0.0000,,0,0,0.0000,S,,,0,600.0000,1,O,A,u,2,20260727,0954,0.00,0,   ,20260727,115114,0.00000,0,1,,,600.0000,,,3,1.000000,0,115747698,,QEFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g8154,0000004247,20260724,215428,20260727,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,43600.0000,1,O,B,u,2,20260724,0954,0.00,0,   ,0,,0.00000,0,1,,,43600.0000,,,3,1.000000,0,215428696,,TMFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g8154,0000004246,20260724,215428,20260727,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,43600.0000,1,O,B,u,2,20260724,0954,0.00,0,   ,0,,0.00000,0,1,,,43600.0000,,,3,1.000000,0,215428696,,TMFH6"
+      ]
+    }
+  },
+  "raw": {
+    "order_report": {
+      "TS_55977ef5": "M999 資料傳輸失敗 Code: 12007",
+      "TF_52f92b59": "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,b3696,2315605199500,2315605199500,2,20260727,115114,20260727,20260727,QEFH6,FIQEF,202608,0,,0,0,S,,,0,2,600.0000,600.0000,1,1,1,0,O,A,N,u,1,,0954,,0.0000,0,600.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260727,115747,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,115114217,,,0,0,,QEFH6,,,\r\n\r\n"
+    },
+    "fulfill_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,b3696,0000012544,20260727,115747,20260727,QEFH6,FIQEF,202608,0,0.0000,,0,0,0.0000,S,,,0,600.0000,1,O,A,u,2,20260727,0954,0.00,0,   ,20260727,115114,0.00000,0,1,,,600.0000,,,3,1.000000,0,115747698,,QEFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g8154,0000004247,20260724,215428,20260727,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,43600.0000,1,O,B,u,2,20260724,0954,0.00,0,   ,0,,0.00000,0,1,,,43600.0000,,,3,1.000000,0,215428696,,TMFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g8154,0000004246,20260724,215428,20260727,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,43600.0000,1,O,B,u,2,20260724,0954,0.00,0,   ,0,,0.00000,0,1,,,43600.0000,,,3,1.000000,0,215428696,,TMFH6\r\n\r\n"
+    },
+    "bank_balance": "true,560173,560173,560173.",
+    "t3_settlement": {
+      "TS_55977ef5": "1150727,1150729,0,1150724,1150728,0,1150723,1150727,0,臺幣;1150727,1150729,0,1150724,1150728,0,1150723,1150727,0,人民幣;"
+    },
+    "ipa_block": {
+      "TS_55977ef5": "560173,0,0#"
+    },
+    "stock_inventory": {
+      "TS_55977ef5": [
+        "RequestRealBalanceReport result JSON data error"
+      ]
+    },
+    "futures_open_interest": {
+      "TF_52f92b59": [
+        "RequestOpenInterest result JSON data error"
+      ]
+    },
+    "futures_rights": {
+      "TF_52f92b59": [
+        "RequestFutureRight result JSON data error"
+      ]
+    }
+  },
+  "redacted": true
+}
