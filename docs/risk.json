@@ -9,25 +9,25 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 2043032,
-    "net_notional": 2043032,
-    "nlr_gross": 2.4465,
-    "nlr_net": 2.4465,
+    "gross_notional": 2038734,
+    "net_notional": 2038734,
+    "nlr_gross": 2.4414,
+    "nlr_net": 2.4414,
     "verdict": "WATCH"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -163484,
-      "dpnl_pct_equity": -0.1958,
-      "futures_equity_after": 689449,
+      "dpnl_total": -163117,
+      "dpnl_pct_equity": -0.1953,
+      "futures_equity_after": 689816,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -326967,
-      "dpnl_pct_equity": -0.3915,
-      "futures_equity_after": 543816,
+      "dpnl_total": -326234,
+      "dpnl_pct_equity": -0.3907,
+      "futures_equity_after": 544549,
       "verdict": "SAFE"
     }
   ],
@@ -48,11 +48,11 @@
       "name": "微台",
       "asset_type": "futures",
       "kind": "micro_index",
-      "signed_notional": 892232,
-      "price": 44611.6015625,
-      "beta": 0.5425,
+      "signed_notional": 887934,
+      "price": 44396.69921875,
+      "beta": 0.541,
       "beta_source": "rolling_60d",
-      "dpnl_at_-20pct": -96807
+      "dpnl_at_-20pct": -96074
     },
     {
       "symbol": "3711",
@@ -80,7 +80,7 @@
       "name": "精測",
       "asset_type": "spot",
       "signed_notional": 0,
-      "price": 2835.0,
+      "price": 2695.0,
       "beta": 1.0,
       "beta_source": "member_default",
       "dpnl_at_-20pct": 0
