@@ -1026,6 +1026,26 @@ def generate_rating_table(stocks_data: dict) -> str:
   </div></details>
 </div>"""
 
+def format_optional_number(value, format_spec: str = ".2f", fallback: str = "-") -> str:
+    """Format a scalar from an external data source without crashing on missing data."""
+    try:
+        if value is None or pd.isna(value):
+            return fallback
+        return format(value, format_spec)
+    except (TypeError, ValueError):
+        return fallback
+
+
+def optional_number_class(value) -> str:
+    """Return the dashboard colour class for a possibly missing numeric scalar."""
+    try:
+        if value is None or pd.isna(value):
+            return ""
+        return "up" if value > 0 else ("down" if value < 0 else "")
+    except (TypeError, ValueError):
+        return ""
+
+
 def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> str:
     latest, ind, inst, margin, borrow, tdcc, news, r = data["latest"], data["indicators"], data["institution"], data["margin"], data.get("borrow", {}), data.get("tdcc", {}), data.get("news", []), data["rating"]
     fund = data.get("fundamentals", {})
@@ -1090,7 +1110,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
 
     # --- 基本面 UI 格式化 ---
     def fmt_pct(v): return f"{v*100:.2f}%" if pd.notna(v) and v is not None else "-"
-    def fmt_f(v): return f"{v:.2f}" if pd.notna(v) and v is not None else "-"
+    def fmt_f(v): return format_optional_number(v)
 
     target_val = fund.get('target_price')
     target_price = f"${target_val:,.2f}" if target_val else "-"
@@ -1112,9 +1132,12 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
     for i in range(5):
         if i < len(eps_data):
             d = eps_data[i]
-            yoy_str = f"{d['yoy']:.2f}%" if d.get('yoy') is not None else "-"
-            yoy_cls = 'up' if d.get('yoy') and d['yoy']>0 else ('down' if d.get('yoy') and d['yoy']<0 else '')
-            eps_rows += f"<tr><td>{d['date']}</td><td>{d['eps']:.2f}</td><td class='{yoy_cls}'>{yoy_str}</td></tr>"
+            eps_str = format_optional_number(d.get('eps'))
+            yoy_value = d.get('yoy')
+            yoy_number = format_optional_number(yoy_value)
+            yoy_str = f"{yoy_number}%" if yoy_number != "-" else "-"
+            yoy_cls = optional_number_class(yoy_value)
+            eps_rows += f"<tr><td>{d.get('date', '-')}</td><td>{eps_str}</td><td class='{yoy_cls}'>{yoy_str}</td></tr>"
         else: eps_rows += "<tr><td style='color:var(--ink-3);'>-</td><td style='color:var(--ink-3);'>-</td><td style='color:var(--ink-3);'>-</td></tr>"
 
     for i in range(6):
