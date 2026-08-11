@@ -23,6 +23,15 @@ def fund_detail(res, label):
     return next(d for d in res["details"] if d["label"] == label)
 
 
+def test_optional_number_formatting_handles_missing_external_data():
+    assert sa.format_optional_number(None) == "-"
+    assert sa.format_optional_number(float("nan")) == "-"
+    assert sa.format_optional_number("not-a-number") == "-"
+    assert sa.format_optional_number(0) == "0.00"
+    assert sa.optional_number_class(None) == ""
+    assert sa.optional_number_class("not-a-number") == ""
+
+
 # ---------- 基本面測試向量 ----------
 
 def test_tv_a_all_positive():
