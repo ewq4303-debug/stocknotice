@@ -1,0 +1,528 @@
+{
+  "generated_at": "2026-08-15T18:04:40",
+  "skcom_dll": "C:\\SKCOM\\x64\\SKCOM.dll",
+  "accounts": [
+    {
+      "market": "OS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "OSn_d7f8bd44",
+      "full_account": "OS_4fa5a681"
+    },
+    {
+      "market": "",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "XXn_cea777ba",
+      "full_account": "XX_461bb16b"
+    },
+    {
+      "market": "TS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "TSn_ed837618",
+      "full_account": "TS_55977ef5"
+    },
+    {
+      "market": "TF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    },
+    {
+      "market": "OF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    }
+  ],
+  "stock_inventory": [
+    {
+      "stock_no": "00735",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "1500",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "1500",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "1500",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "00947",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "6000",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "6000",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "6000",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "1303",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "1000",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "1000",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "1000",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "2330",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "75",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "75",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "75",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3037",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "165",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "165",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "165",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3189",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "40",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "40",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "40",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3481",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "650",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "650",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "650",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3711",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "440",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "440",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "440",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "5434",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "35",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "35",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "35",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "6223",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "17",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "17",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "17",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "6274",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "70",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "70",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "70",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "6789",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "50",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "50",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "50",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    }
+  ],
+  "futures_open_interest": [
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "OLF08",
+      "bs": "B",
+      "oi_qty": "1",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "4520.00",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "QEF08",
+      "bs": "B",
+      "oi_qty": "2",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "602.00",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "TM08",
+      "bs": "B",
+      "oi_qty": "6",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "46006.33",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "TM09",
+      "bs": "B",
+      "oi_qty": "2",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "46165.00",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    }
+  ],
+  "futures_rights": [
+    {
+      "balance": "457071",
+      "floating_pl": "-7680",
+      "realized_fee": "350",
+      "tax": "63",
+      "premium_withheld": "0",
+      "premium_paid": "0",
+      "equity": "449391",
+      "excess_margin": "69846",
+      "deposit_withdraw": "50000",
+      "buy_market_value": "0",
+      "sell_market_value": "0",
+      "futures_closed_pl": "10310",
+      "intraday_unrealized": "0",
+      "initial_margin": "379545",
+      "maintenance_margin": "291217",
+      "position_initial_margin": "379545",
+      "position_maintenance_margin": "291217",
+      "order_margin": "0",
+      "excess_best_margin": "69846",
+      "option_total_value": "449391",
+      "fee_withheld": "0",
+      "initial_margin_2": "0",
+      "yesterday_balance": "397174",
+      "option_combo_extra_margin": "",
+      "maintenance_ratio": "118",
+      "currency": "NTD",
+      "full_initial_margin": "379545",
+      "full_maintenance_margin": "291217",
+      "full_available": "69846",
+      "collateral_amount": "0",
+      "securities_available": "0",
+      "available_balance": "69846",
+      "full_cash_available": "69846",
+      "securities_value": "0",
+      "risk_index": "118",
+      "option_expiry_diff": "0",
+      "option_expiry_loss": "0",
+      "futures_expiry_pl": "0",
+      "extra_margin": "0",
+      "login_id": "LOGIN_ID",
+      "account_no": "TF_52f92b59"
+    }
+  ],
+  "bank_balance": {
+    "status": "ok",
+    "has_account_link": true,
+    "balance": "131093",
+    "withdrawable": "115188",
+    "today_buyable": "115188"
+  },
+  "t3_settlement": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "currencies": [
+        {
+          "currency": "臺幣",
+          "T": {
+            "trade_date": "1150814",
+            "settle_date": "1150818",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150813",
+            "settle_date": "1150817",
+            "amount": -32630
+          },
+          "T2": {
+            "trade_date": "1150812",
+            "settle_date": "1150814",
+            "amount": -12544
+          }
+        },
+        {
+          "currency": "人民幣",
+          "T": {
+            "trade_date": "1150814",
+            "settle_date": "1150818",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1150813",
+            "settle_date": "1150817",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1150812",
+            "settle_date": "1150814",
+            "amount": 0
+          }
+        }
+      ]
+    }
+  },
+  "ipa_block": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "blockable": "115188",
+      "blocked": "0",
+      "ordered": "0"
+    }
+  },
+  "order_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "ok",
+      "rows": [
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g6691,2315608820976,2315608820976,7,20260814,195439,20260817,20260814,TMFH6,FITM,202608,0,,0,0,S,,,0,2,46100.0000,46100.0000,1,1,0,1,O,B,N,u,1,,0954,,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,,,,,,,,,,3,1.000000,1.000000,0.000000,1.000000,0.000000,195439462,,,0,0,,TMFH6,,,",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,d6064,2315608810202,2315608810202,2,20260814,155647,20260817,20260814,TMFI6,FITM,202609,0,,0,0,B,,,0,2,45980.0000,45980.0000,1,1,1,0,N,B,N,RI,1,,0954,,0.0000,0,45980.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260814,155652,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,155647918,,,0,0,,TMFI6,,,",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,k1151,2315608698076,2315608698076,2,20260814,091149,20260814,20260814,TMFI6,FITM,202609,0,,0,0,B,,,0,2,46350.0000,46350.0000,1,1,1,0,N,A,N,RI,1,,0954,,0.0000,0,46350.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260814,091211,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,091149929,,,0,0,,TMFI6,,,",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,x0196,2315608673352,2315608673352,11,20260814,084242,20260814,20260814,TMFH6,FITM,202608,0,,0,0,S,,,0,2,46500.0000,46500.0000,0,2,0,0,O,A,N,u,1,,0954,,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,,0.0000,2,,,,,,,,,,3,0.000000,2.000000,0.000000,0.000000,2.000000,084242361,,,0,0,,TMFH6,,,"
+      ]
+    }
+  },
+  "fulfill_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "ok",
+      "rows": [
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,d6064,0000000442,20260814,155652,20260817,TMFI6,FITM,202609,0,0.0000,,0,0,0.0000,B,,,0,45980.0000,1,N,B,RI,2,20260814,0954,0.00,0,   ,20260814,155647,0.00000,0,1,,,45980.0000,,,3,1.000000,0,155652663,,TMFI6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,k1151,0000005893,20260814,091211,20260814,TMFI6,FITM,202609,0,0.0000,,0,0,0.0000,B,,,0,46350.0000,1,N,A,RI,2,20260814,0954,0.00,0,   ,20260814,091149,0.00000,0,1,,,46350.0000,,,3,1.000000,0,091211056,,TMFI6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,m6315,0000011189,20260813,233618,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46350.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46350.0000,,,3,1.000000,0,233618938,,TMFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,e6498,0000007646,20260813,233418,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46400.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46400.0000,,,3,1.000000,0,233418510,,TMFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,m6949,0000007154,20260813,232848,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46450.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46450.0000,,,3,1.000000,0,232848185,,TMFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,l6678,0000005923,20260813,222941,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,46500.0000,1,O,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46500.0000,,,3,1.000000,0,222941424,,TMFH6",
+        "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,u5697,0000002407,20260813,204733,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46040.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46040.0000,,,3,1.000000,0,204733393,,TMFH6"
+      ]
+    }
+  },
+  "raw": {
+    "order_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,g6691,2315608820976,2315608820976,7,20260814,195439,20260817,20260814,TMFH6,FITM,202608,0,,0,0,S,,,0,2,46100.0000,46100.0000,1,1,0,1,O,B,N,u,1,,0954,,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,,,,,,,,,,3,1.000000,1.000000,0.000000,1.000000,0.000000,195439462,,,0,0,,TMFH6,,,\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,d6064,2315608810202,2315608810202,2,20260814,155647,20260817,20260814,TMFI6,FITM,202609,0,,0,0,B,,,0,2,45980.0000,45980.0000,1,1,1,0,N,B,N,RI,1,,0954,,0.0000,0,45980.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260814,155652,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,155647918,,,0,0,,TMFI6,,,\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,k1151,2315608698076,2315608698076,2,20260814,091149,20260814,20260814,TMFI6,FITM,202609,0,,0,0,B,,,0,2,46350.0000,46350.0000,1,1,1,0,N,A,N,RI,1,,0954,,0.0000,0,46350.0000,0.0000,0,0.0000,0.0000,0,,0.0000,0,20260814,091211,,,,,,,,3,1.000000,1.000000,1.000000,0.000000,0.000000,091149929,,,0,0,,TMFI6,,,\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,x0196,2315608673352,2315608673352,11,20260814,084242,20260814,20260814,TMFH6,FITM,202608,0,,0,0,S,,,0,2,46500.0000,46500.0000,0,2,0,0,O,A,N,u,1,,0954,,0.0000,0,0.0000,0.0000,0,0.0000,0.0000,0,,0.0000,2,,,,,,,,,,3,0.000000,2.000000,0.000000,0.000000,2.000000,084242361,,,0,0,,TMFH6,,,\r\n\r\n"
+    },
+    "fulfill_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "TF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,d6064,0000000442,20260814,155652,20260817,TMFI6,FITM,202609,0,0.0000,,0,0,0.0000,B,,,0,45980.0000,1,N,B,RI,2,20260814,0954,0.00,0,   ,20260814,155647,0.00000,0,1,,,45980.0000,,,3,1.000000,0,155652663,,TMFI6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,k1151,0000005893,20260814,091211,20260814,TMFI6,FITM,202609,0,0.0000,,0,0,0.0000,B,,,0,46350.0000,1,N,A,RI,2,20260814,0954,0.00,0,   ,20260814,091149,0.00000,0,1,,,46350.0000,,,3,1.000000,0,091211056,,TMFI6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,m6315,0000011189,20260813,233618,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46350.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46350.0000,,,3,1.000000,0,233618938,,TMFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,e6498,0000007646,20260813,233418,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46400.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46400.0000,,,3,1.000000,0,233418510,,TMFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,m6949,0000007154,20260813,232848,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46450.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46450.0000,,,3,1.000000,0,232848185,,TMFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,l6678,0000005923,20260813,222941,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,S,,,0,46500.0000,1,O,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46500.0000,,,3,1.000000,0,222941424,,TMFH6\r\nTF,FUT,TAIFEX,F020000,B09,TFn_f321c09b,0000000,u5697,0000002407,20260813,204733,20260814,TMFH6,FITM,202608,0,0.0000,,0,0,0.0000,B,,,0,46040.0000,1,N,B,u,2,20260813,0954,0.00,0,   ,0,,0.00000,0,1,,,46040.0000,,,3,1.000000,0,204733393,,TMFH6\r\n\r\n"
+    },
+    "bank_balance": "true,131093,115188,115188.",
+    "t3_settlement": {
+      "TS_55977ef5": "1150814,1150818,0,1150813,1150817,-32630,1150812,1150814,-12544,臺幣;1150814,1150818,0,1150813,1150817,0,1150812,1150814,0,人民幣;"
+    },
+    "ipa_block": {
+      "TS_55977ef5": "115188,0,0#"
+    },
+    "stock_inventory": {
+      "TS_55977ef5": [
+        "00735,T,0,0,0,0,1500,0,0,0,0,1500,0,0,1500,0,,LOGIN_ID,TS_55977ef5",
+        "00947,T,0,0,0,0,6000,0,0,0,0,6000,0,0,6000,0,,LOGIN_ID,TS_55977ef5",
+        "1303,T,0,0,0,0,1000,0,0,0,0,1000,0,0,1000,0,,LOGIN_ID,TS_55977ef5",
+        "2330,T,0,0,0,0,75,0,0,0,0,75,0,0,75,0,,LOGIN_ID,TS_55977ef5",
+        "3037,T,0,0,0,0,165,0,0,0,0,165,0,0,165,0,,LOGIN_ID,TS_55977ef5",
+        "3189,T,0,0,0,0,40,0,0,0,0,40,0,0,40,0,,LOGIN_ID,TS_55977ef5",
+        "3481,T,0,0,0,0,650,0,0,0,0,650,0,0,650,0,,LOGIN_ID,TS_55977ef5",
+        "3711,T,0,0,0,0,440,0,0,0,0,440,0,0,440,0,,LOGIN_ID,TS_55977ef5",
+        "5434,T,0,0,0,0,35,0,0,0,0,35,0,0,35,0,,LOGIN_ID,TS_55977ef5",
+        "6223,T,0,0,0,0,17,0,0,0,0,17,0,0,17,0,,LOGIN_ID,TS_55977ef5",
+        "6274,T,0,0,0,0,70,0,0,0,0,70,0,0,70,0,,LOGIN_ID,TS_55977ef5",
+        "6789,T,0,0,0,0,50,0,0,0,0,50,0,0,50,0,,LOGIN_ID,TS_55977ef5"
+      ]
+    },
+    "futures_open_interest": {
+      "TF_52f92b59": [
+        "TF,TF_52f92b59,OLF08,B,1,0,4520.00,,,LOGIN_ID",
+        "TF,TF_52f92b59,QEF08,B,2,0,602.00,,,LOGIN_ID",
+        "TF,TF_52f92b59,TM08,B,6,0,46006.33,,,LOGIN_ID",
+        "TF,TF_52f92b59,TM09,B,2,0,46165.00,,,LOGIN_ID"
+      ]
+    },
+    "futures_rights": {
+      "TF_52f92b59": [
+        "457071,-7680,350,63,0,0,449391,69846,50000,0,0,10310,0,379545,291217,379545,291217,0,69846,449391,0,0,397174,,118,NTD,379545,291217,69846,0,0,69846,69846,0,118,0,0,0,0,LOGIN_ID,TF_52f92b59"
+      ]
+    }
+  },
+  "redacted": true
+}
