@@ -1207,7 +1207,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         <div class="sc-detail">
           {fund_strip}
 
-          <details class="fold rating-detail" open>
+          <details class="fold rating-detail">
             <summary>評分明細與變化</summary>
             <div>
               <div class="rating-summary"><span>本次：<b>{r.get('rating','')}</b></span><span>前次：{previous_rating}</span><span>總分：{r.get('total',0):g}</span><span>基本面：{fund_str} · Tilt {tilt_mark}</span></div>
@@ -1358,6 +1358,16 @@ def generate_chart_scripts(stocks_data: dict, market_data: dict):
         ind_vol_color = [T["up"] if r["Close"] >= r["Open"] else T["down"] for _, r in df_tail.iterrows()]
 
         cd = data.get("chart_data", {})
+        tdcc_by_date = {}
+        for item in data.get("tdcc", {}).get("history", []):
+            raw_date = str(item.get("date", ""))
+            if len(raw_date) == 8 and raw_date.isdigit():
+                date_key = f"{raw_date[4:6]}-{raw_date[6:8]}"
+            else:
+                date_key = raw_date[-5:]
+            tdcc_by_date[date_key] = item
+        large_ratio_aligned = [tdcc_by_date.get(date, {}).get("large_ratio") for date in ind_dates]
+        retail_ratio_aligned = [tdcc_by_date.get(date, {}).get("retail_ratio") for date in ind_dates]
 
         scripts.append(f"""
 var dates_{stock_id} = {json.dumps(ind_dates)};
@@ -1389,7 +1399,7 @@ chartK_{stock_id}.setOption({{
     {{ text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '{T["title"]}'}} }},
     {{ text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
     {{ text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
-    {{ text: '法人成交比重(%)', left: '6%', top: '80%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }}
+    {{ text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }}
   ],
   tooltip: {{
     trigger: 'axis',
@@ -1428,7 +1438,7 @@ chartK_{stock_id}.setOption({{
           var val = p.data;
           var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
           if (v == null || isNaN(v) || v === '') return;
-          v = (p.seriesName.indexOf('占比') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
+          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
           html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
         }}
       }});
@@ -1440,7 +1450,7 @@ chartK_{stock_id}.setOption({{
     {{ data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
     {{ data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
     {{ data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }},
-    {{ data: ['外資占比', '投信占比', '自營占比'], top: '82%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
+    {{ data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {{fontSize: 10, color: '{T["legend"]}'}}, itemWidth:10, itemHeight:10 }}
   ],
   axisPointer: {{ link: {{xAxisIndex: 'all'}} }},
   grid: [
@@ -1462,7 +1472,14 @@ chartK_{stock_id}.setOption({{
     {{ type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
     {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
-    {{ type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }}
+    {{ type: 'value', gridIndex: 3, splitNumber: 4, scale: true, name: '大戶', nameTextStyle: {{color: '{T["blue"]}', fontSize: 9}},
+      min: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.max(0, +(v.min - pad).toFixed(2)); }},
+      max: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.min(100, +(v.max + pad).toFixed(2)); }},
+      axisLabel: {{fontSize: 9, color: '{T["blue"]}', formatter: function(v){{ return v.toFixed(1) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
+    {{ type: 'value', gridIndex: 3, splitNumber: 4, scale: true, position: 'right', name: '散戶', nameTextStyle: {{color: '{T["orange"]}', fontSize: 9}},
+      min: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.max(0, +(v.min - pad).toFixed(2)); }},
+      max: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.min(100, +(v.max + pad).toFixed(2)); }},
+      axisLabel: {{fontSize: 9, color: '{T["orange"]}', formatter: function(v){{ return v.toFixed(1) + '%'; }}}}, splitLine: {{show: false}} }}
   ],
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }},
@@ -1488,9 +1505,8 @@ chartK_{stock_id}.setOption({{
     {{ name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('short_bal', []))}, itemStyle: {{color: '{T["green"]}'}}, smooth: true, showSymbol: false }},
     {{ name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('borrow_bal', []))}, itemStyle: {{color: '{T["purple"]}'}}, smooth: true, showSymbol: false }},
 
-    {{ name: '外資占比', type: 'bar', stack: 'ratio', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(cd.get('inst_f_ratio', []))}, itemStyle: {{color: '{T["blue"]}'}} }},
-    {{ name: '投信占比', type: 'bar', stack: 'ratio', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(cd.get('inst_t_ratio', []))}, itemStyle: {{color: '{T["green"]}'}} }},
-    {{ name: '自營占比', type: 'bar', stack: 'ratio', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(cd.get('inst_d_ratio', []))}, itemStyle: {{color: '{T["orange"]}'}} }}
+    {{ name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(large_ratio_aligned)}, itemStyle: {{color: '{T["blue"]}'}}, lineStyle: {{width: 2}}, connectNulls: true, showSymbol: true, symbolSize: 5 }},
+    {{ name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 7, data: {json.dumps(retail_ratio_aligned)}, itemStyle: {{color: '{T["orange"]}'}}, lineStyle: {{width: 2}}, connectNulls: true, showSymbol: true, symbolSize: 5 }}
   ]
 }});
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
@@ -2116,7 +2132,7 @@ window.DASHBOARD_CONFIG = {{
   triggerUrl: 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec'
 }};
 </script>
-<script src="app.js?v=20260629"></script>
+<script src="app.js?v=20260816"></script>
 <script src="inventory.js?v=20260622"></script>
 <script src="risk.js?v=20260630"></script>
 </body>
