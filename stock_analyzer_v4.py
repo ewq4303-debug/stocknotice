@@ -1394,7 +1394,18 @@ chartK_{stock_id}.getZr().on('mousemove', function(e) {{
     currentMouseY_{stock_id} = e.offsetY;
 }});
 
-chartK_{stock_id}.setOption({{
+var holderRatioAxis_{stock_id} = function(name, color, position) {{
+  return {{
+    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
+    name: name, position: position, nameTextStyle: {{color: color, fontSize: 9}},
+    min: function(v) {{ var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); }},
+    max: function(v) {{ var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); }},
+    axisLabel: {{fontSize: 9, color: color, formatter: function(v) {{ return v.toFixed(1) + '%'; }}}},
+    splitLine: position === 'left' ? {{lineStyle: {{color: '{T["split_line"]}'}}}} : {{show: false}}
+  }};
+}};
+
+var chartOption_{stock_id} = {{
   title: [
     {{ text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {{fontSize: 12, color: '{T["title"]}'}} }},
     {{ text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {{fontSize: 11, color: '{T["title"]}'}} }},
@@ -1472,14 +1483,7 @@ chartK_{stock_id}.setOption({{
     {{ type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, position: 'right' }},
     {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
     {{ type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v).toLocaleString(); }}}}, splitLine: {{show: false}}, scale: true, position: 'right' }},
-    {{ type: 'value', gridIndex: 3, splitNumber: 4, scale: true, name: '大戶', nameTextStyle: {{color: '{T["blue"]}', fontSize: 9}},
-      min: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.max(0, +(v.min - pad).toFixed(2)); }},
-      max: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.min(100, +(v.max + pad).toFixed(2)); }},
-      axisLabel: {{fontSize: 9, color: '{T["blue"]}', formatter: function(v){{ return v.toFixed(1) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }},
-    {{ type: 'value', gridIndex: 3, splitNumber: 4, scale: true, position: 'right', name: '散戶', nameTextStyle: {{color: '{T["orange"]}', fontSize: 9}},
-      min: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.max(0, +(v.min - pad).toFixed(2)); }},
-      max: function(v) {{ var pad = Math.max((v.max - v.min) * 0.15, 0.2); return Math.min(100, +(v.max + pad).toFixed(2)); }},
-      axisLabel: {{fontSize: 9, color: '{T["orange"]}', formatter: function(v){{ return v.toFixed(1) + '%'; }}}}, splitLine: {{show: false}} }}
+    {{ type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {{fontSize: 9, color: '{T["axis_label"]}', formatter: function(v){{ return Math.round(v) + '%'; }}}}, splitLine: {{lineStyle: {{color: '{T["split_line"]}'}}}} }}
   ],
   dataZoom: [
     {{ type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 }},
@@ -1506,9 +1510,17 @@ chartK_{stock_id}.setOption({{
     {{ name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: {json.dumps(cd.get('borrow_bal', []))}, itemStyle: {{color: '{T["purple"]}'}}, smooth: true, showSymbol: false }},
 
     {{ name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(large_ratio_aligned)}, itemStyle: {{color: '{T["blue"]}'}}, lineStyle: {{width: 2}}, connectNulls: true, showSymbol: true, symbolSize: 5 }},
-    {{ name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 7, data: {json.dumps(retail_ratio_aligned)}, itemStyle: {{color: '{T["orange"]}'}}, lineStyle: {{width: 2}}, connectNulls: true, showSymbol: true, symbolSize: 5 }}
+    {{ name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: {json.dumps(retail_ratio_aligned)}, itemStyle: {{color: '{T["orange"]}'}}, lineStyle: {{width: 2}}, connectNulls: true, showSymbol: true, symbolSize: 5 }}
   ]
+}};
+
+// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
+chartOption_{stock_id}.yAxis[6] = holderRatioAxis_{stock_id}('大戶', '{T["blue"]}', 'left');
+chartOption_{stock_id}.yAxis.push(holderRatioAxis_{stock_id}('散戶', '{T["orange"]}', 'right'));
+chartOption_{stock_id}.series.forEach(function(series) {{
+  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
 }});
+chartK_{stock_id}.setOption(chartOption_{stock_id});
 window.addEventListener('resize', function() {{ chartK_{stock_id}.resize(); }});
 """)
 
