@@ -1207,7 +1207,7 @@ def generate_stock_card(stock_id: str, data: dict, is_first: bool = False) -> st
         <div class="sc-detail">
           {fund_strip}
 
-          <details class="fold rating-detail" open>
+          <details class="fold rating-detail">
             <summary>評分明細與變化</summary>
             <div>
               <div class="rating-summary"><span>本次：<b>{r.get('rating','')}</b></span><span>前次：{previous_rating}</span><span>總分：{r.get('total',0):g}</span><span>基本面：{fund_str} · Tilt {tilt_mark}</span></div>
@@ -2116,7 +2116,7 @@ window.DASHBOARD_CONFIG = {{
   triggerUrl: 'https://script.google.com/macros/s/AKfycbxnUDMfJgGIVxuKUz6DlqGcvOXAKHXP2GnBtNSEdRdslnd8sqPv9irKAlh8e3z1svNFnA/exec'
 }};
 </script>
-<script src="app.js?v=20260629"></script>
+<script src="app.js?v=20260816"></script>
 <script src="inventory.js?v=20260622"></script>
 <script src="risk.js?v=20260630"></script>
 </body>
