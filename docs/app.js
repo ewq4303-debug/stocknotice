@@ -24,7 +24,7 @@
     return token;
   }
 
-  function ensureWebhookAllowed() {
+  function ensureWebhookAllowed(requireToken) {
     const now = Date.now();
     if (now - lastWebhookAt < COOLDOWN_MS) {
       alert('操作太頻繁，請稍候再試。');
@@ -33,6 +33,10 @@
     if (!CONFIG.gasUrl || !CONFIG.triggerUrl) {
       alert('尚未設定 webhook URL，請先設定 window.DASHBOARD_CONFIG。');
       return null;
+    }
+    if (requireToken === false) {
+      lastWebhookAt = now;
+      return true;
     }
     const token = getWebhookToken();
     if (!token) {
@@ -91,15 +95,14 @@
     }
     if (!stockId) { alert('請輸入股票代號！'); return; }
     if (!isValidStockId(stockId)) { alert('股票代號格式不正確，請輸入 4-6 碼數字或 ETF 代號。'); return; }
-    const token = ensureWebhookAllowed();
-    if (!token) return;
+    if (!ensureWebhookAllowed(false)) return;
 
     let originalText = '';
     if (btn) { originalText = btn.innerText; btn.innerText = '⏳'; btn.style.pointerEvents = 'none'; }
     fetch(CONFIG.gasUrl, {
       method: 'POST',
-      body: JSON.stringify({ action: action, stock: stockId, authToken: token }),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8', 'X-Dashboard-Token': token }
+      body: JSON.stringify({ action: action, stock: stockId }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
     })
       .then(function (response) { return response.text(); })
       .then(function (text) {
@@ -109,7 +112,7 @@
         } else if (text.includes('Success') || text.includes('No changes')) {
           const input = document.getElementById('stockInput');
           if (action === 'add' && input) input.value = '';
-          fetch(CONFIG.triggerUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'refresh', authToken: token }) }).catch(function (e) { console.log(e); });
+          fetch(CONFIG.triggerUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'refresh' }) }).catch(function (e) { console.log(e); });
           const actionStr = (action === 'add') ? '新增' : '刪除';
           window.showCountdownToast('✅ 股票 ' + stockId + ' 已' + actionStr + '！<br>系統已自動觸發重新抓取資料', 150);
         } else {
