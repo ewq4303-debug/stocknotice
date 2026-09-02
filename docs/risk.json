@@ -9,25 +9,25 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 2213174,
-    "net_notional": 2213174,
-    "nlr_gross": 2.6502,
-    "nlr_net": 2.6502,
+    "gross_notional": 2190294,
+    "net_notional": 2190294,
+    "nlr_gross": 2.6228,
+    "nlr_net": 2.6228,
     "verdict": "WATCH"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -176707,
-      "dpnl_pct_equity": -0.2116,
-      "futures_equity_after": 676676,
+      "dpnl_total": -175164,
+      "dpnl_pct_equity": -0.2098,
+      "futures_equity_after": 677589,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -353414,
-      "dpnl_pct_equity": -0.4232,
-      "futures_equity_after": 518269,
+      "dpnl_total": -350327,
+      "dpnl_pct_equity": -0.4195,
+      "futures_equity_after": 520096,
       "verdict": "SAFE"
     }
   ],
@@ -48,39 +48,39 @@
       "name": "微台",
       "asset_type": "futures",
       "kind": "micro_index",
-      "signed_notional": 938974,
-      "price": 46948.71875,
+      "signed_notional": 923294,
+      "price": 46164.71875,
       "beta": 0.5249,
       "beta_source": "rolling_60d",
-      "dpnl_at_-20pct": -98574
+      "dpnl_at_-20pct": -96927
     },
     {
       "symbol": "3711",
       "name": "日月光投控",
       "asset_type": "spot",
-      "signed_notional": 183000,
-      "price": 610.0,
+      "signed_notional": 176700,
+      "price": 589.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -36600
+      "dpnl_at_-20pct": -35340
     },
     {
       "symbol": "3034",
       "name": "小聯發科",
       "asset_type": "futures",
       "kind": "mini",
-      "signed_notional": 55200,
-      "price": 552.0,
+      "signed_notional": 54300,
+      "price": 543.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -11040
+      "dpnl_at_-20pct": -10860
     },
     {
       "symbol": "6510",
       "name": "精測",
       "asset_type": "spot",
       "signed_notional": 0,
-      "price": 3125.0,
+      "price": 3435.0,
       "beta": 1.0,
       "beta_source": "member_default",
       "dpnl_at_-20pct": 0
