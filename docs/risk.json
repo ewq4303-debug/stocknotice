@@ -9,25 +9,25 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 2235967,
-    "net_notional": 2235967,
-    "nlr_gross": 2.6775,
-    "nlr_net": 2.6775,
+    "gross_notional": 2223167,
+    "net_notional": 2223167,
+    "nlr_gross": 2.6622,
+    "nlr_net": 2.6622,
     "verdict": "WATCH"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -176895,
-      "dpnl_pct_equity": -0.2118,
-      "futures_equity_after": 677388,
+      "dpnl_total": -175615,
+      "dpnl_pct_equity": -0.2103,
+      "futures_equity_after": 678968,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -353789,
-      "dpnl_pct_equity": -0.4237,
-      "futures_equity_after": 519694,
+      "dpnl_total": -351229,
+      "dpnl_pct_equity": -0.4206,
+      "futures_equity_after": 522854,
       "verdict": "SAFE"
     }
   ],
@@ -37,11 +37,11 @@
       "name": "南亞科期",
       "asset_type": "futures",
       "kind": "standard",
-      "signed_notional": 1046000,
-      "price": 523.0,
+      "signed_notional": 1030000,
+      "price": 515.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -209200
+      "dpnl_at_-20pct": -206000
     },
     {
       "symbol": "TXF",
@@ -58,29 +58,29 @@
       "symbol": "3711",
       "name": "日月光投控",
       "asset_type": "spot",
-      "signed_notional": 192000,
-      "price": 640.0,
+      "signed_notional": 195000,
+      "price": 650.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -38400
+      "dpnl_at_-20pct": -39000
     },
     {
       "symbol": "3034",
       "name": "小聯發科",
       "asset_type": "futures",
       "kind": "mini",
-      "signed_notional": 54300,
-      "price": 543.0,
+      "signed_notional": 54500,
+      "price": 545.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -10860
+      "dpnl_at_-20pct": -10900
     },
     {
       "symbol": "6510",
       "name": "精測",
       "asset_type": "spot",
       "signed_notional": 0,
-      "price": 3610.0,
+      "price": 3670.0,
       "beta": 1.0,
       "beta_source": "member_default",
       "dpnl_at_-20pct": 0
