@@ -291,7 +291,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 <body>
 <div class="container">
   <div class="header" id="top">
-    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-09-12 22:25 · 即時連線</div></div>
+    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-09-13 22:27 · 即時連線</div></div>
     <button id="runBtn" class="btn-run" onclick="triggerAction(this)">⟳ 重新抓取最新資料</button>
   </div>
 
@@ -321,7 +321,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
   <div id="tab-market" class="tab-content active"><div class="status-panel card">
       <div class="card-title"><span>資料新鮮度與來源狀態</span><span class="src-pill">避免不同來源更新時間混淆</span></div>
-      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-09-12 22:25</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">24 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-09-11</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-09-11</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20260911</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
+      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-09-13 22:27</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">24 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-09-11</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-09-11</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20260911</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
       <div class="status-note">提示：庫存頁會另外讀取 inventory.json；若該檔 updated_at 與頁面產生時間不同，請以各資料卡時間為準。</div>
     </div><div class="section-head"><span class="eyebrow">Market</span><h2>大盤總覽</h2></div>
     <div class="metrics">
@@ -346,8 +346,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
     </div></div>
   <div id="tab-rating" class="tab-content"><div class="rating-wrap">
-  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-09-12 22:25</span></div>
-  <div class="rating-grid"><div class="rcol" data-k="sb"><div class="rcol-head"><span class="rcol-label">強力加碼</span><span class="rcol-count">5</span></div><div class="schip"><div class="schip-top"><span class="schip-name">2454 聯發科</span><span class="schip-chg down">-2.86%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 8</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3711 日月光投控</span><span class="schip-chg down">-4.92%</span></div><div class="schip-meta"><span class="tag t">技 6</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3037 欣興</span><span class="schip-chg down">-1.71%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 9</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8042 金山電</span><span class="schip-chg down">-6.22%</span></div><div class="schip-meta"><span class="tag t">技 6</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8358 金居</span><span class="schip-chg down">-6.91%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="b"><div class="rcol-head"><span class="rcol-label">加碼</span><span class="rcol-count">7</span></div><div class="schip"><div class="schip-top"><span class="schip-name">1303 南亞</span><span class="schip-chg down">-3.89%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2327 國巨*</span><span class="schip-chg down">-4.90%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3481 群創</span><span class="schip-chg down">-3.34%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +1</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6223 旺矽</span><span class="schip-chg up">+0.00%</span></div><div class="schip-meta"><span class="tag t">技 4</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3491 昇達科</span><span class="schip-chg up">+4.43%</span></div><div class="schip-meta"><span class="tag t">技 4.5</span><span class="tag c">籌 4</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3189 景碩</span><span class="schip-chg down">-0.60%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 7.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3617 碩天</span><span class="schip-chg up">+1.46%</span></div><div class="schip-meta"><span class="tag t">技 2.5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="n"><div class="rcol-head"><span class="rcol-label">中性</span><span class="rcol-count">6</span></div><div class="schip"><div class="schip-top"><span class="schip-name">8046 南電</span><span class="schip-chg up">+0.93%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 7</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3008 大立光</span><span class="schip-chg down">-0.89%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +0</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2330 台積電</span><span class="schip-chg down">-1.63%</span></div><div class="schip-meta"><span class="tag t">技 5.5</span><span class="tag c">籌 0</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2383 台光電</span><span class="schip-chg down">-0.19%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6446 藥華藥</span><span class="schip-chg down">-3.03%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">4979 華星光</span><span class="schip-chg down">-7.01%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="s"><div class="rcol-head"><span class="rcol-label">減碼</span><span class="rcol-count">5</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6274 台燿</span><span class="schip-chg down">-2.15%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5425 台半</span><span class="schip-chg down">-3.58%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6488 環球晶</span><span class="schip-chg down">-1.64%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6753 龍德造船</span><span class="schip-chg down">-1.11%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 0</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2308 台達電</span><span class="schip-chg down">-3.28%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 0</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="ss"><div class="rcol-head"><span class="rcol-label">強力減碼</span><span class="rcol-count">1</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6409 旭隼</span><span class="schip-chg down">-1.71%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 2.5</span><span class="tag f fp">基 +0.5</span></div></div></div></div>
+  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-09-13 22:27</span></div>
+  <div class="rating-grid"><div class="rcol" data-k="sb"><div class="rcol-head"><span class="rcol-label">強力加碼</span><span class="rcol-count">5</span></div><div class="schip"><div class="schip-top"><span class="schip-name">2454 聯發科</span><span class="schip-chg down">-2.86%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 8</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3711 日月光投控</span><span class="schip-chg down">-4.92%</span></div><div class="schip-meta"><span class="tag t">技 6</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3037 欣興</span><span class="schip-chg down">-1.71%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 9</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8042 金山電</span><span class="schip-chg down">-6.22%</span></div><div class="schip-meta"><span class="tag t">技 6</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8358 金居</span><span class="schip-chg down">-6.91%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="b"><div class="rcol-head"><span class="rcol-label">加碼</span><span class="rcol-count">7</span></div><div class="schip"><div class="schip-top"><span class="schip-name">1303 南亞</span><span class="schip-chg down">-3.89%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2327 國巨*</span><span class="schip-chg down">-4.90%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3481 群創</span><span class="schip-chg down">-3.34%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +1</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6223 旺矽</span><span class="schip-chg up">+0.00%</span></div><div class="schip-meta"><span class="tag t">技 4</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3491 昇達科</span><span class="schip-chg up">+4.43%</span></div><div class="schip-meta"><span class="tag t">技 4.5</span><span class="tag c">籌 4</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3189 景碩</span><span class="schip-chg down">-0.60%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 7.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3617 碩天</span><span class="schip-chg up">+1.46%</span></div><div class="schip-meta"><span class="tag t">技 2.5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="n"><div class="rcol-head"><span class="rcol-label">中性</span><span class="rcol-count">6</span></div><div class="schip"><div class="schip-top"><span class="schip-name">8046 南電</span><span class="schip-chg up">+0.93%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 7</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3008 大立光</span><span class="schip-chg down">-0.89%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +0</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2330 台積電</span><span class="schip-chg down">-1.63%</span></div><div class="schip-meta"><span class="tag t">技 5.5</span><span class="tag c">籌 0</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2383 台光電</span><span class="schip-chg down">-0.19%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6446 藥華藥</span><span class="schip-chg down">-3.03%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">4979 華星光</span><span class="schip-chg down">-7.01%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="s"><div class="rcol-head"><span class="rcol-label">減碼</span><span class="rcol-count">5</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6274 台燿</span><span class="schip-chg down">-2.15%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6488 環球晶</span><span class="schip-chg down">-1.64%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5425 台半</span><span class="schip-chg down">-3.58%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6753 龍德造船</span><span class="schip-chg down">-1.11%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 0</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2308 台達電</span><span class="schip-chg down">-3.28%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 0</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="ss"><div class="rcol-head"><span class="rcol-label">強力減碼</span><span class="rcol-count">1</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6409 旭隼</span><span class="schip-chg down">-1.71%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 2.5</span><span class="tag f fp">基 +0.5</span></div></div></div></div>
   <details class="legend"><summary>評分邏輯與門檻</summary><div class="legend-body">
     <div class="legend-row"><span class="lbadge t">技術 10</span><span>站月線 +1 · 月&gt;季 +1 · 5&gt;10 +1 · 近20日高 +1.5 · 價漲且量&gt;5均 +1.5 · MACD 紅 +2 · 趨勢向上且5日量&gt;20日量 +2（量能兩項均需價格方向配合）</span></div>
     <div class="legend-row"><span class="lbadge c">籌碼 9</span><span>外資3日 +1.5 · 投信3日 +1.5 · 同買 +1 · 融資減 +1.5 · 借券減 +1.5 · 大戶增&gt;0.1pp +2</span></div>
@@ -459,14 +459,14 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="nav-top"><span>6274 台燿</span><span class="pct down">-2.15%</span></div>
             <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技0 / 籌1.5</span></div>
         </div>
-        <div class="sidebar-item " id="nav_5425" onclick="showStock('5425')">
-            <div class="side-del" onclick="confirmDelete(event, '5425', this)" title="刪除 5425">✖</div>
-            <div class="nav-top"><span>5425 台半</span><span class="pct down">-3.58%</span></div>
-            <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技0 / 籌1.5</span></div>
-        </div>
         <div class="sidebar-item " id="nav_6488" onclick="showStock('6488')">
             <div class="side-del" onclick="confirmDelete(event, '6488', this)" title="刪除 6488">✖</div>
             <div class="nav-top"><span>6488 環球晶</span><span class="pct down">-1.64%</span></div>
+            <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技0 / 籌1.5</span></div>
+        </div>
+        <div class="sidebar-item " id="nav_5425" onclick="showStock('5425')">
+            <div class="side-del" onclick="confirmDelete(event, '5425', this)" title="刪除 5425">✖</div>
+            <div class="nav-top"><span>5425 台半</span><span class="pct down">-3.58%</span></div>
             <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技0 / 籌1.5</span></div>
         </div>
         <div class="sidebar-item " id="nav_6753" onclick="showStock('6753')">
@@ -569,19 +569,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">集(15)中(16)，(17)拉(18)回(19)提(20)供(21)逢(22)低(23)佈(24)局(25)機(26)會(27)。(28)<br>            建(29)議(30)於(31)十(32)日(33)線(34)至(35)月(36)線(37)區(38)間(39)分(40)批(41)承(42)接(43)，(44)跌(45)破(46)月(</div>
-                <div class="ai-text ai-divider"></div>
+                <div class="ai-text">現階段股價拉回跌破五日均線，但仍立於十日線之上。均線呈現多頭排列，且其技術指標與量能維持偏多，整體中長期之多頭架構未變。</div>
+                <div class="ai-text ai-divider">外資與投信近五日偏多操作，融資與借券餘額同步減少，籌碼沉澱。大戶持股比例上升至逾九成，顯示主力籌碼高度集中且極為穩定。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">鑑於大戶控盤力道強勁且中長線多頭趨勢不變，短線拉回可視為良性整理。建議投資人於十日均線附近分</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 18:29:12</div><a href="https://stock.ltn.com.tw/article/2vwrfsjyfctt" target="_blank">聯發科小金雞意騰強攻語音終端市場 明年營收有望續創新高 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-09 18:29:12</div><a href="https://stock.ltn.com.tw/article/2vwrfsjyfctt" target="_blank">聯發科小金雞意騰強攻語音終端市場 明年營收有望續創新高 - stock.ltn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 16:07:28</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/-6a9e76ee725a7334fdc97399" target="_blank">三大法人買賣超 – 外資買超(2330)台積電、(2454)聯發科，投信買超(2454)聯發科、(2303)聯電，法人合計買超1138.65億元 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 13:31:38</div><a href="https://www.cmoney.tw/forum/article/184489414" target="_blank">2454 聯發科 - 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 09:09:45</div><a href="https://www.taiwanhot.net/news/1147606/%E8%81%AF%E7%99%BC%E7%A7%91%E8%BC%9D%E9%81%94%E7%B5%90%E7%9B%9F+%E5%B0%8F%E9%87%91%E9%9B%9E%E9%81%94%E7%99%BCH1+EPS%E5%88%B7%E7%B4%80%E9%8C%84" target="_blank">聯發科輝達結盟 小金雞達發H1 EPS刷紀錄 - 台灣好新聞</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 21:30:00</div><a href="https://ec.ltn.com.tw/article/paper/1770250" target="_blank">營收速報》聯發科8月營收爆發衝破640億 年月雙增創新高 - 自由財經</a></div><div class="news-item"><div class="d">2026-09-10 20:35:37</div><a href="https://stock.ltn.com.tw/article/kbufslm2u2d6" target="_blank">營收速報》聯發科8月營收爆發衝破640億 年月雙增創新高 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-10 19:31:20</div><a href="https://udn.com/news/story/7252/9747493" target="_blank">聯發科8月業績月增三成締新猷單月達641億元| 個股情報| 股市 - UDN</a></div><div class="news-item"><div class="d">2026-09-10 17:28:45</div><a href="https://finance.technews.tw/2026/09/10/mtk-2454-202608-financial-report/" target="_blank">聯發科8月營收月增32.4% - TechNews 科技新報</a></div><div class="news-item"><div class="d">2026-09-10 17:28:45</div><a href="https://finance.technews.tw/2026/09/10/mtk-2454-202608-financial-report/" target="_blank">聯發科8月營收月增32.4% - finance.technews.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -669,19 +669,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">今日股價回檔失守五日線與季線，但仍守在十日線與月線之上。Supertrend維持上升，MACD偏多，短線震盪洗盤。</div>
-                <div class="ai-text ai-divider">外資今日雖調節，但中長線仍大買；大戶持股比高達91.8%且週增，融資處低檔。籌碼高度集中，結構穩健偏多。</div>
+                <div class="ai-text">籌碼結構依舊偏向多方。<br>        外(1)資(2)今(3)日(4)雖(5)調(6)節(7)但(8)中(9)長(10)線(11)大(12)舉(13)買(14)超(15)，(16)投(17)信(18)今(19)日(20)也(21)小(22)幅(23)轉(24)買(25)。(26)大(27)戶(28)持(29)股(30)比(31)例(32</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">鑑於大戶籌碼穩固且均線多頭未破，建議不宜追高。可靜待股價回測十日線至月線（約604-610元）附近止穩分批佈局。</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 21:30:00</div><a href="https://ec.ltn.com.tw/article/paper/1770069" target="_blank">營收速報》日月光投控營收 首度突破800億元 - 自由財經</a></div><div class="news-item"><div class="d">2026-09-09 21:30:00</div><a href="https://ec.ltn.com.tw/article/paper/1770069" target="_blank">營收速報》日月光投控營收 首度突破800億元 - ec.ltn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 20:39:31</div><a href="https://stock.ltn.com.tw/article/a77ney1bntmx" target="_blank">營收速報》日月光投控營收 首度突破800億元 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-09 12:33:19</div><a href="https://www.cmoney.tw/forum/article/184488550" target="_blank">日月光投控 8 月營收續創新高，AI 先進封測扮要角 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 12:24:27</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B2%B7%E8%B3%A3%E8%B6%85-%E2%80%93-%E5%A4%96%E8%B3%87%E8%B2%B7%E8%B6%85-3711-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7--2382-%E5%BB%A3%E9%81%94-%E6%8A%95%E4%BF%A1%E8%B2%B7%E8%B6%85-2360-%E8%87%B4%E8%8C%82--1815-%E5%AF%8C%E5%96%AC-%E6%B3%95%E4%BA%BA%E5%90%88%E8%A8%88%E8%B2%B7%E8%B6%85220-81%E5%84%84%E5%85%83--0909--6aa11e7c9533d535cbd28c74" target="_blank">三大法人買賣超 – 外資買超(3711)日月光投控、(2382)廣達，投信買超(2360)致茂、(1815)富喬，法人合計買超220.81億元 - sinotrade.com.tw</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 10:17:11</div><a href="https://www.cmoney.tw/forum/article/184511563" target="_blank">3711 日月光投控- 各產業龍頭股9/10 收盤價更新｜ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 08:56:34</div><a href="https://www.sinotrade.com.tw/richclub/hotstock/%E9%AB%98%E9%80%9A%E6%94%9C%E6%89%8B%E4%BA%9E%E9%A6%AC%E9%81%9C%E5%88%87%E5%85%A5AI%E8%B3%87%E6%96%99%E4%B8%AD%E5%BF%83-%E5%8F%B0%E7%A9%8D%E9%9B%BB-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7%E5%8F%97%E6%83%A0-QQQ-SPY%E4%B8%80%E6%AC%A1%E5%8F%83%E8%88%87%E9%9B%99%E9%9B%84-%E7%BE%8E%E8%82%A1%E8%A7%80%E5%AF%9F-6aa210f16a5a3b34ec24499e" target="_blank">高通攜手亞馬遜切入AI資料中心，台積電、日月光投控受惠，QQQ、SPY一次參與雙雄｜美股觀察｜豐雲學堂2026 年 09 月 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 08:27:52</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B2%B7%E8%B3%A3%E8%B6%85-%E2%80%93-%E5%A4%96%E8%B3%87%E8%B2%B7%E8%B6%85-2454-%E8%81%AF%E7%99%BC%E7%A7%91--3711-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7-%E6%8A%95%E4%BF%A1%E8%B2%B7%E8%B6%85-2303-%E8%81%AF%E9%9B%BB--1815-%E5%AF%8C%E5%96%AC-%E6%B3%95%E4%BA%BA%E5%90%88%E8%A8%88%E8%B3%A3%E8%B6%85503-12%E5%84%84%E5%85%83--0910--6aa267d5b6b85141a6ee08e4" target="_blank">三大法人買賣超 – 外資買超(2454)聯發科、(3711)日月光投控，投信買超(2303)聯電、(1815)富喬，法人合計賣超503.12億元 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 08:27:46</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B2%B7%E8%B3%A3%E8%B6%85-%E2%80%93-%E5%A4%96%E8%B3%87%E8%B2%B7%E8%B6%85-2454-%E8%81%AF%E7%99%BC%E7%A7%91--3711-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7-%E6%8A%95%E4%BF%A1%E8%B2%B7%E8%B6%85-2303-%E8%81%AF%E9%9B%BB--1815-%E5%AF%8C%E5%96%AC-%E6%B3%95%E4%BA%BA%E5%90%88%E8%A8%88%E8%B3%A3%E8%B6%85503-12%E5%84%84%E5%85%83--0910--6aa267d5b6b85141a6ee08e4" target="_blank">三大法人買賣超 – 外資買超(2454)聯發科、(3711)日月光投控，投信買超(2303)聯電、(1815)富喬，法人合計賣超503.12億元 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 08:26:15</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B2%B7%E8%B3%A3%E8%B6%85-%E2%80%93-%E5%A4%96%E8%B3%87%E8%B2%B7%E8%B6%85-2454-%E8%81%AF%E7%99%BC%E7%A7%91--3711-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7-%E6%8A%95%E4%BF%A1%E8%B2%B7%E8%B6%85-2303-%E8%81%AF%E9%9B%BB--1815-%E5%AF%8C%E5%96%AC-%E6%B3%95%E4%BA%BA%E5%90%88%E8%A8%88%E8%B3%A3%E8%B6%85503-12%E5%84%84%E5%85%83--0910--6aa267d5b6b85141a6ee08e4" target="_blank">三大法人買賣超 – 外資買超(2454)聯發科、(3711)日月光投控，投信買超(2303)聯電、(1815)富喬，法人合計賣超503.12億元 - sinotrade.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -769,7 +769,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">備支撐且大戶籌碼穩定，建議投資人於季線附近分批逢低布局。若股價放量突破下彎月線，可視為轉強訊號並適度加碼。」 (60字)<br>    (計數：鑑(1)於(2)季(3)線(4)具(5)備(6)支(7)撐(8)且(9)大(10)戶(11)籌(12)碼(13)穩(14)定(15)，(16)建(17)議(18)投(19)資(20)人(21)於(22)季(23)線</div>
+                <div class="ai-text">10)、(11)散(12)戶(13)退(14)場(15)之(16)健(17)康(18)結(19)構(20)。(21)<br>            Ah, 21. Total: 24 + 10 + 21 = 55.<br>            Let's recount precisely:<br>            外(1)資(2)持(3)續(4)偏(5)多(6)操(7)作(8)，(9)<br>            投(10)信(11)短(12)期(13)買(14)超(15)回(</div>
                 <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
@@ -781,7 +781,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 22:48:16</div><a href="https://www.cmoney.tw/forum/article/184520103" target="_blank">3037 欣興 - 明天掛跌停收 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 17:22:53</div><a href="https://www.cmoney.tw/forum/article/184365002" target="_blank">3037 欣興- 欣興營收／8月177億元、月增9.2%創新高產能與客戶需求增加- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 17:16:10</div><a href="https://www.cmoney.tw/forum/article/184382205" target="_blank">3037 欣興- 欣興高營收公佈，將打破價穩量縮的局面。 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 15:13:53</div><a href="https://www.cmoney.tw/forum/article/184490925" target="_blank">3037 欣興- 0909日三大法人買賣情形- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 12:18:18</div><a href="https://www.cmoney.tw/forum/article/184488194" target="_blank">3037 欣興- 都多久了- 股市爆料同學會 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 16:01:14</div><a href="https://www.cmoney.tw/forum/article/184522335" target="_blank">3037 欣興- 今日0910日三大法人買賣- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 13:24:52</div><a href="https://www.cmoney.tw/forum/article/184519454" target="_blank">3037 欣興- 欣興、景碩、中探針盤後解析- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 08:25:00</div><a href="https://www.ftnn.com.tw/news/577905" target="_blank">PCB族群漲跌互見！「這軟板廠」重挫9%、台虹跌半根 欣興收連4紅、柏承直逼漲停 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-10 08:25:00</div><a href="https://www.ftnn.com.tw/news/577905" target="_blank">PCB族群漲跌互見！「這軟板廠」重挫9%、台虹跌半根 欣興收連4紅、柏承直逼漲停 - ftnn.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 08:10:34</div><a href="https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f" target="_blank">欣興洗產地風波下，載板四雄後續怎麼看？欣興、南電、景碩、臻鼎三大面向全比較｜陳唯泰｜豐雲學堂2026 年 09 月 - sinotrade.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -869,19 +869,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text"><br>            *Wait, let's recount:*<br>            鑑(1)於(2)外(3)資(4)賣(5)壓(6)未(7)歇(8)且(9)股(10)價(11)重(12)挫(13)，(14)短(15)期(16)不(17)宜(18)盲(19)目(20)追(21)高(22)。(23)建(24)議(25)靜(26)待(27)股(28)價(29)回(30)測(31)十(32)日</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 09:32:45</div><a href="https://today.line.me/tw/v3/posts/list/article/RBqkpjw" target="_blank">討論牆 | 盤中速報 - 金山電(8042)大漲8.1%，報113.5元 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-09-10 09:32:45</div><a href="https://today.line.me/tw/v3/posts/list/article/RBqkpjw" target="_blank">討論牆 | 盤中速報 - 金山電(8042)大漲8.1%，報113.5元 - today.line.me</a></div><div class="news-item"><div class="d">2026-09-10 06:10:00</div><a href="https://www.ftnn.com.tw/news/577855" target="_blank">被動元件強攻！「這檔」連2漲17.5%攜信昌電漲停 金山電大漲7.11%、禾伸堂勁揚近6% - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-10 06:10:00</div><a href="https://www.ftnn.com.tw/news/577855" target="_blank">被動元件強攻！「這檔」連2漲17.5%攜信昌電漲停 金山電大漲7.11%、禾伸堂勁揚近6% - ftnn.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 04:47:39</div><a href="https://cmnews.com.tw/article/cmoneyairesearcher-c022524b-acd2-11f1-9ee9-7f7c1f141338" target="_blank">【12:47 即時新聞】金山電(8042)股價上攻至116元、漲幅3.11%，受MLCC漲價與營收創高支撐，惟高檔法人與主力調節壓力仍在 - CMoney投資網誌</a></div></div>
           </details>
         </div>
       </div>
@@ -969,19 +969,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">今日股價重挫跌破五日及十日線，但仍守在月季線之上，中長線趨勢偏多。成交量急凍，MACD雖維持紅柱但面臨轉折修正壓力。</div>
+                <div class="ai-text ai-divider">外資擴大賣超且投信持續觀望，籌碼面呈現法人調節壓力。融資小幅減肥，所幸大戶持股比例微升，顯示主力籌碼並未完全潰散。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">短期面臨回檔修正，不宜急於進場搶反彈。建議靜待量縮止穩，並以月線與超趨勢線為防守支撐，待外資賣壓減輕後再逢低分批布局。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 14:46:25</div><a href="https://www.cmoney.tw/forum/article/184490601" target="_blank">8358 金居- 銅價漲對金居股價有上漲幫助嗎- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 07:28:08</div><a href="https://www.cmoney.tw/forum/article/184481537" target="_blank">8358 金居- 金居8月營收10.56 億元- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 07:28:08</div><a href="https://www.cmoney.tw/forum/article/184481537" target="_blank">8358 金居- 金居8月營收10.56 億元- 股市爆料同學會 - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-09 07:08:53</div><a href="https://finance.technews.tw/2026/09/09/co-tech-8358-202608-financial-report/" target="_blank">金居8月營收10.56 億元 - TechNews 科技新報</a></div><div class="news-item"><div class="d">2026-09-09 05:14:04</div><a href="https://www.cmoney.tw/forum/article/184473547" target="_blank">8358 金居 - 看來明天還要繼續死魚一整天，關個兩分鐘而已也能死成這樣 - 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 08:46:50</div><a href="https://stock.ltn.com.tw/article/nnj7bqqvan6e" target="_blank">熱門股》祭出庫藏股 金居挑戰新高 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-10 08:46:50</div><a href="https://stock.ltn.com.tw/article/nnj7bqqvan6e" target="_blank">熱門股》祭出庫藏股 金居挑戰新高 - stock.ltn.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 08:30:05</div><a href="https://www.cmoney.tw/forum/article/184512877" target="_blank">8358 金居- 外資今天賣了嗚嗚嗚- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1069,19 +1069,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">7)逾(48)八(49)成(50)八(51)，(52)籌(53)碼(54)穩(55)定(56)度(57)極(58)高(59)。(60) -> 沒錯，60字。<br>        *   操作建議：<br>            鑑於中長線多頭趨勢未變且大戶籌碼集中，建議於十日線至月線區間分批逢低布局。若後續跌破月線則應果斷停損，短期靜待量能回溫。<br>            鑑(1)於(2)中(3)長(4)線(5)</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 09:48:05</div><a href="https://www.cmoney.tw/forum/article/184484892" target="_blank">1303 南亞 - 🥰週四南亞科世紀南亞富喬頎邦臻鼎鼎元國巨南茂穩懋宏致亞通東- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 09:06:00</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202609090047/" target="_blank">台塑化漲停理由不只美伊互轟，主菜是它、連外資都轉買1.3萬張！台塑台化南亞…老手更愛這檔「原因曝光」 - 今周刊</a></div><div class="news-item"><div class="d">2026-09-09 09:06:00</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202609090047/" target="_blank">台塑化漲停理由不只美伊互轟，主菜是它、連外資都轉買1.3萬張！台塑台化南亞…老手更愛這檔「原因曝光」 - businesstoday.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 04:03:31</div><a href="https://www.taiwanhot.net/news/1147567/%E3%80%8C%E5%82%B3%E7%94%A2%E5%B7%A8%E9%A0%AD%E3%80%8D%E5%8D%97%E4%BA%9E%E9%9D%A0AI%E6%9D%90%E6%96%99%E5%A4%A7%E8%AE%8A%E8%BA%AB%EF%BC%8C%E4%BD%86%E6%9A%B4%E8%B3%BA%E8%83%8C%E5%BE%8C%E7%AB%9F%E6%9C%89%E5%85%AB%E6%88%90%E7%8D%B2%E5%88%A9%E5%85%A8%E9%9D%A0%E3%80%8C%E8%BD%89%E6%8A%95%E8%B3%87%E3%80%8D%EF%BC%9F" target="_blank">「傳產巨頭」南亞靠AI材料大變身，但暴賺背後竟有八成獲利全靠「轉投資」？ - 台灣好新聞</a></div><div class="news-item"><div class="d">2026-09-09 04:00:21</div><a href="https://www.moneyweekly.com.tw/ArticleData/Info/Article/247666" target="_blank">「傳產巨頭」南亞靠AI材料大變身，但暴賺背後竟有八成獲利全靠「轉投資」？ - 理財周刊</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:06:35</div><a href="https://www.cmoney.tw/forum/article/184525150" target="_blank">1303 南亞 - 🥰南亞235～253區間，國巨549～595區間 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 21:00:50</div><a href="https://www.cmoney.tw/forum/article/184546915" target="_blank">1303 南亞 - 【金包銀之南亞：塑膠龍頭法說當日量縮拉回，短線震盪沉澱！】 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 17:08:48</div><a href="https://money.udn.com/money/story/5739/9747124" target="_blank">南亞 選價內外15% - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-10 17:08:48</div><a href="https://udn.com/news/story/7255/9747124" target="_blank">南亞 選價內外15% - UDN</a></div><div class="news-item"><div class="d">2026-09-10 17:08:48</div><a href="https://udn.com/news/story/7255/9747124" target="_blank">南亞 選價內外15% - udn</a></div></div>
           </details>
         </div>
       </div>
@@ -1169,19 +1169,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">詳(8)細(9)算：<br>            因(1)技(2)術(3)面(4)破(5)位(6)且(7)法(8)人(9)持(10)續(11)賣(12)超(13)，(14)短(15)線(16)不(17)宜(18)盲(19)目(20)摸(21)底(22)。(23)建(24)議(25)投(26)資(27)人(28)先(29)暫(30)時(31)觀(32)望</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 12:17:00</div><a href="https://stock.ltn.com.tw/article/vzh4a5cahujt" target="_blank">焦點股》國巨*:營收創高股價卻連跌 散戶喊出清 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-09 12:17:00</div><a href="https://stock.ltn.com.tw/article/vzh4a5cahujt" target="_blank">焦點股》國巨*:營收創高股價卻連跌 散戶喊出清 - stock.ltn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 01:57:54</div><a href="https://www.cmoney.tw/forum/article/184440792" target="_blank">2327 國巨* - 高點賣在1220、賺走141億的那隻手，最近又回頭買—— 4 步驟找出國巨的關鍵主力- 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 03:17:23</div><a href="https://ec.ltn.com.tw/article/breakingnews/5569134" target="_blank">焦點股》國巨*:營收創高股價卻連跌 散戶喊出清 - 自由財經</a></div><div class="news-item"><div class="d">2026-09-10 03:17:23</div><a href="https://ec.ltn.com.tw/article/breakingnews/5569134" target="_blank">焦點股》國巨*:營收創高股價卻連跌 散戶喊出清 - ec.ltn.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -1269,19 +1269,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">(55)錯(56)格(57)局(58)。(59) -> Need 1 more character.<br>            "外資與投信今日聯手調節，惟大戶持股比例微幅回升。融資餘額減少有利籌碼沉澱，但借券賣出餘額仍增，整體呈現多空交錯的格局。"<br>            1.外 2.資 3.與 4.投 5.信 6.今 7.日 8.聯 9.手 10.調 11.節 12.， 13.惟 14.大 15.戶 16.持 17.股</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 23:42:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6297695001&PU=1002" target="_blank">《外資》買超股：群創、新纖、臺企銀 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-09 23:36:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6297484001&PU=1002" target="_blank">《台北股市》三大法人09日買超股：群創、友達、聯電 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-09 22:25:05</div><a href="https://www.cmoney.tw/forum/article/184493802" target="_blank">3481 群創 - 回顧15天 ， 最低44.95 最高52.4 好像要跌下去... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 13:18:28</div><a href="https://tw.news.yahoo.com/%E5%A4%96%E8%B3%87%E8%B2%B7%E7%9B%A4%E5%A4%A7%E6%B4%97%E7%89%8C-%E7%BE%A4%E5%89%B5-%E8%8F%AF%E9%82%A6%E9%9B%BB%E5%A4%9A%E7%A9%BA%E7%BF%BB%E8%BD%89-%E9%80%99%E5%B9%BE%E6%AA%94%E5%82%B3%E7%94%A2%E8%82%A1-%E7%AB%9F%E7%BD%95%E8%A6%8B%E9%80%B2%E6%A6%9C-131828756.html" target="_blank">外資買盤大洗牌！群創、華邦電多空翻轉 「這幾檔傳產股」竟罕見進榜 - Yahoo新聞</a></div><div class="news-item"><div class="d">2026-09-09 12:00:00</div><a href="https://www.ftnn.com.tw/news/577652" target="_blank">狂砸28億注資台塑三寶！外資掃入「這檔」1.3萬張助攻漲停 另搶群創、友達破14萬張登冠亞軍 - FTNN 新聞網</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:43:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=6299599001&PU=0010" target="_blank">《台北股市》三大法人10日賣超股：緯創、群創、新纖 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 17:34:09</div><a href="https://udn.com/news/story/7252/9747160" target="_blank">群創8月合併營收月減1% - udn.com</a></div><div class="news-item"><div class="d">2026-09-10 17:34:09</div><a href="https://udn.com/news/story/7252/9747160" target="_blank">群創8月合併營收月減1% - UDN</a></div><div class="news-item"><div class="d">2026-09-10 16:24:15</div><a href="https://money.udn.com/money/story/5710/9747160?from=edn_newest_index" target="_blank">群創8月合併營收月減1% - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-10 16:24:15</div><a href="https://udn.com/news/story/7252/9747160" target="_blank">群創8月合併營收月減1% - UDN</a></div></div>
           </details>
         </div>
       </div>
@@ -1369,19 +1369,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
+                <div class="ai-text">股價站上十日與月線，短線呈現反彈，且ＭＡＣＤ紅柱持續增長。惟季線與超趨勢指標仍下行壓制，且均量稍顯不足，呈弱勢整理。</div>
+                <div class="ai-text ai-divider">大戶持股比逾九成且續增，籌碼高度集中。投信近期連續回補，伴隨融資餘額遞減，浮額有效清洗。外資與借券則呈現觀望保守。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
+                <div class="ai-text">籌碼結構有利多方，惟技術面受季線反壓。建議採區間操作，拉回至月線不破可分批佈局，若能帶量強勢突破季線則可順勢加碼。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 23:50:00</div><a href="https://www.ftnn.com.tw/news/577682" target="_blank">目標價狂喊8000元以上！這「光測試大廠」EPS拚破百元、旺矽8月營收暴增70％ CPO把身價越推越高 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-09 23:50:00</div><a href="https://www.ftnn.com.tw/news/577682" target="_blank">目標價狂喊8000元以上！這「光測試大廠」EPS拚破百元、旺矽8月營收暴增70％ CPO把身價越推越高 - ftnn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20260910000361-260206" target="_blank">致茂、旺矽 外資齊聲唱多 - 中時新聞網</a></div><div class="news-item"><div class="d">2026-09-09 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20260910000361-260206" target="_blank">致茂、旺矽 外資齊聲唱多 - chinatimes.com</a></div><div class="news-item"><div class="d">2026-09-09 19:00:00</div><a href="https://www.ctee.com.tw/news/20260910700215-439901" target="_blank">致茂、旺矽外資齊聲唱多- 日報 - 工商時報</a></div></div>
+            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 09:00:00</div><a href="https://money.udn.com/money/story/5612/9740365" target="_blank">旺矽探針卡 獲三星採用 - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-10 08:19:36</div><a href="https://today.line.me/tw/v3/posts/list/article/3NPwogo" target="_blank">討論牆 | 盤中速報 - 旺矽(6223)股價殺至跌停，跌停價5040.0元，成交1,299張 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-09-10 08:19:36</div><a href="https://today.line.me/tw/v3/posts/list/article/3NPwogo" target="_blank">討論牆 | 盤中速報 - 旺矽(6223)股價殺至跌停，跌停價5040.0元，成交1,299張 - today.line.me</a></div></div>
           </details>
         </div>
       </div>
@@ -1406,8 +1406,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
       <div class="fund-cell"><div class="k">預估本益比</div><div class="v">39.58</div></div>
       <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
       <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">12.45</div></div>
-      <div class="fund-cell"><div class="k">ROE</div><div class="v">20.75%</div></div>
-      <div class="fund-cell"><div class="k">殖利率</div><div class="v">54.00%</div></div>
+      <div class="fund-cell"><div class="k">ROE</div><div class="v">24.64%</div></div>
+      <div class="fund-cell"><div class="k">殖利率</div><div class="v">48.00%</div></div>
     </div>
 
           <details class="fold rating-detail">
@@ -1469,19 +1469,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">今日股價強彈站上月線，但受制於五日及十日線反壓。中長期均線多頭且超趨勢看多，惟量縮且MACD偏弱仍處震盪整理。</div>
-                <div class="ai-text ai-divider">投信持續買超力挺，外資今日轉買但波段仍站賣方。融資遞減籌碼沉澱，惟借券增加且大戶持股微幅下滑，土洋呈現對峙格局。</div>
+                <div class="ai-text">股價強彈收在1415元，但仍承壓短均線之下。中長期均線多頭排列且超級趨勢看多，惟MACD負值與量縮顯示短線仍處震盪整理。</div>
+                <div class="ai-text ai-divider">投信為主要買盤支撐，外資今日雖轉買但中線仍偏賣方。融資持續減肥有利籌碼沉澱，惟大戶持股微降且借券增加，多空勢力仍在拉鋸。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">建議採區間操作。股價拉回至月線支撐不破可分批佈局，待帶量突破十日均線反壓後再行加碼，並以月線作為短期停損點。</div>
+                <div class="ai-text">中長線多頭趨勢不變，短線震盪可採分批佈局。建議以月線為守，若站穩短均線且量</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 19:53:16</div><a href="https://udn.com/news/story/7252/9744787" target="_blank">昇達科8月營收月增四成 鐳洋增16.2% - UDN</a></div><div class="news-item"><div class="d">2026-09-09 19:53:16</div><a href="https://udn.com/news/story/7252/9744787" target="_blank">昇達科8月營收月增四成 鐳洋增16.2% - udn.com</a></div><div class="news-item"><div class="d">2026-09-09 17:14:20</div><a href="https://money.udn.com/money/story/5607/9744787" target="_blank">昇達科8月營收月增四成 鐳洋增16.2% - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-09 17:14:20</div><a href="https://udn.com/news/story/7252/9744787" target="_blank">昇達科8月營收月增四成 鐳洋增16.2% - udn.com</a></div><div class="news-item"><div class="d">2026-09-09 17:14:20</div><a href="https://udn.com/news/story/7252/9744787" target="_blank">昇達科8月營收月增四成 鐳洋增16.2% - UDN</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:43:15</div><a href="https://www.cmoney.tw/forum/article/184525682" target="_blank">3491 昇達科- 9/11通膨風險均上揚，台股恐面臨壓力。美伊中東戰事擴大，最... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 05:37:58</div><a href="https://www.cmoney.tw/forum/article/184508839" target="_blank">3491 昇達科- 媽媽跌太多了這根好醜我怕了- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 02:41:37</div><a href="https://www.cmoney.tw/forum/article/184532267" target="_blank">昇達科即使跌深反彈，也要看清楚：這可能只是逃生門！ - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 02:21:52</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 01:04:35</div><a href="https://www.cmoney.tw/forum/article/184495991" target="_blank">3491 昇達科 - 外資急了想要散戶多殺多！ - 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1569,19 +1569,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價站上5日及10日線，但受制於下彎月線。量能萎縮且MACD維持負值，顯示多頭動能不足，目前呈季線上方的弱勢震盪格局。</div>
+                <div class="ai-text ai-divider">投信持續偏多掌控，外資短線轉買但中期仍賣。融資與借券微增，惟大戶持股比微升至八成，整體籌碼呈現土洋對峙且小幅集中。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">月線下彎壓制，建議靜待帶量突破20日線再行佈局。若失守季線或Supertrend支撐則應果斷停損，短期以區間操作為主。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 01:30:41</div><a href="https://www.cmoney.tw/forum/article/184435784" target="_blank">3189 景碩- 【09/09 產業即時新聞】ABF載板族群強勢表態，AI伺服器需求點燃多頭反攻- 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 22:50:01</div><a href="https://www.businesstoday.com.tw/article/category/183015/post/202609090067/" target="_blank">不要只看欣興南電景碩…PCB女王廖婉婷喊出「5檔黑馬股」！台股第二隻腳已過：第4季5萬點沒大問題 - 今周刊</a></div><div class="news-item"><div class="d">2026-09-10 08:56:54</div><a href="https://today.line.me/tw/v3/posts/list/article/rmRj3nP" target="_blank">討論牆 | 盤中速報 - 景碩(3189)急拉3.96%報735.0元，成交3,529張 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-09-10 08:56:54</div><a href="https://today.line.me/tw/v3/posts/list/article/rmRj3nP" target="_blank">討論牆 | 盤中速報 - 景碩(3189)急拉3.96%報735.0元，成交3,529張 - today.line.me</a></div><div class="news-item"><div class="d">2026-09-10 08:10:34</div><a href="https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f" target="_blank">欣興洗產地風波下，載板四雄後續怎麼看？欣興、南電、景碩、臻鼎三大面向全比較｜陳唯泰｜豐雲學堂2026 年 09 月 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 05:12:09</div><a href="https://cmnews.com.tw/article/cmoneyairesearcher-2cc51ba4-acd6-11f1-9f67-4100ca4a03f5" target="_blank">【13:11 即時新聞】景碩(3189)股價走強至830元上漲2.22%，受AI載板需求與營收創高加持＋短線守穩800元支撐、法人近日轉為買超 - CMoney投資網誌</a></div></div>
           </details>
         </div>
       </div>
@@ -1669,19 +1669,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價站於季線與超趨勢支撐之上，但受制於短中期均線反壓。MACD柱體為負，且成交量顯著萎縮，短期呈量縮震盪整理格局。</div>
+                <div class="ai-text ai-divider">外資與投信近期買賣互見，融資持續減少有利籌碼沉澱。大戶持股比例高達75.15%且微增，顯示中長線籌碼依然安定。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">短線受制均線反壓，不宜追高。建議採區間操作，待股價回檔至季線約226元與超趨勢支撐229元附近分批布局，跌破支撐停損。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 13:23:47</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 12:42:17</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 02:36:19</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 01:59:07</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 01:53:25</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 12:55:27</div><a href="https://www.cmoney.tw/finance/3617/f00025" target="_blank">碩天(3617) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1769,19 +1769,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">(48)d(49)偏(50)空(51)、(52)量(53)能(54)萎(55)縮(56)偏(57)弱(58)。(59) -> 59字。<br>        股價站上5MA迎來短期反彈，但受限於10MA、20MA及60MA下行壓制，且Supertrend指標偏空、量能萎縮偏弱。(60字)<br>        股(1)價(2)站(3)上(4)5(5)M(6)A(7)迎(8)來(9)短(10)期(11</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 11:38:01</div><a href="https://stock.ltn.com.tw/article/cf3hfn09jdjp" target="_blank">焦點股》南電：ABF載板價格看不到天花板！ 出關首日急拉漲停 - 自由時報</a></div><div class="news-item"><div class="d">2026-09-09 08:25:32</div><a href="https://today.line.me/tw/v3/article/mWR70Z2" target="_blank">【盤中速報】高力、玉晶光攻漲停南電飆近8% AI缺電、蘋果鏡頭與PCB接棒領漲| 優分析 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-09-09 07:19:00</div><a href="https://www.ftnn.com.tw/news/577530" target="_blank">PCB強勢撐盤！「這檔」連4漲25%攜霖宏漲停 南電一度亮燈大漲8.29%、欣興也攻4% - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-09 07:19:00</div><a href="https://www.ftnn.com.tw/news/577530" target="_blank">PCB強勢撐盤！「這檔」連4漲25%攜霖宏漲停 南電一度亮燈大漲8.29%、欣興也攻4% - ftnn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 07:00:04</div><a href="https://cmnews.com.tw/article/yeguanyu-15b4ba7f-ac1c-11f1-a6e1-172cd84acf30" target="_blank">南電(8046)盤中轉強，獲利撐得起高估值嗎？-葉博金融研究院 - CMoney投資網誌</a></div></div>
+            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 08:27:00</div><a href="https://fnc.ebc.net.tw/fncnews/headline/217897" target="_blank">PCB女王喊逢跌就買！ 不只欣興、南電、景碩 點名「5檔黑馬」抱到明年 - 東森電視</a></div><div class="news-item"><div class="d">2026-09-10 04:04:40</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202609100006/" target="_blank">南電、國巨、晶技、新日興…新iPhone來了，頂規價11萬！蘋概股為何一堆跌半根停板？規格升級題材沒了？ - 今周刊</a></div><div class="news-item"><div class="d">2026-09-10 03:51:00</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202609100006/" target="_blank">南電、國巨、晶技、新日興…新iPhone來了，頂規價11萬！蘋概股為何一堆跌半根停板？規格升級題材沒了？ - 今周刊</a></div><div class="news-item"><div class="d">2026-09-10 03:51:00</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202609100006/" target="_blank">南電、國巨、晶技、新日興…新iPhone來了，頂規價11萬！蘋概股為何一堆跌半根停板？規格升級題材沒了？ - businesstoday.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -1869,19 +1869,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價跌破五日及十日線，MACD綠柱擴大，短期面臨修正壓力；惟仍站穩月季線且超趨勢維持偏多，量縮拉回屬多頭架構下的整理。</div>
+                <div class="ai-text ai-divider">外資持續調節，投信今日轉買但近期多空交錯；融資短線微增，大戶持股比例雖高達九成但週呈微幅流失，籌碼面呈現高檔震盪。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">短期震盪整理，不宜追高。建議採拉回守勢，待股價回測月線或超趨勢支撐守穩時再分批佈局，並以跌破月線作為短線防守點。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 10:24:41</div><a href="https://www.cmoney.tw/forum/article/184485679" target="_blank">3008 大立光- 路過經過給他吐口水- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 10:19:00</div><a href="https://www.ftnn.com.tw/news/577557" target="_blank">光電股紅通通！「光學大廠」出關首日亮燈攻千元、大立光回彈半根 友達收連5紅、天瀚同飆漲停 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-09 10:19:00</div><a href="https://tw.stock.yahoo.com/news/%E5%85%89%E9%9B%BB%E8%82%A1%E7%B4%85%E9%80%9A%E9%80%9A-%E5%85%89%E5%AD%B8%E5%A4%A7%E5%BB%A0-%E5%87%BA%E9%97%9C%E9%A6%96%E6%97%A5%E4%BA%AE%E7%87%88%E6%94%BB%E5%8D%83%E5%85%83-%E5%A4%A7%E7%AB%8B%E5%85%89%E5%9B%9E%E5%BD%88%E5%8D%8A%E6%A0%B9-%E5%8F%8B%E9%81%94%E6%94%B6%E9%80%A35%E7%B4%85-101900708.html" target="_blank">光電股紅通通！「光學大廠」出關首日亮燈攻千元、大立光回彈半根 友達收連5紅、天瀚同飆漲停 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-09-09 10:19:00</div><a href="https://tw.stock.yahoo.com/news/%E5%85%89%E9%9B%BB%E8%82%A1%E7%B4%85%E9%80%9A%E9%80%9A-%E5%85%89%E5%AD%B8%E5%A4%A7%E5%BB%A0-%E5%87%BA%E9%97%9C%E9%A6%96%E6%97%A5%E4%BA%AE%E7%87%88%E6%94%BB%E5%8D%83%E5%85%83-%E5%A4%A7%E7%AB%8B%E5%85%89%E5%9B%9E%E5%BD%88%E5%8D%8A%E6%A0%B9-%E5%8F%8B%E9%81%94%E6%94%B6%E9%80%A35%E7%B4%85-101900708.html" target="_blank">光電股紅通通！「光學大廠」出關首日亮燈攻千元、大立光回彈半根 友達收連5紅、天瀚同飆漲停 - tw.stock.yahoo.com</a></div><div class="news-item"><div class="d">2026-09-09 09:53:46</div><a href="https://www.peoplenews.tw/articles/economic-news/54508" target="_blank">蘋果新機倒數點火光學股！玉晶光漲停重返千金 大立光終結連跌漲5% - 民報</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 22:04:30</div><a href="https://cmnews.com.tw/article/forumnews-99040f22-ad63-11f1-85cb-68dd538570d1" target="_blank">蘋果摺疊機供應鏈亮相，零組件成本推升新機售價一成大立光卻反挫-財經焦點情報站 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-09-10 22:04:30</div><a href="https://cmnews.com.tw/article/forumnews-99040f22-ad63-11f1-85cb-68dd538570d1" target="_blank">蘋果摺疊機供應鏈亮相，零組件成本推升新機售價一成大立光卻反挫-財經焦點情報站 - cmnews.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 07:55:00</div><a href="https://tw.stock.yahoo.com/news/%E5%85%89%E9%9B%BB%E6%95%B4%E7%89%87%E7%B6%A0-%E7%BE%A4%E5%89%B5-%E5%8F%8B%E9%81%94-%E5%A4%A7%E7%AB%8B%E5%85%89%E5%85%A8%E4%B8%8B%E6%AE%BA-%E9%80%99%E6%AA%94-075500455.html" target="_blank">光電整片綠！群創、友達、大立光全下殺 「這檔」再飆第2根漲停、光鼎也亮燈 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-09-10 07:55:00</div><a href="https://tw.stock.yahoo.com/news/%E5%85%89%E9%9B%BB%E6%95%B4%E7%89%87%E7%B6%A0-%E7%BE%A4%E5%89%B5-%E5%8F%8B%E9%81%94-%E5%A4%A7%E7%AB%8B%E5%85%89%E5%85%A8%E4%B8%8B%E6%AE%BA-%E9%80%99%E6%AA%94-075500455.html" target="_blank">光電整片綠！群創、友達、大立光全下殺 「這檔」再飆第2根漲停、光鼎也亮燈 - tw.stock.yahoo.com</a></div><div class="news-item"><div class="d">2026-09-10 05:11:16</div><a href="https://wantrich.chinatimes.com/news/20260910900352-420101" target="_blank">同樣吃蘋果！為什麼「光學二哥」飆天價 大立光卻慘遭外資獵殺...AI高速傳輸CPO題材只是泡沫？ - 旺得富理財網</a></div></div>
           </details>
         </div>
       </div>
@@ -1894,7 +1894,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">2330</div>
             <div class="sc-name">台積電 <span class="sc-price down">$2,410.00 <span style="font-size:13px">(-1.63%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$3,230.85</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$3,231.41</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge n">★ 中性觀望</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">5.5 / 0</div></div>
           </div>
@@ -1969,7 +1969,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">情(39)緒(40)升(41)溫(42)。(43)大(44)戶(45)持(46)股(47)極(48)高(49)且(50)微(51)增(52)，(53)籌(54)碼(55)仍(56)算(57)穩(58)固(59)。(60) -> 剛好60字。<br><br>    *   **操作建議草稿**：<br>        短期面臨修正壓力，不宜過度追高。建議採取逢低分批布局策略，以季線或超趨勢線為關鍵支</div>
+                <div class="ai-text"> recalculate:<br>        外(1)資(2)今(3)日(4)大(5)賣(6)，(7)但(8)中(9)長(10)期(11)仍(12)呈(13)買(14)超(15)；(16)<br>        融(17)資(18)與(19)借(20)券(21)今(22)日(23)同(24)步(25)增(26)加(27)，(28)顯(29)示(30)散(31)戶(32)與(33)空</div>
                 <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
@@ -1981,7 +1981,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 17:23:46</div><a href="https://www.cmoney.tw/forum/article/184374077" target="_blank">2330 台積電 - 50大權值股強弱： 川湖vs 聯發科 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 16:29:58</div><a href="https://www.cmoney.tw/forum/article/184521837" target="_blank">2330 台積電 - Apple 首款摺疊手機iPhone Duo 正式登場- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 14:15:18</div><a href="https://cmnews.com.tw/article/shenyichen-e265652c-ac58-11f1-8d99-6f5633089aae" target="_blank">台積電(2330)三率創高股價卻平，毛利率能否續撐評價？-Momentum 動能沈沈 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-09-09 14:15:18</div><a href="https://cmnews.com.tw/article/shenyichen-e265652c-ac58-11f1-8d99-6f5633089aae" target="_blank">台積電(2330)三率創高股價卻平，毛利率能否續撐評價？-Momentum 動能沈沈 - cmnews.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 13:48:46</div><a href="https://www.cmoney.tw/forum/article/184489765" target="_blank">2330 台積電 - 指數今天上漲視為4-B若明天拉回4-C不能重疊46580 - 股市爆料同學會 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:46:21</div><a href="https://www.cmoney.tw/forum/article/184525718" target="_blank">2330 台積電 - 09/11 台股盤前：昨夜費半重挫2.66%，中東情勢升溫、美債殖利率走高，台股AI如何表態？ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 22:42:30</div><a href="https://www.cmoney.tw/forum/article/184524982" target="_blank">AI大趨勢尚處極早期！台積電高盛大會最新研判：智能體將把算力需求擴至CPU N3、CoWoS產能仍非常吃緊 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 22:35:58</div><a href="https://www.cmoney.tw/forum/article/184524911" target="_blank">2330 台積電 - 【美股巨頭】台積電8月營收年增53%創歷史新高，股價卻跌？市場在算下一題- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 22:23:09</div><a href="https://www.cmoney.tw/forum/article/184524802" target="_blank">2330 台積電 - 【美股巨頭】從499美元被降評，微軟憑什麼還值這個價？ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 22:19:08</div><a href="https://www.cmoney.tw/forum/article/184524766" target="_blank">2330 台積電 - 【美股巨頭】邁威爾跌3.43%，AI訂單旺季卻被當壞消息？市場在看下一張牌- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2069,19 +2069,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">股價跌破短均，呈現偏弱整理，僅靠季線支撐。Supertrend偏空且MACD持續綠柱，量能萎縮，靜待止跌訊號。</div>
-                <div class="ai-text ai-divider">大戶持股逾九成，結構集中。外資長線偏多但短線觀望，投信長線賣超今日微幅回補，融資借券雙減，籌碼沉澱有利後市止穩。</div>
+                <div class="ai-text">股價跌破短中期均線僅守季線。技術指標偏空，超趨勢看跌且柱體持續收黑，均量萎縮顯示追價意願不足，短期股價維持弱勢整理格局。</div>
+                <div class="ai-text ai-divider">籌碼呈現土洋對峙，外資中長線偏多，投信則持續調節。大戶持股高達九成五但微幅下滑，融資與借券續減，整體籌碼仍處於沉澱階段。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">短線趨勢偏弱，不宜躁進。建議以季線5321元為關鍵防守點，待股價帶量站回五日線且MACD綠柱縮短時再行佈局。</div>
+                <div class="ai-text">目前股價逼近季線支撐，建議不宜盲目追高。待量能回溫且守穩季線後再行布局，若跌破季</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 10:04:28</div><a href="https://www.taiwanhot.net/news/1147670/%E4%B8%80%E5%BC%B5%E4%B8%8D%E8%B5%B7%E7%9C%BC%E7%9A%84%E9%8A%85%E7%AE%94%E5%9F%BA%E6%9D%BF%EF%BC%8C%E7%82%BA%E4%BB%80%E9%BA%BC8%E6%9C%88%E5%8F%AF%E4%BB%A5%E8%AE%93%E5%8F%B0%E5%85%89%E9%9B%BB%E5%81%9A%E5%88%B0201%E5%84%84%E7%87%9F%E6%94%B6%EF%BC%9F" target="_blank">一張不起眼的銅箔基板，為什麼8月可以讓台光電做到201億營收？ - 台灣好新聞</a></div><div class="news-item"><div class="d">2026-09-09 09:31:55</div><a href="https://www.yesmedia.com.tw/%E4%B8%80%E5%BC%B5%E4%B8%8D%E8%B5%B7%E7%9C%BC%E7%9A%84%E9%8A%85%E7%AE%94%E5%9F%BA%E6%9D%BF%EF%BC%8C%E7%82%BA%E4%BB%80%E9%BA%BC8%E6%9C%88%E5%8F%AF%E4%BB%A5%E8%AE%93%E5%8F%B0%E5%85%89%E9%9B%BB%E5%81%9A/" target="_blank">一張不起眼的銅箔基板，為什麼8月可以讓台光電做到201億營收？ - yesmedia.com.tw</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -2169,19 +2169,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">。 (58 chars).<br>            Let's make it exactly 60 characters:<br>            "外資與投信近二十日同步賣超，籌碼流失。大戶持股比下滑，且借券餘額顯著增加，融資雖減難擋賣壓，籌碼結構明顯偏向空方。" (60 chars)<br>            Let's count:<br>            1外 2資 3與 4投 5信 6近 7二 8十 9日 10同 11步 12賣 13超 14， 15籌 16碼 17流 18失 19。 20大 21戶 22</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 17:57:37</div><a href="https://udn.com/news/story/7241/9745032" target="_blank">生技論壇10月7日登場 藥華藥創辦人林國鐘：台灣有孕育大藥廠實力 - UDN</a></div><div class="news-item"><div class="d">2026-09-09 17:57:37</div><a href="https://money.udn.com/money/story/5648/9745032" target="_blank">生技論壇10月7日登場 藥華藥創辦人林國鐘：台灣有孕育大藥廠實力 - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-09 17:57:37</div><a href="https://udn.com/news/story/7241/9745032" target="_blank">生技論壇10月7日登場 藥華藥創辦人林國鐘：台灣有孕育大藥廠實力 - udn.com</a></div></div>
+            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 08:35:18</div><a href="https://www.cmoney.tw/forum/article/184513040" target="_blank">6446 藥華藥 - 加油 希望盤完繼續高飛👍 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 08:35:18</div><a href="https://www.cmoney.tw/forum/article/184513040" target="_blank">6446 藥華藥 - 加油 希望盤完繼續高飛👍 - 股市爆料同學會 - cmoney.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -2269,19 +2269,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 23:51:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6297722001&PU=1002" target="_blank">《通網股》注意股：華星光 近5日跌2.24% - 富聯網</a></div><div class="news-item"><div class="d">2026-09-09 11:59:50</div><a href="https://www.cmoney.tw/forum/article/184487690" target="_blank">營收速報 - 華星光(4979)8月營收5.46億元年增率高達37.45％ - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 11:59:50</div><a href="https://www.cmoney.tw/forum/article/184487690" target="_blank">營收速報 - 華星光(4979)8月營收5.46億元年增率高達37.45％ - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-09 09:17:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6297421001&PU=1002" target="_blank">《業績-通網》華星光8月營收為5.46億元，年增37.45% - 富聯網</a></div><div class="news-item"><div class="d">2026-09-09 09:07:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2419150002&PU=1002" target="_blank">營收：華星光(4979)8月營收5億4586萬元，月增率7.28%，年增率37.45% - 富聯網</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:59:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6299646001&PU=1002" target="_blank">《台北股市》注意股：11日25檔 世紀*.華星光.上詮.蔚華科.高力等 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 13:13:58</div><a href="https://www.cmoney.tw/forum/article/184519219" target="_blank">4979 華星光 - 【華星光(4979)盤後解析】投信主力大賣，股價回檔修正 ... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 13:13:58</div><a href="https://www.cmoney.tw/forum/article/184519219" target="_blank">4979 華星光 - 【華星光(4979)盤後解析】投信主力大賣，股價回檔修正 ... - 股市爆料同學會 - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-10 12:23:30</div><a href="https://www.cmoney.tw/forum/article/184517923" target="_blank">4979 華星光- 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 12:23:30</div><a href="https://www.cmoney.tw/forum/article/184517923" target="_blank">4979 華星光- 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - cmoney.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -2369,119 +2369,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
+                <div class="ai-text">)進(56)場(57)摸(58)底(59)。(60)<br>        Wait, 45 is 元. 46 is "應" (removed "則").<br>        Let's trace:<br>        41:1, 42:3, 43:0, 44:1, 45:元, 46:應, 47:果, 48:斷, 49:停, 50:損, 51:，, 52:切, 53:忌, 54:盲, 55:目, 56:進, 57:場, 58</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 06:57:22</div><a href="https://www.cmoney.tw/forum/article/184480904" target="_blank">6274 台燿- ⭕️行情趨勢成長：台燿、欣興、光寶科、瑞軒、佳世達布局賺大錢- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 06:57:22</div><a href="https://www.cmoney.tw/forum/article/184480904" target="_blank">6274 台燿- ⭕️行情趨勢成長：台燿、欣興、光寶科、瑞軒、佳世達布局賺大錢- 股市爆料同學會 - cmoney.tw</a></div></div>
-          </details>
-        </div>
-      </div>
-    </div>
-    <div class="stock-card " id="card_5425">
-
-      <div class="sc-body">
-        <div class="sc-header" onclick="toggleCard('5425')">
-          <span class="chevron mobile-only" id="chev_5425">▶</span>
-          <div><div class="sc-id">5425</div>
-            <div class="sc-name">台半 <span class="sc-price down">$86.10 <span style="font-size:13px">(-3.58%)</span></span></div></div>
-          <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">-</div></div>
-            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge s">★ 減碼</span><span class="tbadge tup">▲基本面</span></div></div>
-            <div class="block"><div class="k">技 / 籌</div><div class="v num">0 / 1.5</div></div>
-          </div>
-        </div>
-
-        <div class="sc-detail">
-          <div class="fund-strip">
-      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">29.39</div></div>
-      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">13.60</div></div>
-      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
-      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">2.93</div></div>
-      <div class="fund-cell"><div class="k">ROE</div><div class="v">13.20%</div></div>
-      <div class="fund-cell"><div class="k">殖利率</div><div class="v">2.35%</div></div>
-    </div>
-
-          <details class="fold rating-detail">
-            <summary>評分明細與變化</summary>
-            <div>
-              <div class="rating-summary"><span>本次：<b>減碼</b></span><span>前次：尚無前次評等</span><span>總分：1.5</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
-              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
-            </div>
-          </details>
-
-          <div id="kline_5425" class="chart-box" style="height:710px;"></div>
-
-          <details class="fold" open>
-            <summary>三大法人 / 融資融券</summary>
-            <div class="grid-2">
-              <div>
-                <div class="subhead">三大法人買賣超（張）</div>
-                <table class="dtable">
-                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-                  <tr><td>外資</td><td class="down">-284</td><td class="down">-1,214</td><td class="down">-18,640</td></tr>
-                  <tr><td>投信</td><td class="up">+0</td><td class="down">-42</td><td class="up">+7,781</td></tr>
-                  <tr><td>自營</td><td class="down">-149</td><td class="down">-448</td><td class="down">-3,091</td></tr>
-                  <tr class="row-total"><td>合計</td><td class="down">-433</td><td class="down">-1,704</td><td class="down">-13,950</td></tr>
-                </table>
-              </div>
-              <div>
-                <div class="subhead">融資 / 融券 / 借券（張）</div>
-                <table class="dtable">
-                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
-                  <tr><td>融資</td><td>12,470</td><td class="down">-15</td><td class="down">-329</td><td class="up">+3,249</td></tr>
-                  <tr><td>融券</td><td>1,214</td><td class="up">+425</td><td class="up">+469</td><td class="up">+1,106</td></tr>
-                  <tr><td>借券</td><td>16,334</td><td class="up">+207</td><td class="up">+883</td><td class="up">+10,069</td></tr>
-                </table>
-              </div>
-            </div>
-          </details>
-
-          <details class="fold" open>
-            <summary>大戶與散戶持股變動</summary>
-            <div class="tdcc-scroll">
-              <table class="dtable" style="min-width:620px">
-                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
-                <tr><td>20260911</td><td>33.59% <span class="diff down">(-0.34%)</span></td><td class="down">-1,200</td><td>55.35% <span class="diff up">(+0.45%)</span></td><td>107,382 <span class="diff down">(-355)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260904</td><td>33.93% <span class="diff down">(-3.21%)</span></td><td class="down">-774</td><td>54.90% <span class="diff up">(+2.31%)</span></td><td>107,737 <span class="diff up">(+1,714)</span></td><td>2.4 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260828</td><td>37.14% <span class="diff up">(+2.32%)</span></td><td class="down">-3,773</td><td>52.59% <span class="diff down">(-1.75%)</span></td><td>106,023 <span class="diff down">(-1,391)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260821</td><td>34.82% <span class="diff down">(-2.34%)</span></td><td class="down">-7,213</td><td>54.34% <span class="diff up">(+2.30%)</span></td><td>107,414 <span class="diff up">(+2,238)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260814</td><td>37.16% <span class="diff up">(+0.12%)</span></td><td class="down">-1,749</td><td>52.04% <span class="diff up">(+0.28%)</span></td><td>105,176 <span class="diff up">(+225)</span></td><td>2.5 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260807</td><td>37.04% <span class="diff down">(-1.59%)</span></td><td class="down">-547</td><td>51.76% <span class="diff up">(+1.11%)</span></td><td>104,951 <span class="diff up">(+800)</span></td><td>2.5 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260731</td><td>38.63% <span class="diff down">(-0.37%)</span></td><td class="down">-2,254</td><td>50.65% <span class="diff up">(+0.18%)</span></td><td>104,151 <span class="diff down">(-1,462)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260724</td><td>39.00% <span class="diff down">(-1.02%)</span></td><td class="up">+158</td><td>50.47% <span class="diff up">(+1.23%)</span></td><td>105,613 <span class="diff down">(-601)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260717</td><td>40.02% <span class="diff down">(-4.97%)</span></td><td class="up">+4,241</td><td>49.24% <span class="diff up">(+4.39%)</span></td><td>106,214 <span class="diff up">(+5,531)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260709</td><td>44.99% </td><td class="down">-773</td><td>44.85% </td><td>100,683 </td><td>2.6 </td></tr>
-              </table>
-            </div>
-            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（581張）· 散戶 &lt;5百萬（58張）</div>
-          </details>
-
-          <details class="fold" open>
-            <summary>基本面追蹤</summary>
-            <div class="fund-tables">
-              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>0.83</td><td class='up'>388.24%</td></tr><tr><td>2026Q1</td><td>0.70</td><td class='up'>48.94%</td></tr><tr><td>2025Q4</td><td>0.84</td><td class='up'>35.48%</td></tr><tr><td>2025Q3</td><td>0.60</td><td class='up'>81.82%</td></tr><tr><td>2025Q2</td><td>0.17</td><td class='down'>-66.00%</td></tr></table></div>
-              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-09</td><td>17.14億</td><td class='up'>22.43%</td></tr><tr><td>2026-08</td><td>17.31億</td><td class='up'>24.09%</td></tr><tr><td>2026-07</td><td>16.70億</td><td class='up'>9.46%</td></tr><tr><td>2026-06</td><td>17.67億</td><td class='up'>11.80%</td></tr><tr><td>2026-05</td><td>16.42億</td><td class='up'>2.60%</td></tr><tr><td>2026-04</td><td>16.04億</td><td class='up'>0.42%</td></tr></table></div>
-            </div>
-          </details>
-
-          <details class="fold" open>
-            <summary>AI 分析與建議</summary>
-            <div class="ai-grid">
-              <div class="ai-box">
-                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
-              </div>
-              <div class="ai-box oper">
-                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
-              </div>
-            </div>
-          </details>
-
-          <details class="news">
-            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 04:09:14</div><a href="https://cmnews.com.tw/article/cmoneyairesearcher-627ba6c9-accd-11f1-8cfc-eb32013ba19f" target="_blank">【12:08 即時新聞】臺燿(6274)股價走強至1385元、上漲2.97%，受益AI高階CCL題材發酵＋法人評價偏多但主力籌碼仍待收斂 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-09-10 04:09:14</div><a href="https://cmnews.com.tw/article/cmoneyairesearcher-627ba6c9-accd-11f1-8cfc-eb32013ba19f" target="_blank">【12:08 即時新聞】臺燿(6274)股價走強至1385元、上漲2.97%，受益AI高階CCL題材發酵＋法人評價偏多但主力籌碼仍待收斂 - cmnews.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 04:02:54</div><a href="https://www.taiwanhot.net/news/1147724/%E5%BE%9E%E5%85%89%E5%AD%B8%E7%8E%BB%E7%92%83%E5%88%B0AI%E9%AB%98%E9%80%9F%E6%9D%90%E6%96%99+%E5%8F%B0%E7%87%BF%E5%85%A8%E5%B9%B4%E7%8D%B2%E5%88%A9%E9%80%B2%E5%85%A5%E8%B7%B3%E5%8D%87%E6%9C%9F+%E7%8E%BB%E7%BA%96%E5%B8%83%E9%A1%8C%E6%9D%90%E4%B9%9F%E5%90%83%E5%88%B0" target="_blank">從光學玻璃到AI高速材料 台燿全年獲利進入跳升期 玻纖布題材也吃到 - 台灣好新聞</a></div><div class="news-item"><div class="d">2026-09-10 02:34:05</div><a href="https://www.taiwanhot.net/news/1147708/%E5%8F%B0%E7%87%BF%E5%9F%BA%E6%9C%AC%E9%9D%A2%E5%89%B5%E9%AB%98+%E8%82%A1%E5%83%B9%E5%9B%9E%E6%B8%AC%E5%8D%8A%E5%B9%B4%E7%B7%9A+AI%E9%AB%98%E9%9A%8ECCL%E6%88%90%E9%95%B7%E6%9C%AA%E6%AD%87+1%2C330%E8%87%B31%2C360%E5%85%83%E9%80%B2%E5%85%A5%E5%B8%83%E5%B1%80%E8%A7%80%E5%AF%9F%E5%8D%80" target="_blank">台燿基本面創高 股價回測半年線 AI高階CCL成長未歇 1,330至1,360元進入布局觀察區 - 台灣好新聞</a></div><div class="news-item"><div class="d">2026-09-10 02:33:04</div><a href="https://www.taiwanhot.net/news/focus/1147708/%E5%8F%B0%E7%87%BF%E5%9F%BA%E6%9C%AC%E9%9D%A2%E5%89%B5%E9%AB%98+%E8%82%A1%E5%83%B9%E5%9B%9E%E6%B8%AC%E5%8D%8A%E5%B9%B4%E7%B7%9A+AI%E9%AB%98%E9%9A%8ECCL%E6%88%90%E9%95%B7%E6%9C%AA%E6%AD%87+1%2C330%E8%87%B31%2C360%E5%85%83%E9%80%B2%E5%85%A5%E5%B8%83%E5%B1%80%E8%A7%80%E5%AF%9F%E5%8D%80/70/%E7%94%9F%E6%B4%BB%E9%A0%BB%E9%81%93" target="_blank">台燿基本面創高 股價回測半年線 AI高階CCL成長未歇 1,330至1,360元進入布局觀察區 - 台灣好新聞</a></div></div>
           </details>
         </div>
       </div>
@@ -2569,19 +2469,119 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text"> Let's double check the count:<br>            股(1)價(2)跌(3)破(4)五(5)日(6)至(7)六(8)十(9)日(10)所(11)有(12)均(13)線(14)呈(15)空(16)頭(17)排(18)列(19)，(20)<br>            趨(21)勢(22)與(23)動(24)能(25)指(26)標(27)持(28)續(29)偏(30)空(31)，(3</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text"></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="news">
+            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 12:27:42</div><a href="https://www.cmoney.tw/forum/article/184518041" target="_blank">6488 環球晶- 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 12:27:42</div><a href="https://www.cmoney.tw/forum/article/184518041" target="_blank">6488 環球晶- 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-10 05:35:04</div><a href="https://www.cmoney.tw/forum/article/184508686" target="_blank">6488 環球晶- 明天應該要大漲了吧，昨天台勝科大漲它平盤，今天嘉晶漲停它跌4... - 股市爆料同學會 - CMoney</a></div></div>
+          </details>
+        </div>
+      </div>
+    </div>
+    <div class="stock-card " id="card_5425">
+
+      <div class="sc-body">
+        <div class="sc-header" onclick="toggleCard('5425')">
+          <span class="chevron mobile-only" id="chev_5425">▶</span>
+          <div><div class="sc-id">5425</div>
+            <div class="sc-name">台半 <span class="sc-price down">$86.10 <span style="font-size:13px">(-3.58%)</span></span></div></div>
+          <div class="sc-meta">
+            <div class="block"><div class="k">法人目標價</div><div class="v target">-</div></div>
+            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge s">★ 減碼</span><span class="tbadge tup">▲基本面</span></div></div>
+            <div class="block"><div class="k">技 / 籌</div><div class="v num">0 / 1.5</div></div>
+          </div>
+        </div>
+
+        <div class="sc-detail">
+          <div class="fund-strip">
+      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">29.39</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">13.60</div></div>
+      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
+      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">2.93</div></div>
+      <div class="fund-cell"><div class="k">ROE</div><div class="v">13.20%</div></div>
+      <div class="fund-cell"><div class="k">殖利率</div><div class="v">2.35%</div></div>
+    </div>
+
+          <details class="fold rating-detail">
+            <summary>評分明細與變化</summary>
+            <div>
+              <div class="rating-summary"><span>本次：<b>減碼</b></span><span>前次：尚無前次評等</span><span>總分：1.5</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
+            </div>
+          </details>
+
+          <div id="kline_5425" class="chart-box" style="height:710px;"></div>
+
+          <details class="fold" open>
+            <summary>三大法人 / 融資融券</summary>
+            <div class="grid-2">
+              <div>
+                <div class="subhead">三大法人買賣超（張）</div>
+                <table class="dtable">
+                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>外資</td><td class="down">-284</td><td class="down">-1,214</td><td class="down">-18,640</td></tr>
+                  <tr><td>投信</td><td class="up">+0</td><td class="down">-42</td><td class="up">+7,781</td></tr>
+                  <tr><td>自營</td><td class="down">-149</td><td class="down">-448</td><td class="down">-3,091</td></tr>
+                  <tr class="row-total"><td>合計</td><td class="down">-433</td><td class="down">-1,704</td><td class="down">-13,950</td></tr>
+                </table>
+              </div>
+              <div>
+                <div class="subhead">融資 / 融券 / 借券（張）</div>
+                <table class="dtable">
+                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>融資</td><td>12,470</td><td class="down">-15</td><td class="down">-329</td><td class="up">+3,249</td></tr>
+                  <tr><td>融券</td><td>1,214</td><td class="up">+425</td><td class="up">+469</td><td class="up">+1,106</td></tr>
+                  <tr><td>借券</td><td>16,334</td><td class="up">+207</td><td class="up">+883</td><td class="up">+10,069</td></tr>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>大戶與散戶持股變動</summary>
+            <div class="tdcc-scroll">
+              <table class="dtable" style="min-width:620px">
+                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
+                <tr><td>20260911</td><td>33.59% <span class="diff down">(-0.34%)</span></td><td class="down">-1,200</td><td>55.35% <span class="diff up">(+0.45%)</span></td><td>107,382 <span class="diff down">(-355)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260904</td><td>33.93% <span class="diff down">(-3.21%)</span></td><td class="down">-774</td><td>54.90% <span class="diff up">(+2.31%)</span></td><td>107,737 <span class="diff up">(+1,714)</span></td><td>2.4 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260828</td><td>37.14% <span class="diff up">(+2.32%)</span></td><td class="down">-3,773</td><td>52.59% <span class="diff down">(-1.75%)</span></td><td>106,023 <span class="diff down">(-1,391)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260821</td><td>34.82% <span class="diff down">(-2.34%)</span></td><td class="down">-7,213</td><td>54.34% <span class="diff up">(+2.30%)</span></td><td>107,414 <span class="diff up">(+2,238)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260814</td><td>37.16% <span class="diff up">(+0.12%)</span></td><td class="down">-1,749</td><td>52.04% <span class="diff up">(+0.28%)</span></td><td>105,176 <span class="diff up">(+225)</span></td><td>2.5 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260807</td><td>37.04% <span class="diff down">(-1.59%)</span></td><td class="down">-547</td><td>51.76% <span class="diff up">(+1.11%)</span></td><td>104,951 <span class="diff up">(+800)</span></td><td>2.5 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260731</td><td>38.63% <span class="diff down">(-0.37%)</span></td><td class="down">-2,254</td><td>50.65% <span class="diff up">(+0.18%)</span></td><td>104,151 <span class="diff down">(-1,462)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260724</td><td>39.00% <span class="diff down">(-1.02%)</span></td><td class="up">+158</td><td>50.47% <span class="diff up">(+1.23%)</span></td><td>105,613 <span class="diff down">(-601)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260717</td><td>40.02% <span class="diff down">(-4.97%)</span></td><td class="up">+4,241</td><td>49.24% <span class="diff up">(+4.39%)</span></td><td>106,214 <span class="diff up">(+5,531)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260709</td><td>44.99% </td><td class="down">-773</td><td>44.85% </td><td>100,683 </td><td>2.6 </td></tr>
+              </table>
+            </div>
+            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（581張）· 散戶 &lt;5百萬（58張）</div>
+          </details>
+
+          <details class="fold" open>
+            <summary>基本面追蹤</summary>
+            <div class="fund-tables">
+              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>0.83</td><td class='up'>388.24%</td></tr><tr><td>2026Q1</td><td>0.70</td><td class='up'>48.94%</td></tr><tr><td>2025Q4</td><td>0.84</td><td class='up'>35.48%</td></tr><tr><td>2025Q3</td><td>0.60</td><td class='up'>81.82%</td></tr><tr><td>2025Q2</td><td>0.17</td><td class='down'>-66.00%</td></tr></table></div>
+              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-09</td><td>17.14億</td><td class='up'>22.43%</td></tr><tr><td>2026-08</td><td>17.31億</td><td class='up'>24.09%</td></tr><tr><td>2026-07</td><td>16.70億</td><td class='up'>9.46%</td></tr><tr><td>2026-06</td><td>17.67億</td><td class='up'>11.80%</td></tr><tr><td>2026-05</td><td>16.42億</td><td class='up'>2.60%</td></tr><tr><td>2026-04</td><td>16.04億</td><td class='up'>0.42%</td></tr></table></div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>AI 分析與建議</summary>
+            <div class="ai-grid">
+              <div class="ai-box">
+                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
+                <div class="ai-text">股價跌破各期均線呈空頭排列，MACD綠柱顯示空方控盤。量能急凍反映追價意願低落，短線走勢疲弱，下檔關注超趨勢支撐力道。</div>
+                <div class="ai-text ai-divider">外資波段大賣且借券持續增加，大戶持股比重連續下滑，顯示主力資金流出。投信買盤熄火，籌碼面偏弱，短線缺乏強大買盤支撐股價。</div>
+              </div>
+              <div class="ai-box oper">
+                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
+                <div class="ai-text">技術與籌碼同步轉弱，建議觀望不急於接刀。待股價回測超趨勢支撐81元附近，若見量縮止跌且投信重回買超，再考慮逢低分批布局。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 11:04:34</div><a href="https://www.cmoney.tw/forum/article/184486518" target="_blank">6488 環球晶- 股市最新爆料，掌握股友們對眾個股股價、技術分析、新聞的第一手... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 06:32:15</div><a href="https://www.cmoney.tw/forum/article/184480411" target="_blank">環球晶的股價要等定價公布後的後續觀察重點 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 06:32:15</div><a href="https://www.cmoney.tw/forum/article/184480411" target="_blank">環球晶的股價要等定價公布後的後續觀察重點 - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-09 06:25:00</div><a href="https://www.ftnn.com.tw/news/577354" target="_blank">矽晶圓真的復活了！台勝科8月營收大增29％ 環球晶產線逼近滿載、價格也喊漲 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-09-09 06:25:00</div><a href="https://www.ftnn.com.tw/news/577354" target="_blank">矽晶圓真的復活了！台勝科8月營收大增29％ 環球晶產線逼近滿載、價格也喊漲 - ftnn.com.tw</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:04:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=2420307002&PU=0010" target="_blank">個股：安世轉單＋伺服器元件需求旺，強茂(2481)、台半(5425)8月營收維持高檔 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 23:04:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=2420307002&PU=0010" target="_blank">個股：安世轉單＋伺服器元件需求旺，強茂(2481)、台半(5425)8月營收維持高檔 - ww2.money-link.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 07:23:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2420040002&PU=1002" target="_blank">營收：台半(5425)8月營收17億1414萬元，月增率-0.94%，年增率22.43% - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 07:23:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2420040002&PU=1002" target="_blank">營收：台半(5425)8月營收17億1414萬元，月增率-0.94%，年增率22.43% - ww2.money-link.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 06:00:08</div><a href="https://news.cnyes.com/news/id/6602855" target="_blank">德微(3675)8月營收率先創高！強茂(2481)、台半(5425)尚待揭曉，功率半導體下一棒看誰？ - news.cnyes.com</a></div></div>
           </details>
         </div>
       </div>
@@ -2669,19 +2669,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價跌破短均與季線，呈偏弱排列。MACD綠柱動能不足且量能萎縮，人氣退潮。幸超趨勢線仍上升，123.6元具下檔支撐。</div>
+                <div class="ai-text ai-divider">外資持續偏空操作，20日賣超逾三千張；投信無動作。融資與借券微增，散戶進場。大戶持股比微幅下滑，籌碼面整體偏弱整理。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">短期均線下彎且量縮，不宜躁進。建議採保守策略，靜待量能回溫並站穩季線再行布局。跌破超趨勢支撐123.6元應嚴格停損。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 13:23:26</div><a href="https://www.cmoney.tw/finance/6753/f00025" target="_blank">龍德造船(6753) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 08:14:18</div><a href="https://www.cmoney.tw/forum/article/184512573" target="_blank">6753 龍德造船- eps很好,股價很爛- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 07:10:04</div><a href="https://www.cmoney.tw/notes/note-detail.aspx?nid=1266156" target="_blank">【2026/08月營收公告】龍德造船(6753) 八月營收5.1億元，年增40.14％ - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 06:43:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6298644001&PU=1002" target="_blank">《業績-航運》龍德造船8月營收為5.10億元，年增40.14% - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 06:43:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6298644001&PU=1002" target="_blank">《業績-航運》龍德造船8月營收為5.10億元，年增40.14% - ww2.money-link.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -2769,19 +2769,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價跌破短中長期均線呈現空頭排列，MACD負值持續擴大且量增下跌。目前僅剩超趨勢線1609.9元支撐，短期技術面極偏弱。</div>
+                <div class="ai-text ai-divider">外資與投信聯手持續擴大賣超，散戶融資與借券賣出餘額雙雙增加。大戶持股比例單週下滑零點三三％，籌碼流向散戶，結構顯著轉弱。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">因技術面與籌碼面皆呈弱勢，短期切勿盲目接刀。靜待股價在超趨勢線附近止跌打底，或等法人賣</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 15:00:00</div><a href="https://money.udn.com/money/story/5710/9745655" target="_blank">營收創同期高也沒用 台達電重挫5%、光寶科也跌 市場擔心什麼？ - 經濟日報</a></div><div class="news-item"><div class="d">2026-09-09 10:00:20</div><a href="https://ec.ltn.com.tw/article/breakingnews/5568563" target="_blank">台達電8月營收寫同期新猷 光寶科創單月新高 - 自由財經</a></div><div class="news-item"><div class="d">2026-09-09 10:00:20</div><a href="https://ec.ltn.com.tw/article/breakingnews/5568563" target="_blank">台達電8月營收寫同期新猷 光寶科創單月新高 - ec.ltn.com.tw</a></div><div class="news-item"><div class="d">2026-09-09 09:33:39</div><a href="https://tw.news.yahoo.com/ai%E9%9B%BB%E6%BA%90%E9%9C%80%E6%B1%82%E6%97%BA-%E5%8F%B0%E9%81%94%E9%9B%BB8%E6%9C%88%E7%87%9F%E6%94%B6%E5%89%B5%E6%AD%B7%E5%8F%B2%E7%AC%AC%E4%B8%89%E9%AB%98-%E5%85%89%E5%AF%B6%E7%A7%91%E5%96%AE%E6%9C%88%E5%91%88-%E5%B9%B4%E6%9C%88%E9%9B%99%E5%A2%9E-093238080.html" target="_blank">AI電源需求旺！台達電8月營收創歷史第三高、光寶科單月呈「年月雙增」 - Yahoo新聞</a></div><div class="news-item"><div class="d">2026-09-09 09:33:39</div><a href="https://tw.news.yahoo.com/ai%E9%9B%BB%E6%BA%90%E9%9C%80%E6%B1%82%E6%97%BA-%E5%8F%B0%E9%81%94%E9%9B%BB8%E6%9C%88%E7%87%9F%E6%94%B6%E5%89%B5%E6%AD%B7%E5%8F%B2%E7%AC%AC%E4%B8%89%E9%AB%98-%E5%85%89%E5%AF%B6%E7%A7%91%E5%96%AE%E6%9C%88%E5%91%88-%E5%B9%B4%E6%9C%88%E9%9B%99%E5%A2%9E-093238080.html" target="_blank">AI電源需求旺！台達電8月營收創歷史第三高、光寶科單月呈「年月雙增」 - tw.news.yahoo.com</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:43:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6299597001&PU=1002" target="_blank">《台北股市》投信10日賣超股：遠東新、遠東銀、台達電 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 21:10:32</div><a href="https://wantrich.chinatimes.com/news/20260911900002-420101" target="_blank">8月營收低預期！台達電、光寶科...電源雙雄都涼了？大咖法人最新看法、目標價完整看- 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-09-10 14:48:46</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/-%E9%9B%B6%E8%82%A1%E6%8E%92%E8%A1%8C%E6%A6%9C-%E7%9B%A4%E4%B8%AD%E9%9B%B6%E8%82%A1%E6%88%90%E4%BA%A4%E9%87%8FTOP-20-0050-%E5%85%83%E5%A4%A7%E5%8F%B0%E7%81%A350-2308-%E5%8F%B0%E9%81%94%E9%9B%BB-00919-%E7%BE%A4%E7%9B%8A%E5%8F%B0%E7%81%A3%E7%B2%BE%E9%81%B8%E9%AB%98%E6%81%AF-2303-%E8%81%AF%E9%9B%BB-009816-%E5%87%B1%E5%9F%BA%E5%8F%B0%E7%81%A3TOP50--0910--6aa24afac8344e351607f4ad" target="_blank">【零股排行榜】盤中零股成交量TOP 20｜0050 元大台灣50、2308 台達電、00919 群益台灣精選高息、2303 聯電、009816 凱基台灣TOP50 (0910)｜豐雲學堂2026 年 09 月 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 14:26:15</div><a href="https://www.sinotrade.com.tw/richclub/MarketTrends/-%E9%9B%B6%E8%82%A1%E6%8E%92%E8%A1%8C%E6%A6%9C-%E7%9B%A4%E4%B8%AD%E9%9B%B6%E8%82%A1%E6%88%90%E4%BA%A4%E9%87%8FTOP-20-0050-%E5%85%83%E5%A4%A7%E5%8F%B0%E7%81%A350-2308-%E5%8F%B0%E9%81%94%E9%9B%BB-00919-%E7%BE%A4%E7%9B%8A%E5%8F%B0%E7%81%A3%E7%B2%BE%E9%81%B8%E9%AB%98%E6%81%AF-2303-%E8%81%AF%E9%9B%BB-009816-%E5%87%B1%E5%9F%BA%E5%8F%B0%E7%81%A3TOP50--0910--6aa24afac8344e351607f4ad" target="_blank">【零股排行榜】盤中零股成交量TOP 20｜0050 元大台灣50、2308 台達電、00919 群益台灣精選高息、2303 聯電、009816 凱基台灣TOP50 (0910)｜豐雲學堂2026 年 09 月 - sinotrade.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 13:54:00</div><a href="https://www.ftnn.com.tw/news/577925" target="_blank">目標價2500元！「測試設備大廠」EPS預估大賺10股本 輝達、台積電、台達電訂單狂拉營收 - ftnn.com.tw</a></div></div>
           </details>
         </div>
       </div>
@@ -2869,19 +2869,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">配額用完</div>
-                <div class="ai-text ai-divider">配額用完</div>
+                <div class="ai-text">股價收八百六十一元，跌破所有短中長期均線呈空頭排列。指標顯示趨勢向下，且柱體負值擴大，量能持續萎縮，短期弱勢探底格局未變。</div>
+                <div class="ai-text ai-divider">外資持續調節，五日與二十日呈賣超，投信雖微幅買超但力道不足。大戶持股高達八成三但週比例微降，借券增加，籌碼面偏向保守沉澱。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">配額用完</div>
+                <div class="ai-text">技術面與籌碼面皆顯疲弱，建議投資人暫勿盲目進場摸底。應靜待股價站穩五日線、量能回溫及外資止跌回買，再行考慮分批佈局因應。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-09-09 11:22:22</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 11:08:36</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 10:49:26</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 10:26:23</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-09 10:25:26</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-09-10 23:05:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2420320002&PU=1002" target="_blank">個股：旭隼(6409)9/14受邀參加瑞銀證券所舉辦之『UBS Taiwan Summit 2026』 - 富聯網</a></div><div class="news-item"><div class="d">2026-09-10 23:05:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2420320002&PU=1002" target="_blank">個股：旭隼(6409)9/14受邀參加瑞銀證券所舉辦之『UBS Taiwan Summit 2026』 - ww2.money-link.com.tw</a></div><div class="news-item"><div class="d">2026-09-10 05:55:31</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - cmoney.tw</a></div><div class="news-item"><div class="d">2026-09-10 05:55:31</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-09-10 05:52:33</div><a href="https://www.cmoney.tw/finance/6409/f00025" target="_blank">旭隼(6409) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -5820,160 +5820,6 @@ chartK_6274.setOption(chartOption_6274);
 window.addEventListener('resize', function() { chartK_6274.resize(); });
 
 
-var dates_5425 = ["05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29", "06-01", "06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-10", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11"];
-var state_5425 = { lastIdx: -1, lastMonth: null };
-
-var dateFmt_5425 = function(value, index) {
-  if (index <= state_5425.lastIdx) { state_5425.lastMonth = null; }
-  state_5425.lastIdx = index;
-  var currM = value.split('-')[0];
-  var currD = value.split('-')[1];
-  var isBoundary = false;
-  if (index === 0) isBoundary = true;
-  else if (dates_5425[index - 1].split('-')[0] !== currM) isBoundary = true;
-  if (state_5425.lastMonth !== null && state_5425.lastMonth !== currM) isBoundary = true;
-  if (state_5425.lastMonth === null) isBoundary = true;
-  state_5425.lastMonth = currM;
-  return isBoundary ? (currM + '/' + currD) : currD;
-};
-
-var chartK_5425 = echarts.init(document.getElementById('kline_5425'));
-
-var currentMouseY_5425 = 0;
-chartK_5425.getZr().on('mousemove', function(e) {
-    currentMouseY_5425 = e.offsetY;
-});
-
-var holderRatioAxis_5425 = function(name, color, position) {
-  return {
-    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
-    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
-    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
-    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
-    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
-    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
-  };
-};
-
-var chartOption_5425 = {
-  title: [
-    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
-    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
-    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
-    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
-  ],
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
-    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
-    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
-    formatter: function(params) {
-      var h = chartK_5425.getHeight();
-      var yPct = (currentMouseY_5425 / h) * 100;
-      var date = params[0].axisValue;
-      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
-
-      var hoveredGrid = 0;
-      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
-      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
-      else if (yPct >= 80) hoveredGrid = 3;
-
-      params.forEach(function(p) {
-        var isPrice = (p.seriesName === 'K線');
-        var isVol = (p.seriesName === '成交量(張)');
-        var axIdx = p.axisIndex || 0;
-
-        if (isPrice) {
-          var val = p.data;
-          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
-                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
-                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
-                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
-        } else if (isVol) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v != null && !isNaN(v) && v !== '') {
-              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
-          }
-        } else if (axIdx === hoveredGrid) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v == null || isNaN(v) || v === '') return;
-          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
-          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
-        }
-      });
-      html += '</div>';
-      return html;
-    }
-  },
-  legend: [
-    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
-  ],
-  axisPointer: { link: {xAxisIndex: 'all'} },
-  grid: [
-    { left: '6%', right: '8%', top: '4%', height: '36%' },
-    { left: '6%', right: '8%', top: '50%', height: '11%' },
-    { left: '6%', right: '8%', top: '67%', height: '11%' },
-    { left: '6%', right: '8%', top: '84%', height: '9%' }
-  ],
-  xAxis: [
-    { type: 'category', gridIndex: 0, data: dates_5425, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5425, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
-    { type: 'category', gridIndex: 1, data: dates_5425, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
-    { type: 'category', gridIndex: 2, data: dates_5425, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
-    { type: 'category', gridIndex: 3, data: dates_5425, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5425, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
-  ],
-  yAxis: [
-    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
-    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
-    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
-    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
-    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
-    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
-    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
-  ],
-  dataZoom: [
-    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
-    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
-  ],
-  series: [
-    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[69.11616533938222, 71.26383972167969, 67.26135158306467, 73.11865347799724], [75.55919747495037, 78.39022827148438, 70.58049225232557, 78.39022827148438], [79.07357577498799, 79.17119598388672, 76.92590138743772, 82.7832032966961], [77.3163845003644, 74.38773345947266, 72.53292709193033, 78.58546959726206], [76.63303975030156, 70.97097778320312, 70.58049691480612, 78.3902334498687], [71.26384523179796, 70.28762817382812, 70.19000795762015, 75.16871346367729], [69.31141072399035, 76.04730987548828, 67.8470851453145, 76.63303861736962], [80.04979855635096, 83.56417846679688, 77.4140154855028, 83.56417846679688], [83.56417449147963, 84.83325958251953, 76.82827563893072, 87.1761818940076], [88.44526331917946, 88.2500228881836, 84.54039511570183, 91.27629425628976], [87.37142582349504, 85.02850341796875, 85.02850341796875, 89.81196844426307], [88.83574954429776, 89.42147827148438, 87.5666644287727, 92.5453772297211], [92.7406163002128, 98.10980987548828, 92.44774821692897, 98.10980987548828], [105.9195470490524, 102.01467895507812, 96.0597566013563, 107.87198109603955], [102.0146777223812, 111.77684783935547, 100.06224369898634, 111.77684783935547], [122.51523963371571, 113.72928619384766, 110.31252652278785, 122.51523963371571], [112.75307088502696, 103.96711730957031, 102.50279171366087, 112.75307088502696], [102.99089378320076, 101.03845977783203, 97.62170026843674, 104.94332778856949], [107.38386971609934, 102.5027847290039, 102.01467623029437, 109.82441220964705], [100.55035460523784, 99.08602905273438, 99.08602905273438, 108.36009088525631], [97.62170621664217, 98.5979232788086, 95.0835433445985, 101.52657446530786], [88.73812866210938, 88.73812866210938, 88.73812866210938, 88.73812866210938], [89.22623788362918, 90.49531555175781, 82.97844741240064, 91.569160241333], [89.5190961038441, 85.22374725341797, 84.73563875242003, 94.00970027138086], [87.27380522918773, 89.71434783935547, 84.63801474143956, 90.30007657620673], [93.91207840123172, 98.5979232788086, 92.74062090581006, 98.5979232788086], [102.50279152747427, 98.5979232788086, 96.54786893784812, 103.96711712072391], [99.57413528227751, 95.9621353149414, 95.18115872570644, 100.06224378856318], [94.693054623074, 105.43144226074219, 94.693054623074, 105.43144226074219], [115.68171691894531, 115.68171691894531, 115.68171691894531, 115.68171691894531], [126.90821075439453, 126.90821075439453, 126.90821075439453, 126.90821075439453], [131.7892968476708, 130.81307983398438, 126.42010327239534, 139.59903295716242], [123.97956128390331, 129.3487548828125, 120.56280172096109, 132.27740593676296], [129.83686293954923, 123.97956085205078, 121.53901831559308, 129.83686293954923], [119.58658393293489, 111.77684783935547, 111.77684783935547, 122.02712646217846], [108.36009001298385, 107.38387298583984, 105.43143893155185, 110.80063258084384], [110.31252735185424, 117.6341552734375, 110.31252735185424, 117.6341552734375], [122.02712635935089, 118.61036682128906, 118.12225831585165, 123.9795603811005], [115.1936032870289, 130.32496643066406, 114.70549479852455, 130.32496643066406], [127.88442993164062, 127.88442993164062, 124.95577886450381, 129.34875546520902], [140.57525634765625, 140.57525634765625, 133.7417369418674, 140.57525634765625], [133.25362355472478, 127.88442993164062, 127.39632142045116, 136.67038313305105], [131.30119262022131, 132.76551818847656, 122.51523921068977, 133.74173523398008], [132.27740937448553, 127.39632415771484, 126.90821563603778, 134.71795198287086], [127.39632415771484, 127.39632415771484, 127.39632415771484, 127.39632415771484], [125.93199326535489, 114.70549774169922, 114.70549774169922, 127.39631876844041], [110.31252531247718, 104.4552230834961, 103.47900604533258, 110.31252531247718], [107.38387138898982, 104.94332885742188, 101.52656931322674, 107.38387138898982], [102.99089435502594, 99.57413482666016, 98.59791781855564, 104.4552198671827], [93.91207160578311, 90.3000717163086, 89.61672280141707, 97.13359065700222], [89.81196842637173, 83.95466613769531, 81.70936394785802, 89.81196842637173], [85.90709630870286, 87.37142181396484, 84.05228251244876, 87.56666223548858], [90.30007320272271, 90.59294128417969, 89.42147640629646, 94.69304973690922], [91.17866889559659, 86.68807220458984, 85.90709562878666, 91.76439760347667], [84.83326079385998, 82.97844696044922, 82.97844696044922, 87.07855547814054], [82.5, 82.80000305175781, 80.0999984741211, 83.80000305175781], [78.5999984741211, 75.30000305175781, 75.0, 79.4000015258789], [76.69999694824219, 70.0999984741211, 67.80000305175781, 77.5], [70.19999694824219, 67.19999694824219, 66.19999694824219, 72.19999694824219], [73.30000305175781, 73.0999984741211, 70.5, 73.80000305175781], [72.0, 80.4000015258789, 71.5999984741211, 80.4000015258789], [79.0, 81.5999984741211, 76.5999984741211, 82.9000015258789], [85.0, 83.5, 83.19999694824219, 87.30000305175781], [83.4000015258789, 84.9000015258789, 80.0999984741211, 85.0999984741211], [84.30000305175781, 82.5, 81.69999694824219, 86.0], [82.69999694824219, 84.30000305175781, 82.69999694824219, 86.0], [84.30000305175781, 86.0, 83.5999984741211, 88.80000305175781], [86.0999984741211, 86.69999694824219, 85.0999984741211, 87.30000305175781], [89.19999694824219, 88.80000305175781, 88.4000015258789, 93.19999694824219], [89.69999694824219, 85.5, 84.80000305175781, 89.69999694824219], [85.5, 89.9000015258789, 83.30000305175781, 91.5], [91.19999694824219, 91.5, 88.9000015258789, 97.9000015258789], [90.19999694824219, 91.80000305175781, 89.4000015258789, 98.5], [92.80000305175781, 90.30000305175781, 88.0999984741211, 95.69999694824219], [90.30000305175781, 88.19999694824219, 88.0, 93.30000305175781], [87.80000305175781, 86.0999984741211, 86.0999984741211, 89.30000305175781], [85.69999694824219, 87.9000015258789, 83.80000305175781, 88.0999984741211], [87.9000015258789, 96.5999984741211, 87.19999694824219, 96.5999984741211], [97.0, 95.19999694824219, 95.0, 98.30000305175781], [97.19999694824219, 96.30000305175781, 96.0, 104.5], [94.9000015258789, 94.80000305175781, 93.19999694824219, 96.30000305175781], [94.4000015258789, 95.19999694824219, 94.0999984741211, 97.5999984741211], [93.5, 92.5, 92.5, 94.69999694824219], [92.80000305175781, 91.19999694824219, 90.69999694824219, 96.0999984741211], [92.69999694824219, 92.9000015258789, 89.0, 93.5], [93.5, 92.4000015258789, 91.80000305175781, 95.30000305175781], [92.5999984741211, 89.5999984741211, 89.5999984741211, 93.0], [89.69999694824219, 90.0, 89.5999984741211, 91.5999984741211], [90.0, 89.30000305175781, 89.0, 91.30000305175781], [87.4000015258789, 86.0999984741211, 86.0999984741211, 88.30000305175781]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
-    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [60.78, 61.95, 63.1, 63.99, 64.7, 65.3, 65.89, 67.04, 68.22, 69.61, 70.98, 72.61, 74.6, 76.83, 79.27, 81.89, 84.05, 85.95, 87.73, 89.19, 90.56, 91.08, 91.64, 92.18, 93.12, 94.54, 95.66, 96.28, 97.31, 98.69, 100.78, 102.85, 104.41, 105.51, 105.51, 105.19, 105.88, 106.75, 108.15, 109.59, 111.68, 113.64, 115.75, 117.86, 119.75, 120.55, 120.85, 121.29, 121.0, 119.73, 117.59, 115.41, 113.48, 111.61, 110.17, 108.94, 106.83, 104.4, 101.24, 98.5, 95.5, 93.18, 90.72, 88.59, 86.35, 84.83, 83.91, 82.99, 82.45, 82.21, 82.51, 82.72, 82.78, 82.96, 83.22, 83.39, 84.02, 85.34, 86.74, 87.9, 88.62, 89.3, 89.75, 90.07, 90.59, 90.99, 91.17, 91.34, 91.36, 91.39], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [59, 62, 67, 67, 67, 67, 67, 67, 67, 70, 70, 72, 76, 81, 84, 93, 93, 93, 93, 93, 93, null, null, null, null, null, null, null, null, 91, 101, 106, 106, 106, 106, 106, 106, 106, 106, 106, 108, 108, 108, 108, 108, 108, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 74, 74, 74, 74, 74, 74, 74, 78, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 114, 112, 112, 112, 112, 112, 112, 112, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 135, 132, 128, 120, 112, 111, 111, 111, 108, 104, 99, 95, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
-
-    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [23477, 37127, 43797, 21829, 26235, 14419, 20533, 25986, 66566, 57252, 30563, 30668, 37061, 68102, 66957, 65973, 43060, 29549, 31022, 29191, 24710, 3896, 27730, 20793, 19167, 24685, 39948, 18537, 42805, 14639, 4650, 116826, 43792, 34674, 12889, 5466, 4809, 6670, 10990, 6004, 20529, 11088, 6941, 5388, 0, 14618, 24243, 13518, 11583, 14226, 12176, 9006, 13710, 6361, 5038, 4222, 6585, 11465, 7193, 6284, 6205, 14658, 11815, 6455, 4619, 4729, 9711, 6010, 14627, 6589, 9585, 35466, 44032, 27943, 19188, 11131, 6431, 26215, 41593, 49196, 10070, 13290, 6028, 21331, 10335, 10669, 5539, 3558, 5377, 5559], itemStyle: {color: function(params) { return ["#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992"][params.dataIndex]; } } },
-
-    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [3951.59, 104.09, -1649.39, -461.08, -4581.36, 596.06, 2983.72, 2006.99, 7146.82, -2510.67, -4242.19, 4903.9, 3701.55, -760.98, 7260.5, -12456.28, -4721.9, 2344.55, -6342.4, -2839.95, 1846.39, -36.41, 1666.68, 2262.38, -169.7, 4281.32, -9535.58, -461.51, 2322.33, -573.35, -230.06, 9931.01, -5188.98, -2736.04, 502.55, 1318.95, 25.0, 1678.08, 1615.44, 1164.91, -205.83, 880.22, 1464.44, -622.45, 0.0, -1619.06, 807.07, -2570.72, 1695.62, 2942.13, 2098.18, -2199.78, -3627.08, 140.19, 41.93, 473.98, 587.13, 2436.64, -1003.79, -1276.06, -780.0, -1018.12, -1378.77, -82.78, -422.68, 443.51, 254.03, 850.62, -1206.76, -268.18, 807.53, 319.12, -8117.99, -5370.51, -1106.0, -419.49, 967.71, 7254.75, -3367.84, -4904.27, -1115.02, -1681.4, -672.0, -1708.99, 1688.57, -594.38, 389.72, 6.2, -731.96, -283.88], itemStyle: {color: '#4d7fff'} },
-    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 214.01, 573.58, 0.0, 260.0, 0.0, 0.0, 0.0, 1.32, 0.0, 0.0, 0.0, 0.0, 0.0, -621.0, 0.0, -170.0, 0.0, 0.0, 1197.58, 0.0, -0.73, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -324.73, -65.22, -68.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 300.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 639.0, 639.0, 266.0, 0.0, 0.0, 19.0, 1064.0, 4575.0, 660.0, -16.0, 0.0, -23.0, 0.0, 0.0, -10.0, -11.0, 0.0, -21.0, 0.0], itemStyle: {color: '#1ed992'} },
-    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [739.42, 126.08, -61.76, -484.83, -323.06, 15.16, 368.88, 506.44, 207.3, 1537.95, 54.81, 1019.36, 964.06, 129.7, 434.62, -192.91, -247.47, -634.69, 42.52, -829.23, -638.01, -97.98, -1081.48, -663.7, -156.37, 129.41, -49.24, 365.26, 979.48, 184.53, 307.92, -99.96, -140.04, -81.96, -197.55, -684.51, 225.48, 35.84, 1332.49, 94.78, 1572.64, -231.62, -652.59, -962.64, 0.0, -827.04, -454.2, -123.3, -51.82, -344.49, -55.41, -99.95, -27.38, -49.49, 25.76, -235.57, -104.01, -368.74, -62.71, 88.71, 159.5, 127.09, -287.38, 75.27, -116.7, 30.79, -80.25, 115.36, 12.88, -286.58, 657.01, 317.62, -186.51, -460.88, -541.53, -429.56, 61.41, 517.91, -367.89, -367.97, -608.46, -394.52, -86.63, -466.02, -287.07, -29.39, -209.34, -46.3, -13.64, -149.03], itemStyle: {color: '#e0a83c'} },
-    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [4691.01, 4921.18, 3210.02, 2264.11, -2640.31, -2029.09, 1323.51, 4050.95, 11978.66, 11005.94, 7078.57, 13001.83, 17667.43, 17036.16, 24732.6, 12083.41, 7114.05, 8823.9, 2524.03, -1145.16, -557.78, -692.17, -276.97, 1321.71, 995.64, 6603.95, -2980.87, -3077.84, 223.96, -164.85, -86.99, 9744.07, 4415.04, 1597.03, 1902.03, 2211.75, 2397.01, 4042.23, 6990.17, 8249.86, 9616.66, 10265.26, 11077.12, 9492.03, 9492.03, 7045.92, 7398.79, 4704.77, 6348.58, 8946.21, 10988.98, 8689.25, 5034.79, 5125.49, 5193.19, 5431.6, 5914.72, 7982.63, 6916.13, 5728.78, 5108.28, 4517.25, 2851.1, 2843.59, 2304.21, 2778.51, 2952.3, 3918.28, 2724.4, 2169.65, 3634.19, 4909.94, -2755.56, -8320.95, -9968.48, -10817.53, -9769.41, -932.75, -93.49, -4705.72, -6445.2, -8521.12, -9302.75, -11477.76, -10076.26, -10710.04, -10540.66, -10580.77, -11347.37, -11780.29], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
-
-    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [533, 2088, 558, -2333, -112, -797, -150, 722, 2800, 1877, -1003, -338, 5043, -1651, 697, 2232, -3197, -430, 1806, 55, -991, -633, -985, -160, 1486, -211, 1273, -111, 555, 1650, 461, -4108, 122, 94, -1693, 341, -55, -250, 1905, -1297, 1031, -2188, -347, -157, 0, 850, -1581, -326, -37, -1559, -1077, 180, 1168, -374, -434, 58, -1396, -1114, -13, 241, -205, 433, 176, -82, -92, 47, -343, -277, -14, -248, 326, 514, 1724, 1389, -36, -391, -533, -288, -1072, 1555, 60, 402, -232, 388, -228, -91, -292, 27, 42, -15], itemStyle: {color: '#ff525b'} },
-    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [46, 87, 96, -61, -37, 11, 31, 124, 14, 135, -97, 10, 193, 21, 153, -130, -160, -8, 1, -37, -13, 546, -643, -30, 33, 148, -81, -43, 119, 105, 16, 153, -154, -31, -62, -100, 46, -38, 55, -1, 78, -53, 97, 126, 0, 185, -524, -73, -63, -215, -46, -66, 0, 0, 0, 15, 23, 80, -54, -21, 81, 21, -28, 17, -13, -3, -1, 2, 0, -11, 39, 35, 61, 73, -140, -21, -7, 229, -68, -33, -31, 61, -43, 280, 202, -1, -33, -14, 92, 425], itemStyle: {color: '#1ed992'} },
-    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-127, -118, 569, 101, 583, 283, -129, -314, 159, 26, -18, 134, -157, -301, 180, 901, 660, 263, 1363, 498, 133, -72, -840, 557, -800, -451, 1031, 705, 70, -175, -1220, 273, 27, -594, -123, -197, -161, 229, 130, 61, -121, -79, 21, -381, 0, 106, -161, 192, -1641, -324, 316, -637, 347, -27, -186, -102, 92, -111, 101, 109, 75, -168, -142, -57, -240, 458, 162, 769, -550, 183, -377, -391, 1870, 1560, 1602, 983, 276, 18, -289, 535, 707, 480, 664, 1023, 525, 194, 227, 60, 195, 207], itemStyle: {color: '#b07bff'} },
-    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [11641, 13729, 14287, 11954, 11842, 11045, 10895, 11617, 14417, 16294, 15291, 14953, 19996, 18345, 19042, 21274, 18077, 17647, 19453, 19508, 18517, 17884, 16899, 16739, 18225, 18014, 19287, 19176, 19731, 21381, 21842, 17734, 17856, 17950, 16257, 16598, 16543, 16293, 18198, 16901, 17932, 15744, 15397, 15240, 0, 16090, 14509, 14183, 14146, 12587, 11510, 11690, 12858, 12484, 12050, 12108, 10712, 9598, 9585, 9826, 9621, 10054, 10230, 10148, 10056, 10103, 9760, 9483, 9469, 9221, 9547, 10061, 11785, 13174, 13138, 12747, 12214, 11926, 10854, 12409, 12469, 12871, 12639, 13027, 12799, 12708, 12416, 12443, 12485, 12470], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
-    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [183, 270, 366, 305, 268, 279, 310, 434, 448, 583, 486, 496, 689, 710, 863, 733, 573, 565, 566, 529, 516, 1062, 419, 389, 422, 570, 489, 446, 565, 670, 686, 839, 685, 654, 592, 492, 538, 500, 555, 554, 632, 579, 676, 802, 0, 987, 463, 390, 327, 112, 66, 0, 0, 0, 0, 15, 38, 118, 64, 43, 124, 145, 117, 134, 121, 118, 117, 119, 119, 108, 147, 182, 243, 316, 176, 155, 148, 377, 309, 276, 245, 306, 263, 543, 745, 744, 711, 697, 789, 1214], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
-    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [4995, 4877, 5446, 5547, 6130, 6413, 6284, 5970, 6129, 6155, 6137, 6271, 6114, 5813, 5993, 6894, 7554, 7817, 9180, 9678, 9811, 9739, 8899, 9456, 8656, 8205, 9236, 9941, 10011, 9836, 8616, 8889, 8916, 8322, 8199, 8002, 7841, 8070, 8200, 8261, 8140, 8061, 8082, 7701, 0, 7807, 7646, 7838, 6197, 5873, 6189, 5552, 5899, 5872, 5686, 5584, 5676, 5565, 5666, 5775, 5850, 5682, 5540, 5483, 5243, 5701, 5863, 6632, 6082, 6265, 5888, 5497, 7367, 8927, 10529, 11512, 11788, 11806, 11517, 12052, 12759, 13239, 13903, 14926, 15451, 15645, 15872, 15932, 16127, 16334], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
-
-    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 44.989999999999995, null, null, null, null, null, 40.019999999999996, null, null, null, null, 39.0, null, null, null, null, 38.63, null, null, null, null, 37.04, null, null, null, null, 37.160000000000004, null, null, null, null, 34.82, null, null, null, null, 37.14, null, null, null, null, 33.93, null, null, null, null, 33.589999999999996], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
-    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 44.849999999999994, null, null, null, null, null, 49.24, null, null, null, null, 50.470000000000006, null, null, null, null, 50.65, null, null, null, null, 51.75999999999999, null, null, null, null, 52.03999999999999, null, null, null, null, 54.34, null, null, null, null, 52.589999999999996, null, null, null, null, 54.90000000000001, null, null, null, null, 55.34999999999999], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
-  ]
-};
-
-// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
-chartOption_5425.yAxis[6] = holderRatioAxis_5425('大戶', '#4d7fff', 'left');
-chartOption_5425.yAxis.push(holderRatioAxis_5425('散戶', '#e0a83c', 'right'));
-chartOption_5425.series.forEach(function(series) {
-  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
-});
-chartK_5425.setOption(chartOption_5425);
-window.addEventListener('resize', function() { chartK_5425.resize(); });
-
-
 var dates_6488 = ["05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29", "06-01", "06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-10", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11"];
 var state_6488 = { lastIdx: -1, lastMonth: null };
 
@@ -6126,6 +5972,160 @@ chartOption_6488.series.forEach(function(series) {
 });
 chartK_6488.setOption(chartOption_6488);
 window.addEventListener('resize', function() { chartK_6488.resize(); });
+
+
+var dates_5425 = ["05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29", "06-01", "06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-10", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11"];
+var state_5425 = { lastIdx: -1, lastMonth: null };
+
+var dateFmt_5425 = function(value, index) {
+  if (index <= state_5425.lastIdx) { state_5425.lastMonth = null; }
+  state_5425.lastIdx = index;
+  var currM = value.split('-')[0];
+  var currD = value.split('-')[1];
+  var isBoundary = false;
+  if (index === 0) isBoundary = true;
+  else if (dates_5425[index - 1].split('-')[0] !== currM) isBoundary = true;
+  if (state_5425.lastMonth !== null && state_5425.lastMonth !== currM) isBoundary = true;
+  if (state_5425.lastMonth === null) isBoundary = true;
+  state_5425.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
+};
+
+var chartK_5425 = echarts.init(document.getElementById('kline_5425'));
+
+var currentMouseY_5425 = 0;
+chartK_5425.getZr().on('mousemove', function(e) {
+    currentMouseY_5425 = e.offsetY;
+});
+
+var holderRatioAxis_5425 = function(name, color, position) {
+  return {
+    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
+    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
+    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
+    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
+    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
+    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
+  };
+};
+
+var chartOption_5425 = {
+  title: [
+    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
+    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
+  ],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
+    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
+    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
+    formatter: function(params) {
+      var h = chartK_5425.getHeight();
+      var yPct = (currentMouseY_5425 / h) * 100;
+      var date = params[0].axisValue;
+      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
+
+      var hoveredGrid = 0;
+      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
+      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
+      else if (yPct >= 80) hoveredGrid = 3;
+
+      params.forEach(function(p) {
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
+        var axIdx = p.axisIndex || 0;
+
+        if (isPrice) {
+          var val = p.data;
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        } else if (isVol) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
+          }
+        } else if (axIdx === hoveredGrid) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') return;
+          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+  },
+  legend: [
+    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
+  ],
+  axisPointer: { link: {xAxisIndex: 'all'} },
+  grid: [
+    { left: '6%', right: '8%', top: '4%', height: '36%' },
+    { left: '6%', right: '8%', top: '50%', height: '11%' },
+    { left: '6%', right: '8%', top: '67%', height: '11%' },
+    { left: '6%', right: '8%', top: '84%', height: '9%' }
+  ],
+  xAxis: [
+    { type: 'category', gridIndex: 0, data: dates_5425, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5425, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
+    { type: 'category', gridIndex: 1, data: dates_5425, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 2, data: dates_5425, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 3, data: dates_5425, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5425, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
+  ],
+  yAxis: [
+    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
+    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
+    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
+  ],
+  dataZoom: [
+    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
+    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
+  ],
+  series: [
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[69.11616533938222, 71.26383972167969, 67.26135158306467, 73.11865347799724], [75.55919747495037, 78.39022827148438, 70.58049225232557, 78.39022827148438], [79.07357577498799, 79.17119598388672, 76.92590138743772, 82.7832032966961], [77.3163845003644, 74.38773345947266, 72.53292709193033, 78.58546959726206], [76.63303975030156, 70.97097778320312, 70.58049691480612, 78.3902334498687], [71.26384523179796, 70.28762817382812, 70.19000795762015, 75.16871346367729], [69.31141072399035, 76.04730987548828, 67.8470851453145, 76.63303861736962], [80.04979855635096, 83.56417846679688, 77.4140154855028, 83.56417846679688], [83.56417449147963, 84.83325958251953, 76.82827563893072, 87.1761818940076], [88.44526331917946, 88.2500228881836, 84.54039511570183, 91.27629425628976], [87.37142582349504, 85.02850341796875, 85.02850341796875, 89.81196844426307], [88.83574954429776, 89.42147827148438, 87.5666644287727, 92.5453772297211], [92.7406163002128, 98.10980987548828, 92.44774821692897, 98.10980987548828], [105.9195470490524, 102.01467895507812, 96.0597566013563, 107.87198109603955], [102.0146777223812, 111.77684783935547, 100.06224369898634, 111.77684783935547], [122.51523963371571, 113.72928619384766, 110.31252652278785, 122.51523963371571], [112.75307088502696, 103.96711730957031, 102.50279171366087, 112.75307088502696], [102.99089378320076, 101.03845977783203, 97.62170026843674, 104.94332778856949], [107.38386971609934, 102.5027847290039, 102.01467623029437, 109.82441220964705], [100.55035460523784, 99.08602905273438, 99.08602905273438, 108.36009088525631], [97.62170621664217, 98.5979232788086, 95.0835433445985, 101.52657446530786], [88.73812866210938, 88.73812866210938, 88.73812866210938, 88.73812866210938], [89.22623788362918, 90.49531555175781, 82.97844741240064, 91.569160241333], [89.5190961038441, 85.22374725341797, 84.73563875242003, 94.00970027138086], [87.27380522918773, 89.71434783935547, 84.63801474143956, 90.30007657620673], [93.91207840123172, 98.5979232788086, 92.74062090581006, 98.5979232788086], [102.50279152747427, 98.5979232788086, 96.54786893784812, 103.96711712072391], [99.57413528227751, 95.9621353149414, 95.18115872570644, 100.06224378856318], [94.693054623074, 105.43144226074219, 94.693054623074, 105.43144226074219], [115.68171691894531, 115.68171691894531, 115.68171691894531, 115.68171691894531], [126.90821075439453, 126.90821075439453, 126.90821075439453, 126.90821075439453], [131.7892968476708, 130.81307983398438, 126.42010327239534, 139.59903295716242], [123.97956128390331, 129.3487548828125, 120.56280172096109, 132.27740593676296], [129.83686293954923, 123.97956085205078, 121.53901831559308, 129.83686293954923], [119.58658393293489, 111.77684783935547, 111.77684783935547, 122.02712646217846], [108.36009001298385, 107.38387298583984, 105.43143893155185, 110.80063258084384], [110.31252735185424, 117.6341552734375, 110.31252735185424, 117.6341552734375], [122.02712635935089, 118.61036682128906, 118.12225831585165, 123.9795603811005], [115.1936032870289, 130.32496643066406, 114.70549479852455, 130.32496643066406], [127.88442993164062, 127.88442993164062, 124.95577886450381, 129.34875546520902], [140.57525634765625, 140.57525634765625, 133.7417369418674, 140.57525634765625], [133.25362355472478, 127.88442993164062, 127.39632142045116, 136.67038313305105], [131.30119262022131, 132.76551818847656, 122.51523921068977, 133.74173523398008], [132.27740937448553, 127.39632415771484, 126.90821563603778, 134.71795198287086], [127.39632415771484, 127.39632415771484, 127.39632415771484, 127.39632415771484], [125.93199326535489, 114.70549774169922, 114.70549774169922, 127.39631876844041], [110.31252531247718, 104.4552230834961, 103.47900604533258, 110.31252531247718], [107.38387138898982, 104.94332885742188, 101.52656931322674, 107.38387138898982], [102.99089435502594, 99.57413482666016, 98.59791781855564, 104.4552198671827], [93.91207160578311, 90.3000717163086, 89.61672280141707, 97.13359065700222], [89.81196842637173, 83.95466613769531, 81.70936394785802, 89.81196842637173], [85.90709630870286, 87.37142181396484, 84.05228251244876, 87.56666223548858], [90.30007320272271, 90.59294128417969, 89.42147640629646, 94.69304973690922], [91.17866889559659, 86.68807220458984, 85.90709562878666, 91.76439760347667], [84.83326079385998, 82.97844696044922, 82.97844696044922, 87.07855547814054], [82.5, 82.80000305175781, 80.0999984741211, 83.80000305175781], [78.5999984741211, 75.30000305175781, 75.0, 79.4000015258789], [76.69999694824219, 70.0999984741211, 67.80000305175781, 77.5], [70.19999694824219, 67.19999694824219, 66.19999694824219, 72.19999694824219], [73.30000305175781, 73.0999984741211, 70.5, 73.80000305175781], [72.0, 80.4000015258789, 71.5999984741211, 80.4000015258789], [79.0, 81.5999984741211, 76.5999984741211, 82.9000015258789], [85.0, 83.5, 83.19999694824219, 87.30000305175781], [83.4000015258789, 84.9000015258789, 80.0999984741211, 85.0999984741211], [84.30000305175781, 82.5, 81.69999694824219, 86.0], [82.69999694824219, 84.30000305175781, 82.69999694824219, 86.0], [84.30000305175781, 86.0, 83.5999984741211, 88.80000305175781], [86.0999984741211, 86.69999694824219, 85.0999984741211, 87.30000305175781], [89.19999694824219, 88.80000305175781, 88.4000015258789, 93.19999694824219], [89.69999694824219, 85.5, 84.80000305175781, 89.69999694824219], [85.5, 89.9000015258789, 83.30000305175781, 91.5], [91.19999694824219, 91.5, 88.9000015258789, 97.9000015258789], [90.19999694824219, 91.80000305175781, 89.4000015258789, 98.5], [92.80000305175781, 90.30000305175781, 88.0999984741211, 95.69999694824219], [90.30000305175781, 88.19999694824219, 88.0, 93.30000305175781], [87.80000305175781, 86.0999984741211, 86.0999984741211, 89.30000305175781], [85.69999694824219, 87.9000015258789, 83.80000305175781, 88.0999984741211], [87.9000015258789, 96.5999984741211, 87.19999694824219, 96.5999984741211], [97.0, 95.19999694824219, 95.0, 98.30000305175781], [97.19999694824219, 96.30000305175781, 96.0, 104.5], [94.9000015258789, 94.80000305175781, 93.19999694824219, 96.30000305175781], [94.4000015258789, 95.19999694824219, 94.0999984741211, 97.5999984741211], [93.5, 92.5, 92.5, 94.69999694824219], [92.80000305175781, 91.19999694824219, 90.69999694824219, 96.0999984741211], [92.69999694824219, 92.9000015258789, 89.0, 93.5], [93.5, 92.4000015258789, 91.80000305175781, 95.30000305175781], [92.5999984741211, 89.5999984741211, 89.5999984741211, 93.0], [89.69999694824219, 90.0, 89.5999984741211, 91.5999984741211], [90.0, 89.30000305175781, 89.0, 91.30000305175781], [87.4000015258789, 86.0999984741211, 86.0999984741211, 88.30000305175781]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
+    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [60.78, 61.95, 63.1, 63.99, 64.7, 65.3, 65.89, 67.04, 68.22, 69.61, 70.98, 72.61, 74.6, 76.83, 79.27, 81.89, 84.05, 85.95, 87.73, 89.19, 90.56, 91.08, 91.64, 92.18, 93.12, 94.54, 95.66, 96.28, 97.31, 98.69, 100.78, 102.85, 104.41, 105.51, 105.51, 105.19, 105.88, 106.75, 108.15, 109.59, 111.68, 113.64, 115.75, 117.86, 119.75, 120.55, 120.85, 121.29, 121.0, 119.73, 117.59, 115.41, 113.48, 111.61, 110.17, 108.94, 106.83, 104.4, 101.24, 98.5, 95.5, 93.18, 90.72, 88.59, 86.35, 84.83, 83.91, 82.99, 82.45, 82.21, 82.51, 82.72, 82.78, 82.96, 83.22, 83.39, 84.02, 85.34, 86.74, 87.9, 88.62, 89.3, 89.75, 90.07, 90.59, 90.99, 91.17, 91.34, 91.36, 91.39], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [59, 62, 67, 67, 67, 67, 67, 67, 67, 70, 70, 72, 76, 81, 84, 93, 93, 93, 93, 93, 93, null, null, null, null, null, null, null, null, 91, 101, 106, 106, 106, 106, 106, 106, 106, 106, 106, 108, 108, 108, 108, 108, 108, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 74, 74, 74, 74, 74, 74, 74, 78, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 114, 112, 112, 112, 112, 112, 112, 112, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 135, 132, 128, 120, 112, 111, 111, 111, 108, 104, 99, 95, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, 91, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
+
+    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [23477, 37127, 43797, 21829, 26235, 14419, 20533, 25986, 66566, 57252, 30563, 30668, 37061, 68102, 66957, 65973, 43060, 29549, 31022, 29191, 24710, 3896, 27730, 20793, 19167, 24685, 39948, 18537, 42805, 14639, 4650, 116826, 43792, 34674, 12889, 5466, 4809, 6670, 10990, 6004, 20529, 11088, 6941, 5388, 0, 14618, 24243, 13518, 11583, 14226, 12176, 9006, 13710, 6361, 5038, 4222, 6585, 11465, 7193, 6284, 6205, 14658, 11815, 6455, 4619, 4729, 9711, 6010, 14627, 6589, 9585, 35466, 44032, 27943, 19188, 11131, 6431, 26215, 41593, 49196, 10070, 13290, 6028, 21331, 10335, 10669, 5539, 3558, 5377, 5559], itemStyle: {color: function(params) { return ["#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992"][params.dataIndex]; } } },
+
+    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [3951.59, 104.09, -1649.39, -461.08, -4581.36, 596.06, 2983.72, 2006.99, 7146.82, -2510.67, -4242.19, 4903.9, 3701.55, -760.98, 7260.5, -12456.28, -4721.9, 2344.55, -6342.4, -2839.95, 1846.39, -36.41, 1666.68, 2262.38, -169.7, 4281.32, -9535.58, -461.51, 2322.33, -573.35, -230.06, 9931.01, -5188.98, -2736.04, 502.55, 1318.95, 25.0, 1678.08, 1615.44, 1164.91, -205.83, 880.22, 1464.44, -622.45, 0.0, -1619.06, 807.07, -2570.72, 1695.62, 2942.13, 2098.18, -2199.78, -3627.08, 140.19, 41.93, 473.98, 587.13, 2436.64, -1003.79, -1276.06, -780.0, -1018.12, -1378.77, -82.78, -422.68, 443.51, 254.03, 850.62, -1206.76, -268.18, 807.53, 319.12, -8117.99, -5370.51, -1106.0, -419.49, 967.71, 7254.75, -3367.84, -4904.27, -1115.02, -1681.4, -672.0, -1708.99, 1688.57, -594.38, 389.72, 6.2, -731.96, -283.88], itemStyle: {color: '#4d7fff'} },
+    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 214.01, 573.58, 0.0, 260.0, 0.0, 0.0, 0.0, 1.32, 0.0, 0.0, 0.0, 0.0, 0.0, -621.0, 0.0, -170.0, 0.0, 0.0, 1197.58, 0.0, -0.73, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -324.73, -65.22, -68.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 300.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 639.0, 639.0, 266.0, 0.0, 0.0, 19.0, 1064.0, 4575.0, 660.0, -16.0, 0.0, -23.0, 0.0, 0.0, -10.0, -11.0, 0.0, -21.0, 0.0], itemStyle: {color: '#1ed992'} },
+    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [739.42, 126.08, -61.76, -484.83, -323.06, 15.16, 368.88, 506.44, 207.3, 1537.95, 54.81, 1019.36, 964.06, 129.7, 434.62, -192.91, -247.47, -634.69, 42.52, -829.23, -638.01, -97.98, -1081.48, -663.7, -156.37, 129.41, -49.24, 365.26, 979.48, 184.53, 307.92, -99.96, -140.04, -81.96, -197.55, -684.51, 225.48, 35.84, 1332.49, 94.78, 1572.64, -231.62, -652.59, -962.64, 0.0, -827.04, -454.2, -123.3, -51.82, -344.49, -55.41, -99.95, -27.38, -49.49, 25.76, -235.57, -104.01, -368.74, -62.71, 88.71, 159.5, 127.09, -287.38, 75.27, -116.7, 30.79, -80.25, 115.36, 12.88, -286.58, 657.01, 317.62, -186.51, -460.88, -541.53, -429.56, 61.41, 517.91, -367.89, -367.97, -608.46, -394.52, -86.63, -466.02, -287.07, -29.39, -209.34, -46.3, -13.64, -149.03], itemStyle: {color: '#e0a83c'} },
+    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [4691.01, 4921.18, 3210.02, 2264.11, -2640.31, -2029.09, 1323.51, 4050.95, 11978.66, 11005.94, 7078.57, 13001.83, 17667.43, 17036.16, 24732.6, 12083.41, 7114.05, 8823.9, 2524.03, -1145.16, -557.78, -692.17, -276.97, 1321.71, 995.64, 6603.95, -2980.87, -3077.84, 223.96, -164.85, -86.99, 9744.07, 4415.04, 1597.03, 1902.03, 2211.75, 2397.01, 4042.23, 6990.17, 8249.86, 9616.66, 10265.26, 11077.12, 9492.03, 9492.03, 7045.92, 7398.79, 4704.77, 6348.58, 8946.21, 10988.98, 8689.25, 5034.79, 5125.49, 5193.19, 5431.6, 5914.72, 7982.63, 6916.13, 5728.78, 5108.28, 4517.25, 2851.1, 2843.59, 2304.21, 2778.51, 2952.3, 3918.28, 2724.4, 2169.65, 3634.19, 4909.94, -2755.56, -8320.95, -9968.48, -10817.53, -9769.41, -932.75, -93.49, -4705.72, -6445.2, -8521.12, -9302.75, -11477.76, -10076.26, -10710.04, -10540.66, -10580.77, -11347.37, -11780.29], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
+
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [533, 2088, 558, -2333, -112, -797, -150, 722, 2800, 1877, -1003, -338, 5043, -1651, 697, 2232, -3197, -430, 1806, 55, -991, -633, -985, -160, 1486, -211, 1273, -111, 555, 1650, 461, -4108, 122, 94, -1693, 341, -55, -250, 1905, -1297, 1031, -2188, -347, -157, 0, 850, -1581, -326, -37, -1559, -1077, 180, 1168, -374, -434, 58, -1396, -1114, -13, 241, -205, 433, 176, -82, -92, 47, -343, -277, -14, -248, 326, 514, 1724, 1389, -36, -391, -533, -288, -1072, 1555, 60, 402, -232, 388, -228, -91, -292, 27, 42, -15], itemStyle: {color: '#ff525b'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [46, 87, 96, -61, -37, 11, 31, 124, 14, 135, -97, 10, 193, 21, 153, -130, -160, -8, 1, -37, -13, 546, -643, -30, 33, 148, -81, -43, 119, 105, 16, 153, -154, -31, -62, -100, 46, -38, 55, -1, 78, -53, 97, 126, 0, 185, -524, -73, -63, -215, -46, -66, 0, 0, 0, 15, 23, 80, -54, -21, 81, 21, -28, 17, -13, -3, -1, 2, 0, -11, 39, 35, 61, 73, -140, -21, -7, 229, -68, -33, -31, 61, -43, 280, 202, -1, -33, -14, 92, 425], itemStyle: {color: '#1ed992'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-127, -118, 569, 101, 583, 283, -129, -314, 159, 26, -18, 134, -157, -301, 180, 901, 660, 263, 1363, 498, 133, -72, -840, 557, -800, -451, 1031, 705, 70, -175, -1220, 273, 27, -594, -123, -197, -161, 229, 130, 61, -121, -79, 21, -381, 0, 106, -161, 192, -1641, -324, 316, -637, 347, -27, -186, -102, 92, -111, 101, 109, 75, -168, -142, -57, -240, 458, 162, 769, -550, 183, -377, -391, 1870, 1560, 1602, 983, 276, 18, -289, 535, 707, 480, 664, 1023, 525, 194, 227, 60, 195, 207], itemStyle: {color: '#b07bff'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [11641, 13729, 14287, 11954, 11842, 11045, 10895, 11617, 14417, 16294, 15291, 14953, 19996, 18345, 19042, 21274, 18077, 17647, 19453, 19508, 18517, 17884, 16899, 16739, 18225, 18014, 19287, 19176, 19731, 21381, 21842, 17734, 17856, 17950, 16257, 16598, 16543, 16293, 18198, 16901, 17932, 15744, 15397, 15240, 0, 16090, 14509, 14183, 14146, 12587, 11510, 11690, 12858, 12484, 12050, 12108, 10712, 9598, 9585, 9826, 9621, 10054, 10230, 10148, 10056, 10103, 9760, 9483, 9469, 9221, 9547, 10061, 11785, 13174, 13138, 12747, 12214, 11926, 10854, 12409, 12469, 12871, 12639, 13027, 12799, 12708, 12416, 12443, 12485, 12470], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [183, 270, 366, 305, 268, 279, 310, 434, 448, 583, 486, 496, 689, 710, 863, 733, 573, 565, 566, 529, 516, 1062, 419, 389, 422, 570, 489, 446, 565, 670, 686, 839, 685, 654, 592, 492, 538, 500, 555, 554, 632, 579, 676, 802, 0, 987, 463, 390, 327, 112, 66, 0, 0, 0, 0, 15, 38, 118, 64, 43, 124, 145, 117, 134, 121, 118, 117, 119, 119, 108, 147, 182, 243, 316, 176, 155, 148, 377, 309, 276, 245, 306, 263, 543, 745, 744, 711, 697, 789, 1214], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [4995, 4877, 5446, 5547, 6130, 6413, 6284, 5970, 6129, 6155, 6137, 6271, 6114, 5813, 5993, 6894, 7554, 7817, 9180, 9678, 9811, 9739, 8899, 9456, 8656, 8205, 9236, 9941, 10011, 9836, 8616, 8889, 8916, 8322, 8199, 8002, 7841, 8070, 8200, 8261, 8140, 8061, 8082, 7701, 0, 7807, 7646, 7838, 6197, 5873, 6189, 5552, 5899, 5872, 5686, 5584, 5676, 5565, 5666, 5775, 5850, 5682, 5540, 5483, 5243, 5701, 5863, 6632, 6082, 6265, 5888, 5497, 7367, 8927, 10529, 11512, 11788, 11806, 11517, 12052, 12759, 13239, 13903, 14926, 15451, 15645, 15872, 15932, 16127, 16334], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
+
+    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 44.989999999999995, null, null, null, null, null, 40.019999999999996, null, null, null, null, 39.0, null, null, null, null, 38.63, null, null, null, null, 37.04, null, null, null, null, 37.160000000000004, null, null, null, null, 34.82, null, null, null, null, 37.14, null, null, null, null, 33.93, null, null, null, null, 33.589999999999996], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
+    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 44.849999999999994, null, null, null, null, null, 49.24, null, null, null, null, 50.470000000000006, null, null, null, null, 50.65, null, null, null, null, 51.75999999999999, null, null, null, null, 52.03999999999999, null, null, null, null, 54.34, null, null, null, null, 52.589999999999996, null, null, null, null, 54.90000000000001, null, null, null, null, 55.34999999999999], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
+  ]
+};
+
+// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
+chartOption_5425.yAxis[6] = holderRatioAxis_5425('大戶', '#4d7fff', 'left');
+chartOption_5425.yAxis.push(holderRatioAxis_5425('散戶', '#e0a83c', 'right'));
+chartOption_5425.series.forEach(function(series) {
+  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
+});
+chartK_5425.setOption(chartOption_5425);
+window.addEventListener('resize', function() { chartK_5425.resize(); });
 
 
 var dates_6753 = ["05-08", "05-11", "05-12", "05-13", "05-14", "05-15", "05-18", "05-19", "05-20", "05-21", "05-22", "05-25", "05-26", "05-27", "05-28", "05-29", "06-01", "06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-10", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11"];
