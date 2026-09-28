@@ -18,16 +18,16 @@
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -173920,
-      "dpnl_pct_equity": -0.2083,
-      "futures_equity_after": 682133,
+      "dpnl_total": -173738,
+      "dpnl_pct_equity": -0.208,
+      "futures_equity_after": 682315,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -347840,
-      "dpnl_pct_equity": -0.4165,
-      "futures_equity_after": 529183,
+      "dpnl_total": -347475,
+      "dpnl_pct_equity": -0.4161,
+      "futures_equity_after": 529548,
       "verdict": "SAFE"
     }
   ],
@@ -50,9 +50,9 @@
       "kind": "micro_index",
       "signed_notional": 960492,
       "price": 48024.6015625,
-      "beta": 0.4885,
+      "beta": 0.4866,
       "beta_source": "rolling_60d",
-      "dpnl_at_-20pct": -93840
+      "dpnl_at_-20pct": -93475
     },
     {
       "symbol": "3711",
