@@ -291,7 +291,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 <body>
 <div class="container">
   <div class="header" id="top">
-    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-10-12 22:25 · 即時連線</div></div>
+    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-10-12 23:04 · 即時連線</div></div>
     <button id="runBtn" class="btn-run" onclick="triggerAction(this)">⟳ 重新抓取最新資料</button>
   </div>
 
@@ -321,7 +321,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
   <div id="tab-market" class="tab-content active"><div class="status-panel card">
       <div class="card-title"><span>資料新鮮度與來源狀態</span><span class="src-pill">避免不同來源更新時間混淆</span></div>
-      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-10-12 22:25</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">26 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-10-12</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-10-12</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20261008</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
+      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-10-12 23:04</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">28 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-10-12</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-10-12</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20261008</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
       <div class="status-note">提示：庫存頁會另外讀取 inventory.json；若該檔 updated_at 與頁面產生時間不同，請以各資料卡時間為準。</div>
     </div><div class="section-head"><span class="eyebrow">Market</span><h2>大盤總覽</h2></div>
     <div class="metrics">
@@ -346,8 +346,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
     </div></div>
   <div id="tab-rating" class="tab-content"><div class="rating-wrap">
-  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-10-12 22:25</span></div>
-  <div class="rating-grid"><div class="rcol" data-k="sb"><div class="rcol-head"><span class="rcol-label">強力加碼</span><span class="rcol-count">13</span></div><div class="schip"><div class="schip-top"><span class="schip-name">3617 碩天</span><span class="schip-chg up">+7.04%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 4</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3264 欣銓</span><span class="schip-chg up">+6.45%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 5.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8358 金居</span><span class="schip-chg down">-2.43%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8042 金山電</span><span class="schip-chg up">+3.97%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3008 大立光</span><span class="schip-chg up">+9.98%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +1.5</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5425 台半</span><span class="schip-chg up">+0.00%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6223 旺矽</span><span class="schip-chg up">+9.96%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2383 台光電</span><span class="schip-chg up">+2.50%</span></div><div class="schip-meta"><span class="tag t">技 7.5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3711 日月光投控</span><span class="schip-chg up">+2.42%</span></div><div class="schip-meta"><span class="tag t">技 8</span><span class="tag c">籌 4</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6274 台燿</span><span class="schip-chg down">-0.29%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3491 昇達科</span><span class="schip-chg down">-9.50%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3189 景碩</span><span class="schip-chg down">-1.40%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2330 台積電</span><span class="schip-chg down">-0.39%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="b"><div class="rcol-head"><span class="rcol-label">加碼</span><span class="rcol-count">7</span></div><div class="schip"><div class="schip-top"><span class="schip-name">1303 南亞</span><span class="schip-chg down">-2.26%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2327 國巨*</span><span class="schip-chg up">+0.16%</span></div><div class="schip-meta"><span class="tag t">技 7.5</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6488 環球晶</span><span class="schip-chg down">-1.33%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8046 南電</span><span class="schip-chg down">-2.37%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3037 欣興</span><span class="schip-chg down">-1.18%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2308 台達電</span><span class="schip-chg down">-3.31%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 2</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">4979 華星光</span><span class="schip-chg up">+3.01%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="n"><div class="rcol-head"><span class="rcol-label">中性</span><span class="rcol-count">3</span></div><div class="schip"><div class="schip-top"><span class="schip-name">3481 群創</span><span class="schip-chg up">+0.59%</span></div><div class="schip-meta"><span class="tag t">技 4</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +0</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2449 京元電子</span><span class="schip-chg down">-1.48%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 0</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6446 藥華藥</span><span class="schip-chg down">-0.84%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="s"><div class="rcol-head"><span class="rcol-label">減碼</span><span class="rcol-count">1</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6409 旭隼</span><span class="schip-chg up">+0.81%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 2.5</span><span class="tag f fp">基 +2</span></div></div></div><div class="rcol" data-k="ss"><div class="rcol-head"><span class="rcol-label">強力減碼</span><span class="rcol-count">2</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6753 龍德造船</span><span class="schip-chg down">-3.44%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fn">基 -1</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2454 聯發科</span><span class="schip-chg down">-1.39%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 0</span><span class="tag f fp">基 +2</span></div></div></div></div>
+  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-10-12 23:04</span></div>
+  <div class="rating-grid"><div class="rcol" data-k="sb"><div class="rcol-head"><span class="rcol-label">強力加碼</span><span class="rcol-count">14</span></div><div class="schip"><div class="schip-top"><span class="schip-name">3617 碩天</span><span class="schip-chg up">+7.04%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 4</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3264 欣銓</span><span class="schip-chg up">+6.45%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 5.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8358 金居</span><span class="schip-chg down">-2.43%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8042 金山電</span><span class="schip-chg up">+3.97%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3008 大立光</span><span class="schip-chg up">+9.98%</span></div><div class="schip-meta"><span class="tag t">技 10</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +0.5</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5425 台半</span><span class="schip-chg up">+0.00%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6223 旺矽</span><span class="schip-chg up">+9.96%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 6</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2383 台光電</span><span class="schip-chg up">+2.50%</span></div><div class="schip-meta"><span class="tag t">技 7.5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3711 日月光投控</span><span class="schip-chg up">+2.42%</span></div><div class="schip-meta"><span class="tag t">技 8</span><span class="tag c">籌 4</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3491 昇達科</span><span class="schip-chg down">-9.50%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6274 台燿</span><span class="schip-chg down">-0.29%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3189 景碩</span><span class="schip-chg down">-1.40%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 6.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5536 聖暉*</span><span class="schip-chg down">-9.61%</span></div><div class="schip-meta"><span class="tag t">技 6</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2330 台積電</span><span class="schip-chg down">-0.39%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="b"><div class="rcol-head"><span class="rcol-label">加碼</span><span class="rcol-count">7</span></div><div class="schip"><div class="schip-top"><span class="schip-name">1303 南亞</span><span class="schip-chg down">-2.26%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2327 國巨*</span><span class="schip-chg up">+0.16%</span></div><div class="schip-meta"><span class="tag t">技 7.5</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6488 環球晶</span><span class="schip-chg down">-1.33%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8046 南電</span><span class="schip-chg down">-2.37%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3037 欣興</span><span class="schip-chg down">-1.18%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2308 台達電</span><span class="schip-chg down">-3.31%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 2</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">4979 華星光</span><span class="schip-chg up">+3.01%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="n"><div class="rcol-head"><span class="rcol-label">中性</span><span class="rcol-count">3</span></div><div class="schip"><div class="schip-top"><span class="schip-name">3481 群創</span><span class="schip-chg up">+0.59%</span></div><div class="schip-meta"><span class="tag t">技 4</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +0</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2449 京元電子</span><span class="schip-chg down">-1.48%</span></div><div class="schip-meta"><span class="tag t">技 5</span><span class="tag c">籌 0</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6446 藥華藥</span><span class="schip-chg down">-0.84%</span></div><div class="schip-meta"><span class="tag t">技 3</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="s"><div class="rcol-head"><span class="rcol-label">減碼</span><span class="rcol-count">2</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6409 旭隼</span><span class="schip-chg up">+0.81%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 2.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5274 信驊</span><span class="schip-chg up">+1.20%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="ss"><div class="rcol-head"><span class="rcol-label">強力減碼</span><span class="rcol-count">2</span></div><div class="schip"><div class="schip-top"><span class="schip-name">6753 龍德造船</span><span class="schip-chg down">-3.44%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fn">基 -1</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2454 聯發科</span><span class="schip-chg down">-1.39%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 0</span><span class="tag f fp">基 +2</span></div></div></div></div>
   <details class="legend"><summary>評分邏輯與門檻</summary><div class="legend-body">
     <div class="legend-row"><span class="lbadge t">技術 10</span><span>站月線 +1 · 月&gt;季 +1 · 5&gt;10 +1 · 近20日高 +1.5 · 價漲且量&gt;5均 +1.5 · MACD 紅 +2 · 趨勢向上且5日量&gt;20日量 +2（量能兩項均需價格方向配合）</span></div>
     <div class="legend-row"><span class="lbadge c">籌碼 9</span><span>外資3日 +1.5 · 投信3日 +1.5 · 同買 +1 · 融資減 +1.5 · 借券減 +1.5 · 大戶增&gt;0.1pp +2</span></div>
@@ -409,20 +409,25 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="nav-top"><span>3711 日月光投控</span><span class="pct up">+2.42%</span></div>
             <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技8 / 籌4</span></div>
         </div>
-        <div class="sidebar-item " id="nav_6274" onclick="showStock('6274')">
-            <div class="side-del" onclick="confirmDelete(event, '6274', this)" title="刪除 6274">✖</div>
-            <div class="nav-top"><span>6274 台燿</span><span class="pct down">-0.29%</span></div>
-            <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技8.5 / 籌3.5</span></div>
-        </div>
         <div class="sidebar-item " id="nav_3491" onclick="showStock('3491')">
             <div class="side-del" onclick="confirmDelete(event, '3491', this)" title="刪除 3491">✖</div>
             <div class="nav-top"><span>3491 昇達科</span><span class="pct down">-9.50%</span></div>
             <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技7 / 籌5</span></div>
         </div>
+        <div class="sidebar-item " id="nav_6274" onclick="showStock('6274')">
+            <div class="side-del" onclick="confirmDelete(event, '6274', this)" title="刪除 6274">✖</div>
+            <div class="nav-top"><span>6274 台燿</span><span class="pct down">-0.29%</span></div>
+            <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技8.5 / 籌3.5</span></div>
+        </div>
         <div class="sidebar-item " id="nav_3189" onclick="showStock('3189')">
             <div class="side-del" onclick="confirmDelete(event, '3189', this)" title="刪除 3189">✖</div>
             <div class="nav-top"><span>3189 景碩</span><span class="pct down">-1.40%</span></div>
             <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技5 / 籌6.5</span></div>
+        </div>
+        <div class="sidebar-item " id="nav_5536" onclick="showStock('5536')">
+            <div class="side-del" onclick="confirmDelete(event, '5536', this)" title="刪除 5536">✖</div>
+            <div class="nav-top"><span>5536 聖暉*</span><span class="pct down">-9.61%</span></div>
+            <div class="nav-bottom"><span class="rbadge sb">★ 強力加碼</span><span class="score">技6 / 籌5</span></div>
         </div>
         <div class="sidebar-item " id="nav_2330" onclick="showStock('2330')">
             <div class="side-del" onclick="confirmDelete(event, '2330', this)" title="刪除 2330">✖</div>
@@ -483,6 +488,11 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="side-del" onclick="confirmDelete(event, '6409', this)" title="刪除 6409">✖</div>
             <div class="nav-top"><span>6409 旭隼</span><span class="pct up">+0.81%</span></div>
             <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技2 / 籌2.5</span></div>
+        </div>
+        <div class="sidebar-item " id="nav_5274" onclick="showStock('5274')">
+            <div class="side-del" onclick="confirmDelete(event, '5274', this)" title="刪除 5274">✖</div>
+            <div class="nav-top"><span>5274 信驊</span><span class="pct up">+1.20%</span></div>
+            <div class="nav-bottom"><span class="rbadge s">★ 減碼</span><span class="score">技1 / 籌1.5</span></div>
         </div>
         <div class="sidebar-item " id="nav_6753" onclick="showStock('6753')">
             <div class="side-del" onclick="confirmDelete(event, '6753', this)" title="刪除 6753">✖</div>
@@ -904,7 +914,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">3008</div>
             <div class="sc-name">大立光 <span class="sc-price up">$7,325.00 <span style="font-size:13px">(+9.98%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$5,449.42</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$6,344.58</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">10 / 3.5</div></div>
           </div>
@@ -913,7 +923,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         <div class="sc-detail">
           <div class="fund-strip">
       <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">39.86</div></div>
-      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">37.45</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">38.31</div></div>
       <div class="fund-cell"><div class="k">PEG</div><div class="v">4.88</div></div>
       <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">183.78</div></div>
       <div class="fund-cell"><div class="k">ROE</div><div class="v">13.33%</div></div>
@@ -923,8 +933,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <details class="fold rating-detail">
             <summary>評分明細與變化</summary>
             <div>
-              <div class="rating-summary"><span>本次：<b>強力加碼</b></span><span>前次：尚無前次評等</span><span>總分：13.5</span><span>基本面：+1.5 / 5（4項） · Tilt —</span></div>
-              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class='up'>✓ 2</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='fneg'>−1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
+              <div class="rating-summary"><span>本次：<b>強力加碼</b></span><span>前次：尚無前次評等</span><span>總分：13.5</span><span>基本面：+0.5 / 5（4項） · Tilt —</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class='up'>✓ 2</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='fneg'>−1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class=''>✗ 0</td></tr></table>
             </div>
           </details>
 
@@ -1179,12 +1189,12 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">37)增(38)。(39) -> 18 chars.<br>    Line 3:<br>    大(40)戶(41)比(42)例(43)逾(44)九(45)成(46)且(47)週(48)增(49)，(50)籌(51)碼(52)極(53)度(54)集(55)中(56)極(57)穩(58)定(59)。(60)<br>    Wait, line 3 has no period at the end in my list above, let's fix punctuation:<br>    大戶比例逾九成</div>
-                <div class="ai-text ai-divider"></div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
@@ -1304,7 +1314,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">3711</div>
             <div class="sc-name">日月光投控 <span class="sc-price up">$762.00 <span style="font-size:13px">(+2.42%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$727.53</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$741.06</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">8 / 4</div></div>
           </div>
@@ -1392,106 +1402,6 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <details class="news">
             <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
             <div class="news-list"><div class="news-item"><div class="d">2026-10-09 00:56:51</div><a href="https://www.cmoney.tw/forum/article/185352398" target="_blank">3711 日月光投控- 當市場上到處教播著好消息、散户熱情加入時,就要開始謹慎操作！... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-09 00:24:19</div><a href="https://www.sinotrade.com.tw/richclub/hotstock/%E6%BC%A2%E6%B8%AC%E6%8E%9B%E7%89%8C%E5%89%B5IPO%E5%A4%A9%E5%83%B9%E6%89%BF%E9%8A%B7-%E6%B8%AC%E8%A9%A6%E9%9C%80%E6%B1%82%E5%8D%87%E6%BA%AB-%E6%97%A5%E6%9C%88%E5%85%89%E6%8A%95%E6%8E%A7-%E4%BA%AC%E5%85%83%E9%9B%BB%E7%AD%89%E5%85%88%E9%80%B2%E5%B0%81%E8%A3%9D%E6%B8%AC%E8%A9%A6%E6%A6%82%E5%BF%B5%E8%82%A1%E4%B8%80%E6%AC%A1%E7%9C%8B-%E8%82%A1%E5%B8%82%E8%A9%B1%E9%A1%8C-6ab1dfe41dac81002e092048" target="_blank">漢測掛牌創IPO天價承銷！測試需求升溫，日月光投控、京元電等先進封裝測試概念股一次看｜股市話題 - 永豐金證券</a></div></div>
-          </details>
-        </div>
-      </div>
-    </div>
-    <div class="stock-card " id="card_6274">
-
-      <div class="sc-body">
-        <div class="sc-header" onclick="toggleCard('6274')">
-          <span class="chevron mobile-only" id="chev_6274">▶</span>
-          <div><div class="sc-id">6274</div>
-            <div class="sc-name">台燿 <span class="sc-price down">$1,735.00 <span style="font-size:13px">(-0.29%)</span></span></div></div>
-          <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$2,202.33</div></div>
-            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
-            <div class="block"><div class="k">技 / 籌</div><div class="v num">8.5 / 3.5</div></div>
-          </div>
-        </div>
-
-        <div class="sc-detail">
-          <div class="fund-strip">
-      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">89.34</div></div>
-      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">22.50</div></div>
-      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
-      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">19.42</div></div>
-      <div class="fund-cell"><div class="k">ROE</div><div class="v">30.74%</div></div>
-      <div class="fund-cell"><div class="k">殖利率</div><div class="v">43.00%</div></div>
-    </div>
-
-          <details class="fold rating-detail">
-            <summary>評分明細與變化</summary>
-            <div>
-              <div class="rating-summary"><span>本次：<b>強力加碼</b></span><span>前次：尚無前次評等</span><span>總分：12</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
-              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class='up'>✓ 2</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
-            </div>
-          </details>
-
-          <div id="kline_6274" class="chart-box" style="height:710px;"></div>
-
-          <details class="fold" open>
-            <summary>三大法人 / 融資融券</summary>
-            <div class="grid-2">
-              <div>
-                <div class="subhead">三大法人買賣超（張）</div>
-                <table class="dtable">
-                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
-                  <tr><td>外資</td><td class="down">-546</td><td class="down">-1,122</td><td class="up">+2,829</td></tr>
-                  <tr><td>投信</td><td class="up">+415</td><td class="up">+2,756</td><td class="down">-7,631</td></tr>
-                  <tr><td>自營</td><td class="down">-32</td><td class="down">-168</td><td class="up">+1,318</td></tr>
-                  <tr class="row-total"><td>合計</td><td class="down">-163</td><td class="up">+1,466</td><td class="down">-3,484</td></tr>
-                </table>
-              </div>
-              <div>
-                <div class="subhead">融資 / 融券 / 借券（張）</div>
-                <table class="dtable">
-                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
-                  <tr><td>融資</td><td>16,960</td><td class="up">+25</td><td class="up">+390</td><td class="up">+5,632</td></tr>
-                  <tr><td>融券</td><td>88</td><td class="down">-8</td><td class="down">-9</td><td class="up">+20</td></tr>
-                  <tr><td>借券</td><td>1,472</td><td class="up">+57</td><td class="up">+145</td><td class="up">+21</td></tr>
-                </table>
-              </div>
-            </div>
-          </details>
-
-          <details class="fold" open>
-            <summary>大戶與散戶持股變動</summary>
-            <div class="tdcc-scroll">
-              <table class="dtable" style="min-width:620px">
-                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
-                <tr><td>20261008</td><td>79.67% <span class="diff up">(+0.62%)</span></td><td class="up">+252</td><td>2.87% <span class="diff down">(-0.17%)</span></td><td>119,017 <span class="diff down">(-2,984)</span></td><td>2.5 <span class="diff up">(+0.1)</span></td></tr><tr><td>20261002</td><td>79.05% <span class="diff up">(+0.09%)</span></td><td class="down">-793</td><td>3.04% <span class="diff down">(-0.03%)</span></td><td>122,001 <span class="diff down">(-139)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260924</td><td>78.96% <span class="diff up">(+0.28%)</span></td><td class="up">+94</td><td>3.07% <span class="diff down">(-0.02%)</span></td><td>122,140 <span class="diff down">(-888)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260918</td><td>78.68% <span class="diff down">(-0.72%)</span></td><td class="down">-2,032</td><td>3.09% <span class="diff up">(+0.13%)</span></td><td>123,028 <span class="diff up">(+3,483)</span></td><td>2.4 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260911</td><td>79.40% <span class="diff down">(-0.67%)</span></td><td class="down">-125</td><td>2.96% <span class="diff up">(+0.17%)</span></td><td>119,545 <span class="diff up">(+3,863)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260904</td><td>80.07% <span class="diff down">(-0.95%)</span></td><td class="down">-367</td><td>2.79% <span class="diff up">(+0.23%)</span></td><td>115,682 <span class="diff up">(+5,795)</span></td><td>2.6 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260828</td><td>81.02% <span class="diff down">(-1.28%)</span></td><td class="down">-2,477</td><td>2.56% <span class="diff up">(+0.25%)</span></td><td>109,887 <span class="diff up">(+8,069)</span></td><td>2.7 <span class="diff down">(-0.2)</span></td></tr><tr><td>20260821</td><td>82.30% <span class="diff down">(-0.25%)</span></td><td class="down">-951</td><td>2.31% <span class="diff up">(+0.04%)</span></td><td>101,818 <span class="diff up">(+2,630)</span></td><td>2.9 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260814</td><td>82.55% <span class="diff down">(-0.12%)</span></td><td class="down">-225</td><td>2.27% <span class="diff down">(-0.03%)</span></td><td>99,188 <span class="diff down">(-780)</span></td><td>3.0 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260807</td><td>82.67% </td><td class="down">-1,754</td><td>2.30% </td><td>99,968 </td><td>3.0 </td></tr>
-              </table>
-            </div>
-            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（29張）· 散戶 &lt;5百萬（3張）</div>
-          </details>
-
-          <details class="fold" open>
-            <summary>基本面追蹤</summary>
-            <div class="fund-tables">
-              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>8.02</td><td class='up'>239.83%</td></tr><tr><td>2026Q1</td><td>4.36</td><td class='up'>79.42%</td></tr><tr><td>2025Q4</td><td>3.76</td><td class='up'>46.30%</td></tr><tr><td>2025Q3</td><td>3.58</td><td class='up'>29.24%</td></tr><tr><td>2025Q2</td><td>2.36</td><td class='down'>-7.45%</td></tr></table></div>
-              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-10</td><td>61.26億</td><td class='up'>114.80%</td></tr><tr><td>2026-09</td><td>59.15億</td><td class='up'>132.48%</td></tr><tr><td>2026-08</td><td>59.08億</td><td class='up'>121.52%</td></tr><tr><td>2026-07</td><td>48.95億</td><td class='up'>107.72%</td></tr><tr><td>2026-06</td><td>47.94億</td><td class='up'>124.42%</td></tr><tr><td>2026-05</td><td>46.10億</td><td class='up'>95.61%</td></tr></table></div>
-            </div>
-          </details>
-
-          <details class="fold" open>
-            <summary>AI 分析與建議</summary>
-            <div class="ai-grid">
-              <div class="ai-box">
-                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
-              </div>
-              <div class="ai-box oper">
-                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
-              </div>
-            </div>
-          </details>
-
-          <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-09 11:36:21</div><a href="https://stock.ltn.com.tw/article/u88hmknsbhvc" target="_blank">台燿：高階銅箔基板放量 9月營收再衝新高 - 自由時報</a></div></div>
           </details>
         </div>
       </div>
@@ -1596,6 +1506,106 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
       </div>
     </div>
+    <div class="stock-card " id="card_6274">
+
+      <div class="sc-body">
+        <div class="sc-header" onclick="toggleCard('6274')">
+          <span class="chevron mobile-only" id="chev_6274">▶</span>
+          <div><div class="sc-id">6274</div>
+            <div class="sc-name">台燿 <span class="sc-price down">$1,735.00 <span style="font-size:13px">(-0.29%)</span></span></div></div>
+          <div class="sc-meta">
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$2,202.33</div></div>
+            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
+            <div class="block"><div class="k">技 / 籌</div><div class="v num">8.5 / 3.5</div></div>
+          </div>
+        </div>
+
+        <div class="sc-detail">
+          <div class="fund-strip">
+      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">89.34</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">22.50</div></div>
+      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
+      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">19.42</div></div>
+      <div class="fund-cell"><div class="k">ROE</div><div class="v">30.74%</div></div>
+      <div class="fund-cell"><div class="k">殖利率</div><div class="v">43.00%</div></div>
+    </div>
+
+          <details class="fold rating-detail">
+            <summary>評分明細與變化</summary>
+            <div>
+              <div class="rating-summary"><span>本次：<b>強力加碼</b></span><span>前次：尚無前次評等</span><span>總分：12</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class='up'>✓ 2</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
+            </div>
+          </details>
+
+          <div id="kline_6274" class="chart-box" style="height:710px;"></div>
+
+          <details class="fold" open>
+            <summary>三大法人 / 融資融券</summary>
+            <div class="grid-2">
+              <div>
+                <div class="subhead">三大法人買賣超（張）</div>
+                <table class="dtable">
+                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>外資</td><td class="down">-546</td><td class="down">-1,122</td><td class="up">+2,829</td></tr>
+                  <tr><td>投信</td><td class="up">+415</td><td class="up">+2,756</td><td class="down">-7,631</td></tr>
+                  <tr><td>自營</td><td class="down">-32</td><td class="down">-168</td><td class="up">+1,318</td></tr>
+                  <tr class="row-total"><td>合計</td><td class="down">-163</td><td class="up">+1,466</td><td class="down">-3,484</td></tr>
+                </table>
+              </div>
+              <div>
+                <div class="subhead">融資 / 融券 / 借券（張）</div>
+                <table class="dtable">
+                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>融資</td><td>16,960</td><td class="up">+25</td><td class="up">+390</td><td class="up">+5,632</td></tr>
+                  <tr><td>融券</td><td>88</td><td class="down">-8</td><td class="down">-9</td><td class="up">+20</td></tr>
+                  <tr><td>借券</td><td>1,472</td><td class="up">+57</td><td class="up">+145</td><td class="up">+21</td></tr>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>大戶與散戶持股變動</summary>
+            <div class="tdcc-scroll">
+              <table class="dtable" style="min-width:620px">
+                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
+                <tr><td>20261008</td><td>79.67% <span class="diff up">(+0.62%)</span></td><td class="up">+252</td><td>2.87% <span class="diff down">(-0.17%)</span></td><td>119,017 <span class="diff down">(-2,984)</span></td><td>2.5 <span class="diff up">(+0.1)</span></td></tr><tr><td>20261002</td><td>79.05% <span class="diff up">(+0.09%)</span></td><td class="down">-793</td><td>3.04% <span class="diff down">(-0.03%)</span></td><td>122,001 <span class="diff down">(-139)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260924</td><td>78.96% <span class="diff up">(+0.28%)</span></td><td class="up">+94</td><td>3.07% <span class="diff down">(-0.02%)</span></td><td>122,140 <span class="diff down">(-888)</span></td><td>2.5 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260918</td><td>78.68% <span class="diff down">(-0.72%)</span></td><td class="down">-2,032</td><td>3.09% <span class="diff up">(+0.13%)</span></td><td>123,028 <span class="diff up">(+3,483)</span></td><td>2.4 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260911</td><td>79.40% <span class="diff down">(-0.67%)</span></td><td class="down">-125</td><td>2.96% <span class="diff up">(+0.17%)</span></td><td>119,545 <span class="diff up">(+3,863)</span></td><td>2.5 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260904</td><td>80.07% <span class="diff down">(-0.95%)</span></td><td class="down">-367</td><td>2.79% <span class="diff up">(+0.23%)</span></td><td>115,682 <span class="diff up">(+5,795)</span></td><td>2.6 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260828</td><td>81.02% <span class="diff down">(-1.28%)</span></td><td class="down">-2,477</td><td>2.56% <span class="diff up">(+0.25%)</span></td><td>109,887 <span class="diff up">(+8,069)</span></td><td>2.7 <span class="diff down">(-0.2)</span></td></tr><tr><td>20260821</td><td>82.30% <span class="diff down">(-0.25%)</span></td><td class="down">-951</td><td>2.31% <span class="diff up">(+0.04%)</span></td><td>101,818 <span class="diff up">(+2,630)</span></td><td>2.9 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260814</td><td>82.55% <span class="diff down">(-0.12%)</span></td><td class="down">-225</td><td>2.27% <span class="diff down">(-0.03%)</span></td><td>99,188 <span class="diff down">(-780)</span></td><td>3.0 <span class="diff up">(+0.0)</span></td></tr><tr><td>20260807</td><td>82.67% </td><td class="down">-1,754</td><td>2.30% </td><td>99,968 </td><td>3.0 </td></tr>
+              </table>
+            </div>
+            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（29張）· 散戶 &lt;5百萬（3張）</div>
+          </details>
+
+          <details class="fold" open>
+            <summary>基本面追蹤</summary>
+            <div class="fund-tables">
+              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>8.02</td><td class='up'>239.83%</td></tr><tr><td>2026Q1</td><td>4.36</td><td class='up'>79.42%</td></tr><tr><td>2025Q4</td><td>3.76</td><td class='up'>46.30%</td></tr><tr><td>2025Q3</td><td>3.58</td><td class='up'>29.24%</td></tr><tr><td>2025Q2</td><td>2.36</td><td class='down'>-7.45%</td></tr></table></div>
+              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-10</td><td>61.26億</td><td class='up'>114.80%</td></tr><tr><td>2026-09</td><td>59.15億</td><td class='up'>132.48%</td></tr><tr><td>2026-08</td><td>59.08億</td><td class='up'>121.52%</td></tr><tr><td>2026-07</td><td>48.95億</td><td class='up'>107.72%</td></tr><tr><td>2026-06</td><td>47.94億</td><td class='up'>124.42%</td></tr><tr><td>2026-05</td><td>46.10億</td><td class='up'>95.61%</td></tr></table></div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>AI 分析與建議</summary>
+            <div class="ai-grid">
+              <div class="ai-box">
+                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
+                <div class="ai-text">配額用完</div>
+                <div class="ai-text ai-divider">配額用完</div>
+              </div>
+              <div class="ai-box oper">
+                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
+                <div class="ai-text">配額用完</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="news">
+            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-09 11:36:21</div><a href="https://stock.ltn.com.tw/article/u88hmknsbhvc" target="_blank">台燿：高階銅箔基板放量 9月營收再衝新高 - 自由時報</a></div></div>
+          </details>
+        </div>
+      </div>
+    </div>
     <div class="stock-card " id="card_3189">
 
       <div class="sc-body">
@@ -1604,7 +1614,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">3189</div>
             <div class="sc-name">景碩 <span class="sc-price down">$1,060.00 <span style="font-size:13px">(-1.40%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,026.77</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,042.15</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">5 / 6.5</div></div>
           </div>
@@ -1696,6 +1706,106 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
       </div>
     </div>
+    <div class="stock-card " id="card_5536">
+
+      <div class="sc-body">
+        <div class="sc-header" onclick="toggleCard('5536')">
+          <span class="chevron mobile-only" id="chev_5536">▶</span>
+          <div><div class="sc-id">5536</div>
+            <div class="sc-name">聖暉* <span class="sc-price down">$931.00 <span style="font-size:13px">(-9.61%)</span></span></div></div>
+          <div class="sc-meta">
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,268.33</div></div>
+            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
+            <div class="block"><div class="k">技 / 籌</div><div class="v num">6 / 5</div></div>
+          </div>
+        </div>
+
+        <div class="sc-detail">
+          <div class="fund-strip">
+      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">23.33</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">13.43</div></div>
+      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
+      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">39.91</div></div>
+      <div class="fund-cell"><div class="k">ROE</div><div class="v">31.17%</div></div>
+      <div class="fund-cell"><div class="k">殖利率</div><div class="v">1.94%</div></div>
+    </div>
+
+          <details class="fold rating-detail">
+            <summary>評分明細與變化</summary>
+            <div>
+              <div class="rating-summary"><span>本次：<b>強力加碼</b></span><span>前次：尚無前次評等</span><span>總分：11</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class='up'>✓ 2</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class='up'>✓ 2</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
+            </div>
+          </details>
+
+          <div id="kline_5536" class="chart-box" style="height:710px;"></div>
+
+          <details class="fold" open>
+            <summary>三大法人 / 融資融券</summary>
+            <div class="grid-2">
+              <div>
+                <div class="subhead">三大法人買賣超（張）</div>
+                <table class="dtable">
+                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>外資</td><td class="down">-988</td><td class="down">-381</td><td class="down">-3,494</td></tr>
+                  <tr><td>投信</td><td class="up">+91</td><td class="up">+732</td><td class="up">+1,965</td></tr>
+                  <tr><td>自營</td><td class="up">+14</td><td class="up">+89</td><td class="up">+107</td></tr>
+                  <tr class="row-total"><td>合計</td><td class="down">-883</td><td class="up">+440</td><td class="down">-1,423</td></tr>
+                </table>
+              </div>
+              <div>
+                <div class="subhead">融資 / 融券 / 借券（張）</div>
+                <table class="dtable">
+                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>融資</td><td>1,539</td><td class="down">-3</td><td class="up">+224</td><td class="up">+543</td></tr>
+                  <tr><td>融券</td><td>6</td><td class="down">-7</td><td class="up">+2</td><td class="up">+3</td></tr>
+                  <tr><td>借券</td><td>3,513</td><td class="up">+264</td><td class="up">+816</td><td class="up">+1,500</td></tr>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>大戶與散戶持股變動</summary>
+            <div class="tdcc-scroll">
+              <table class="dtable" style="min-width:620px">
+                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
+                <tr><td>20261008</td><td>78.53% <span class="diff up">(+1.02%)</span></td><td class="up">+605</td><td>9.73% <span class="diff down">(-0.89%)</span></td><td>34,654 <span class="diff down">(-1,792)</span></td><td>3.6 <span class="diff up">(+0.2)</span></td></tr><tr><td>20261002</td><td>77.51% <span class="diff up">(+0.43%)</span></td><td class="down">-438</td><td>10.62% <span class="diff down">(-0.13%)</span></td><td>36,446 <span class="diff up">(+1,266)</span></td><td>3.4 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260924</td><td>77.08% <span class="diff down">(-0.77%)</span></td><td class="down">-547</td><td>10.75% <span class="diff up">(+0.83%)</span></td><td>35,180 <span class="diff up">(+2,421)</span></td><td>3.5 <span class="diff down">(-0.3)</span></td></tr><tr><td>20260918</td><td>77.85% <span class="diff down">(-0.06%)</span></td><td class="up">+306</td><td>9.92% <span class="diff up">(+0.08%)</span></td><td>32,759 <span class="diff up">(+201)</span></td><td>3.8 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260911</td><td>77.91% <span class="diff up">(+0.05%)</span></td><td class="down">-218</td><td>9.84% <span class="diff down">(-0.11%)</span></td><td>32,558 <span class="diff up">(+42)</span></td><td>3.8 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260904</td><td>77.86% <span class="diff down">(-0.64%)</span></td><td class="up">+37</td><td>9.95% <span class="diff up">(+0.38%)</span></td><td>32,516 <span class="diff up">(+949)</span></td><td>3.8 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260828</td><td>78.50% <span class="diff down">(-0.41%)</span></td><td class="down">-7</td><td>9.57% <span class="diff up">(+0.30%)</span></td><td>31,567 <span class="diff up">(+633)</span></td><td>3.9 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260821</td><td>78.91% <span class="diff down">(-0.56%)</span></td><td class="down">-467</td><td>9.27% <span class="diff up">(+0.60%)</span></td><td>30,934 <span class="diff up">(+1,517)</span></td><td>4.0 <span class="diff down">(-0.2)</span></td></tr><tr><td>20260814</td><td>79.47% <span class="diff down">(-0.95%)</span></td><td class="down">-258</td><td>8.67% <span class="diff up">(+0.73%)</span></td><td>29,417 <span class="diff up">(+2,481)</span></td><td>4.2 <span class="diff down">(-0.4)</span></td></tr><tr><td>20260807</td><td>80.42% </td><td class="down">-17</td><td>7.94% </td><td>26,936 </td><td>4.6 </td></tr>
+              </table>
+            </div>
+            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（54張）· 散戶 &lt;5百萬（5張）</div>
+          </details>
+
+          <details class="fold" open>
+            <summary>基本面追蹤</summary>
+            <div class="fund-tables">
+              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>10.97</td><td class='up'>57.84%</td></tr><tr><td>2026Q1</td><td>12.76</td><td class='up'>146.33%</td></tr><tr><td>2025Q4</td><td>8.07</td><td class='up'>34.50%</td></tr><tr><td>2025Q3</td><td>8.22</td><td class='up'>62.45%</td></tr><tr><td>2025Q2</td><td>6.95</td><td class='up'>5.62%</td></tr></table></div>
+              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-10</td><td>55.14億</td><td class='up'>41.05%</td></tr><tr><td>2026-09</td><td>48.79億</td><td class='up'>44.54%</td></tr><tr><td>2026-08</td><td>38.85億</td><td class='up'>3.41%</td></tr><tr><td>2026-07</td><td>47.74億</td><td class='up'>24.90%</td></tr><tr><td>2026-06</td><td>45.19億</td><td class='up'>27.80%</td></tr><tr><td>2026-05</td><td>40.88億</td><td class='up'>15.17%</td></tr></table></div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>AI 分析與建議</summary>
+            <div class="ai-grid">
+              <div class="ai-box">
+                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
+                <div class="ai-text">配額用完</div>
+                <div class="ai-text ai-divider">配額用完</div>
+              </div>
+              <div class="ai-box oper">
+                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
+                <div class="ai-text">配額用完</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="news">
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-09 21:48:53</div><a href="https://www.cmoney.tw/finance/5536/f00025" target="_blank">聖暉*(5536) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-09 21:48:28</div><a href="https://www.cmoney.tw/finance/5536/f00025" target="_blank">聖暉*(5536) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-09 09:35:13</div><a href="https://www.cmoney.tw/finance/5536/f00025" target="_blank">聖暉*(5536) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-09 09:28:41</div><a href="https://www.cmoney.tw/finance/5536/f00025" target="_blank">聖暉*(5536) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-09 02:29:15</div><a href="https://www.cmoney.tw/finance/5536/f00025" target="_blank">聖暉*(5536) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+          </details>
+        </div>
+      </div>
+    </div>
     <div class="stock-card " id="card_2330">
 
       <div class="sc-body">
@@ -1704,7 +1814,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">2330</div>
             <div class="sc-name">台積電 <span class="sc-price down">$2,540.00 <span style="font-size:13px">(-0.39%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$3,277.94</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$3,336.80</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge sb">★ 強力加碼</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">8.5 / 1.5</div></div>
           </div>
@@ -1904,7 +2014,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">2327</div>
             <div class="sc-name">國巨* <span class="sc-price up">$636.00 <span style="font-size:13px">(+0.16%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,009.33</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,015.33</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge b">★ 加碼</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">7.5 / 3</div></div>
           </div>
@@ -2204,7 +2314,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">3037</div>
             <div class="sc-name">欣興 <span class="sc-price down">$1,255.00 <span style="font-size:13px">(-1.18%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,264.21</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$1,277.37</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge b">★ 加碼</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">5 / 3.5</div></div>
           </div>
@@ -2313,7 +2423,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         <div class="sc-detail">
           <div class="fund-strip">
       <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">60.57</div></div>
-      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">29.59</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">29.54</div></div>
       <div class="fund-cell"><div class="k">PEG</div><div class="v">1.01</div></div>
       <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">31.37</div></div>
       <div class="fund-cell"><div class="k">ROE</div><div class="v">29.97%</div></div>
@@ -2604,7 +2714,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">2449</div>
             <div class="sc-name">京元電子 <span class="sc-price down">$300.00 <span style="font-size:13px">(-1.48%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$343.97</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$344.64</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge n">★ 中性觀望</span><span class="tbadge tup">▲基本面</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">5 / 0</div></div>
           </div>
@@ -2896,6 +3006,106 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
       </div>
     </div>
+    <div class="stock-card " id="card_5274">
+
+      <div class="sc-body">
+        <div class="sc-header" onclick="toggleCard('5274')">
+          <span class="chevron mobile-only" id="chev_5274">▶</span>
+          <div><div class="sc-id">5274</div>
+            <div class="sc-name">信驊 <span class="sc-price up">$17,695.00 <span style="font-size:13px">(+1.20%)</span></span></div></div>
+          <div class="sc-meta">
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$22,593.47</div></div>
+            <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge s">★ 減碼</span><span class="tbadge tup">▲基本面</span></div></div>
+            <div class="block"><div class="k">技 / 籌</div><div class="v num">1 / 1.5</div></div>
+          </div>
+        </div>
+
+        <div class="sc-detail">
+          <div class="fund-strip">
+      <div class="fund-cell"><div class="k">本益比 TTM</div><div class="v">137.11</div></div>
+      <div class="fund-cell"><div class="k">預估本益比</div><div class="v">51.73</div></div>
+      <div class="fund-cell"><div class="k">PEG</div><div class="v">-</div></div>
+      <div class="fund-cell"><div class="k">EPS TTM</div><div class="v">129.06</div></div>
+      <div class="fund-cell"><div class="k">ROE</div><div class="v">87.24%</div></div>
+      <div class="fund-cell"><div class="k">殖利率</div><div class="v">42.00%</div></div>
+    </div>
+
+          <details class="fold rating-detail">
+            <summary>評分明細與變化</summary>
+            <div>
+              <div class="rating-summary"><span>本次：<b>減碼</b></span><span>前次：尚無前次評等</span><span>總分：2.5</span><span>基本面：+5 / 5（4項） · Tilt ▲</span></div>
+              <table class="dtable"><tr><th>分類</th><th>條件</th><th>配分</th><th>得分</th></tr><tr class='bucket-head'><td colspan='4'>技術面</td></tr><tr><td>技術</td><td>站上月線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>月線高於季線</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>技術</td><td>5日線高於10日線</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>接近20日高點</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>價漲且量增(量>5日均量)</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>MACD紅柱</td><td>2</td><td class=''>✗ 0</td></tr><tr><td>技術</td><td>趨勢向上且量能擴張(5日均量>20日均量)</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>籌碼面</td></tr><tr><td>籌碼</td><td>外資3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>投信3日買超</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>外資投信同買</td><td>1</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>融資減少</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>籌碼</td><td>借券減少</td><td>1.5</td><td class=''>✗ 0</td></tr><tr><td>籌碼</td><td>集保大戶增加</td><td>2</td><td class=''>✗ 0</td></tr><tr class='bucket-head'><td colspan='4'>基本面</td></tr><tr><td>基本</td><td>最新月營收YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr><td>基本</td><td>營收YoY動能(3m vs 3m)</td><td>1</td><td class='up'>✓ 1</td></tr><tr><td>基本</td><td>最新季EPS YoY</td><td>1.5</td><td class='up'>✓ 1.5</td></tr><tr class='na-row'><td>基本</td><td>毛利率趨勢(vs前3季均)</td><td>1</td><td>資料不足</td></tr><tr><td>基本</td><td>Forward PE vs Trailing</td><td>1</td><td class='up'>✓ 1</td></tr></table>
+            </div>
+          </details>
+
+          <div id="kline_5274" class="chart-box" style="height:710px;"></div>
+
+          <details class="fold" open>
+            <summary>三大法人 / 融資融券</summary>
+            <div class="grid-2">
+              <div>
+                <div class="subhead">三大法人買賣超（張）</div>
+                <table class="dtable">
+                  <tr><th>法人</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>外資</td><td class="up">+14</td><td class="down">-126</td><td class="down">-114</td></tr>
+                  <tr><td>投信</td><td class="down">-12</td><td class="down">-134</td><td class="down">-134</td></tr>
+                  <tr><td>自營</td><td class="down">-1</td><td class="up">+19</td><td class="up">+16</td></tr>
+                  <tr class="row-total"><td>合計</td><td class="up">+1</td><td class="down">-241</td><td class="down">-232</td></tr>
+                </table>
+              </div>
+              <div>
+                <div class="subhead">融資 / 融券 / 借券（張）</div>
+                <table class="dtable">
+                  <tr><th>項目</th><th>餘額</th><th>今日</th><th>5日</th><th>20日</th></tr>
+                  <tr><td>融資</td><td>132</td><td class="down">-2</td><td class="down">-7</td><td class="down">-33</td></tr>
+                  <tr><td>融券</td><td>0</td><td class="up">+0</td><td class="up">+0</td><td class="up">+0</td></tr>
+                  <tr><td>借券</td><td>112</td><td class="up">+3</td><td class="up">+11</td><td class="up">+6</td></tr>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>大戶與散戶持股變動</summary>
+            <div class="tdcc-scroll">
+              <table class="dtable" style="min-width:620px">
+                <tr><th>日期</th><th>大戶比例</th><th>四五法人（張）</th><th>散戶比例</th><th>總股東人數</th><th>平均每戶（張）</th></tr>
+                <tr><td>20261008</td><td>98.39% <span class="diff down">(-0.25%)</span></td><td class="down">-245</td><td>1.54% <span class="diff up">(+0.25%)</span></td><td>44,571 <span class="diff up">(+9,115)</span></td><td>0.9 <span class="diff down">(-0.2)</span></td></tr><tr><td>20261002</td><td>98.64% <span class="diff down">(-0.11%)</span></td><td class="down">-33</td><td>1.29% <span class="diff up">(+0.11%)</span></td><td>35,456 <span class="diff up">(+4,089)</span></td><td>1.2 <span class="diff down">(-0.2)</span></td></tr><tr><td>20260924</td><td>98.75% <span class="diff up">(+0.13%)</span></td><td class="down">-21</td><td>1.18% <span class="diff down">(-0.13%)</span></td><td>31,367 <span class="diff down">(-4,817)</span></td><td>1.3 <span class="diff up">(+0.2)</span></td></tr><tr><td>20260918</td><td>98.62% <span class="diff down">(-0.03%)</span></td><td class="up">+21</td><td>1.31% <span class="diff up">(+0.03%)</span></td><td>36,184 <span class="diff up">(+1,155)</span></td><td>1.1 <span class="diff down">(-0.0)</span></td></tr><tr><td>20260911</td><td>98.65% <span class="diff up">(+0.14%)</span></td><td class="down">-18</td><td>1.28% <span class="diff down">(-0.14%)</span></td><td>35,029 <span class="diff down">(-4,896)</span></td><td>1.2 <span class="diff up">(+0.1)</span></td></tr><tr><td>20260904</td><td>98.51% <span class="diff up">(+0.43%)</span></td><td class="up">+60</td><td>1.42% <span class="diff down">(-0.42%)</span></td><td>39,925 <span class="diff down">(-10,819)</span></td><td>1.0 <span class="diff up">(+0.3)</span></td></tr><tr><td>20260828</td><td>98.08% <span class="diff down">(-0.14%)</span></td><td class="down">-97</td><td>1.84% <span class="diff up">(+0.12%)</span></td><td>50,744 <span class="diff up">(+3,344)</span></td><td>0.7 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260821</td><td>98.22% <span class="diff down">(-0.06%)</span></td><td class="up">+55</td><td>1.72% <span class="diff up">(+0.07%)</span></td><td>47,400 <span class="diff up">(+3,297)</span></td><td>0.8 <span class="diff down">(-0.1)</span></td></tr><tr><td>20260814</td><td>98.28% <span class="diff up">(+0.16%)</span></td><td class="up">+56</td><td>1.65% <span class="diff down">(-0.17%)</span></td><td>44,103 <span class="diff down">(-4,224)</span></td><td>0.9 <span class="diff up">(+0.1)</span></td></tr><tr><td>20260807</td><td>98.12% </td><td class="up">+37</td><td>1.82% </td><td>48,327 </td><td>0.8 </td></tr>
+              </table>
+            </div>
+            <div style="font-size:10px;color:var(--ink-3);margin-top:6px">大戶 &gt;5千萬（3張）· 散戶 &lt;5百萬（0張）</div>
+          </details>
+
+          <details class="fold" open>
+            <summary>基本面追蹤</summary>
+            <div class="fund-tables">
+              <div class="mini-table"><div class="cap">近 5 季 EPS 與 YoY</div><table class="dtable"><tr><th>季度</th><th>EPS</th><th>YoY</th></tr><tr><td>2026Q2</td><td>44.27</td><td class='up'>165.89%</td></tr><tr><td>2026Q1</td><td>37.41</td><td class='up'>59.46%</td></tr><tr><td>2025Q4</td><td>31.69</td><td class='up'>27.01%</td></tr><tr><td>2025Q3</td><td>32.12</td><td class='up'>66.42%</td></tr><tr><td>2025Q2</td><td>16.65</td><td class='up'>23.88%</td></tr></table></div>
+              <div class="mini-table"><div class="cap">近 6 個月營收與 YoY</div><table class="dtable"><tr><th>月份</th><th>營收</th><th>YoY</th></tr><tr><td>2026-10</td><td>16.36億</td><td class='up'>100.93%</td></tr><tr><td>2026-09</td><td>16.26億</td><td class='up'>118.42%</td></tr><tr><td>2026-08</td><td>15.24億</td><td class='up'>97.59%</td></tr><tr><td>2026-07</td><td>13.10億</td><td class='up'>67.47%</td></tr><tr><td>2026-06</td><td>12.82億</td><td class='up'>68.74%</td></tr><tr><td>2026-05</td><td>12.79億</td><td class='up'>81.59%</td></tr></table></div>
+            </div>
+          </details>
+
+          <details class="fold" open>
+            <summary>AI 分析與建議</summary>
+            <div class="ai-grid">
+              <div class="ai-box">
+                <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
+                <div class="ai-text">配額用完</div>
+                <div class="ai-text ai-divider">配額用完</div>
+              </div>
+              <div class="ai-box oper">
+                <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
+                <div class="ai-text">配額用完</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="news">
+            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-09 18:42:38</div><a href="https://udn.com/news/story/7252/9805620" target="_blank">外資喊不用怕邁威爾新品 信驊目標價上看24,000 - UDN</a></div><div class="news-item"><div class="d">2026-10-09 15:16:47</div><a href="https://money.udn.com/money/story/5607/9805449" target="_blank">信驊、聯發科 買盤聚焦 | 市場焦點 | 證券 - 經濟日報</a></div><div class="news-item"><div class="d">2026-10-09 10:38:27</div><a href="https://udn.com/news/story/7252/9805337" target="_blank">邁威爾出招、信驊股價剉咧等？大摩、瑞銀這麼說 - UDN</a></div><div class="news-item"><div class="d">2026-10-09 07:44:58</div><a href="https://www.cmoney.tw/forum/article/185355908" target="_blank">5274 信驊 - 這兩張圖片為口袋證券（pocketsecurities）針對... - 股市爆料同學會 - CMoney</a></div></div>
+          </details>
+        </div>
+      </div>
+    </div>
     <div class="stock-card " id="card_6753">
 
       <div class="sc-body">
@@ -3004,7 +3214,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           <div><div class="sc-id">2454</div>
             <div class="sc-name">聯發科 <span class="sc-price down">$4,625.00 <span style="font-size:13px">(-1.39%)</span></span></div></div>
           <div class="sc-meta">
-            <div class="block"><div class="k">法人目標價</div><div class="v target">$6,062.16</div></div>
+            <div class="block"><div class="k">法人目標價</div><div class="v target">$6,067.46</div></div>
             <div class="block"><div class="k">綜合評等</div><div class="v"><span class="rbadge ss">★ 強力減碼</span></div></div>
             <div class="block"><div class="k">技 / 籌</div><div class="v num">1 / 0</div></div>
           </div>
@@ -3079,12 +3289,12 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
+                <div class="ai-text"> 47:結 48:構 49:偏 50:向 51:空 52:方 53:偏 54:弱 55:。 -> wait, let's count properly:<br><br>        1:外 2:資 3:持 4:續 5:擴 6:大 7:賣 8:超 9:， 10:投 11:信 12:買 13:盤 14:偏 15:淡 16:；<br>        17:融 18:資 19:與 20:借 21:券 22:同 23:步 2</div>
+                <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
+                <div class="ai-text"></div>
               </div>
             </div>
           </details>
@@ -4490,160 +4700,6 @@ chartK_3711.setOption(chartOption_3711);
 window.addEventListener('resize', function() { chartK_3711.resize(); });
 
 
-var dates_6274 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
-var state_6274 = { lastIdx: -1, lastMonth: null };
-
-var dateFmt_6274 = function(value, index) {
-  if (index <= state_6274.lastIdx) { state_6274.lastMonth = null; }
-  state_6274.lastIdx = index;
-  var currM = value.split('-')[0];
-  var currD = value.split('-')[1];
-  var isBoundary = false;
-  if (index === 0) isBoundary = true;
-  else if (dates_6274[index - 1].split('-')[0] !== currM) isBoundary = true;
-  if (state_6274.lastMonth !== null && state_6274.lastMonth !== currM) isBoundary = true;
-  if (state_6274.lastMonth === null) isBoundary = true;
-  state_6274.lastMonth = currM;
-  return isBoundary ? (currM + '/' + currD) : currD;
-};
-
-var chartK_6274 = echarts.init(document.getElementById('kline_6274'));
-
-var currentMouseY_6274 = 0;
-chartK_6274.getZr().on('mousemove', function(e) {
-    currentMouseY_6274 = e.offsetY;
-});
-
-var holderRatioAxis_6274 = function(name, color, position) {
-  return {
-    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
-    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
-    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
-    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
-    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
-    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
-  };
-};
-
-var chartOption_6274 = {
-  title: [
-    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
-    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
-    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
-    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
-  ],
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
-    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
-    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
-    formatter: function(params) {
-      var h = chartK_6274.getHeight();
-      var yPct = (currentMouseY_6274 / h) * 100;
-      var date = params[0].axisValue;
-      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
-
-      var hoveredGrid = 0;
-      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
-      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
-      else if (yPct >= 80) hoveredGrid = 3;
-
-      params.forEach(function(p) {
-        var isPrice = (p.seriesName === 'K線');
-        var isVol = (p.seriesName === '成交量(張)');
-        var axIdx = p.axisIndex || 0;
-
-        if (isPrice) {
-          var val = p.data;
-          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
-                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
-                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
-                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
-        } else if (isVol) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v != null && !isNaN(v) && v !== '') {
-              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
-          }
-        } else if (axIdx === hoveredGrid) {
-          var val = p.data;
-          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
-          if (v == null || isNaN(v) || v === '') return;
-          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
-          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
-        }
-      });
-      html += '</div>';
-      return html;
-    }
-  },
-  legend: [
-    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
-    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
-  ],
-  axisPointer: { link: {xAxisIndex: 'all'} },
-  grid: [
-    { left: '6%', right: '8%', top: '4%', height: '36%' },
-    { left: '6%', right: '8%', top: '50%', height: '11%' },
-    { left: '6%', right: '8%', top: '67%', height: '11%' },
-    { left: '6%', right: '8%', top: '84%', height: '9%' }
-  ],
-  xAxis: [
-    { type: 'category', gridIndex: 0, data: dates_6274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_6274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
-    { type: 'category', gridIndex: 1, data: dates_6274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
-    { type: 'category', gridIndex: 2, data: dates_6274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
-    { type: 'category', gridIndex: 3, data: dates_6274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_6274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
-  ],
-  yAxis: [
-    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
-    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
-    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
-    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
-    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
-    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
-    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
-  ],
-  dataZoom: [
-    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
-    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
-  ],
-  series: [
-    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[1700.0, 1590.0, 1565.0, 1700.0], [1605.0, 1695.0, 1585.0, 1730.0], [1680.0, 1695.0, 1640.0, 1705.0], [1645.0, 1610.0, 1530.0, 1715.0], [1450.0, 1535.0, 1450.0, 1545.0], [1550.0, 1615.0, 1480.0, 1620.0], [1590.0, 1500.0, 1490.0, 1705.0], [1520.0, 1475.0, 1400.0, 1555.0], [1580.0, 1430.0, 1430.0, 1620.0], [1490.0, 1570.0, 1490.0, 1570.0], [1590.0, 1610.0, 1580.0, 1660.0], [1585.0, 1670.0, 1570.0, 1690.0], [1790.0, 1835.0, 1770.0, 1835.0], [1900.0, 1900.0, 1835.0, 1920.0], [1905.0, 1735.0, 1715.0, 1905.0], [1700.0, 1765.0, 1670.0, 1765.0], [1795.0, 1700.0, 1650.0, 1795.0], [1680.0, 1580.0, 1575.0, 1750.0], [1575.0, 1555.0, 1505.0, 1585.0], [1675.0, 1680.0, 1620.0, 1710.0], [1710.0, 1690.0, 1595.0, 1715.0], [1620.0, 1690.0, 1610.0, 1710.0], [1655.0, 1790.0, 1615.0, 1840.0], [1820.0, 1630.0, 1615.0, 1825.0], [1630.0, 1575.0, 1560.0, 1715.0], [1630.0, 1645.0, 1550.0, 1665.0], [1635.0, 1570.0, 1565.0, 1680.0], [1600.0, 1550.0, 1525.0, 1620.0], [1515.0, 1395.0, 1395.0, 1530.0], [1420.0, 1435.0, 1410.0, 1490.0], [1410.0, 1295.0, 1295.0, 1415.0], [1195.0, 1170.0, 1170.0, 1235.0], [1135.0, 1125.0, 1060.0, 1175.0], [1230.0, 1235.0, 1230.0, 1235.0], [1355.0, 1355.0, 1355.0, 1355.0], [1405.0, 1335.0, 1325.0, 1415.0], [1315.0, 1250.0, 1205.0, 1330.0], [1290.0, 1255.0, 1205.0, 1305.0], [1180.0, 1130.0, 1130.0, 1245.0], [1125.0, 1020.0, 1020.0, 1155.0], [996.0, 1010.0, 938.0, 1120.0], [1110.0, 1110.0, 1110.0, 1110.0], [1220.0, 1220.0, 1220.0, 1220.0], [1305.0, 1340.0, 1245.0, 1340.0], [1470.0, 1470.0, 1470.0, 1470.0], [1405.0, 1530.0, 1365.0, 1530.0], [1540.0, 1440.0, 1430.0, 1540.0], [1510.0, 1460.0, 1445.0, 1510.0], [1585.0, 1605.0, 1500.0, 1605.0], [1580.0, 1600.0, 1580.0, 1645.0], [1675.0, 1600.0, 1525.0, 1675.0], [1620.0, 1675.0, 1600.0, 1730.0], [1695.0, 1600.0, 1575.0, 1695.0], [1620.0, 1545.0, 1515.0, 1640.0], [1455.0, 1500.0, 1455.0, 1575.0], [1555.0, 1575.0, 1510.0, 1580.0], [1545.0, 1495.0, 1485.0, 1580.0], [1505.0, 1455.0, 1455.0, 1540.0], [1430.0, 1485.0, 1395.0, 1485.0], [1475.0, 1530.0, 1465.0, 1560.0], [1560.0, 1445.0, 1420.0, 1565.0], [1460.0, 1490.0, 1440.0, 1515.0], [1435.0, 1435.0, 1385.0, 1485.0], [1435.0, 1450.0, 1430.0, 1480.0], [1435.0, 1410.0, 1400.0, 1460.0], [1420.0, 1345.0, 1340.0, 1430.0], [1390.0, 1365.0, 1295.0, 1425.0], [1395.0, 1370.0, 1345.0, 1405.0], [1405.0, 1345.0, 1335.0, 1430.0], [1360.0, 1345.0, 1315.0, 1405.0], [1345.0, 1395.0, 1330.0, 1400.0], [1355.0, 1365.0, 1335.0, 1395.0], [1340.0, 1410.0, 1320.0, 1440.0], [1430.0, 1370.0, 1370.0, 1450.0], [1360.0, 1415.0, 1345.0, 1460.0], [1445.0, 1320.0, 1275.0, 1460.0], [1365.0, 1370.0, 1335.0, 1395.0], [1385.0, 1435.0, 1355.0, 1445.0], [1480.0, 1440.0, 1395.0, 1510.0], [1440.0, 1460.0, 1420.0, 1485.0], [1485.0, 1495.0, 1475.0, 1530.0], [1495.0, 1485.0, 1465.0, 1515.0], [1500.0, 1520.0, 1485.0, 1550.0], [1530.0, 1535.0, 1500.0, 1540.0], [1540.0, 1620.0, 1530.0, 1685.0], [1695.0, 1780.0, 1680.0, 1780.0], [1775.0, 1755.0, 1680.0, 1775.0], [1740.0, 1720.0, 1710.0, 1835.0], [1705.0, 1740.0, 1645.0, 1750.0], [1700.0, 1735.0, 1685.0, 1740.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
-    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [1452.25, 1471.25, 1483.75, 1495.75, 1499.75, 1508.0, 1510.5, 1511.75, 1518.0, 1533.5, 1552.75, 1576.0, 1601.5, 1623.75, 1630.5, 1639.75, 1643.25, 1645.25, 1638.5, 1637.25, 1642.25, 1642.0, 1646.75, 1647.75, 1649.75, 1651.25, 1654.75, 1658.5, 1656.75, 1650.0, 1634.25, 1609.25, 1573.75, 1540.5, 1521.5, 1500.0, 1477.5, 1461.25, 1440.0, 1407.0, 1373.0, 1344.0, 1315.5, 1301.0, 1295.75, 1290.0, 1283.5, 1279.0, 1289.5, 1297.75, 1313.0, 1338.25, 1362.0, 1377.5, 1384.75, 1396.75, 1409.0, 1419.0, 1436.75, 1462.25, 1484.0, 1503.0, 1513.75, 1519.25, 1516.25, 1507.0, 1503.25, 1498.75, 1485.75, 1473.0, 1462.75, 1447.25, 1437.75, 1429.0, 1424.75, 1412.0, 1405.75, 1404.75, 1402.5, 1399.0, 1401.5, 1401.25, 1405.5, 1409.75, 1420.25, 1442.0, 1461.5, 1479.0, 1498.75, 1518.25], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1377, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1094, 1094, 1103, 1112, 1180, 1258, 1258, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1337, 1439, 1439, 1472, 1472, 1472], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
-    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1881, 1855, 1761, 1606, 1515, 1515, 1515, 1515, 1515, 1515, 1515, 1461, 1420, 1420, 1420, 1420, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
-
-    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [7475, 6664, 3326, 7811, 5505, 8707, 8654, 8043, 8808, 4651, 5633, 5932, 3466, 7374, 6148, 4389, 6734, 5789, 4753, 5198, 5275, 4515, 7646, 7741, 6397, 5816, 4834, 3723, 4753, 5831, 9078, 5568, 8924, 2302, 553, 9532, 5847, 5176, 5533, 7111, 14195, 790, 1288, 8597, 2829, 16305, 8621, 2205, 3307, 2271, 2759, 3196, 6216, 6740, 5433, 4506, 5288, 3571, 5257, 5596, 8302, 4989, 7029, 4618, 3297, 4473, 5600, 5587, 4734, 8141, 4663, 4438, 7157, 6463, 6904, 21674, 9259, 11236, 11355, 6552, 10075, 5656, 5971, 4475, 11807, 11325, 16873, 11612, 7551, 4138], itemStyle: {color: function(params) { return ["#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b"][params.dataIndex]; } } },
-
-    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [51.99, 708.55, -221.23, -382.47, 86.53, -1081.42, -37.65, 1033.75, -1724.21, 1738.69, -4.05, 456.73, 619.45, 66.03, -1202.84, -351.27, -535.23, 539.24, 1402.44, -378.65, -147.23, -687.17, 64.62, -2359.3, 1519.78, -43.57, -783.62, 914.7, 395.05, 951.1, 2507.06, 1520.31, 1703.1, -250.0, -32.88, -915.11, 1001.9, -1011.5, 550.36, 453.34, -2413.8, -213.48, -510.0, -1249.54, -214.93, -2980.84, -1005.63, -124.22, 49.27, -231.25, -484.32, 208.7, -1150.2, 602.09, -343.32, -343.8, -1332.06, -149.36, 18.24, -1075.36, -2004.38, 258.1, 1128.82, 526.17, 58.18, 77.48, 1025.4, 955.95, -435.75, 2131.03, 206.59, 836.59, 820.5, -1191.86, 400.41, 1103.91, 688.32, 3272.65, -1337.88, 482.39, -711.1, -156.4, 658.82, -9.13, -1112.97, -440.97, -121.81, -937.61, 924.46, -545.97], itemStyle: {color: '#4d7fff'} },
-    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [655.0, 419.85, 208.0, 286.0, 342.0, 1005.6, 462.2, -539.0, 443.0, 431.0, 252.0, 521.0, 290.7, 627.0, 273.0, 413.0, 87.0, 56.0, -33.0, 389.0, 229.0, 64.58, 233.66, 186.0, 27.0, 94.0, -18.0, -378.0, -921.0, -2.7, -2005.4, -47.39, -169.22, -172.0, -5.0, 533.0, -337.0, 212.0, -377.0, -144.8, -75.95, 5.0, -42.0, 1114.0, -27.0, 1868.2, 488.25, 6.65, 24.0, -28.0, -50.0, -5.0, -269.0, 70.0, 198.0, 351.0, 425.0, -43.0, 443.0, 511.0, -773.0, -52.0, -1401.0, -832.0, -631.0, -416.0, -909.0, -1766.0, -415.0, -3331.0, -347.0, -889.0, 261.0, 176.0, -318.0, -4355.0, -448.88, -4420.0, 97.0, 169.0, -62.0, -312.0, -59.0, -29.0, 150.0, 496.0, 1458.0, 177.0, 210.0, 415.0], itemStyle: {color: '#1ed992'} },
-    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-435.61, -168.38, -130.6, -322.05, -213.12, -166.89, -307.21, -131.23, -556.48, -37.93, 20.04, 20.17, 206.72, -136.84, -105.83, -160.28, -86.72, -68.51, 2.06, 79.66, 44.19, -0.2, 5.51, -116.23, -331.01, 20.34, 13.84, -100.16, -256.22, -102.65, 285.97, 54.64, 29.65, -14.31, -2.39, -123.85, 105.26, -54.5, -2.43, -24.84, -21.02, 14.81, 33.78, 209.51, -178.82, -205.57, 81.35, 59.13, 49.09, -82.36, 34.11, 71.73, 211.57, -122.94, -217.93, -50.47, -1.13, 27.82, 93.41, 51.56, 65.53, 28.95, -74.88, 110.25, 10.79, -110.71, -33.96, 3.24, -51.81, -7.45, 48.65, 19.09, -63.31, -141.2, 8.57, 972.17, 7.14, 109.54, 51.92, 18.9, 196.49, 19.73, 30.62, -6.96, 215.2, 246.59, -261.55, -115.77, -5.81, -31.62], itemStyle: {color: '#e0a83c'} },
-    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [271.39, 1231.41, 1087.57, 669.06, 884.47, 641.75, 759.1, 1122.62, -715.07, 1416.69, 1684.67, 2682.57, 3799.44, 4355.63, 3319.96, 3221.41, 2686.45, 3213.19, 4584.68, 4674.69, 4800.65, 4177.85, 4481.64, 2192.11, 3407.87, 3478.64, 2690.85, 3127.39, 2345.23, 3190.97, 3978.61, 5506.16, 7069.69, 6633.38, 6593.11, 6087.16, 6857.32, 6003.31, 6174.24, 6457.94, 3947.16, 3753.49, 3235.27, 3309.24, 2888.49, 1570.27, 1134.24, 1075.79, 1198.15, 856.55, 356.34, 631.77, -575.86, -26.71, -389.97, -433.24, -1341.43, -1505.97, -951.31, -1464.1, -4175.95, -3940.9, -4287.95, -4483.54, -5045.57, -5494.8, -5412.35, -6219.16, -7121.72, -8329.14, -8420.9, -8454.23, -7436.04, -8593.09, -8502.11, -10781.04, -10534.46, -11572.27, -12761.22, -12090.93, -12667.54, -13116.21, -12485.77, -12530.86, -13278.63, -12977.01, -11902.37, -12778.75, -11650.09, -11812.68], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
-
-    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-487, 74, 151, -54, -544, 36, -418, -175, 294, -213, 173, 457, -179, 201, -360, 160, 223, -404, -413, 135, -307, -423, -205, -113, -391, 252, 58, -203, 55, -96, 208, -166, -485, 409, -56, -154, -175, 284, -268, -308, 1063, -58, 425, 215, 86, 1628, -451, 174, 354, 47, 318, 368, 115, -294, -134, 260, 25, -220, -96, 416, 250, 7, -154, 139, -154, -101, -72, 68, 146, 316, 252, 65, 66, 147, 336, 922, 267, 966, -445, 146, 701, 175, 183, 66, 1395, 291, -130, 803, -599, 25], itemStyle: {color: '#ff525b'} },
-    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-34, 29, -66, -2, -10, 37, 5, 8, -26, 72, 89, 34, 46, -105, -55, -41, -71, -38, -16, 11, 0, 2, 13, -27, -11, 8, -9, 6, 88, -101, 217, -170, -86, 13, 12, -8, 46, -61, 2, -15, 8, 9, 8, 85, 19, 10, -24, -18, 21, -15, -9, 19, -14, -6, 6, 12, -10, -1, -18, -8, -6, 4, -11, -10, -1, -3, -8, 3, -7, 9, 3, -8, 13, -2, -5, 0, 9, -5, -8, -1, 5, 12, -6, 1, 21, 41, -33, -22, 13, -8], itemStyle: {color: '#1ed992'} },
-    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-40, -14, -83, -29, -1, 15, -4, -38, 6, -33, -2, -280, -17, -36, 13, -2, -2, 0, -2, -71, 5, 14, 7, 198, -66, 5, -74, -37, 87, 52, 11, -41, -69, -7, -30, -9, 3, 89, -125, -1, 62, 0, -14, 45, 22, 165, 22, -21, -66, 0, -99, 0, 10, 6, 55, 3, 10, 6, 5, 9, 104, 42, 37, -51, -21, -61, -37, -19, 17, 40, 31, 29, -16, -58, 6, 121, 154, -35, -174, 5, -51, -43, -12, -72, -9, 0, 132, 60, -104, 57], itemStyle: {color: '#b07bff'} },
-    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [9582, 9656, 9807, 9753, 9209, 9245, 8827, 8652, 8946, 8733, 8906, 9363, 9184, 9385, 9025, 9185, 9408, 9004, 8591, 8726, 8419, 7996, 7791, 7678, 7287, 7539, 7597, 7394, 7449, 7353, 7561, 7395, 6910, 7319, 7263, 7109, 6934, 7218, 6950, 6642, 7705, 7647, 8072, 8287, 8373, 10001, 9550, 9724, 10078, 10125, 10443, 10811, 10926, 10632, 10498, 10758, 10783, 10563, 10467, 10883, 11133, 11140, 10986, 11125, 10971, 10870, 10798, 10866, 11012, 11328, 11580, 11645, 11711, 11858, 12194, 13116, 13383, 14349, 13904, 14050, 14751, 14926, 15109, 15175, 16570, 16861, 16731, 17534, 16935, 16960], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
-    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [204, 233, 167, 165, 155, 192, 197, 205, 179, 251, 340, 374, 420, 315, 260, 219, 148, 110, 94, 105, 105, 107, 120, 93, 82, 90, 81, 87, 175, 74, 291, 121, 35, 48, 60, 52, 98, 37, 39, 24, 32, 41, 49, 134, 153, 163, 139, 121, 142, 127, 118, 137, 123, 117, 123, 135, 125, 124, 106, 98, 92, 96, 85, 75, 74, 71, 63, 66, 59, 68, 71, 63, 76, 74, 69, 69, 78, 73, 65, 64, 69, 81, 75, 76, 97, 138, 105, 83, 96, 88], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
-    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1748, 1734, 1651, 1622, 1621, 1636, 1632, 1594, 1600, 1567, 1565, 1285, 1268, 1232, 1245, 1243, 1241, 1241, 1239, 1168, 1173, 1187, 1194, 1392, 1326, 1331, 1257, 1220, 1307, 1359, 1370, 1329, 1260, 1253, 1223, 1214, 1217, 1306, 1181, 1180, 1242, 1242, 1228, 1273, 1295, 1460, 1482, 1461, 1395, 1395, 1296, 1296, 1306, 1312, 1367, 1370, 1380, 1386, 1391, 1400, 1504, 1546, 1583, 1532, 1511, 1450, 1413, 1394, 1411, 1451, 1482, 1511, 1495, 1437, 1443, 1564, 1718, 1683, 1509, 1514, 1463, 1420, 1408, 1336, 1327, 1327, 1459, 1519, 1415, 1472], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
-
-    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 82.66999999999999, null, null, null, null, 82.55000000000001, null, null, null, null, 82.3, null, null, null, null, 81.02, null, null, null, null, 80.07000000000001, null, null, null, null, 79.4, null, null, null, null, 78.68, null, null, null, 78.96000000000001, null, null, null, 79.05000000000001, null, null, null, 79.67, null], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
-    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2.3, null, null, null, null, 2.27, null, null, null, null, 2.31, null, null, null, null, 2.56, null, null, null, null, 2.79, null, null, null, null, 2.96, null, null, null, null, 3.09, null, null, null, 3.07, null, null, null, 3.04, null, null, null, 2.87, null], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
-  ]
-};
-
-// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
-chartOption_6274.yAxis[6] = holderRatioAxis_6274('大戶', '#4d7fff', 'left');
-chartOption_6274.yAxis.push(holderRatioAxis_6274('散戶', '#e0a83c', 'right'));
-chartOption_6274.series.forEach(function(series) {
-  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
-});
-chartK_6274.setOption(chartOption_6274);
-window.addEventListener('resize', function() { chartK_6274.resize(); });
-
-
 var dates_3491 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
 var state_3491 = { lastIdx: -1, lastMonth: null };
 
@@ -4796,6 +4852,160 @@ chartOption_3491.series.forEach(function(series) {
 });
 chartK_3491.setOption(chartOption_3491);
 window.addEventListener('resize', function() { chartK_3491.resize(); });
+
+
+var dates_6274 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
+var state_6274 = { lastIdx: -1, lastMonth: null };
+
+var dateFmt_6274 = function(value, index) {
+  if (index <= state_6274.lastIdx) { state_6274.lastMonth = null; }
+  state_6274.lastIdx = index;
+  var currM = value.split('-')[0];
+  var currD = value.split('-')[1];
+  var isBoundary = false;
+  if (index === 0) isBoundary = true;
+  else if (dates_6274[index - 1].split('-')[0] !== currM) isBoundary = true;
+  if (state_6274.lastMonth !== null && state_6274.lastMonth !== currM) isBoundary = true;
+  if (state_6274.lastMonth === null) isBoundary = true;
+  state_6274.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
+};
+
+var chartK_6274 = echarts.init(document.getElementById('kline_6274'));
+
+var currentMouseY_6274 = 0;
+chartK_6274.getZr().on('mousemove', function(e) {
+    currentMouseY_6274 = e.offsetY;
+});
+
+var holderRatioAxis_6274 = function(name, color, position) {
+  return {
+    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
+    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
+    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
+    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
+    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
+    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
+  };
+};
+
+var chartOption_6274 = {
+  title: [
+    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
+    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
+  ],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
+    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
+    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
+    formatter: function(params) {
+      var h = chartK_6274.getHeight();
+      var yPct = (currentMouseY_6274 / h) * 100;
+      var date = params[0].axisValue;
+      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
+
+      var hoveredGrid = 0;
+      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
+      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
+      else if (yPct >= 80) hoveredGrid = 3;
+
+      params.forEach(function(p) {
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
+        var axIdx = p.axisIndex || 0;
+
+        if (isPrice) {
+          var val = p.data;
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        } else if (isVol) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
+          }
+        } else if (axIdx === hoveredGrid) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') return;
+          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+  },
+  legend: [
+    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
+  ],
+  axisPointer: { link: {xAxisIndex: 'all'} },
+  grid: [
+    { left: '6%', right: '8%', top: '4%', height: '36%' },
+    { left: '6%', right: '8%', top: '50%', height: '11%' },
+    { left: '6%', right: '8%', top: '67%', height: '11%' },
+    { left: '6%', right: '8%', top: '84%', height: '9%' }
+  ],
+  xAxis: [
+    { type: 'category', gridIndex: 0, data: dates_6274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_6274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
+    { type: 'category', gridIndex: 1, data: dates_6274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 2, data: dates_6274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 3, data: dates_6274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_6274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
+  ],
+  yAxis: [
+    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
+    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
+    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
+  ],
+  dataZoom: [
+    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
+    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
+  ],
+  series: [
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[1700.0, 1590.0, 1565.0, 1700.0], [1605.0, 1695.0, 1585.0, 1730.0], [1680.0, 1695.0, 1640.0, 1705.0], [1645.0, 1610.0, 1530.0, 1715.0], [1450.0, 1535.0, 1450.0, 1545.0], [1550.0, 1615.0, 1480.0, 1620.0], [1590.0, 1500.0, 1490.0, 1705.0], [1520.0, 1475.0, 1400.0, 1555.0], [1580.0, 1430.0, 1430.0, 1620.0], [1490.0, 1570.0, 1490.0, 1570.0], [1590.0, 1610.0, 1580.0, 1660.0], [1585.0, 1670.0, 1570.0, 1690.0], [1790.0, 1835.0, 1770.0, 1835.0], [1900.0, 1900.0, 1835.0, 1920.0], [1905.0, 1735.0, 1715.0, 1905.0], [1700.0, 1765.0, 1670.0, 1765.0], [1795.0, 1700.0, 1650.0, 1795.0], [1680.0, 1580.0, 1575.0, 1750.0], [1575.0, 1555.0, 1505.0, 1585.0], [1675.0, 1680.0, 1620.0, 1710.0], [1710.0, 1690.0, 1595.0, 1715.0], [1620.0, 1690.0, 1610.0, 1710.0], [1655.0, 1790.0, 1615.0, 1840.0], [1820.0, 1630.0, 1615.0, 1825.0], [1630.0, 1575.0, 1560.0, 1715.0], [1630.0, 1645.0, 1550.0, 1665.0], [1635.0, 1570.0, 1565.0, 1680.0], [1600.0, 1550.0, 1525.0, 1620.0], [1515.0, 1395.0, 1395.0, 1530.0], [1420.0, 1435.0, 1410.0, 1490.0], [1410.0, 1295.0, 1295.0, 1415.0], [1195.0, 1170.0, 1170.0, 1235.0], [1135.0, 1125.0, 1060.0, 1175.0], [1230.0, 1235.0, 1230.0, 1235.0], [1355.0, 1355.0, 1355.0, 1355.0], [1405.0, 1335.0, 1325.0, 1415.0], [1315.0, 1250.0, 1205.0, 1330.0], [1290.0, 1255.0, 1205.0, 1305.0], [1180.0, 1130.0, 1130.0, 1245.0], [1125.0, 1020.0, 1020.0, 1155.0], [996.0, 1010.0, 938.0, 1120.0], [1110.0, 1110.0, 1110.0, 1110.0], [1220.0, 1220.0, 1220.0, 1220.0], [1305.0, 1340.0, 1245.0, 1340.0], [1470.0, 1470.0, 1470.0, 1470.0], [1405.0, 1530.0, 1365.0, 1530.0], [1540.0, 1440.0, 1430.0, 1540.0], [1510.0, 1460.0, 1445.0, 1510.0], [1585.0, 1605.0, 1500.0, 1605.0], [1580.0, 1600.0, 1580.0, 1645.0], [1675.0, 1600.0, 1525.0, 1675.0], [1620.0, 1675.0, 1600.0, 1730.0], [1695.0, 1600.0, 1575.0, 1695.0], [1620.0, 1545.0, 1515.0, 1640.0], [1455.0, 1500.0, 1455.0, 1575.0], [1555.0, 1575.0, 1510.0, 1580.0], [1545.0, 1495.0, 1485.0, 1580.0], [1505.0, 1455.0, 1455.0, 1540.0], [1430.0, 1485.0, 1395.0, 1485.0], [1475.0, 1530.0, 1465.0, 1560.0], [1560.0, 1445.0, 1420.0, 1565.0], [1460.0, 1490.0, 1440.0, 1515.0], [1435.0, 1435.0, 1385.0, 1485.0], [1435.0, 1450.0, 1430.0, 1480.0], [1435.0, 1410.0, 1400.0, 1460.0], [1420.0, 1345.0, 1340.0, 1430.0], [1390.0, 1365.0, 1295.0, 1425.0], [1395.0, 1370.0, 1345.0, 1405.0], [1405.0, 1345.0, 1335.0, 1430.0], [1360.0, 1345.0, 1315.0, 1405.0], [1345.0, 1395.0, 1330.0, 1400.0], [1355.0, 1365.0, 1335.0, 1395.0], [1340.0, 1410.0, 1320.0, 1440.0], [1430.0, 1370.0, 1370.0, 1450.0], [1360.0, 1415.0, 1345.0, 1460.0], [1445.0, 1320.0, 1275.0, 1460.0], [1365.0, 1370.0, 1335.0, 1395.0], [1385.0, 1435.0, 1355.0, 1445.0], [1480.0, 1440.0, 1395.0, 1510.0], [1440.0, 1460.0, 1420.0, 1485.0], [1485.0, 1495.0, 1475.0, 1530.0], [1495.0, 1485.0, 1465.0, 1515.0], [1500.0, 1520.0, 1485.0, 1550.0], [1530.0, 1535.0, 1500.0, 1540.0], [1540.0, 1620.0, 1530.0, 1685.0], [1695.0, 1780.0, 1680.0, 1780.0], [1775.0, 1755.0, 1680.0, 1775.0], [1740.0, 1720.0, 1710.0, 1835.0], [1705.0, 1740.0, 1645.0, 1750.0], [1700.0, 1735.0, 1685.0, 1740.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
+    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [1452.25, 1471.25, 1483.75, 1495.75, 1499.75, 1508.0, 1510.5, 1511.75, 1518.0, 1533.5, 1552.75, 1576.0, 1601.5, 1623.75, 1630.5, 1639.75, 1643.25, 1645.25, 1638.5, 1637.25, 1642.25, 1642.0, 1646.75, 1647.75, 1649.75, 1651.25, 1654.75, 1658.5, 1656.75, 1650.0, 1634.25, 1609.25, 1573.75, 1540.5, 1521.5, 1500.0, 1477.5, 1461.25, 1440.0, 1407.0, 1373.0, 1344.0, 1315.5, 1301.0, 1295.75, 1290.0, 1283.5, 1279.0, 1289.5, 1297.75, 1313.0, 1338.25, 1362.0, 1377.5, 1384.75, 1396.75, 1409.0, 1419.0, 1436.75, 1462.25, 1484.0, 1503.0, 1513.75, 1519.25, 1516.25, 1507.0, 1503.25, 1498.75, 1485.75, 1473.0, 1462.75, 1447.25, 1437.75, 1429.0, 1424.75, 1412.0, 1405.75, 1404.75, 1402.5, 1399.0, 1401.5, 1401.25, 1405.5, 1409.75, 1420.25, 1442.0, 1461.5, 1479.0, 1498.75, 1518.25], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1349, 1377, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, 1469, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1094, 1094, 1103, 1112, 1180, 1258, 1258, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1298, 1337, 1439, 1439, 1472, 1472, 1472], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1881, 1855, 1761, 1606, 1515, 1515, 1515, 1515, 1515, 1515, 1515, 1461, 1420, 1420, 1420, 1420, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
+
+    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [7475, 6664, 3326, 7811, 5505, 8707, 8654, 8043, 8808, 4651, 5633, 5932, 3466, 7374, 6148, 4389, 6734, 5789, 4753, 5198, 5275, 4515, 7646, 7741, 6397, 5816, 4834, 3723, 4753, 5831, 9078, 5568, 8924, 2302, 553, 9532, 5847, 5176, 5533, 7111, 14195, 790, 1288, 8597, 2829, 16305, 8621, 2205, 3307, 2271, 2759, 3196, 6216, 6740, 5433, 4506, 5288, 3571, 5257, 5596, 8302, 4989, 7029, 4618, 3297, 4473, 5600, 5587, 4734, 8141, 4663, 4438, 7157, 6463, 6904, 21674, 9259, 11236, 11355, 6552, 10075, 5656, 5971, 4475, 11807, 11325, 16873, 11612, 7551, 4138], itemStyle: {color: function(params) { return ["#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b"][params.dataIndex]; } } },
+
+    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [51.99, 708.55, -221.23, -382.47, 86.53, -1081.42, -37.65, 1033.75, -1724.21, 1738.69, -4.05, 456.73, 619.45, 66.03, -1202.84, -351.27, -535.23, 539.24, 1402.44, -378.65, -147.23, -687.17, 64.62, -2359.3, 1519.78, -43.57, -783.62, 914.7, 395.05, 951.1, 2507.06, 1520.31, 1703.1, -250.0, -32.88, -915.11, 1001.9, -1011.5, 550.36, 453.34, -2413.8, -213.48, -510.0, -1249.54, -214.93, -2980.84, -1005.63, -124.22, 49.27, -231.25, -484.32, 208.7, -1150.2, 602.09, -343.32, -343.8, -1332.06, -149.36, 18.24, -1075.36, -2004.38, 258.1, 1128.82, 526.17, 58.18, 77.48, 1025.4, 955.95, -435.75, 2131.03, 206.59, 836.59, 820.5, -1191.86, 400.41, 1103.91, 688.32, 3272.65, -1337.88, 482.39, -711.1, -156.4, 658.82, -9.13, -1112.97, -440.97, -121.81, -937.61, 924.46, -545.97], itemStyle: {color: '#4d7fff'} },
+    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [655.0, 419.85, 208.0, 286.0, 342.0, 1005.6, 462.2, -539.0, 443.0, 431.0, 252.0, 521.0, 290.7, 627.0, 273.0, 413.0, 87.0, 56.0, -33.0, 389.0, 229.0, 64.58, 233.66, 186.0, 27.0, 94.0, -18.0, -378.0, -921.0, -2.7, -2005.4, -47.39, -169.22, -172.0, -5.0, 533.0, -337.0, 212.0, -377.0, -144.8, -75.95, 5.0, -42.0, 1114.0, -27.0, 1868.2, 488.25, 6.65, 24.0, -28.0, -50.0, -5.0, -269.0, 70.0, 198.0, 351.0, 425.0, -43.0, 443.0, 511.0, -773.0, -52.0, -1401.0, -832.0, -631.0, -416.0, -909.0, -1766.0, -415.0, -3331.0, -347.0, -889.0, 261.0, 176.0, -318.0, -4355.0, -448.88, -4420.0, 97.0, 169.0, -62.0, -312.0, -59.0, -29.0, 150.0, 496.0, 1458.0, 177.0, 210.0, 415.0], itemStyle: {color: '#1ed992'} },
+    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-435.61, -168.38, -130.6, -322.05, -213.12, -166.89, -307.21, -131.23, -556.48, -37.93, 20.04, 20.17, 206.72, -136.84, -105.83, -160.28, -86.72, -68.51, 2.06, 79.66, 44.19, -0.2, 5.51, -116.23, -331.01, 20.34, 13.84, -100.16, -256.22, -102.65, 285.97, 54.64, 29.65, -14.31, -2.39, -123.85, 105.26, -54.5, -2.43, -24.84, -21.02, 14.81, 33.78, 209.51, -178.82, -205.57, 81.35, 59.13, 49.09, -82.36, 34.11, 71.73, 211.57, -122.94, -217.93, -50.47, -1.13, 27.82, 93.41, 51.56, 65.53, 28.95, -74.88, 110.25, 10.79, -110.71, -33.96, 3.24, -51.81, -7.45, 48.65, 19.09, -63.31, -141.2, 8.57, 972.17, 7.14, 109.54, 51.92, 18.9, 196.49, 19.73, 30.62, -6.96, 215.2, 246.59, -261.55, -115.77, -5.81, -31.62], itemStyle: {color: '#e0a83c'} },
+    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [271.39, 1231.41, 1087.57, 669.06, 884.47, 641.75, 759.1, 1122.62, -715.07, 1416.69, 1684.67, 2682.57, 3799.44, 4355.63, 3319.96, 3221.41, 2686.45, 3213.19, 4584.68, 4674.69, 4800.65, 4177.85, 4481.64, 2192.11, 3407.87, 3478.64, 2690.85, 3127.39, 2345.23, 3190.97, 3978.61, 5506.16, 7069.69, 6633.38, 6593.11, 6087.16, 6857.32, 6003.31, 6174.24, 6457.94, 3947.16, 3753.49, 3235.27, 3309.24, 2888.49, 1570.27, 1134.24, 1075.79, 1198.15, 856.55, 356.34, 631.77, -575.86, -26.71, -389.97, -433.24, -1341.43, -1505.97, -951.31, -1464.1, -4175.95, -3940.9, -4287.95, -4483.54, -5045.57, -5494.8, -5412.35, -6219.16, -7121.72, -8329.14, -8420.9, -8454.23, -7436.04, -8593.09, -8502.11, -10781.04, -10534.46, -11572.27, -12761.22, -12090.93, -12667.54, -13116.21, -12485.77, -12530.86, -13278.63, -12977.01, -11902.37, -12778.75, -11650.09, -11812.68], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
+
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-487, 74, 151, -54, -544, 36, -418, -175, 294, -213, 173, 457, -179, 201, -360, 160, 223, -404, -413, 135, -307, -423, -205, -113, -391, 252, 58, -203, 55, -96, 208, -166, -485, 409, -56, -154, -175, 284, -268, -308, 1063, -58, 425, 215, 86, 1628, -451, 174, 354, 47, 318, 368, 115, -294, -134, 260, 25, -220, -96, 416, 250, 7, -154, 139, -154, -101, -72, 68, 146, 316, 252, 65, 66, 147, 336, 922, 267, 966, -445, 146, 701, 175, 183, 66, 1395, 291, -130, 803, -599, 25], itemStyle: {color: '#ff525b'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-34, 29, -66, -2, -10, 37, 5, 8, -26, 72, 89, 34, 46, -105, -55, -41, -71, -38, -16, 11, 0, 2, 13, -27, -11, 8, -9, 6, 88, -101, 217, -170, -86, 13, 12, -8, 46, -61, 2, -15, 8, 9, 8, 85, 19, 10, -24, -18, 21, -15, -9, 19, -14, -6, 6, 12, -10, -1, -18, -8, -6, 4, -11, -10, -1, -3, -8, 3, -7, 9, 3, -8, 13, -2, -5, 0, 9, -5, -8, -1, 5, 12, -6, 1, 21, 41, -33, -22, 13, -8], itemStyle: {color: '#1ed992'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-40, -14, -83, -29, -1, 15, -4, -38, 6, -33, -2, -280, -17, -36, 13, -2, -2, 0, -2, -71, 5, 14, 7, 198, -66, 5, -74, -37, 87, 52, 11, -41, -69, -7, -30, -9, 3, 89, -125, -1, 62, 0, -14, 45, 22, 165, 22, -21, -66, 0, -99, 0, 10, 6, 55, 3, 10, 6, 5, 9, 104, 42, 37, -51, -21, -61, -37, -19, 17, 40, 31, 29, -16, -58, 6, 121, 154, -35, -174, 5, -51, -43, -12, -72, -9, 0, 132, 60, -104, 57], itemStyle: {color: '#b07bff'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [9582, 9656, 9807, 9753, 9209, 9245, 8827, 8652, 8946, 8733, 8906, 9363, 9184, 9385, 9025, 9185, 9408, 9004, 8591, 8726, 8419, 7996, 7791, 7678, 7287, 7539, 7597, 7394, 7449, 7353, 7561, 7395, 6910, 7319, 7263, 7109, 6934, 7218, 6950, 6642, 7705, 7647, 8072, 8287, 8373, 10001, 9550, 9724, 10078, 10125, 10443, 10811, 10926, 10632, 10498, 10758, 10783, 10563, 10467, 10883, 11133, 11140, 10986, 11125, 10971, 10870, 10798, 10866, 11012, 11328, 11580, 11645, 11711, 11858, 12194, 13116, 13383, 14349, 13904, 14050, 14751, 14926, 15109, 15175, 16570, 16861, 16731, 17534, 16935, 16960], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [204, 233, 167, 165, 155, 192, 197, 205, 179, 251, 340, 374, 420, 315, 260, 219, 148, 110, 94, 105, 105, 107, 120, 93, 82, 90, 81, 87, 175, 74, 291, 121, 35, 48, 60, 52, 98, 37, 39, 24, 32, 41, 49, 134, 153, 163, 139, 121, 142, 127, 118, 137, 123, 117, 123, 135, 125, 124, 106, 98, 92, 96, 85, 75, 74, 71, 63, 66, 59, 68, 71, 63, 76, 74, 69, 69, 78, 73, 65, 64, 69, 81, 75, 76, 97, 138, 105, 83, 96, 88], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1748, 1734, 1651, 1622, 1621, 1636, 1632, 1594, 1600, 1567, 1565, 1285, 1268, 1232, 1245, 1243, 1241, 1241, 1239, 1168, 1173, 1187, 1194, 1392, 1326, 1331, 1257, 1220, 1307, 1359, 1370, 1329, 1260, 1253, 1223, 1214, 1217, 1306, 1181, 1180, 1242, 1242, 1228, 1273, 1295, 1460, 1482, 1461, 1395, 1395, 1296, 1296, 1306, 1312, 1367, 1370, 1380, 1386, 1391, 1400, 1504, 1546, 1583, 1532, 1511, 1450, 1413, 1394, 1411, 1451, 1482, 1511, 1495, 1437, 1443, 1564, 1718, 1683, 1509, 1514, 1463, 1420, 1408, 1336, 1327, 1327, 1459, 1519, 1415, 1472], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
+
+    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 82.66999999999999, null, null, null, null, 82.55000000000001, null, null, null, null, 82.3, null, null, null, null, 81.02, null, null, null, null, 80.07000000000001, null, null, null, null, 79.4, null, null, null, null, 78.68, null, null, null, 78.96000000000001, null, null, null, 79.05000000000001, null, null, null, 79.67, null], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
+    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2.3, null, null, null, null, 2.27, null, null, null, null, 2.31, null, null, null, null, 2.56, null, null, null, null, 2.79, null, null, null, null, 2.96, null, null, null, null, 3.09, null, null, null, 3.07, null, null, null, 3.04, null, null, null, 2.87, null], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
+  ]
+};
+
+// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
+chartOption_6274.yAxis[6] = holderRatioAxis_6274('大戶', '#4d7fff', 'left');
+chartOption_6274.yAxis.push(holderRatioAxis_6274('散戶', '#e0a83c', 'right'));
+chartOption_6274.series.forEach(function(series) {
+  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
+});
+chartK_6274.setOption(chartOption_6274);
+window.addEventListener('resize', function() { chartK_6274.resize(); });
 
 
 var dates_3189 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
@@ -4952,6 +5162,160 @@ chartK_3189.setOption(chartOption_3189);
 window.addEventListener('resize', function() { chartK_3189.resize(); });
 
 
+var dates_5536 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
+var state_5536 = { lastIdx: -1, lastMonth: null };
+
+var dateFmt_5536 = function(value, index) {
+  if (index <= state_5536.lastIdx) { state_5536.lastMonth = null; }
+  state_5536.lastIdx = index;
+  var currM = value.split('-')[0];
+  var currD = value.split('-')[1];
+  var isBoundary = false;
+  if (index === 0) isBoundary = true;
+  else if (dates_5536[index - 1].split('-')[0] !== currM) isBoundary = true;
+  if (state_5536.lastMonth !== null && state_5536.lastMonth !== currM) isBoundary = true;
+  if (state_5536.lastMonth === null) isBoundary = true;
+  state_5536.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
+};
+
+var chartK_5536 = echarts.init(document.getElementById('kline_5536'));
+
+var currentMouseY_5536 = 0;
+chartK_5536.getZr().on('mousemove', function(e) {
+    currentMouseY_5536 = e.offsetY;
+});
+
+var holderRatioAxis_5536 = function(name, color, position) {
+  return {
+    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
+    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
+    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
+    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
+    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
+    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
+  };
+};
+
+var chartOption_5536 = {
+  title: [
+    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
+    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
+  ],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
+    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
+    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
+    formatter: function(params) {
+      var h = chartK_5536.getHeight();
+      var yPct = (currentMouseY_5536 / h) * 100;
+      var date = params[0].axisValue;
+      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
+
+      var hoveredGrid = 0;
+      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
+      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
+      else if (yPct >= 80) hoveredGrid = 3;
+
+      params.forEach(function(p) {
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
+        var axIdx = p.axisIndex || 0;
+
+        if (isPrice) {
+          var val = p.data;
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        } else if (isVol) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
+          }
+        } else if (axIdx === hoveredGrid) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') return;
+          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+  },
+  legend: [
+    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
+  ],
+  axisPointer: { link: {xAxisIndex: 'all'} },
+  grid: [
+    { left: '6%', right: '8%', top: '4%', height: '36%' },
+    { left: '6%', right: '8%', top: '50%', height: '11%' },
+    { left: '6%', right: '8%', top: '67%', height: '11%' },
+    { left: '6%', right: '8%', top: '84%', height: '9%' }
+  ],
+  xAxis: [
+    { type: 'category', gridIndex: 0, data: dates_5536, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5536, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
+    { type: 'category', gridIndex: 1, data: dates_5536, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 2, data: dates_5536, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 3, data: dates_5536, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5536, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
+  ],
+  yAxis: [
+    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
+    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
+    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
+  ],
+  dataZoom: [
+    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
+    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
+  ],
+  series: [
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[1009.6572931018286, 987.88037109375, 961.1541486292898, 1009.6572931018286], [994.8093649335383, 1044.3023681640625, 988.8702045458754, 1054.2009688101673], [1073.9982070922852, 1108.643310546875, 1064.0996061052595, 1148.2377144949776], [1103.6940896363385, 1118.5419921875, 1103.6940896363385, 1192.7815049433075], [1039.3531494140625, 1039.3531494140625, 1019.5559465680803, 1083.8968558175222], [1069.0489076640272, 1093.79541015625, 1044.3024051718041, 1108.6433116515836], [1108.6433127866972, 1078.947509765625, 1078.947509765625, 1148.2377168147937], [1098.7447129360464, 1064.099609375, 1029.4545058139536, 1113.5926144622092], [1123.4912078340176, 1168.034912109375, 1108.6433064088983, 1168.034912109375], [1207.629310881474, 1242.2744140625, 1187.832109063745, 1267.0209163346615], [1242.2745065242686, 1163.085693359375, 1133.3898884225398, 1276.9196122839096], [1158.1363904936975, 1177.93359375, 1128.4405856092437, 1177.93359375], [1177.9335841001728, 1252.173095703125, 1172.9842833266428, 1257.122396476655], [1247.2237930297852, 1267.02099609375, 1242.274492263794, 1291.767499923706], [1286.8181597997273, 1247.2237548828125, 1212.5786505805122, 1296.716761028956], [1207.629308143029, 1286.818115234375, 1202.6800076998197, 1306.6153170072116], [1301.6660531503182, 1336.3111572265625, 1281.868850821036, 1375.9055618851273], [1346.209762631705, 1291.7674560546875, 1262.0716524672234, 1375.905566219169], [1296.7167625580448, 1232.3758544921875, 1207.6293513899348, 1321.4632656602976], [1242.274451440619, 1276.9195556640625, 1237.3251508372698, 1306.615359284157], [1316.5139961812033, 1326.41259765625, 1306.6153947061568, 1380.8549057690066], [1306.6153846153845, 1415.5, 1296.7167832167831, 1420.4493006993007], [1405.6013986013986, 1415.5, 1390.7534965034965, 1474.8916083916083], [1435.0, 1435.0, 1400.0, 1450.0], [1445.0, 1395.0, 1365.0, 1455.0], [1360.0, 1260.0, 1260.0, 1365.0], [1270.0, 1215.0, 1205.0, 1270.0], [1245.0, 1180.0, 1170.0, 1255.0], [1180.0, 1155.0, 1110.0, 1200.0], [1150.0, 1250.0, 1130.0, 1265.0], [1250.0, 1265.0, 1235.0, 1300.0], [1240.0, 1140.0, 1140.0, 1240.0], [1140.0, 1140.0, 1075.0, 1150.0], [1190.0, 1190.0, 1165.0, 1195.0], [1225.0, 1200.0, 1200.0, 1250.0], [1200.0, 1195.0, 1175.0, 1215.0], [1170.0, 1120.0, 1120.0, 1190.0], [1120.0, 1105.0, 1070.0, 1135.0], [1070.0, 1015.0, 1015.0, 1070.0], [992.0, 944.0, 925.0, 1020.0], [924.0, 906.0, 895.0, 974.0], [980.0, 925.0, 913.0, 990.0], [919.0, 942.0, 904.0, 970.0], [943.0, 990.0, 937.0, 999.0], [1030.0, 1020.0, 1000.0, 1035.0], [1015.0, 1070.0, 1010.0, 1110.0], [1085.0, 1060.0, 1060.0, 1125.0], [1080.0, 1045.0, 1045.0, 1090.0], [963.0, 941.0, 941.0, 980.0], [925.0, 918.0, 900.0, 938.0], [928.0, 903.0, 901.0, 940.0], [910.0, 925.0, 895.0, 933.0], [925.0, 908.0, 896.0, 925.0], [909.0, 889.0, 881.0, 937.0], [880.0, 873.0, 860.0, 921.0], [893.0, 878.0, 856.0, 924.0], [882.0, 880.0, 868.0, 896.0], [881.0, 860.0, 860.0, 892.0], [860.0, 853.0, 803.0, 860.0], [854.0, 854.0, 836.0, 869.0], [862.0, 854.0, 852.0, 870.0], [856.0, 871.0, 841.0, 880.0], [880.0, 864.0, 850.0, 898.0], [872.0, 883.0, 870.0, 893.0], [880.0, 823.0, 823.0, 880.0], [822.0, 817.0, 817.0, 847.0], [832.0, 853.0, 822.0, 855.0], [858.0, 874.0, 851.0, 888.0], [885.0, 851.0, 848.0, 885.0], [857.0, 862.0, 852.0, 881.0], [862.0, 864.0, 844.0, 872.0], [859.0, 836.0, 833.0, 859.0], [833.0, 849.0, 816.0, 853.0], [841.0, 837.0, 828.0, 865.0], [842.0, 839.0, 839.0, 853.0], [845.0, 825.0, 825.0, 858.0], [831.0, 888.0, 831.0, 888.0], [888.0, 865.0, 865.0, 897.0], [876.0, 888.0, 869.0, 905.0], [900.0, 893.0, 883.0, 902.0], [890.0, 902.0, 881.0, 905.0], [902.0, 902.0, 886.0, 907.0], [908.0, 919.0, 908.0, 935.0], [929.0, 959.0, 919.0, 970.0], [964.0, 956.0, 938.0, 975.0], [975.0, 954.0, 946.0, 977.0], [955.0, 994.0, 950.0, 994.0], [1000.0, 1045.0, 982.0, 1060.0], [1050.0, 1030.0, 1025.0, 1085.0], [1010.0, 931.0, 927.0, 1015.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
+    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [949.77, 958.58, 971.4, 984.76, 992.38, 1003.27, 1010.2, 1013.42, 1021.09, 1034.45, 1045.89, 1059.45, 1076.08, 1093.55, 1108.94, 1122.06, 1133.93, 1147.3, 1159.77, 1173.88, 1190.8, 1209.36, 1224.7, 1240.53, 1258.31, 1266.62, 1273.42, 1279.22, 1278.57, 1278.95, 1284.05, 1282.15, 1276.54, 1272.69, 1270.33, 1265.74, 1254.92, 1245.59, 1234.72, 1218.07, 1197.05, 1172.53, 1148.85, 1126.6, 1107.85, 1098.35, 1090.6, 1083.85, 1073.15, 1056.55, 1038.45, 1027.7, 1016.1, 1001.05, 984.7, 968.85, 956.85, 944.6, 936.5, 932.0, 929.4, 926.7, 922.8, 917.45, 907.6, 894.95, 884.6, 876.05, 871.55, 868.75, 866.8, 862.35, 859.4, 856.8, 855.1, 852.45, 852.85, 853.1, 854.85, 856.8, 859.2, 860.75, 863.5, 867.3, 873.95, 880.8, 887.85, 896.4, 905.35, 908.8], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [874, 874, 913, 948, 948, 948, 948, 948, 948, 996, 996, 996, 996, 1034, 1034, 1034, 1083, 1083, 1083, 1083, 1083, 1083, 1159, 1164, 1164, 1164, 1164, 1164, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 837, 849, 856, 863, 900, 928, 928], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1422, 1422, 1422, 1422, 1389, 1389, 1389, 1389, 1389, 1339, 1283, 1217, 1178, 1178, 1177, 1177, 1177, 1177, 1177, 1177, 1177, 1137, 1128, 1112, 1098, 1094, 1076, 1076, 1059, 1045, 1000, 1000, 1000, 1000, 1000, 1000, 997, 972, 972, 972, 972, 972, 972, 966, 954, 954, 954, 952, 952, 952, 952, 952, 952, 952, 952, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
+
+    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [1036, 2129, 1744, 2572, 1528, 1072, 1160, 883, 1105, 960, 1086, 434, 1096, 737, 863, 819, 972, 1333, 1170, 886, 1023, 952, 668, 749, 1067, 1614, 803, 1078, 801, 1066, 886, 606, 1005, 660, 669, 310, 660, 698, 820, 1395, 994, 1550, 1064, 861, 588, 501, 611, 405, 1000, 2087, 1414, 1307, 1137, 2460, 2223, 3440, 737, 555, 1180, 877, 374, 801, 761, 651, 1230, 1112, 527, 734, 586, 547, 507, 509, 231, 392, 188, 343, 857, 780, 2105, 1249, 693, 656, 1432, 1982, 1736, 2560, 1951, 2648, 2985, 2810], itemStyle: {color: function(params) { return ["#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992"][params.dataIndex]; } } },
+
+    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-1.32, 554.74, 738.87, 752.64, 27.69, -17.68, 140.45, 130.69, 562.75, 125.27, 84.02, 25.91, 269.52, 235.57, -51.45, -37.59, 20.63, 370.66, 81.67, 194.58, 370.92, 363.05, 143.66, 389.28, 277.67, 192.54, -61.09, 193.7, 174.74, -102.99, 116.42, -191.95, 29.51, 145.75, 235.98, 97.88, 50.46, 2.06, 57.92, 20.7, -125.34, -505.84, 79.34, 46.53, -41.55, -15.01, 1.98, 4.58, -432.04, -76.83, -294.88, 182.6, -10.87, 444.69, 499.75, 1000.53, -47.31, -177.12, 11.53, -108.71, -35.97, 32.81, -121.24, 136.81, -826.5, -142.09, 68.84, 238.16, -134.27, 127.69, -52.12, -173.4, 77.2, -8.04, -45.73, -142.17, 413.61, -273.17, -982.11, -543.07, 0.58, -116.22, -255.36, -415.21, -598.14, 281.03, 341.36, 278.42, -293.62, -988.3], itemStyle: {color: '#4d7fff'} },
+    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-32.94, -12.83, 8.13, 3.06, 55.0, 27.5, 20.15, 10.06, 3.0, 27.06, 12.45, -27.0, 10.5, 28.57, 85.17, 171.0, 81.19, -301.62, -305.92, -79.94, -147.44, -12.21, -70.29, -335.9, -99.0, 70.13, 19.06, 20.4, 44.7, 7.34, -1.34, 28.95, 47.51, -114.77, -92.94, -50.0, -63.99, 22.06, 9.0, 1.4, -0.29, 1.66, 6.93, -53.0, -0.03, -13.83, 0.5, -83.87, -99.4, -419.99, -28.0, -152.0, -243.1, -779.76, -831.0, -1568.94, 0.0, 0.0, -31.0, 2.95, -10.9, 0.0, 0.0, -27.94, 7.0, 80.0, 16.0, 6.88, 2.94, -5.0, 9.0, -5.0, 10.2, 5.0, -6.0, -3.3, -1.3, 0.0, 253.0, -1.0, -16.3, 12.5, 390.0, 455.25, 130.63, 3.0, 0.4, 22.24, 615.5, 90.92], itemStyle: {color: '#1ed992'} },
+    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-60.15, 69.46, -27.9, -26.98, -35.88, -0.87, -5.11, -12.92, 9.74, 14.12, -54.16, 5.64, 15.82, -10.79, -4.49, 8.79, 3.67, -10.56, -32.36, -9.89, -6.92, 24.84, -17.98, 4.54, -1.87, -20.69, 14.46, 4.48, -2.21, 21.77, -8.22, -17.64, -3.06, -3.61, 1.72, -3.22, 1.76, 9.16, -1.38, -7.32, 2.24, 3.91, 9.82, 0.11, -5.79, 13.94, -4.85, -4.7, 0.53, 9.38, 5.02, 29.59, -16.31, 1.73, 7.99, 130.91, 17.53, -2.87, -120.11, 5.45, -2.81, 10.16, -5.76, 15.83, -13.96, 23.51, -9.15, 21.84, -34.63, 7.93, 6.36, -2.54, -5.3, -5.11, 0.06, 13.61, 25.53, -16.4, 0.02, 4.79, 8.11, -3.72, 2.35, 19.81, -29.88, 40.96, 52.08, 49.2, -66.81, 13.88], itemStyle: {color: '#e0a83c'} },
+    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [-94.41, 516.96, 1236.06, 1964.79, 2011.6, 2020.55, 2176.05, 2303.88, 2879.37, 3045.82, 3088.13, 3092.67, 3388.51, 3641.86, 3671.09, 3813.28, 3918.77, 3977.25, 3720.65, 3825.4, 4041.97, 4417.64, 4473.03, 4530.95, 4707.75, 4949.73, 4922.16, 5140.74, 5357.96, 5284.09, 5390.94, 5210.31, 5284.27, 5311.64, 5456.41, 5501.07, 5489.31, 5522.6, 5588.14, 5602.92, 5479.52, 4979.25, 5075.34, 5068.98, 5021.61, 5006.71, 5004.34, 4920.35, 4389.45, 3902.0, 3584.14, 3644.33, 3374.05, 3040.72, 2717.46, 2279.96, 2250.19, 2070.2, 1930.62, 1830.31, 1780.63, 1823.6, 1696.59, 1821.3, 987.85, 949.27, 1024.96, 1291.84, 1125.88, 1256.5, 1219.75, 1038.8, 1120.9, 1112.75, 1061.07, 929.21, 1367.05, 1077.47, 348.39, -190.89, -198.5, -305.94, -168.94, -109.09, -606.48, -281.49, 112.35, 462.21, 717.28, -166.21], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
+
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-2, -60, -72, -52, -7, -3, -25, 26, -35, -4, 9, 1, -13, 20, -13, -45, -31, 8, 4, -9, -34, -7, -3, -22, -35, 19, 13, -20, -5, 20, 17, 69, -5, 31, -12, -4, -21, 5, -32, -61, -3, 120, -13, 6, 22, 14, 41, 15, 46, 57, -54, -3, 29, -9, 49, 66, 25, -16, 13, 21, -39, -64, 21, 0, 84, -1, -23, -16, 19, -24, -12, -6, -18, 3, 6, 14, -2, 44, 101, 102, -13, -13, 34, 77, 2, 34, 96, 265, -168, -3], itemStyle: {color: '#ff525b'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [-2, 3, -1, 0, 6, 2, 1, -1, 4, 3, -3, -1, 0, 0, 0, -1, 1, -6, -24, -5, 0, 0, 0, 3, -1, 0, -2, 0, 0, 0, 5, -5, 1, 0, 0, 0, 0, 0, -1, 0, 3, 0, 0, 0, 0, 1, 0, 0, 77, -75, 1, -2, 0, 0, 0, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 2, -2, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, 1, 0, -2, 1, -1, 0, 0, 1, 0, 8, 1, 0, -7], itemStyle: {color: '#1ed992'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [52, 116, 87, 32, 69, -121, -17, 31, -48, -50, -140, 1, 71, -56, -13, 29, 8, 28, 24, -30, 49, -289, -7, -5, -72, 45, -200, -108, -173, -79, -67, -228, -17, -59, -181, -16, -72, 7, 43, 66, 59, 58, -78, -512, -74, -64, -130, 28, -39, 0, 10, -4, 4, -71, -78, -182, -112, -75, -107, -42, 0, -2, -1, -11, 103, 33, 3, -22, 21, 19, -8, -75, -85, -6, -3, -11, -32, 1, 65, 309, 5, 43, 40, 138, 303, 221, 36, 102, 193, 264], itemStyle: {color: '#b07bff'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1001, 941, 869, 817, 810, 807, 782, 808, 773, 769, 778, 779, 766, 786, 773, 728, 697, 705, 709, 700, 666, 659, 656, 634, 599, 618, 631, 611, 606, 626, 643, 712, 707, 738, 726, 722, 701, 706, 674, 613, 610, 730, 717, 723, 745, 759, 800, 815, 861, 918, 864, 861, 890, 881, 930, 996, 1021, 1005, 1018, 1039, 1000, 936, 957, 957, 1041, 1040, 1017, 1001, 1020, 996, 984, 978, 960, 963, 969, 983, 981, 1025, 1126, 1228, 1215, 1202, 1236, 1313, 1315, 1349, 1445, 1710, 1542, 1539], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [22, 25, 24, 24, 30, 32, 33, 32, 36, 39, 36, 35, 35, 35, 35, 34, 35, 29, 5, 0, 0, 0, 0, 3, 2, 2, 0, 0, 0, 0, 5, 0, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 4, 4, 4, 81, 6, 7, 5, 5, 5, 5, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 5, 3, 3, 3, 3, 4, 3, 3, 3, 3, 3, 4, 5, 5, 3, 4, 3, 3, 3, 4, 4, 12, 13, 13, 6], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [4621, 4737, 4824, 4856, 4925, 4804, 4787, 4818, 4770, 4720, 4580, 4581, 4652, 4596, 4583, 4612, 4620, 4648, 4672, 4642, 4691, 4402, 4395, 4390, 4318, 4363, 4163, 4055, 3882, 3803, 3736, 3508, 3491, 3432, 3251, 3235, 3163, 3170, 3213, 3279, 3338, 3396, 3318, 2806, 2732, 2668, 2538, 2566, 2527, 2527, 2537, 2533, 2537, 2466, 2388, 2206, 2094, 2019, 1912, 1870, 1870, 1868, 1867, 1856, 1959, 1992, 1995, 1973, 1994, 2013, 2005, 1930, 1845, 1839, 1836, 1825, 1793, 1794, 1859, 2168, 2173, 2216, 2256, 2394, 2697, 2918, 2954, 3056, 3249, 3513], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
+
+    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 80.41999999999999, null, null, null, null, 79.47, null, null, null, null, 78.91, null, null, null, null, 78.5, null, null, null, null, 77.85999999999999, null, null, null, null, 77.91, null, null, null, null, 77.85, null, null, null, 77.07999999999998, null, null, null, 77.50999999999999, null, null, null, 78.53, null], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
+    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 7.9399999999999995, null, null, null, null, 8.67, null, null, null, null, 9.27, null, null, null, null, 9.57, null, null, null, null, 9.95, null, null, null, null, 9.84, null, null, null, null, 9.92, null, null, null, 10.75, null, null, null, 10.620000000000001, null, null, null, 9.729999999999999, null], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
+  ]
+};
+
+// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
+chartOption_5536.yAxis[6] = holderRatioAxis_5536('大戶', '#4d7fff', 'left');
+chartOption_5536.yAxis.push(holderRatioAxis_5536('散戶', '#e0a83c', 'right'));
+chartOption_5536.series.forEach(function(series) {
+  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
+});
+chartK_5536.setOption(chartOption_5536);
+window.addEventListener('resize', function() { chartK_5536.resize(); });
+
+
 var dates_2330 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
 var state_2330 = { lastIdx: -1, lastMonth: null };
 
@@ -5072,7 +5436,7 @@ var chartOption_2330 = {
     { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
   ],
   series: [
-    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[2376.6448041130516, 2366.70068359375, 2346.812442555147, 2386.5889246323527], [2411.44921875, 2411.44921875, 2396.533038015464, 2426.3653994845363], [2371.6728515625, 2371.6728515625, 2371.6728515625, 2401.505214475236], [2381.6170316216308, 2351.78466796875, 2336.86848614231, 2391.5611528392574], [2217.5387571912443, 2282.175537109375, 2217.5387571912443, 2307.0358370778868], [2292.119873046875, 2292.119873046875, 2282.1757521225936, 2307.036054433297], [2272.23153138425, 2242.399169921875, 2242.399169921875, 2287.147712115438], [2233.4255902777777, 2243.396240234375, 2203.513640407986, 2253.3668901909723], [2318.1761902648136, 2303.22021484375, 2283.278914282332, 2318.1761902648136], [2353.073322368421, 2368.029296875, 2338.117347861842, 2368.029296875], [2368.029429117839, 2392.9560546875, 2343.1028035481772, 2392.9560546875], [2348.0880503144654, 2378.0, 2343.1027253668763, 2378.0], [2387.9707821414677, 2402.9267578125, 2378.000131694113, 2407.9120830361776], [2447.7944836863485, 2502.633056640625, 2447.7944836863485, 2502.633056640625], [2502.6331948889306, 2482.69189453125, 2482.69189453125, 2527.5598203360314], [2427.8532765919194, 2382.9853515625, 2382.9853515625, 2437.823926598457], [2402.9266515755753, 2382.9853515625, 2382.9853515625, 2412.897301582113], [2353.0733799078525, 2333.132080078125, 2318.176105205829, 2363.0440298227163], [2323.161587099486, 2363.044189453125, 2323.161587099486, 2387.9708159241495], [2432.838709154564, 2402.9267578125, 2402.9267578125, 2467.735985720306], [2487.6772987228665, 2497.64794921875, 2467.7359977311003, 2497.64794921875], [2442.809162255958, 2457.76513671875, 2437.823837435028, 2472.7211111815413], [2407.912024000671, 2437.823974609375, 2407.912024000671, 2457.7652750151774], [2457.7653545596736, 2452.780029296875, 2447.7947040340764, 2492.662631399263], [2472.7212234246927, 2432.838623046875, 2432.838623046875, 2492.6625236136015], [2437.823837435028, 2457.76513671875, 2412.897213330375, 2457.76513671875], [2442.8093863224635, 2407.912109375, 2407.912109375, 2452.7800368788817], [2452.779923235784, 2432.838623046875, 2432.838623046875, 2472.7212234246927], [2402.9265671406897, 2412.897216796875, 2382.9852678283187, 2422.8678664530603], [2417.882647905193, 2432.838623046875, 2407.9119978107387, 2452.779923235784], [2422.867889280744, 2462.75048828125, 2412.8972395306173, 2462.75048828125], [2368.0293320568367, 2283.27880859375, 2283.27880859375, 2387.97063169521], [2293.249616951778, 2313.19091796875, 2293.249616951778, 2338.117544239965], [2343.102855128371, 2402.9267578125, 2338.117529904694, 2402.9267578125], [2432.838655598958, 2392.9560546875, 2378.0000793457034, 2437.8239807128907], [2378.000105574324, 2397.94140625, 2363.0441300675675, 2397.94140625], [2348.08810827377, 2343.102783203125, 2338.1174581324804, 2358.05875841506], [2323.1614829205455, 2343.102783203125, 2323.1614829205455, 2358.05875841506], [2263.3374558833607, 2273.30810546875, 2263.3374558833607, 2298.234729432223], [2253.3668678977274, 2193.54296875, 2173.6016690340907, 2273.308167613636], [2198.5283203125, 2198.5283203125, 2183.572345344388, 2253.3668951955783], [2343.102695111147, 2417.882568359375, 2338.1173702279316, 2417.882568359375], [2382.9854906299447, 2363.044189453125, 2358.05886415892, 2387.9708159241495], [2328.146893731479, 2313.19091796875, 2303.220267460264, 2353.073520002694], [2378.000105574324, 2397.94140625, 2363.0441300675675, 2407.912056587838], [2387.9707893226414, 2358.058837890625, 2353.0735126519558, 2387.9707893226414], [2382.9854906299447, 2363.044189453125, 2348.0882135705106, 2387.9708159241495], [2382.985298220851, 2373.0146484375, 2373.0146484375, 2402.9265977875525], [2382.985378066284, 2387.970703125, 2368.0294028901358, 2397.9413532424323], [2397.941458818582, 2407.912109375, 2382.985482983954, 2407.912109375], [2432.838596477156, 2427.853271484375, 2417.8826214988126, 2437.823921469937], [2427.8533035947285, 2387.970703125, 2387.970703125, 2432.8386286534446], [2402.9267049153646, 2392.9560546875, 2382.9854044596354, 2412.897355143229], [2407.9119226792277, 2373.0146484375, 2368.0293235458244, 2407.9119226792277], [2333.1321330618352, 2343.102783203125, 2328.14680799119, 2348.08810827377], [2358.058647203947, 2368.029296875, 2343.1026726973682, 2368.029296875], [2368.029481246758, 2402.9267578125, 2358.0588307994035, 2402.9267578125], [2402.926570723684, 2368.029296875, 2368.029296875, 2402.926570723684], [2348.0881286621093, 2392.9560546875, 2343.1028035481772, 2392.9560546875], [2368.029507149327, 2407.912109375, 2368.029507149327, 2417.882759931418], [2422.8680587072095, 2402.9267578125, 2402.9267578125, 2427.853383930887], [2432.838516109246, 2412.897216796875, 2402.9265671406897, 2437.8238409373384], [2387.970755912162, 2397.94140625, 2368.0294552364862, 2397.94140625], [2387.97069762183, 2432.838623046875, 2382.985372574603, 2432.838623046875], [2407.9119496855346, 2378.0, 2378.0, 2412.8972746331237], [2378.000026559231, 2382.9853515625, 2373.0147015559623, 2392.9560015690377], [2407.9120830361776, 2402.9267578125, 2382.9854569177905, 2407.9120830361776], [2427.8534029828825, 2452.780029296875, 2422.868077720084, 2452.780029296875], [2457.7651634061867, 2462.75048828125, 2452.7798385311235, 2497.647762406693], [2472.7211111815413, 2457.76513671875, 2452.7798118978194, 2482.6917608234025], [2437.8240010164222, 2442.809326171875, 2427.8533507055167, 2447.7946513273278], [2422.8680587072095, 2402.9267578125, 2397.941432588823, 2422.8680587072095], [2377.999973329175, 2373.0146484375, 2373.0146484375, 2387.970623112526], [2397.9412997903564, 2378.0, 2373.014675052411, 2397.9412997903564], [2375.0, 2380.0, 2375.0, 2395.0], [2405.0, 2425.0, 2400.0, 2445.0], [2460.0, 2460.0, 2435.0, 2460.0], [2445.0, 2480.0, 2445.0, 2485.0], [2505.0, 2460.0, 2460.0, 2510.0], [2475.0, 2500.0, 2475.0, 2505.0], [2480.0, 2475.0, 2470.0, 2490.0], [2475.0, 2475.0, 2475.0, 2495.0], [2495.0, 2480.0, 2480.0, 2510.0], [2490.0, 2510.0, 2485.0, 2510.0], [2505.0, 2500.0, 2495.0, 2515.0], [2550.0, 2575.0, 2545.0, 2580.0], [2575.0, 2585.0, 2565.0, 2590.0], [2565.0, 2585.0, 2560.0, 2585.0], [2550.0, 2550.0, 2550.0, 2575.0], [2510.0, 2540.0, 2510.0, 2550.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[2376.6448041130516, 2366.70068359375, 2346.812442555147, 2386.5889246323527], [2411.44921875, 2411.44921875, 2396.533038015464, 2426.3653994845363], [2371.672607421875, 2371.672607421875, 2371.672607421875, 2401.5049672636596], [2381.616784384084, 2351.784423828125, 2336.868243550145, 2391.560904569404], [2217.538994417211, 2282.17578125, 2217.538994417211, 2307.0360838779957], [2292.119873046875, 2292.119873046875, 2282.1757521225936, 2307.036054433297], [2272.23153138425, 2242.399169921875, 2242.399169921875, 2287.147712115438], [2233.4255902777777, 2243.396240234375, 2203.513640407986, 2253.3668901909723], [2318.1761902648136, 2303.22021484375, 2283.278914282332, 2318.1761902648136], [2353.073322368421, 2368.029296875, 2338.117347861842, 2368.029296875], [2368.029429117839, 2392.9560546875, 2343.1028035481772, 2392.9560546875], [2348.0880503144654, 2378.0, 2343.1027253668763, 2378.0], [2387.9707821414677, 2402.9267578125, 2378.000131694113, 2407.9120830361776], [2447.7944836863485, 2502.633056640625, 2447.7944836863485, 2502.633056640625], [2502.6331948889306, 2482.69189453125, 2482.69189453125, 2527.5598203360314], [2427.8532765919194, 2382.9853515625, 2382.9853515625, 2437.823926598457], [2402.9266515755753, 2382.9853515625, 2382.9853515625, 2412.897301582113], [2353.0733799078525, 2333.132080078125, 2318.176105205829, 2363.0440298227163], [2323.161587099486, 2363.044189453125, 2323.161587099486, 2387.9708159241495], [2432.838709154564, 2402.9267578125, 2402.9267578125, 2467.735985720306], [2487.6772987228665, 2497.64794921875, 2467.7359977311003, 2497.64794921875], [2442.809162255958, 2457.76513671875, 2437.823837435028, 2472.7211111815413], [2407.912024000671, 2437.823974609375, 2407.912024000671, 2457.7652750151774], [2457.7653545596736, 2452.780029296875, 2447.7947040340764, 2492.662631399263], [2472.7212234246927, 2432.838623046875, 2432.838623046875, 2492.6625236136015], [2437.823837435028, 2457.76513671875, 2412.897213330375, 2457.76513671875], [2442.8093863224635, 2407.912109375, 2407.912109375, 2452.7800368788817], [2452.779923235784, 2432.838623046875, 2432.838623046875, 2472.7212234246927], [2402.9265671406897, 2412.897216796875, 2382.9852678283187, 2422.8678664530603], [2417.882647905193, 2432.838623046875, 2407.9119978107387, 2452.779923235784], [2422.867889280744, 2462.75048828125, 2412.8972395306173, 2462.75048828125], [2368.0293320568367, 2283.27880859375, 2283.27880859375, 2387.97063169521], [2293.249616951778, 2313.19091796875, 2293.249616951778, 2338.117544239965], [2343.102855128371, 2402.9267578125, 2338.117529904694, 2402.9267578125], [2432.838655598958, 2392.9560546875, 2378.0000793457034, 2437.8239807128907], [2378.000105574324, 2397.94140625, 2363.0441300675675, 2397.94140625], [2348.08810827377, 2343.102783203125, 2338.1174581324804, 2358.05875841506], [2323.1614829205455, 2343.102783203125, 2323.1614829205455, 2358.05875841506], [2263.3374558833607, 2273.30810546875, 2263.3374558833607, 2298.234729432223], [2253.3668678977274, 2193.54296875, 2173.6016690340907, 2273.308167613636], [2198.5283203125, 2198.5283203125, 2183.572345344388, 2253.3668951955783], [2343.102695111147, 2417.882568359375, 2338.1173702279316, 2417.882568359375], [2382.9854906299447, 2363.044189453125, 2358.05886415892, 2387.9708159241495], [2328.146893731479, 2313.19091796875, 2303.220267460264, 2353.073520002694], [2378.000105574324, 2397.94140625, 2363.0441300675675, 2407.912056587838], [2387.9707893226414, 2358.058837890625, 2353.0735126519558, 2387.9707893226414], [2382.9854906299447, 2363.044189453125, 2348.0882135705106, 2387.9708159241495], [2382.985298220851, 2373.0146484375, 2373.0146484375, 2402.9265977875525], [2382.985378066284, 2387.970703125, 2368.0294028901358, 2397.9413532424323], [2397.941458818582, 2407.912109375, 2382.985482983954, 2407.912109375], [2432.838596477156, 2427.853271484375, 2417.8826214988126, 2437.823921469937], [2427.8533035947285, 2387.970703125, 2387.970703125, 2432.8386286534446], [2402.9267049153646, 2392.9560546875, 2382.9854044596354, 2412.897355143229], [2407.9119226792277, 2373.0146484375, 2368.0293235458244, 2407.9119226792277], [2333.1321330618352, 2343.102783203125, 2328.14680799119, 2348.08810827377], [2358.058647203947, 2368.029296875, 2343.1026726973682, 2368.029296875], [2368.029481246758, 2402.9267578125, 2358.0588307994035, 2402.9267578125], [2402.926570723684, 2368.029296875, 2368.029296875, 2402.926570723684], [2348.0881286621093, 2392.9560546875, 2343.1028035481772, 2392.9560546875], [2368.029507149327, 2407.912109375, 2368.029507149327, 2417.882759931418], [2422.8680587072095, 2402.9267578125, 2402.9267578125, 2427.853383930887], [2432.838516109246, 2412.897216796875, 2402.9265671406897, 2437.8238409373384], [2387.970755912162, 2397.94140625, 2368.0294552364862, 2397.94140625], [2387.97069762183, 2432.838623046875, 2382.985372574603, 2432.838623046875], [2407.9119496855346, 2378.0, 2378.0, 2412.8972746331237], [2378.000026559231, 2382.9853515625, 2373.0147015559623, 2392.9560015690377], [2407.9120830361776, 2402.9267578125, 2382.9854569177905, 2407.9120830361776], [2427.8534029828825, 2452.780029296875, 2422.868077720084, 2452.780029296875], [2457.7651634061867, 2462.75048828125, 2452.7798385311235, 2497.647762406693], [2472.7211111815413, 2457.76513671875, 2452.7798118978194, 2482.6917608234025], [2437.8240010164222, 2442.809326171875, 2427.8533507055167, 2447.7946513273278], [2422.8680587072095, 2402.9267578125, 2397.941432588823, 2422.8680587072095], [2377.999973329175, 2373.0146484375, 2373.0146484375, 2387.970623112526], [2397.9412997903564, 2378.0, 2373.014675052411, 2397.9412997903564], [2375.0, 2380.0, 2375.0, 2395.0], [2405.0, 2425.0, 2400.0, 2445.0], [2460.0, 2460.0, 2435.0, 2460.0], [2445.0, 2480.0, 2445.0, 2485.0], [2505.0, 2460.0, 2460.0, 2510.0], [2475.0, 2500.0, 2475.0, 2505.0], [2480.0, 2475.0, 2470.0, 2490.0], [2475.0, 2475.0, 2475.0, 2495.0], [2495.0, 2480.0, 2480.0, 2510.0], [2490.0, 2510.0, 2485.0, 2510.0], [2505.0, 2500.0, 2495.0, 2515.0], [2550.0, 2575.0, 2545.0, 2580.0], [2575.0, 2585.0, 2565.0, 2590.0], [2565.0, 2585.0, 2560.0, 2585.0], [2550.0, 2550.0, 2550.0, 2575.0], [2510.0, 2540.0, 2510.0, 2550.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
     { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2261.04, 2269.75, 2273.47, 2277.2, 2280.19, 2282.67, 2284.41, 2283.72, 2286.26, 2293.29, 2303.3, 2313.56, 2322.83, 2335.84, 2345.12, 2351.41, 2356.2, 2358.75, 2359.81, 2362.86, 2369.41, 2371.72, 2375.03, 2380.08, 2387.62, 2395.9, 2404.17, 2413.65, 2419.13, 2422.37, 2425.86, 2421.12, 2416.64, 2411.65, 2407.16, 2407.91, 2405.92, 2406.42, 2401.93, 2391.46, 2376.5, 2374.51, 2370.77, 2363.79, 2362.05, 2357.06, 2354.82, 2351.83, 2350.58, 2349.33, 2347.59, 2352.82, 2356.81, 2355.32, 2352.82, 2351.33, 2354.32, 2355.57, 2361.55, 2372.27, 2382.49, 2382.24, 2383.98, 2389.96, 2388.97, 2390.21, 2392.21, 2396.2, 2399.94, 2402.43, 2403.18, 2403.92, 2402.93, 2403.18, 2405.02, 2407.87, 2410.72, 2416.32, 2419.67, 2424.28, 2427.88, 2430.99, 2435.09, 2438.95, 2445.05, 2454.65, 2463.75, 2470.36, 2474.73, 2478.84], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
     { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [2187, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2232, 2294, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, 2329, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2252, 2252, 2252, 2252, 2252, 2252, 2252, 2252, 2252, 2252, 2278, 2287, 2287, 2287, 2287, 2287, 2287, 2310, 2347, 2347, 2347, 2347, 2347, 2347, 2347, 2347, 2347, 2348, 2365, 2368, 2368, 2372, 2383, 2388, 2400, 2444, 2464, 2464, 2464, 2464], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
     { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 2521, 2521, 2521, 2521, 2521, 2521, 2521, 2473, 2426, 2422, 2422, 2422, 2422, 2422, 2422, 2422, 2422, 2422, 2422, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
@@ -6798,6 +7162,160 @@ chartOption_6409.series.forEach(function(series) {
 });
 chartK_6409.setOption(chartOption_6409);
 window.addEventListener('resize', function() { chartK_6409.resize(); });
+
+
+var dates_5274 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
+var state_5274 = { lastIdx: -1, lastMonth: null };
+
+var dateFmt_5274 = function(value, index) {
+  if (index <= state_5274.lastIdx) { state_5274.lastMonth = null; }
+  state_5274.lastIdx = index;
+  var currM = value.split('-')[0];
+  var currD = value.split('-')[1];
+  var isBoundary = false;
+  if (index === 0) isBoundary = true;
+  else if (dates_5274[index - 1].split('-')[0] !== currM) isBoundary = true;
+  if (state_5274.lastMonth !== null && state_5274.lastMonth !== currM) isBoundary = true;
+  if (state_5274.lastMonth === null) isBoundary = true;
+  state_5274.lastMonth = currM;
+  return isBoundary ? (currM + '/' + currD) : currD;
+};
+
+var chartK_5274 = echarts.init(document.getElementById('kline_5274'));
+
+var currentMouseY_5274 = 0;
+chartK_5274.getZr().on('mousemove', function(e) {
+    currentMouseY_5274 = e.offsetY;
+});
+
+var holderRatioAxis_5274 = function(name, color, position) {
+  return {
+    type: 'value', gridIndex: 3, splitNumber: 4, scale: true,
+    name: name, position: position, nameTextStyle: {color: color, fontSize: 9},
+    min: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.max(0, +(v.min - pad).toFixed(2)); },
+    max: function(v) { var pad = Math.max((v.max - v.min) * 0.08, 0.1); return Math.min(100, +(v.max + pad).toFixed(2)); },
+    axisLabel: {fontSize: 9, color: color, formatter: function(v) { return v.toFixed(1) + '%'; }},
+    splitLine: position === 'left' ? {lineStyle: {color: '#171e29'}} : {show: false}
+  };
+};
+
+var chartOption_5274 = {
+  title: [
+    { text: '日K線與成交量(張)', left: '6%', top: '1%', textStyle: {fontSize: 12, color: '#8b95a5'} },
+    { text: '三大法人買賣超(張)與累計', left: '6%', top: '46%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '融資/券/借券 增減(張)與餘額', left: '6%', top: '63%', textStyle: {fontSize: 11, color: '#8b95a5'} },
+    { text: '大戶與散戶持股比例(%)', left: '6%', top: '80%', textStyle: {fontSize: 11, color: '#8b95a5'} }
+  ],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross', lineStyle: {color: '#3a4658'}, crossStyle: {color: '#3a4658'} },
+    backgroundColor: 'rgba(10,14,21,.95)', borderColor: '#1e2632', borderWidth: 1,
+    textStyle: {color: '#dde3ec', fontSize: 12, fontFamily: 'IBM Plex Mono'}, padding: [8,12],
+    formatter: function(params) {
+      var h = chartK_5274.getHeight();
+      var yPct = (currentMouseY_5274 / h) * 100;
+      var date = params[0].axisValue;
+      var html = '<div style="font-size:12px; line-height:1.5;"><b>' + date + '</b><br/>';
+
+      var hoveredGrid = 0;
+      if (yPct >= 46 && yPct < 63) hoveredGrid = 1;
+      else if (yPct >= 63 && yPct < 80) hoveredGrid = 2;
+      else if (yPct >= 80) hoveredGrid = 3;
+
+      params.forEach(function(p) {
+        var isPrice = (p.seriesName === 'K線');
+        var isVol = (p.seriesName === '成交量(張)');
+        var axIdx = p.axisIndex || 0;
+
+        if (isPrice) {
+          var val = p.data;
+          html += p.marker + ' 開: <b>' + Math.round(val[0]).toLocaleString() + '</b> ' +
+                  '高: <b>' + Math.round(val[3]).toLocaleString() + '</b> ' +
+                  '低: <b>' + Math.round(val[2]).toLocaleString() + '</b> ' +
+                  '收: <b>' + Math.round(val[1]).toLocaleString() + '</b><br/>';
+        } else if (isVol) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v != null && !isNaN(v) && v !== '') {
+              html += p.marker + ' ' + p.seriesName + ': <b>' + Math.round(v).toLocaleString() + '</b><br/>';
+          }
+        } else if (axIdx === hoveredGrid) {
+          var val = p.data;
+          var v = (Array.isArray(val)) ? (val.length > 1 ? val[1] : val[0]) : val;
+          if (v == null || isNaN(v) || v === '') return;
+          v = (p.seriesName.indexOf('占比') !== -1 || p.seriesName.indexOf('比例') !== -1) ? v.toFixed(2) + '%' : Math.round(v).toLocaleString();
+          html += p.marker + ' ' + p.seriesName + ': <b>' + v + '</b><br/>';
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+  },
+  legend: [
+    { data: ['MA20', 'ST指標'], top: '1%', right: '8%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['外資', '投信', '自營', '法人累計(右)'], top: '48%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['融資增減', '融券增減', '借券增減', '融資餘額(右)', '融券餘額(右)', '借券餘額(右)'], top: '65%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 },
+    { data: ['大戶持股比例', '散戶持股比例'], top: '82%', left: '6%', textStyle: {fontSize: 10, color: '#8b95a5'}, itemWidth:10, itemHeight:10 }
+  ],
+  axisPointer: { link: {xAxisIndex: 'all'} },
+  grid: [
+    { left: '6%', right: '8%', top: '4%', height: '36%' },
+    { left: '6%', right: '8%', top: '50%', height: '11%' },
+    { left: '6%', right: '8%', top: '67%', height: '11%' },
+    { left: '6%', right: '8%', top: '84%', height: '9%' }
+  ],
+  xAxis: [
+    { type: 'category', gridIndex: 0, data: dates_5274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} },
+    { type: 'category', gridIndex: 1, data: dates_5274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 2, data: dates_5274, boundaryGap: true, axisLabel: {show: false}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: false} },
+    { type: 'category', gridIndex: 3, data: dates_5274, boundaryGap: true, axisLabel: {show: true, fontSize: 10, color: '#8b95a5', formatter: dateFmt_5274, showMinLabel: true, showMaxLabel: true}, axisLine: {onZero: false, lineStyle: {color: '#2a323e'}}, axisTick: {show: true} }
+  ],
+  yAxis: [
+    { scale: true, gridIndex: 0, splitNumber: 5, splitArea: {show: false}, splitLine: {lineStyle: {color: '#171e29'}}, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }} },
+    { scale: true, gridIndex: 0, show: false, max: function(v) { return Math.max(v.max * 6, 100); } },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 1, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, position: 'right' },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {lineStyle: {color: '#171e29'}} },
+    { type: 'value', gridIndex: 2, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v).toLocaleString(); }}, splitLine: {show: false}, scale: true, position: 'right' },
+    { type: 'value', gridIndex: 3, splitNumber: 4, axisLabel: {fontSize: 9, color: '#8b95a5', formatter: function(v){ return Math.round(v) + '%'; }}, splitLine: {lineStyle: {color: '#171e29'}} }
+  ],
+  dataZoom: [
+    { type: 'inside', xAxisIndex: [0, 1, 2, 3], start: 0, end: 100 },
+    { show: true, xAxisIndex: [0, 1, 2, 3], type: 'slider', bottom: 12, start: 0, end: 100, height: 15, borderColor: '#1e2632', fillerColor: 'rgba(77,127,255,.18)', handleStyle: {color: '#4d7fff'}, textStyle: {color: '#8b95a5'}, dataBackground: {lineStyle: {color: '#2a323e'}, areaStyle: {color: '#151b24'}} }
+  ],
+  series: [
+    { name: 'K線', type: 'candlestick', xAxisIndex: 0, yAxisIndex: 0, data: [[16718.34562512337, 16374.4765625, 16351.854339703497, 17003.394186654597], [16786.213734730805, 16270.41015625, 15976.312519995974, 16971.7213997465], [16188.969426066047, 16528.3125, 16084.903503868334, 16831.461182760166], [16528.3113512953, 15840.5751953125, 15840.5751953125, 16831.46001298687], [14451.527253363487, 15858.673828125, 14302.215917986696, 16093.951942508182], [15926.541848325247, 16157.2958984375, 15433.362443171525, 16247.787701855617], [15799.853672873993, 15238.8046875, 15211.657438166121, 16464.966627988375], [15600.772080187024, 15926.5419921875, 14876.83764630288, 16012.508768775702], [16505.689596571807, 16691.197265625, 16333.756038748457, 16831.460489456054], [17374.409467151854, 16116.5751953125, 16112.050167521587, 17374.409467151854], [16293.034255804307, 16428.771484375, 16112.050636324026, 16876.70550515313], [16555.459030799568, 16727.392578125, 16333.755041442259, 16727.392578125], [16831.459584415607, 17157.228515625, 16736.442755073826, 17256.76940041413], [17962.60594172803, 17442.27734375, 17302.016069333065, 17989.75221901244], [17781.623448661237, 16745.4921875, 16745.4921875, 17781.623448661237], [16745.490915886294, 16582.607421875, 15944.639779738593, 16745.490915886294], [16609.754159665976, 15768.181640625, 15682.214863694255, 16958.147267133285], [15109.0908203125, 14195.4541015625, 14195.4541015625, 15518.181640625], [13422.7275390625, 13827.2724609375, 13422.7275390625, 14240.9091796875], [14518.181640625, 14995.4541015625, 14250.0, 15186.36328125], [15550.0, 15586.36328125, 15227.2724609375, 16163.63671875], [15572.7275390625, 16136.36328125, 15186.36328125, 16136.36328125], [16086.36328125, 15695.4541015625, 15677.2724609375, 16277.2724609375], [15781.818359375, 14790.9091796875, 14522.7275390625, 15831.818359375], [15665.0, 14415.0, 14270.0, 15695.0], [14870.0, 13975.0, 13600.0, 15045.0], [13975.0, 13665.0, 13410.0, 14180.0], [14865.0, 13520.0, 13070.0, 14865.0], [13485.0, 12985.0, 12200.0, 13485.0], [13700.0, 13900.0, 13500.0, 14280.0], [13900.0, 13905.0, 13550.0, 14295.0], [13625.0, 12950.0, 12800.0, 13835.0], [13100.0, 12915.0, 11880.0, 13220.0], [13010.0, 14100.0, 13010.0, 14205.0], [15300.0, 15510.0, 15085.0, 15510.0], [15575.0, 15540.0, 15315.0, 16210.0], [15120.0, 14730.0, 14500.0, 15300.0], [14850.0, 14695.0, 14245.0, 14935.0], [14000.0, 13230.0, 13230.0, 14290.0], [12955.0, 12910.0, 12210.0, 13245.0], [12355.0, 13205.0, 12355.0, 13925.0], [14525.0, 14525.0, 14405.0, 14525.0], [15640.0, 15975.0, 15265.0, 15975.0], [16215.0, 15500.0, 15255.0, 16405.0], [15840.0, 16020.0, 15775.0, 16400.0], [16625.0, 16750.0, 16000.0, 17000.0], [16800.0, 16345.0, 16170.0, 17000.0], [16750.0, 16540.0, 16535.0, 17395.0], [16800.0, 16440.0, 15930.0, 16800.0], [16450.0, 17370.0, 16450.0, 17395.0], [17920.0, 17490.0, 17010.0, 18085.0], [17990.0, 17690.0, 17690.0, 18600.0], [17380.0, 17020.0, 16980.0, 17600.0], [16950.0, 17055.0, 16715.0, 17450.0], [16250.0, 15830.0, 15585.0, 16700.0], [15710.0, 15750.0, 15200.0, 16280.0], [15585.0, 15350.0, 15205.0, 16120.0], [15350.0, 15115.0, 14600.0, 15500.0], [15115.0, 15400.0, 14805.0, 15400.0], [15820.0, 15690.0, 14950.0, 16050.0], [15690.0, 15305.0, 15105.0, 16125.0], [15525.0, 15630.0, 14815.0, 15745.0], [15630.0, 16065.0, 15010.0, 16140.0], [16210.0, 17120.0, 16000.0, 17670.0], [17120.0, 17725.0, 17120.0, 18395.0], [17735.0, 17850.0, 17360.0, 18790.0], [18490.0, 17470.0, 17410.0, 18490.0], [19215.0, 19215.0, 18700.0, 19215.0], [19260.0, 19220.0, 18840.0, 19795.0], [19565.0, 18605.0, 18100.0, 19575.0], [18280.0, 18700.0, 17900.0, 18865.0], [17805.0, 17885.0, 17730.0, 18245.0], [17765.0, 17980.0, 17170.0, 18035.0], [17980.0, 17520.0, 17405.0, 18160.0], [17965.0, 18250.0, 17485.0, 18420.0], [18250.0, 18275.0, 18225.0, 18800.0], [18890.0, 19290.0, 18870.0, 19500.0], [19400.0, 19820.0, 19200.0, 19820.0], [21800.0, 20905.0, 20625.0, 21800.0], [20385.0, 20280.0, 19780.0, 20620.0], [20485.0, 19835.0, 19705.0, 20505.0], [20430.0, 19395.0, 19040.0, 20430.0], [19525.0, 18750.0, 18680.0, 19675.0], [18755.0, 19040.0, 18740.0, 19330.0], [18740.0, 18840.0, 18355.0, 18905.0], [19100.0, 19520.0, 19100.0, 19770.0], [19520.0, 18985.0, 18855.0, 19895.0], [18700.0, 17750.0, 17655.0, 19000.0], [16355.0, 17485.0, 15975.0, 17840.0], [17445.0, 17695.0, 16935.0, 18080.0]], itemStyle: {color: '#ff525b', color0: '#1ed992', borderColor: '#ff525b', borderColor0: '#1ed992'} },
+    { name: 'MA20', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [15864.56, 15831.98, 15848.95, 15873.83, 15860.26, 15853.47, 15809.13, 15799.63, 15856.18, 15931.29, 16032.19, 16164.54, 16278.55, 16346.2, 16381.49, 16430.58, 16394.16, 16296.97, 16130.93, 16043.65, 16004.24, 15997.54, 15955.9, 15903.42, 15831.23, 15722.12, 15643.43, 15523.1, 15337.79, 15226.96, 15100.77, 14911.9, 14699.79, 14532.68, 14470.9, 14418.77, 14366.86, 14391.84, 14361.98, 14257.7, 14138.64, 14058.07, 14072.05, 14107.5, 14187.75, 14326.5, 14460.5, 14611.5, 14784.25, 14957.75, 15137.0, 15374.0, 15579.25, 15727.0, 15743.0, 15753.5, 15784.5, 15805.5, 15914.0, 16053.0, 16158.0, 16213.25, 16217.75, 16298.75, 16384.0, 16439.0, 16495.25, 16629.0, 16768.0, 16829.75, 16890.25, 16900.0, 16948.0, 16971.25, 17092.25, 17218.5, 17415.5, 17650.75, 17926.0, 18155.5, 18382.0, 18570.25, 18704.5, 18800.5, 18856.25, 18939.75, 19015.5, 18942.25, 18855.5, 18810.0], smooth: true, showSymbol: false, lineStyle: {width: 1, color: '#e0a83c'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [14050, 14050, 14050, 14050, 14050, 14050, 14050, 14050, 14050, 14050, 14050, 14050, 14192, 14872, 14872, 14872, 14872, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 12560, 13025, 13208, 13611, 13611, 13684, 14311, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 14899, 15402, 15831, 15831, 15831, 15831, 15831, 15831, 15831, 15831, 16061, 16513, 17921, 17921, 17921, 17921, 17921, 17921, 17921, 17921, 17921, null, null, null], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#ff525b', type: 'dashed'} },
+    { name: 'ST指標', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 17914, 16829, 16829, 16829, 16829, 16829, 16829, 16829, 16829, 16829, 16829, 16324, 16324, 16324, 16324, 15999, 15999, 15999, 15999, 15999, 15999, 15999, 15999, 15999, 15999, 15999, 15999, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 20969, 20265, 20265], smooth: false, showSymbol: false, lineStyle: {width: 1.5, color: '#1ed992', type: 'dashed'} },
+
+    { name: '成交量(張)', type: 'bar', xAxisIndex: 0, yAxisIndex: 1, data: [290, 289, 155, 290, 409, 266, 202, 325, 285, 215, 206, 122, 164, 228, 205, 194, 309, 454, 411, 294, 271, 205, 142, 243, 278, 245, 382, 282, 435, 343, 241, 314, 464, 479, 319, 325, 311, 134, 280, 338, 329, 109, 240, 269, 224, 318, 155, 182, 158, 252, 310, 246, 127, 165, 425, 234, 153, 182, 184, 210, 295, 316, 358, 434, 672, 523, 219, 461, 424, 400, 226, 206, 208, 113, 163, 167, 226, 132, 328, 234, 172, 229, 206, 114, 123, 100, 167, 370, 1079, 239], itemStyle: {color: function(params) { return ["#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#1ed992", "#ff525b", "#ff525b", "#ff525b", "#1ed992", "#1ed992", "#ff525b", "#ff525b"][params.dataIndex]; } } },
+
+    { name: '外資', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [-62.98, -26.34, 29.62, -40.9, -30.54, -23.8, -23.99, 74.52, 80.34, 20.65, 36.4, 38.28, 42.75, 30.6, -24.89, -23.59, -0.82, -86.89, 76.5, 21.88, 25.94, 48.35, -3.66, 28.33, -77.1, -14.13, 54.1, 11.96, 114.91, -50.56, 14.43, 5.88, -70.89, -201.79, -59.33, -67.42, -122.47, -16.32, -89.56, -17.24, -111.32, 34.62, 56.62, -9.27, 24.1, -12.61, -22.0, -12.14, 42.4, -33.44, -20.62, 26.64, 9.24, -4.94, -6.7, 49.23, 10.7, 38.13, 83.28, -6.23, 12.28, 75.82, 107.98, -81.36, -95.46, -37.42, -36.42, 44.72, 28.05, 82.81, 39.22, -43.5, -16.08, -3.61, -0.38, -34.66, -12.86, 16.53, 21.3, 48.94, 38.33, -17.58, -5.62, -15.24, -2.03, 11.88, -2.31, 5.75, -155.31, 13.67], itemStyle: {color: '#4d7fff'} },
+    { name: '投信', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [17.04, -49.87, 10.32, -10.89, -20.1, 13.56, 5.5, -26.99, 19.3, 0.33, -8.27, -4.39, 0.85, 9.09, 7.53, 18.7, -69.97, -51.34, -70.0, 2.01, -2.9, -2.19, 4.07, -83.57, -25.4, -21.98, -102.69, -37.11, -105.35, 86.92, 43.29, 49.98, 77.39, 104.7, 49.0, 60.35, 53.01, 3.01, 3.0, 7.08, 90.16, 6.0, 62.05, 23.4, 23.27, 60.41, 11.0, 24.98, -1.11, 63.0, 24.0, 32.93, -0.67, 16.88, -81.0, 0.01, -5.0, -35.0, 0.0, 37.98, -78.08, -110.2, -91.0, 48.21, 246.9, 120.2, 11.3, 56.92, -2.01, -61.9, -11.22, 0.4, 18.29, -6.25, 40.8, 24.05, 44.48, 22.5, 15.4, -55.5, -51.97, 13.98, -33.12, 0.8, -22.99, 0.9, -12.35, -74.19, -36.48, -11.71], itemStyle: {color: '#1ed992'} },
+    { name: '自營', type: 'bar', stack: 'inst', xAxisIndex: 1, yAxisIndex: 2, data: [0.24, 3.13, 1.83, -4.45, 0.69, 1.09, -2.0, 1.03, 0.46, 0.7, 0.9, -5.11, -0.43, -2.02, -2.6, -0.41, -0.21, 4.88, 0.61, 4.25, -1.28, -3.09, -1.97, 2.07, -2.57, 0.66, 3.08, -4.6, -0.97, -8.92, -1.14, -2.24, 1.51, 3.64, 7.47, -10.84, -2.45, -2.29, -0.14, 2.41, 2.45, 1.43, -3.32, -10.98, -0.87, -0.49, 0.54, 1.66, -1.63, 3.54, -2.36, -4.13, 1.27, 0.13, 5.19, 0.06, -0.06, 2.34, 1.96, 0.33, 0.09, 3.29, 2.62, 10.61, -0.82, -1.9, 4.26, -1.18, -2.31, -3.3, -1.72, -0.72, 0.12, -2.16, -4.0, -1.12, 1.13, 0.84, -0.24, -1.42, 0.95, 1.2, -1.96, 2.58, 3.51, 4.93, -0.17, 0.48, 14.61, -1.02], itemStyle: {color: '#e0a83c'} },
+    { name: '法人累計(右)', type: 'line', xAxisIndex: 1, yAxisIndex: 3, data: [-45.71, -118.78, -77.02, -133.26, -183.21, -192.35, -212.85, -164.3, -64.2, -42.53, -13.49, 15.29, 58.46, 96.13, 76.16, 70.86, -0.13, -133.48, -126.37, -98.23, -76.47, -33.41, -34.97, -88.14, -193.21, -228.65, -274.16, -303.91, -295.32, -267.88, -211.3, -157.69, -149.68, -243.13, -246.0, -263.9, -335.81, -351.41, -438.11, -445.87, -464.58, -422.54, -307.19, -304.04, -257.54, -210.22, -220.68, -206.18, -166.52, -133.41, -132.39, -76.96, -67.12, -55.04, -137.55, -88.24, -82.6, -77.13, 8.11, 40.2, -25.51, -56.6, -37.0, -59.54, 91.09, 171.97, 151.11, 251.57, 275.29, 292.9, 319.19, 275.36, 277.69, 265.67, 302.09, 290.36, 323.11, 362.98, 399.43, 391.46, 378.77, 376.36, 335.66, 323.8, 302.3, 320.01, 305.18, 237.24, 60.05, 60.99], itemStyle: {color: '#ff5cae'}, smooth: true, showSymbol: false },
+
+    { name: '融資增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [3, 4, -14, 19, -2, -7, -7, 1, -10, 15, -11, -4, -3, -7, 11, -3, 19, 25, 6, -9, 2, -16, 8, 5, 4, 2, 6, 2, -1, -7, 0, 8, 5, -6, -7, -9, 2, 6, 12, -7, 2, -9, -10, 11, -6, 0, 4, 8, -1, -10, -5, 0, 1, -6, 7, 3, 11, 1, -2, 3, 24, 2, 10, 69, 1, -19, -4, -3, -35, -24, -11, 15, -7, 5, -14, -6, -2, -15, -4, 8, -2, -4, 6, 3, 2, -2, -4, -6, 7, -2], itemStyle: {color: '#ff525b'} },
+    { name: '融券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#1ed992'} },
+    { name: '借券增減', type: 'bar', xAxisIndex: 2, yAxisIndex: 4, data: [1, -82, -3, -6, 18, -6, 1, 8, -4, -16, -3, -8, 0, -2, -1, -2, -8, 0, 0, -10, 1, 0, -2, 0, 0, 0, -21, 4, 1, -2, -6, 4, 10, -6, 0, 9, 6, -1, -1, 0, 16, -37, -5, 13, 3, 15, -4, 4, 0, -28, -6, 0, -8, -3, 4, 5, -7, 1, -4, -3, 2, 0, 1, 4, 1, 4, 7, -6, 1, -9, 5, -7, -3, -1, 2, 8, -2, 10, 4, 3, 5, -16, -7, -5, -1, -1, 1, 0, 8, 3], itemStyle: {color: '#b07bff'} },
+    { name: '融資餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [110, 114, 100, 119, 117, 110, 103, 104, 94, 109, 98, 94, 91, 84, 95, 92, 111, 136, 142, 133, 135, 119, 127, 132, 136, 138, 144, 146, 145, 138, 138, 146, 151, 145, 138, 129, 131, 137, 149, 142, 144, 135, 125, 136, 130, 130, 134, 142, 141, 131, 126, 126, 127, 121, 128, 131, 142, 143, 141, 144, 168, 170, 180, 249, 250, 231, 227, 224, 189, 165, 154, 169, 162, 167, 153, 147, 145, 130, 126, 134, 132, 128, 134, 137, 139, 137, 133, 127, 134, 132], itemStyle: {color: '#ff525b'}, smooth: true, showSymbol: false },
+    { name: '融券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], itemStyle: {color: '#1ed992'}, smooth: true, showSymbol: false },
+    { name: '借券餘額(右)', type: 'line', xAxisIndex: 2, yAxisIndex: 5, data: [273, 191, 188, 182, 200, 194, 195, 203, 199, 183, 180, 172, 172, 170, 169, 167, 159, 159, 159, 149, 150, 150, 148, 148, 148, 148, 127, 131, 132, 130, 124, 128, 138, 132, 132, 141, 147, 146, 145, 145, 161, 124, 119, 132, 135, 150, 146, 150, 150, 122, 116, 116, 108, 105, 109, 114, 107, 108, 104, 101, 103, 103, 104, 108, 109, 113, 120, 114, 115, 106, 111, 104, 101, 100, 102, 110, 108, 118, 122, 125, 130, 114, 107, 102, 101, 100, 101, 101, 109, 112], itemStyle: {color: '#b07bff'}, smooth: true, showSymbol: false },
+
+    { name: '大戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.12, null, null, null, null, 98.28, null, null, null, null, 98.22, null, null, null, null, 98.08, null, null, null, null, 98.51, null, null, null, null, 98.65, null, null, null, null, 98.62, null, null, null, 98.75, null, null, null, 98.64, null, null, null, 98.38999999999999, null], itemStyle: {color: '#4d7fff'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 },
+    { name: '散戶持股比例', type: 'line', xAxisIndex: 3, yAxisIndex: 6, data: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1.82, null, null, null, null, 1.65, null, null, null, null, 1.72, null, null, null, null, 1.84, null, null, null, null, 1.42, null, null, null, null, 1.28, null, null, null, null, 1.31, null, null, null, 1.18, null, null, null, 1.29, null, null, null, 1.54, null], itemStyle: {color: '#e0a83c'}, lineStyle: {width: 2}, connectNulls: true, showSymbol: true, symbolSize: 5 }
+  ]
+};
+
+// 大戶、散戶各自依資料範圍縮放，避免比例差距讓小幅變化被壓平。
+chartOption_5274.yAxis[6] = holderRatioAxis_5274('大戶', '#4d7fff', 'left');
+chartOption_5274.yAxis.push(holderRatioAxis_5274('散戶', '#e0a83c', 'right'));
+chartOption_5274.series.forEach(function(series) {
+  if (series.name === '散戶持股比例') series.yAxisIndex = 7;
+});
+chartK_5274.setOption(chartOption_5274);
+window.addEventListener('resize', function() { chartK_5274.resize(); });
 
 
 var dates_6753 = ["06-02", "06-03", "06-04", "06-05", "06-08", "06-09", "06-10", "06-11", "06-12", "06-15", "06-16", "06-17", "06-18", "06-22", "06-23", "06-24", "06-25", "06-26", "06-29", "06-30", "07-01", "07-02", "07-03", "07-06", "07-07", "07-08", "07-09", "07-13", "07-14", "07-15", "07-16", "07-17", "07-20", "07-21", "07-22", "07-23", "07-24", "07-27", "07-28", "07-29", "07-30", "07-31", "08-03", "08-04", "08-05", "08-06", "08-07", "08-10", "08-11", "08-12", "08-13", "08-14", "08-17", "08-18", "08-19", "08-20", "08-21", "08-24", "08-25", "08-26", "08-27", "08-28", "08-31", "09-01", "09-02", "09-03", "09-04", "09-07", "09-08", "09-09", "09-10", "09-11", "09-14", "09-15", "09-16", "09-17", "09-18", "09-21", "09-22", "09-23", "09-24", "09-29", "09-30", "10-01", "10-02", "10-05", "10-06", "10-07", "10-08", "10-12"];
