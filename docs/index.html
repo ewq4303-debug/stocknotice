@@ -291,7 +291,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 <body>
 <div class="container">
   <div class="header" id="top">
-    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-10-17 22:25 · 即時連線</div></div>
+    <div><h1>📊 股票監控儀表板</h1><div class="update-time">最後更新 2026-10-18 22:25 · 即時連線</div></div>
     <button id="runBtn" class="btn-run" onclick="triggerAction(this)">⟳ 重新抓取最新資料</button>
   </div>
 
@@ -321,7 +321,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
   <div id="tab-market" class="tab-content active"><div class="status-panel card">
       <div class="card-title"><span>資料新鮮度與來源狀態</span><span class="src-pill">避免不同來源更新時間混淆</span></div>
-      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-10-17 22:25</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">28 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-10-16</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-10-16</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20261016</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
+      <div class="status-grid"><div class="status-card"><div class="k">頁面產生</div><div class="v">2026-10-18 22:25</div><div class="src">Python batch</div></div><div class="status-card"><div class="k">追蹤個股</div><div class="v">28 檔</div><div class="src">stocks.txt / GAS</div></div><div class="status-card"><div class="k">大盤行情</div><div class="v">2026-10-16</div><div class="src">FinMind / yfinance</div></div><div class="status-card"><div class="k">三大法人</div><div class="v">2026-10-16</div><div class="src">FinMind</div></div><div class="status-card"><div class="k">集保快照</div><div class="v">20261016</div><div class="src">tdcc_history</div></div><div class="status-card"><div class="k">庫存資料</div><div class="v">由 inventory.json 載入</div><div class="src">前端即時檢查</div></div></div>
       <div class="status-note">提示：庫存頁會另外讀取 inventory.json；若該檔 updated_at 與頁面產生時間不同，請以各資料卡時間為準。</div>
     </div><div class="section-head"><span class="eyebrow">Market</span><h2>大盤總覽</h2></div>
     <div class="metrics">
@@ -346,7 +346,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
         </div>
     </div></div>
   <div id="tab-rating" class="tab-content"><div class="rating-wrap">
-  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-10-17 22:25</span></div>
+  <div class="rating-top"><h3>個股操作建議 · 綜合評等</h3><span class="upd">更新於 2026-10-18 22:25</span></div>
   <div class="rating-grid"><div class="rcol" data-k="sb"><div class="rcol-head"><span class="rcol-label">強力加碼</span><span class="rcol-count">5</span></div><div class="schip"><div class="schip-top"><span class="schip-name">3617 碩天</span><span class="schip-chg up">+1.34%</span></div><div class="schip-meta"><span class="tag t">技 8.5</span><span class="tag c">籌 8</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6409 旭隼</span><span class="schip-chg up">+0.11%</span></div><div class="schip-meta"><span class="tag t">技 7.5</span><span class="tag c">籌 6</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6446 藥華藥</span><span class="schip-chg up">+3.32%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3264 欣銓</span><span class="schip-chg down">-3.54%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 3.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8042 金山電</span><span class="schip-chg down">-2.70%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 3</span><span class="tag f fp">基 +3</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="b"><div class="rcol-head"><span class="rcol-label">加碼</span><span class="rcol-count">4</span></div><div class="schip"><div class="schip-top"><span class="schip-name">1303 南亞</span><span class="schip-chg down">-2.38%</span></div><div class="schip-meta"><span class="tag t">技 7</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6274 台燿</span><span class="schip-chg down">-0.62%</span></div><div class="schip-meta"><span class="tag t">技 4</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3189 景碩</span><span class="schip-chg up">+2.15%</span></div><div class="schip-meta"><span class="tag t">技 3.5</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6223 旺矽</span><span class="schip-chg down">-1.79%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="n"><div class="rcol-head"><span class="rcol-label">中性</span><span class="rcol-count">9</span></div><div class="schip"><div class="schip-top"><span class="schip-name">8046 南電</span><span class="schip-chg up">+0.74%</span></div><div class="schip-meta"><span class="tag t">技 3.5</span><span class="tag c">籌 3</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3491 昇達科</span><span class="schip-chg up">+9.81%</span></div><div class="schip-meta"><span class="tag t">技 2.5</span><span class="tag c">籌 3</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">4979 華星光</span><span class="schip-chg down">-4.06%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5274 信驊</span><span class="schip-chg up">+3.36%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2330 台積電</span><span class="schip-chg down">-0.82%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3711 日月光投控</span><span class="schip-chg down">-0.30%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3037 欣興</span><span class="schip-chg up">+1.40%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5425 台半</span><span class="schip-chg up">+0.11%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2449 京元電子</span><span class="schip-chg up">+1.10%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 3</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="s"><div class="rcol-head"><span class="rcol-label">減碼</span><span class="rcol-count">7</span></div><div class="schip"><div class="schip-top"><span class="schip-name">2327 國巨*</span><span class="schip-chg down">-1.05%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6488 環球晶</span><span class="schip-chg down">-2.28%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 4.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3008 大立光</span><span class="schip-chg down">-3.10%</span></div><div class="schip-meta"><span class="tag t">技 2</span><span class="tag c">籌 3</span><span class="tag f fp">基 +0.5</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">8358 金居</span><span class="schip-chg up">+2.28%</span></div><div class="schip-meta"><span class="tag t">技 2.5</span><span class="tag c">籌 0</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2308 台達電</span><span class="schip-chg up">+0.31%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +4</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">2383 台光電</span><span class="schip-chg up">+0.88%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">5536 聖暉*</span><span class="schip-chg down">-1.49%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +5</span><span class="tbadge tup">▲基本面</span></div></div></div><div class="rcol" data-k="ss"><div class="rcol-head"><span class="rcol-label">強力減碼</span><span class="rcol-count">3</span></div><div class="schip"><div class="schip-top"><span class="schip-name">2454 聯發科</span><span class="schip-chg up">+2.04%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +2</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">3481 群創</span><span class="schip-chg down">-0.10%</span></div><div class="schip-meta"><span class="tag t">技 1</span><span class="tag c">籌 1.5</span><span class="tag f fp">基 +0</span></div></div><div class="schip"><div class="schip-top"><span class="schip-name">6753 龍德造船</span><span class="schip-chg up">+0.00%</span></div><div class="schip-meta"><span class="tag t">技 0</span><span class="tag c">籌 0</span><span class="tag f fn">基 -1</span></div></div></div></div>
   <details class="legend"><summary>評分邏輯與門檻</summary><div class="legend-body">
     <div class="legend-row"><span class="lbadge t">技術 10</span><span>站月線 +1 · 月&gt;季 +1 · 5&gt;10 +1 · 近20日高 +1.5 · 價漲且量&gt;5均 +1.5 · MACD 紅 +2 · 趨勢向上且5日量&gt;20日量 +2（量能兩項均需價格方向配合）</span></div>
@@ -600,8 +600,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:22:04</div><a href="https://today.line.me/tw/v3/posts/list/article/wJvlNgr" target="_blank">討論牆 | AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 07:00:07</div><a href="https://news.cnyes.com/news/id/6630210" target="_blank">AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-14 06:00:00</div><a href="https://uanalyze.com.tw/articles/1763857065" target="_blank">AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - 優分析UAnalyze</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -700,8 +700,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:22:04</div><a href="https://today.line.me/tw/v3/posts/list/article/wJvlNgr" target="_blank">討論牆 | AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 07:00:07</div><a href="https://news.cnyes.com/news/id/6630210" target="_blank">AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-14 06:00:00</div><a href="https://uanalyze.com.tw/articles/1763857065" target="_blank">AI伺服器不能斷電！碩天(3617)第三季營收創高、旭隼(6409)漲逾7%，UPS族群接棒？ - 優分析UAnalyze</a></div><div class="news-item"><div class="d">2026-10-14 05:55:28</div><a href="https://www.cmoney.tw/forum/article/185688508" target="_blank">6409 旭隼- 準千金股熱身中！美系外資首評不斷電系統廠旭隼目標價喊1050元 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 04:34:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=2431834002&PU=0010" target="_blank">焦點股：UPS委外趨勢＋HVDC提高估值空間，旭隼(6409)低檔醞釀反彈 - 富聯網</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -801,7 +801,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:17:07</div><a href="https://www.cmoney.tw/finance/6446/f00025" target="_blank">藥華藥(6446) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 22:19:07</div><a href="https://www.cmoney.tw/forum/article/185926412" target="_blank">6446 藥華藥- 今日下午「台積電法說會」前夕的市場防禦性賣壓- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 11:29:58</div><a href="https://www.cmoney.tw/finance/6446/f00025" target="_blank">藥華藥(6446) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 09:45:24</div><a href="https://www.cmoney.tw/finance/6446/f00025" target="_blank">藥華藥(6446) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 07:52:02</div><a href="https://www.cmoney.tw/forum/article/185796392" target="_blank">6446 藥華藥- ❤️生技股星期4盤中點重如下； - 股市爆料同學會 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:47:26</div><a href="https://www.genetinfo.com/investment/featured/item/98607.html" target="_blank">10月16日 Genet新聞: 【華安法說】、《10/15日法人買超》外資買超前三名：健喬(1332張)、晟德(987張)、藥華藥(683張)【10/15日股價漲幅】全福生技(+5.02%)、視航生醫(+4.82%)、鴻林堂(+4.38%) - 生技投資第一站-Genet觀點</a></div><div class="news-item"><div class="d">2026-10-15 23:42:17</div><a href="https://www.cmoney.tw/finance/6446/f00025" target="_blank">藥華藥(6446) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 23:33:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6332268001&PU=1002" target="_blank">《生醫股》藥華藥Ropeg中國ET藥證到手 下一步攻醫保！ - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 22:11:14</div><a href="https://www.cmoney.tw/forum/article/186055296" target="_blank">6446 藥華藥- 從籌碼面、K線型態以及指標面為投資人詳細拆解： - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 21:48:10</div><a href="https://www.cmoney.tw/forum/article/185941687" target="_blank">6446 藥華藥- ❤️生技股星期5盤中點重如下； - 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -900,8 +900,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 18:17:30</div><a href="https://www.cmoney.tw/finance/3264/f00025" target="_blank">欣銓(3264) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 06:34:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=6330795001&PU=0010" target="_blank">《半導體》欣銓10月22日召開董事會 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-14 04:16:52</div><a href="https://www.ttv.com.tw/finance/view/?i=1020261410266F2A990A453C44F6BAC5969B6227A825412E&from=587" target="_blank">欣銓Q3獲利估創高 Q4續向上 - 台視全球資訊網</a></div><div class="news-item"><div class="d">2026-10-14 02:26:00</div><a href="https://www.moneydj.com/kmdj/news/newsviewer.aspx?a=e6b62ba9-8b19-4971-aaea-01f92e5e94d1" target="_blank">欣銓Q3獲利估創高Q4續向上- 新聞 - MoneyDJ</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -1000,8 +1000,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:59:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6331404001&PU=1002" target="_blank">《電零組》注意股：金山電 近5日漲35.04% - 富聯網</a></div><div class="news-item"><div class="d">2026-10-14 03:11:23</div><a href="https://cmnews.com.tw/article/cmoneyairesearcher-ef80776d-c77c-11f1-b518-9710f0dda6ec" target="_blank">【11:11 即時新聞】金山電(8042)股價續強，市場關注高階電容與AI伺服器題材 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-10-14 00:12:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6330313001&PU=1002" target="_blank">《電零組》注意股：金山電 近5日漲21.52% - 富聯網</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -1101,7 +1101,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 16:00:00</div><a href="https://uanalyze.com.tw/articles/2245757133" target="_blank">南亞(1303)電子材料占比逼近六成！高階銅箔基板 M9、M10 認證結果，為何要等到2027年？ - 優分析UAnalyze</a></div><div class="news-item"><div class="d">2026-10-14 14:58:39</div><a href="https://www.cmoney.tw/forum/article/185792083" target="_blank">1303 南亞 - 法人一日買超金額排行榜- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 12:15:00</div><a href="https://tw.stock.yahoo.com/news/%E5%A1%91%E8%86%A0%E8%82%A1%E5%85%A8%E9%9D%A2%E6%B2%B8%E9%A8%B0-%E9%80%99%E6%AA%94-9%E6%9C%88%E7%87%9F%E6%94%B6%E5%B9%B4%E5%A2%9E96-%E9%80%A36%E6%97%A5%E4%B8%8A%E6%BC%B230-%E5%8F%B0%E5%A1%91%E5%9B%9B%E5%AF%B6-121500190.html" target="_blank">塑膠股全面沸騰！「這檔」9月營收年增96%、連6日上漲30% 「台塑四寶」台塑、台化亮燈漲停、南亞大漲9% - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-14 11:59:13</div><a href="https://www.cmoney.tw/forum/article/185768625" target="_blank">2303 聯電 - 盤中一燈💡🙏🏻南亞正式翻倍- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 11:46:57</div><a href="https://inews.setn.com/news/1922496" target="_blank">南亞、台化漲停有原因！半導體布局發酵：法人最新目標價一次看 - 三立新聞</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 20:02:22</div><a href="https://www.cmoney.tw/forum/article/186038174" target="_blank">1303 南亞 - 【00991A】10/16 操作日報｜趁回檔加碼半導體與散熱指標- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 11:21:01</div><a href="https://www.cmoney.tw/forum/article/185908189" target="_blank">1303 南亞 - 空軍一號- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 11:00:00</div><a href="https://www.ftnn.com.tw/news/587654" target="_blank">M7、M8通過AI晶片大廠認證！投信狂掃南亞逾5千張約16.5億元 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-10-15 09:31:14</div><a href="https://money.udn.com/money/story/5607/9817226?from=udnamp-referralnews_ch1001artbottom" target="_blank">一夕變天！塑化昨飆漲今打回原形 南亞、台化摜跌停 - 經濟日報</a></div><div class="news-item"><div class="d">2026-10-15 09:31:09</div><a href="https://udn.com/news/story/7251/9817226" target="_blank">一夕變天！塑化昨飆漲今打回原形 南亞、台化摜跌停 - UDN</a></div></div>
           </details>
         </div>
       </div>
@@ -1189,19 +1189,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">跌破5日與10日均線呈短線修正，惟仍站穩月線及季線之上，趨勢指標看多。MACD微幅正值，量能萎縮呈現高檔偏多整理。<br>    1.股 2.價 3.跌 4.破 5.5 6.日 7.與 8.1 9.0 10.日 11.均 12.線 13.呈 14.短 15.線 16.修 17.正 18.， 19.惟 20.仍 21.站 22.穩 23.月 24.線 2</div>
-                <div class="ai-text ai-divider"></div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 20:01:40</div><a href="https://www.cmoney.tw/forum/article/185905227" target="_blank">6274 台燿- 【00403A】10/15 操作日報｜單日大跌5.6%，經理人減碼聯發科- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 13:07:31</div><a href="https://www.cmoney.tw/forum/article/185779033" target="_blank">6274 台燿- 【最新消息】銅箔基板買盤擴散，「3檔概念股」走勢轉強！ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 10:00:07</div><a href="https://news.cnyes.com/news/id/6630357" target="_blank">CCL三雄誰最會賺？台光電(2383)、台燿(6274)、聯茂(6213) 產品布局、漲價動能全解析 - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-14 09:00:06</div><a href="https://m.cnyes.com/news/id/6630305" target="_blank">台光電(2383)、聯茂(6213)、台燿(6274) 誰最會賺？高階CCL漲價與獲利動能一次看！ - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-14 08:00:07</div><a href="https://news.cnyes.com/news/id/6630251" target="_blank">台光電(2383)、聯茂(6213)、台燿(6274) 誰最會賺？高階CCL漲價潮、產品布局與獲利動能一次看！ - 鉅亨網</a></div></div>
+            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 05:19:21</div><a href="https://www.cmoney.tw/forum/article/185854431" target="_blank">6274 台燿- 今日爆大量好不容易強攻上來又立刻被打回原形- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1300,8 +1300,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 14:59:55</div><a href="https://today.line.me/tw/v3/posts/list/article/l2pJWak" target="_blank">討論牆| 鉅亨速報- Factset 最新調查：景碩(3189-TW)EPS預估上修至11.79元，預估目標價為1125元 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 14:13:17</div><a href="https://cmnews.com.tw/article/cmoney-66e77b68-c7d9-11f1-94ac-09d1784afffe" target="_blank">【00992A】10/14 操作日報｜經理人今天只做一件事：狂拉景碩持股 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-10-14 04:10:39</div><a href="https://es.tradingview.com/news/cnyes:46d5435e1acdf:0/" target="_blank">鉅亨速報 - Factset 最新調查：景碩(3189-TW)EPS預估上修至11.79元，預估目標價為1125元 - TradingView</a></div><div class="news-item"><div class="d">2026-10-14 04:10:00</div><a href="https://www.tradingview.com/news/cnyes:46d5435e1acdf:0/" target="_blank">鉅亨速報 - Factset 最新調查：景碩(3189-TW)EPS預估上修至11.79元，預估目標價為1125元 - TradingView</a></div></div>
+            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 04:21:58</div><a href="https://www.cmoney.tw/forum/article/185843311" target="_blank">3189 景碩 - 升息循環，像這種EPS頂多$10的， 就會沒有投資價值本益比... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 04:00:00</div><a href="https://www.businesstoday.com.tw/article/category/183008/post/202610150006/" target="_blank">欣興閃見跌停1070元，景碩、南電、台光電…載板股全被壓扁先挑誰？9檔PCB概念股前景、目標價盤點 - 今周刊</a></div></div>
           </details>
         </div>
       </div>
@@ -1389,19 +1389,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">58:力 59:道 60:。 (10)<br>    Total: 60 chars. Excellent!<br><br>    *Section 2: === 籌碼面 ===*<br>    Target: Exactly 60 Traditional Chinese characters.<br><br>    Data:<br>    - 外資: 今日-300, 5D -757, 20D +1627<br>    - 投信: 今日+127, 5D +704, 20D -2265<br>    - 融資: +127 today, 1400 balance<br>    - 大戶: 90.13% (+0.11%)<br><br>    Drafting:<br>    </div>
-                <div class="ai-text ai-divider">Target: Exactly 60 Traditional Chinese characters.<br>    Data:<br>    - 外資: 今日-300, 5D -757, 20D +1627<br>    - 投信: 今日+127, 5D +704, 20D -2265<br>    - 融資: +127 today, 1400 balance<br>    - 大戶: 90.13% (+0.11%)<br>    Drafting:</div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 14:18:30</div><a href="https://today.line.me/tw/v3/posts/list/article/QwWE66r" target="_blank">討論牆| 鉅亨速報- Factset 最新調查：旺矽(6223-TW)EPS預估上修至64.86元，預估目標價為8415元 - LINE TODAY</a></div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 05:43:03</div><a href="https://tw.stock.yahoo.com/news/48%E6%AA%94%E5%8D%83%E9%87%91%E8%82%A1%E9%80%BE%E5%8D%8A%E6%95%B8%E8%B7%8C%E9%80%BE5%EF%BC%81%E8%82%A1%E7%8E%8B%E4%BF%A1%E9%A9%8A%E4%B8%80%E5%BA%A6%E9%96%83%E7%87%88-%E8%82%A1%E5%90%8E%E5%B7%9D%E6%B9%96%E7%97%9B%E5%A4%B1%E8%90%AC%E5%85%83-%E7%B7%AF%E7%A9%8E%E6%97%BA%E7%9F%BD9%E6%AA%94%E6%85%98%E8%B7%8C%E5%81%9C-054303037.html" target="_blank">48檔千金股逾半數跌逾5%！股王信驊一度閃燈 股后川湖痛失萬元 緯穎旺矽9檔慘跌停 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-15 03:40:50</div><a href="https://today.line.me/tw/v3/article/Yap0Xya" target="_blank">台股一度大跌點1605點、面臨4萬7千點保衛戰 川湖跌破1萬元 旺矽、漢測跌停 | 信傳媒 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-15 03:23:49</div><a href="https://today.line.me/tw/v3/article/Yap0Xya" target="_blank">台股一度大跌點1605點、面臨4萬7千點保衛戰 川湖跌破1萬元 旺矽、漢測跌停 | 信傳媒 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-15 02:46:59</div><a href="https://tw.stock.yahoo.com/news/%E5%8D%83%E9%87%91%E8%82%A1%E6%B7%AA%E9%87%8D%E7%81%BD%E5%8D%80%E5%89%A948%E6%AA%94%EF%BC%81%E7%B7%AF%E7%A9%8E%E6%97%BA%E7%9F%BD%E6%85%98%E8%B7%8C%E5%81%9C-%E8%82%A1%E7%8E%8B%E4%BF%A1%E9%A9%8A%E8%B7%8C8-%E8%82%A1%E5%90%8E%E5%B7%9D%E6%B9%96%E7%97%9B%E5%A4%B1%E8%90%AC%E9%87%91%E5%9C%B0%E4%BD%8D-023117293.html" target="_blank">千金股淪重災區剩48檔！緯穎旺矽慘跌停 股王信驊跌8% 股后川湖痛失萬金地位 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-15 02:25:36</div><a href="https://tw.stock.yahoo.com/news/%E5%8D%83%E9%87%91%E8%82%A1%E6%B7%AA%E9%87%8D%E7%81%BD%E5%8D%80%E5%89%A948%E6%AA%94%EF%BC%81%E7%B7%AF%E7%A9%8E%E6%97%BA%E7%9F%BD%E6%85%98%E8%B7%8C%E5%81%9C-%E8%82%A1%E7%8E%8B%E4%BF%A1%E9%A9%8A%E8%B7%8C8%E3%80%8C%E4%B8%80%E5%BC%B5%E8%92%B8%E7%99%BC141%E8%90%AC%E5%85%83%E3%80%8D-022329985.html" target="_blank">千金股淪重災區剩48檔！緯穎旺矽慘跌停 股王信驊跌8%「一張蒸發141萬元」 - Yahoo股市</a></div></div>
           </details>
         </div>
       </div>
@@ -1501,7 +1501,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 10:13:18</div><a href="https://www.cmoney.tw/forum/article/185800980" target="_blank">8046 南電- 操作最忌諱「紅了想追、綠了想跑」南電剛接蘇媽大訂單！買綠賣紅- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 08:20:00</div><a href="https://www.ftnn.com.tw/news/587080" target="_blank">AI載板缺貨恐一路到2030年！欣興砸537億、南電豪擲468億擴產 ABF漲價超預期 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-10-14 07:52:09</div><a href="https://www.cmoney.tw/forum/article/185705493" target="_blank">南亞大股東賣自家股票（南電）獲利貢獻，創造自己，踐踏南電 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 05:17:21</div><a href="https://www.cmoney.tw/forum/article/185685615" target="_blank">8046 南電- 今天穩穩的交換籌碼南亞要放出的股票兩千多張等消化完再漲- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 05:16:45</div><a href="https://www.cmoney.tw/forum/article/185685494" target="_blank">8046 南電- 今天穩穩的交換籌碼南亞要放出的股票兩千多張等消化完再漲- 股市爆料同學會 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 22:28:14</div><a href="https://stock.ltn.com.tw/article/cf3hfn09jdjp" target="_blank">焦點股》南電：ABF載板價格看不到天花板！ 出關首日急拉漲停 - 自由時報</a></div><div class="news-item"><div class="d">2026-10-15 09:10:04</div><a href="https://www.cmoney.tw/forum/article/185943092" target="_blank">8046 南電 - ABF們加油！ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 08:28:39</div><a href="https://www.cmoney.tw/forum/article/185881105" target="_blank">8046 南電- 投信相挺護下南電+883張！謝謝投信！愛你唷🥰🥰🥰 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 07:33:38</div><a href="https://www.cmoney.tw/forum/article/185872157" target="_blank">8046 南電- 外資史上第一大賣超！台股重跌1,655點狂砍3,700億元- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 05:04:16</div><a href="https://www.cmoney.tw/forum/article/185851650" target="_blank">8046 南電- 跌時不敢買，漲的時候只能羨慕別人- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1589,19 +1589,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">股價大漲站回5日線與季線之上，但仍受制於10日線與月線反壓。超趨勢指標下降且MACD值呈負，均量萎縮，短線暫視為跌深反彈架構。</div>
-                <div class="ai-text ai-divider">外資今日轉買，但投信連續賣超。融資退場有利籌碼沉澱，惟借券餘額增加且大戶持股比例單週下滑，顯示法人態度分歧，籌碼尚未回穩。</div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">跌深反彈上面臨月線重壓，尚未扭轉短空格局。建議暫不盲目追高，待帶量站穩月線或籌碼轉佳後再行布局，並嚴格以季線為停損依據。</div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:49:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=6331377001&PU=0010" target="_blank">《通網股》注意股：昇達科 近5日跌17.78% - 富聯網</a></div><div class="news-item"><div class="d">2026-10-14 14:34:28</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 14:30:37</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 13:35:11</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 08:30:42</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:16:31</div><a href="https://www.cmoney.tw/forum/article/185942305" target="_blank">3491 昇達科 - SpaceX獵鷹9號火箭即將發射：10月15日至23日（已更... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 22:59:17</div><a href="https://www.cmoney.tw/forum/article/185942185" target="_blank">3491 昇達科- 新聞：星鏈正大規模進軍亞太海上市場🛰 全球最大的星鏈授權經... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 22:37:15</div><a href="https://www.cmoney.tw/forum/article/186058817" target="_blank">3491 昇達科 - 外資券賣餘額今天小增6張 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 13:58:03</div><a href="https://www.cmoney.tw/forum/article/185932868" target="_blank">3491 昇達科 - 股價本週跌約21.36%，外資本週持股才減少48張上週223... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 11:19:14</div><a href="https://www.cmoney.tw/finance/3491/f00025" target="_blank">昇達科(3491) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -1700,8 +1700,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:00:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?SN=2432000002&PU=0010" target="_blank">盈餘：華星光(4979)股價遭警示，自結9月歸屬母公司淨利1.03億元，EPS 0.72元 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-14 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20261015000376-260206" target="_blank">熱門股－華星光 獲利貢獻放大 - 中時新聞網</a></div><div class="news-item"><div class="d">2026-10-14 19:00:00</div><a href="https://www.ctee.com.tw/news/20261015700256-439901" target="_blank">華星光獲利貢獻放大- 日報 - 工商時報</a></div><div class="news-item"><div class="d">2026-10-14 14:34:46</div><a href="https://www.cmoney.tw/forum/article/185791814" target="_blank">4979華新光-光芒萬丈，星光閃耀 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 12:17:07</div><a href="https://udn.com/news/story/7252/9815074" target="_blank">華星光獲利／9月自結1.03億元、年增翻倍 第3季獲利創新高 - udn</a></div></div>
+            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 02:44:00</div><a href="https://news.tvbs.com.tw/money/4036308" target="_blank">台股狂瀉1400點多檔被波及！華星光不敵賣壓 跌幅逾3% - TVBS新聞網</a></div><div class="news-item"><div class="d">2026-10-15 02:08:47</div><a href="https://www.cmoney.tw/forum/article/185814525" target="_blank">4979 華星光 - 不要再跌了… - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 02:00:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=2432250002&PU=1002" target="_blank">個股：華星光(4979)Q3獲利季增77%，EPS 2.28元 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 01:46:16</div><a href="https://www.ttv.com.tw/finance/view/102026150802B2FC890F476F4ABE9B8387A146C6AA8093AD/587" target="_blank">華星光自結9月獲利年增110%，每股賺0.72元 - 台視全球資訊網</a></div></div>
           </details>
         </div>
       </div>
@@ -1801,7 +1801,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 13:53:59</div><a href="https://cmnews.com.tw/article/cmoney-b4aa01ee-c7d6-11f1-91bc-1f80e9143ddf" target="_blank">【00403A】10/14 操作日報｜經理人重手加碼信驊，大砍聯電！ - CMoney投資網誌</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 04:10:44</div><a href="https://cmnews.com.tw/article/forumnews-646c557f-c84e-11f1-8b39-b764fcddd334" target="_blank">通膨升溫重擊台股急殺逾千點！AI伺服器與高價股淪重災區，信驊重挫逾8%-財經焦點情報站 - CMoney投資網誌</a></div></div>
           </details>
         </div>
       </div>
@@ -1889,19 +1889,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
+                <div class="ai-text">股價失守短均與月線，回測季線2416.5元支撐。超趨勢指標看空，MACD呈負值，且量能放大，短線技術面偏弱維持修正格局。</div>
+                <div class="ai-text ai-divider">外資單日重賣逾2.2萬張且持續提款，投信微幅買超支撐有限。大戶持股微降，借券賣出增加，籌碼面受外資棄守壓迫，整體結構偏空。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
+                <div class="ai-text">短線受外資賣壓壓制，建議暫觀望，觀察季線2416.5元能否止跌。未見外資止賣或打底訊號前不宜急於承接，待籌碼沉澱再行布局。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 22:08:53</div><a href="https://www.cmoney.tw/forum/article/185795985" target="_blank">2330 台積電 - 〈美股盤後〉美CPI升溫、AI融資疑慮夾擊費半重摔超4% 台積電ADR跌逾3% - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 21:00:00</div><a href="https://news.pchome.com.tw/finance/nownews/20261015/index-79201160070355207003.html" target="_blank">台積電法說登場！明年營收拚增4成 - PChome Online 新聞</a></div><div class="news-item"><div class="d">2026-10-14 19:47:02</div><a href="https://www.cmoney.tw/forum/article/185795140" target="_blank">2330 台積電 - 台股押寶買盤進場搶短！小摩建議買進12月到期的台積買權價差- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 19:28:21</div><a href="https://www.cmoney.tw/forum/article/185795044" target="_blank">2330 台積電 - Google 推新模型強化「關鍵經濟領域」設計台鏈嗨- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 19:15:00</div><a href="https://tw.news.yahoo.com/asml%E8%A8%82%E5%96%AE%E7%88%86%E6%BB%BF-%E6%8E%92%E5%88%B02030%E5%B9%B4-%E5%8F%B0%E7%A9%8D%E9%9B%BB3%E5%A4%A7%E8%A8%8A%E8%99%9F%E6%9B%9D-191500453.html" target="_blank">ASML訂單爆滿 排到2030年！台積電3大訊號曝 - Yahoo新聞</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 21:00:00</div><a href="https://news.pchome.com.tw/finance/nownews/20261016/index-79209800037053207003.html" target="_blank">台積電法說會重點一次看！德州擴廠有新進展- 財經新聞 - PChome Online 新聞</a></div><div class="news-item"><div class="d">2026-10-15 16:46:48</div><a href="https://www.cmoney.tw/forum/article/185939918" target="_blank">2330 台積電 - 每天至少10通電話追產能！AI大廠搶台積電擴張計畫恐受限- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 16:31:15</div><a href="https://news.cnyes.com/news/id/6631577" target="_blank">每天至少10通電話追產能！AI大廠搶台積電 擴張計畫恐受限 - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-15 15:30:00</div><a href="https://tw.stock.yahoo.com/news/2%E5%A5%88%E7%B1%B3%E7%87%9F%E6%94%B6%E7%AA%81%E7%A0%B48-%E5%8F%B0%E7%A9%8D%E9%9B%BB%E7%AC%AC3%E5%AD%A3eps%E8%A1%9D%E4%B8%8A29-43%E5%85%83-%E7%8D%B2%E5%88%A9%E5%A4%A7%E5%A2%9E%E9%80%BE%E5%85%AD%E6%88%90-%E7%87%9F%E9%81%8B%E8%A1%A8%E7%8F%BE%E5%85%A8%E9%9D%A2%E8%B6%85%E6%A8%99-153000177.html" target="_blank">2奈米營收突破8％！台積電第3季EPS衝上29.43元、獲利大增逾六成 營運表現全面超標 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-15 13:37:21</div><a href="https://tw.news.yahoo.com/%E5%8F%B0%E7%A9%8D%E9%9B%BB%E8%B5%B4%E5%BE%B7%E5%B7%9E%E8%A8%AD%E5%BB%A0%E6%9C%89%E6%9C%9B-%E9%AD%8F%E5%93%B2%E5%AE%B6%E6%B3%95%E8%AA%AA%E6%9C%83%E5%AE%9A%E8%AA%BF-%E5%9C%B0%E9%BB%9E%E8%A9%95%E4%BC%B0%E4%B8%AD-%E7%87%9F%E9%81%8B%E6%AC%8A%E5%BF%85%E9%A0%88%E6%98%AF%E6%88%91%E5%80%91-133721106.html" target="_blank">台積電赴德州設廠有望？魏哲家法說會定調：地點評估中、營運權必須是我們 - Yahoo新聞</a></div></div>
           </details>
         </div>
       </div>
@@ -1989,19 +1989,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">4)日(5)大(6)賣(7)2(8)4(9),(10)4(11)4(12)5(13)張(14)，(15)投(16)信(17)亦(18)轉(19)賣(20)。(21)融(22)資(23)連(24)續(25)5(26)日(27)增(28)加(29)呈(30)現(31)散(32)戶(33)承(34)接(35)，(36)大(37)戶(38)</div>
-                <div class="ai-text ai-divider"></div>
+                <div class="ai-text">股價跌破月線等短均線，MACD柱體偏弱且量能放大，顯示短期修正壓力較大；目前正測試超趨勢線669.85與季線防禦力。</div>
+                <div class="ai-text ai-divider">外資近五日大幅賣超逾2.4萬張，投信今日轉賣，且大戶持股微幅偏減；同步見融資逆勢增加，籌碼流向散戶，短線籌碼面結構較鬆散。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">短線籌碼弱勢且技術面拉回，建議暫不宜接刀。可觀察超趨勢線669.85與季線防守力道，待外資賣壓止歇及技術指標築底後再分批布局。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20261015000348-260206" target="_blank">日月光投控 深耕AI供電 - 中時新聞網</a></div><div class="news-item"><div class="d">2026-10-14 06:53:00</div><a href="https://ww2.money-link.com.tw/RealtimeNews/NewsContent.aspx?sn=2431876002&pu=News_0002_3" target="_blank">個股：日月光投控(3711)旗下8/5～10/14取得朋億*廠務工程，總金額約6.3億元 - 富聯網</a></div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 09:07:41</div><a href="https://finance.technews.tw/2026/10/14/ase-technology-holding-co-ltd-reported-better-than-expected-results-for-the-third-quarter-of-2026/" target="_blank">日月光投控 2026 年第三季優於預期，美銀力挺目標價至 900 元 - TechNews 科技新報</a></div><div class="news-item"><div class="d">2026-10-15 08:55:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6332176001&PU=1002" target="_blank">《半導體》日月光投控子公司斥資3.22億取得一批廠務工程 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 06:30:59</div><a href="https://www.cmoney.tw/forum/article/185862197" target="_blank">3711 日月光投控- 逢低加碼封測龍頭日月光- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 03:02:17</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=75281900&PU=1011" target="_blank">日月光投控 深耕AI供電 [工商時報] - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 00:07:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6331433001&PU=1002" target="_blank">《盤前掃瞄-基本面》日月光投控 深耕AI供電；功率元件廠發功 - 富聯網</a></div></div>
           </details>
         </div>
       </div>
@@ -2089,7 +2089,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text"> 53:且 54:趨 55:於 56:凌 57:亂 58:。 (58)<br>        Change 「偏弱」 to 「顯著偏弱」:<br>        外(1)資(2)近(3)五(4)日(5)呈(6)持(7)續(8)賣(9)超(10)，(11)大(12)戶(13)持(14)股(15)週(16)減(17)；(18)投(19)信(20)雖(21)小(22)幅(23)買(24)超(</div>
+                <div class="ai-text">(16)多(17)方(18)以(19)保(20)守(21)觀(22)望(23)為(24)主(25)。(26)下(27)檔(28)可(29)關(30)注(31)季(32)線(33)支(34)撐(35)力(36)道(37)，(38)未(39)重(40)回(41)月(42)線(43)且(44)外(45)資(46)轉(47)買(48</div>
                 <div class="ai-text ai-divider"></div>
               </div>
               <div class="ai-box oper">
@@ -2101,7 +2101,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 20:01:00</div><a href="https://www.cmoney.tw/forum/article/185905131" target="_blank">3037 欣興- 【00981A】10/15 操作日報｜趁大跌狂掃貨，經理人猛吃PCB族群 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 20:00:04</div><a href="https://www.cmoney.tw/forum/article/185904979" target="_blank">3037 欣興- 跌的時候，不急著攤平；漲的時候，不急著追高。投資是為了更好的... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 17:43:56</div><a href="https://udn.com/news/story/7255/9815060" target="_blank">欣興、富喬 權證選長天期 - UDN</a></div><div class="news-item"><div class="d">2026-10-14 16:41:50</div><a href="https://stock.ltn.com.tw/article/x9aflqr2leuc" target="_blank">焦點股》欣興：出關首日火力全開 8分鐘急拉漲停 - 自由時報</a></div><div class="news-item"><div class="d">2026-10-14 15:00:46</div><a href="https://money.udn.com/money/story/5739/9815060?from=edn_next_story" target="_blank">欣興、富喬 選長天期 - 經濟日報</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:58:09</div><a href="https://www.cmoney.tw/forum/article/185942898" target="_blank">3037 欣興- 欣興、南電、中探針盤後- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 21:53:30</div><a href="https://www.cmoney.tw/forum/article/185941715" target="_blank">3037 欣興- 均線角度看乖離/對比七月初，判短空波段之可能。 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 21:39:02</div><a href="https://www.cmoney.tw/forum/article/185941496" target="_blank">3037 欣興- 英特爾代工傳獲蘋果、輝達等6大廠訂單！KeyBanc看好14A與先進封裝商機- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20261016000387-260206" target="_blank">外資送暖 欣興、南電目標價調升 - 中時新聞網</a></div><div class="news-item"><div class="d">2026-10-15 19:00:00</div><a href="https://www.ctee.com.tw/news/20261016700212-439901" target="_blank">外資送暖欣興、南電目標價調升- 日報 - 工商時報</a></div></div>
           </details>
         </div>
       </div>
@@ -2200,8 +2200,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（4）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 16:40:35</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 16:37:36</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 09:35:21</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 05:04:26</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 02:11:06</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 01:51:04</div><a href="https://www.cmoney.tw/finance/5425/f00025" target="_blank">台半(5425) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2301,7 +2301,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:33:00</div><a href="https://ww2.money-link.com.tw/realtimenews/NewsContent.aspx?SN=6331104001&PU=1002" target="_blank">《台北股市》外資14日賣超股：南亞科、京元電子、台塑化 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-14 17:29:02</div><a href="https://today.line.me/tw/v3/posts/list/article/wJaJjyR" target="_blank">討論牆 | 盤中速報 - 京元電子(2449)大跌7.16%，報266元 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 12:30:00</div><a href="https://tw.yahoo.com/%E9%81%AD%E9%A6%AC%E6%96%AF%E5%85%8B%E9%96%8B%E8%BD%9F-%E4%B8%AD%E5%9C%8B%E6%8A%80%E8%A1%93%E7%AA%81%E7%A0%B4%E5%9A%87%E6%85%98-%E5%B0%8F%E5%85%92%E7%8B%82%E8%B3%A3-%E9%80%99%E6%AA%94%E8%A8%98%E6%86%B6%E9%AB%94-2%E8%90%AC%E5%BC%B5%E6%B7%AA%E8%B3%A3%E8%B6%85%E7%8E%8B-123000274.html" target="_blank">遭馬斯克開轟、中國技術突破嚇慘！小兒狂賣「這檔記憶體」2萬張淪賣超王 輝達砸450億支持京元電子赴美利多也無效 - Yahoo</a></div><div class="news-item"><div class="d">2026-10-14 12:30:00</div><a href="https://tw.stock.yahoo.com/news/%E9%81%AD%E9%A6%AC%E6%96%AF%E5%85%8B%E9%96%8B%E8%BD%9F-%E4%B8%AD%E5%9C%8B%E6%8A%80%E8%A1%93%E7%AA%81%E7%A0%B4%E5%9A%87%E6%85%98-%E5%B0%8F%E5%85%92%E7%8B%82%E8%B3%A3-%E9%80%99%E6%AA%94%E8%A8%98%E6%86%B6%E9%AB%94-2%E8%90%AC%E5%BC%B5%E6%B7%AA%E8%B3%A3%E8%B6%85%E7%8E%8B-123000274.html" target="_blank">遭馬斯克開轟、中國技術突破嚇慘！小兒狂賣「這檔記憶體」2萬張淪賣超王 輝達砸450億支持京元電子赴美利多也無效 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-14 12:30:00</div><a href="https://www.ftnn.com.tw/news/587304" target="_blank">遭馬斯克開轟、中國技術突破嚇慘！小兒狂賣「這檔記憶體」2萬張淪賣超王 輝達砸450億支持京元電子赴美利多也無效 - FTNN 新聞網</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:53:56</div><a href="https://abmedia.io/kyec-nvidia-prepayment-agreement" target="_blank">京元電(2449)獲輝達預付注資協議，加速赴美建置半導體測試產能 - 鏈新聞 ABMedia</a></div><div class="news-item"><div class="d">2026-10-15 13:27:00</div><a href="https://www.cmoney.tw/forum/article/185903533" target="_blank">2303 聯電 - 00994A全面減碼！京元電子直接刪除- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 10:31:31</div><a href="https://www.cmoney.tw/forum/article/185900648" target="_blank">2449 京元電子 - 明日：融資催繳令......急急如律令！！ - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 08:09:46</div><a href="https://www.cmoney.tw/forum/article/185878081" target="_blank">2449 京元電子- 對於阿京後市的看法（缺口世代） - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 05:42:08</div><a href="https://www.cmoney.tw/forum/article/185856639" target="_blank">2449 京元電子- 外資單日賣超創紀錄、空單創紀錄🧨🧨 - 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2400,8 +2400,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 02:36:22</div><a href="https://www.cmoney.tw/forum/article/185655385" target="_blank">2327 國巨* - 3117年程科技，供參考 - 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -2500,8 +2500,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 03:40:47</div><a href="https://www.cmoney.tw/forum/article/185831056" target="_blank">6488 環球晶 - 這種暴跌，折折也救不了 - 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 14:04:04</div><a href="https://www.cmoney.tw/forum/article/185933862" target="_blank">環球晶為何跌不休? - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 10:10:00</div><a href="https://www.ftnn.com.tw/news/587609" target="_blank">矽晶圓遍地皆綠！「三雄」全重挫、環球晶崩9.5%最慘 昇陽半、中砂均收黑、嘉晶跌7.67% - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-10-15 03:11:46</div><a href="https://www.cmoney.tw/forum/article/185968998" target="_blank">6488 環球晶- 【10/16 產業即時新聞】電子上游-晶圓材料族群走跌矽晶圓帶頭修正，盤面聚焦個別題材表現- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2601,7 +2601,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:54:56</div><a href="https://inews.setn.com/news/1922587" target="_blank">高盛點讚大立光 台光學供應鏈21強 - 三立新聞</a></div><div class="news-item"><div class="d">2026-10-14 23:48:45</div><a href="https://inews.setn.com/news/1922587" target="_blank">高盛點讚大立光 台光學供應鏈21強 - 三立新聞</a></div><div class="news-item"><div class="d">2026-10-14 20:44:17</div><a href="https://www.cmoney.tw/forum/article/185911713" target="_blank">3008 大立光 - 明天想再進場 放隔週 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 14:11:21</div><a href="https://www.cmoney.tw/forum/article/185788907" target="_blank">3008 大立光- 【00991A】10/14 操作日報｜動作不大但精準，經理人單獨加碼大立光電- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 13:33:12</div><a href="https://cmnews.com.tw/article/cmoney-cdb0840b-c7d3-11f1-96de-c0c5839ae4a1" target="_blank">【00406A】10/14 操作日報｜經理人爆買大立光近一倍持股 - CMoney投資網誌</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 15:21:45</div><a href="https://www.cmoney.tw/forum/article/185938977" target="_blank">大立光、健鼎 挑逾 90 天 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 15:06:12</div><a href="https://money.udn.com/money/story/5739/9817565" target="_blank">大立光、健鼎 挑逾 90 天 - 經濟日報</a></div><div class="news-item"><div class="d">2026-10-15 15:06:12</div><a href="https://udn.com/news/story/7255/9817565" target="_blank">大立光、健鼎 挑逾90天 - UDN</a></div><div class="news-item"><div class="d">2026-10-15 08:56:38</div><a href="https://cmnews.com.tw/article/cmoney-55275ee0-c876-11f1-b933-9c88458d9a8f" target="_blank">地緣主力悄悄進場、近一季獲利第四的那隻手，至今仍未下車——用4步驟找出大立光的關鍵主力 - CMoney投資網誌</a></div><div class="news-item"><div class="d">2026-10-15 07:43:33</div><a href="https://www.cmoney.tw/forum/article/185873718" target="_blank">3008 大立光 - 明天再跌10%應該可以分批進場做多了 - 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2689,19 +2689,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">分析失敗</div>
-                <div class="ai-text ai-divider">分析失敗</div>
+                <div class="ai-text">配額用完</div>
+                <div class="ai-text ai-divider">配額用完</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">分析失敗</div>
+                <div class="ai-text">配額用完</div>
               </div>
             </div>
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 23:51:18</div><a href="https://www.cmoney.tw/forum/article/185797090" target="_blank">8358 金居 - 2026/10/14 ➡️ 金居籌碼【謹供參考｜部分資訊未顯... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 04:35:01</div><a href="https://www.cmoney.tw/forum/article/185843016" target="_blank">【10/15 產業即時新聞】銅箔族群殺聲隆隆重挫9.32%！金居、榮科遭重手調節面臨沉重賣壓 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 21:04:49</div><a href="https://wantrich.chinatimes.com/news/20261016900001-420101" target="_blank">1表評》台光電、富喬、金居、聯茂...7檔選誰？PCB女王全說了：「2升價、2不推」關鍵曝光- 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-15 16:36:41</div><a href="https://www.cmoney.tw/finance/8358/f00025" target="_blank">金居(8358) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 16:26:47</div><a href="https://www.cmoney.tw/finance/8358/f00025" target="_blank">金居(8358) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 11:15:19</div><a href="https://www.cmoney.tw/finance/8358/f00025" target="_blank">金居(8358) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 02:58:35</div><a href="https://www.cmoney.tw/forum/article/185962945" target="_blank">8358 金居 - 剛剛492加空嘴邱仔太邱了讓他們套久一點 - 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -2801,7 +2801,7 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 20:10:30</div><a href="https://news.pchome.com.tw/finance/idn/20261015/index-79200841467769224003.html" target="_blank">台達電預製型SST直流電力方案建置時間減半- 財經新聞 - PChome Online 新聞</a></div><div class="news-item"><div class="d">2026-10-14 17:50:46</div><a href="https://udn.com/news/story/7252/9815016" target="_blank">台達電搶AI電力革命商機 - UDN</a></div><div class="news-item"><div class="d">2026-10-14 17:43:56</div><a href="https://udn.com/news/story/7255/9814992" target="_blank">期貨商論壇／台達電期動能強| 權證期貨| 股市 - UDN</a></div><div class="news-item"><div class="d">2026-10-14 16:08:01</div><a href="https://money.udn.com/money/story/5710/9815016" target="_blank">台達電搶 AI 電力革命商機 - 經濟日報</a></div><div class="news-item"><div class="d">2026-10-14 16:08:01</div><a href="https://udn.com/news/story/7252/9815016" target="_blank">台達電搶AI電力革命商機 - UDN</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:55:18</div><a href="https://wantrich.chinatimes.com/news/20261016900061-420101" target="_blank">《台北股市》注意股：16日35檔台達電、川湖、緯穎、漢測、立碁等- 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-15 21:39:19</div><a href="https://news.wearn.com/c2126442.html" target="_blank">台達電深化AI供電商機 SOFC明年量產 - 聚財網</a></div><div class="news-item"><div class="d">2026-10-15 21:30:00</div><a href="https://ec.ltn.com.tw/article/paper/1774740" target="_blank">台達電深化AI供電商機 SOFC明年量產 - 自由財經</a></div><div class="news-item"><div class="d">2026-10-15 20:33:32</div><a href="https://stock.ltn.com.tw/article/gtxmhrdrmnhb" target="_blank">台達電深化AI供電商機 SOFC明年量產 - 自由時報</a></div><div class="news-item"><div class="d">2026-10-15 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20261016000464-260206" target="_blank">權證市場焦點－台達電 Q4加速出貨 - 中時新聞網</a></div></div>
           </details>
         </div>
       </div>
@@ -2889,19 +2889,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">(26)觀(27)望(28)，(29)等(30)待(31)股(32)價(33)站(34)回(35)月(36)線(37)並(38)出(39)現(40)打(41)底(42)止(43)跌(44)訊(45)號(46)後(47)，(48)再(49)行(50)評(51)估(52)佈(53)局(54)。(55) -> add 5 chars.<br>            "目前技術面與籌碼面皆呈</div>
-                <div class="ai-text ai-divider"></div>
+                <div class="ai-text">分析失敗</div>
+                <div class="ai-text ai-divider">分析失敗</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text"></div>
+                <div class="ai-text">分析失敗</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 22:04:26</div><a href="https://wantrich.chinatimes.com/news/20261015900002-420101" target="_blank">目標價1表看》台光電、欣興、南電、臻鼎、華通等9檔PCB 法人一口氣全評了：它訂單看到2030年 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-14 22:04:26</div><a href="https://wantrich.chinatimes.com/news/20261015900002-420101" target="_blank">目標價1表看》台光電、欣興、南電、臻鼎、華通等9檔PCB 法人一口氣全評了：它訂單看到2030年 - 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-14 19:40:56</div><a href="https://today.line.me/tw/v3/posts/list/article/pep2a29" target="_blank">討論牆 | 台光電 (2383) 營收與預期雙創高 還有新動能？ - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 12:50:36</div><a href="https://today.line.me/tw/v3/posts/list/article/gzp1M3G" target="_blank">討論牆| CCL三雄誰最會賺？台光電(2383)、台燿(6274)、聯茂(6213) 產品布局、漲價動能全解析 - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-14 11:44:49</div><a href="https://news.cnyes.com/news/print/6630093" target="_blank">台光電(2383)、聯茂(6213)、台燿(6274)CCL三雄擴產盤點！AI高階銅箔基板誰能先放量？ - 鉅亨網</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 21:04:49</div><a href="https://wantrich.chinatimes.com/news/20261016900001-420101" target="_blank">1表評》台光電、富喬、金居、聯茂...7檔選誰？PCB女王全說了：「2升價、2不推」關鍵曝光- 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-15 21:04:42</div><a href="https://wantrich.chinatimes.com/news/20261016900001-420101" target="_blank">1表評》台光電、富喬、金居、聯茂...7檔選誰？PCB女王全說了：「2升價、2不推」關鍵曝光- 上市櫃 - 旺得富理財網</a></div><div class="news-item"><div class="d">2026-10-15 14:46:08</div><a href="https://today.line.me/tw/v3/posts/list/article/l2pMDBB" target="_blank">討論牆 | 台光電(2383) 高階材料布局解析：切入ABF載板CCL，挑戰日系材料供應鏈！ - LINE TODAY</a></div><div class="news-item"><div class="d">2026-10-15 07:50:23</div><a href="https://uanalyze.com.tw/articles/2263057135" target="_blank">台光電(2383) 高階材料布局解析：切入ABF載板CCL，挑戰日系材料供應鏈！ - 優分析UAnalyze</a></div><div class="news-item"><div class="d">2026-10-15 07:16:29</div><a href="https://today.line.me/tw/v3/article/l2pMDBB" target="_blank">台光電(2383) 高階材料布局解析：切入ABF載板CCL，挑戰日系材料供應鏈！ - LINE TODAY</a></div></div>
           </details>
         </div>
       </div>
@@ -3000,8 +3000,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（1）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 10:33:20</div><a href="https://www.cmoney.tw/forum/article/185755822" target="_blank">聖暉*：聖暉系統集成集團訂10/22召開線上法說會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
           </details>
         </div>
       </div>
@@ -3089,19 +3089,19 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
             <div class="ai-grid">
               <div class="ai-box">
                 <div class="ai-head"><span class="ai-mono">AI</span>技術與籌碼分析</div>
-                <div class="ai-text">股價今反彈但仍處於各均線之下，趨勢指標向下且指標柱體呈負值，顯示下行壓力顯著。五日均量擴增，短線於季線附近尋求支撐防線。</div>
-                <div class="ai-text ai-divider">外資持續大幅賣超，集保大戶持股下降且借券增加，顯示法人主力籌碼鬆動。投信小買難抵散戶融資逆勢進場，籌碼結構顯著偏弱觀望。</div>
+                <div class="ai-text">股價雖反彈至4250元，但仍受制於全數均線之下。Supertrend與MACD皆呈偏空訊號，量能放大但未扭轉偏空格局。</div>
+                <div class="ai-text ai-divider">外資持續大幅賣超，借券餘額同步增加，顯示法人偏空意圖；僅投信微幅買超。融資增加且大戶持股降低，籌碼流向散戶、結構零亂。</div>
               </div>
               <div class="ai-box oper">
                 <div class="ai-head"><span class="ai-mono">AI</span>操作建議</div>
-                <div class="ai-text">技術與籌碼均呈偏空態勢，短線反彈切勿盲目追高或急於抄底。建議保持觀望，待外資賣壓宣洩</div>
+                <div class="ai-text">短線呈現技術與籌碼面雙重劣勢，反彈上方壓力沉重。建議多方暫時觀望，切勿急於搶反彈，待外資賣壓沉澱及站穩均線後再行布局。</div>
               </div>
             </div>
           </details>
 
           <details class="news">
             <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 14:00:00</div><a href="https://www.ftnn.com.tw/news/587339" target="_blank">連跌6天重挫13.36%淪弱勢股王！聯發科攜手子公司搶攻AI連網商機WiFi 8、5G FWA新技術齊亮相 - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-10-14 14:00:00</div><a href="https://tw.stock.yahoo.com/news/%E9%80%A3%E8%B7%8C6%E5%A4%A9%E9%87%8D%E6%8C%AB13-36-%E6%B7%AA%E5%BC%B1%E5%8B%A2%E8%82%A1%E7%8E%8B-%E8%81%AF%E7%99%BC%E7%A7%91%E6%94%9C%E6%89%8B%E5%AD%90%E5%85%AC%E5%8F%B8%E6%90%B6%E6%94%BBai%E9%80%A3%E7%B6%B2%E5%95%86%E6%A9%9F-wifi-140000956.html" target="_blank">連跌6天重挫13.36%淪弱勢股王！聯發科攜手子公司搶攻AI連網商機WiFi 8、5G FWA新技術齊亮相 - Yahoo股市</a></div><div class="news-item"><div class="d">2026-10-14 12:30:07</div><a href="https://news.cnyes.com/news/id/6630478" target="_blank">輝達再度出資台廠：預付京元電美國測試產能和認購聯發科ECB有何不同？ - 鉅亨網</a></div><div class="news-item"><div class="d">2026-10-14 12:30:00</div><a href="https://uanalyze.com.tw/articles/3219857042" target="_blank">輝達再度出資台廠：預付京元電美國測試產能 和認購聯發科ECB有何不同？ - 優分析UAnalyze</a></div><div class="news-item"><div class="d">2026-10-14 11:06:00</div><a href="https://stock.ltn.com.tw/article/nbrcxpbu1bhz" target="_blank">焦點股》聯發科：Google TPU雜音不斷！早盤暴跌逾6％回測季線 - 自由時報</a></div></div>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:31:00</div><a href="https://ww2.money-link.com.tw/RealTimeNews/NewsContent.aspx?SN=6332266001&PU=0010" target="_blank">《外資》賣超股：台積電、台塑化、聯發科(2-1) - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 20:10:00</div><a href="https://www.chinatimes.com/newspapers/20261016000461-260206" target="_blank">聯發科、智邦 逢低布局 - 中時新聞網</a></div><div class="news-item"><div class="d">2026-10-15 20:00:57</div><a href="https://www.cmoney.tw/forum/article/186037987" target="_blank">2454 聯發科 - 【00981A】10/16 操作日報｜經理人趁回檔狂加碼AI零組件- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 19:00:00</div><a href="https://www.ctee.com.tw/news/20261016700286-439901" target="_blank">聯發科、智邦逢低布局- 日報 - 工商時報</a></div><div class="news-item"><div class="d">2026-10-15 18:45:37</div><a href="https://today.line.me/tw/v3/article/GgNogn5" target="_blank">資料中心ASIC 成營運新亮點聯發科發掘新客戶| 經濟日報 - LINE TODAY</a></div></div>
           </details>
         </div>
       </div>
@@ -3200,8 +3200,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（3）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class="news-item"><div class="d">2026-10-14 16:02:34</div><a href="https://www.cmoney.tw/forum/article/185793191" target="_blank">3481 群創 - 有空大家可以去聽一下 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-14 04:25:00</div><a href="https://www.ftnn.com.tw/news/587157" target="_blank">面板大復活！「面板三雄」群創狂炸6.1萬張翻紅、友達、彩晶漲逾3% 台表科、銘旺科漲停、新門漲6% - FTNN 新聞網</a></div><div class="news-item"><div class="d">2026-10-14 03:56:40</div><a href="https://www.cmoney.tw/forum/article/185670516" target="_blank">3481 群創- 第三代(類)半導體…… - 股市爆料同學會 - CMoney</a></div></div>
+            <summary><span>近期相關新聞（5）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:34:00</div><a href="https://ww2.money-link.com.tw/RealTimeNews/NewsContent.aspx?SN=6332281001&PU=0010" target="_blank">《台北股市》三大法人15日賣超股：力積電、台塑、群創 - 富聯網</a></div><div class="news-item"><div class="d">2026-10-15 22:19:17</div><a href="https://www.cmoney.tw/forum/article/186056347" target="_blank">3481 群創 - 【群創(3481)盤後解析】量縮止跌，外資賣壓未減 群創今... - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 11:13:08</div><a href="https://www.cmoney.tw/forum/article/185906969" target="_blank">3481 群創- 【金包銀之群創：面板大廠爆量拉回，多空對決蓄勢待發】 - 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 10:48:13</div><a href="https://www.cmoney.tw/forum/article/185903114" target="_blank">3481 群創- 楊振宇：人類應堅守善意、擁抱共生，避免重複歷史悲劇- 股市爆料同學會 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 08:22:46</div><a href="https://www.cmoney.tw/forum/article/185880153" target="_blank">3481 群創- 趁今天大跌把六日的先買一買- 股市爆料同學會 - CMoney</a></div></div>
           </details>
         </div>
       </div>
@@ -3300,8 +3300,8 @@ body{font-family:var(--sans);color:var(--ink);line-height:1.5;padding:20px;min-h
           </details>
 
           <details class="news">
-            <summary><span>近期相關新聞（0）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
-            <div class="news-list"><div class='news-item' style='color:var(--ink-3);'>近期無相關新聞</div></div>
+            <summary><span>近期相關新聞（2）</span><span style="font-size:11.5px;color:var(--ink-3);font-weight:500">▾</span></summary>
+            <div class="news-list"><div class="news-item"><div class="d">2026-10-15 23:27:34</div><a href="https://www.cmoney.tw/finance/6753/f00025" target="_blank">龍德造船(6753) 個股概覽 | 個股 - 股市 - CMoney</a></div><div class="news-item"><div class="d">2026-10-15 13:14:38</div><a href="https://www.cmoney.tw/finance/6753/f00025" target="_blank">龍德造船(6753) 個股概覽 | 個股 - 股市 - CMoney</a></div></div>
           </details>
         </div>
       </div>
