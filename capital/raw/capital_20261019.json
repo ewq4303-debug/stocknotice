@@ -1,0 +1,550 @@
+{
+  "generated_at": "2026-10-19T16:20:06",
+  "skcom_dll": "C:\\SKCOM\\x64\\SKCOM.dll",
+  "accounts": [
+    {
+      "market": "OS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "OSn_d7f8bd44",
+      "full_account": "OS_4fa5a681"
+    },
+    {
+      "market": "",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "XXn_cea777ba",
+      "full_account": "XX_461bb16b"
+    },
+    {
+      "market": "TS",
+      "broker_id": "918B",
+      "branch": "",
+      "account": "TSn_ed837618",
+      "full_account": "TS_55977ef5"
+    },
+    {
+      "market": "TF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    },
+    {
+      "market": "OF",
+      "broker_id": "F020000",
+      "branch": "B09",
+      "account": "TFn_f321c09b",
+      "full_account": "TF_52f92b59"
+    }
+  ],
+  "stock_inventory": [
+    {
+      "stock_no": "00735",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "1750",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "1750",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "1750",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "00947",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "7500",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "7500",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "7500",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "2059",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "1",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "1",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "1",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "2308",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "10",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "10",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "10",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "2330",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "90",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "90",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "90",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3008",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "5",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "5",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "5",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3037",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "165",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "165",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "165",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3189",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "85",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "85",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "85",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3491",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "20",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "20",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "20",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "3711",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "460",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "460",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "460",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "4573",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "35",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "35",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "35",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "5274",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "2",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "2",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "2",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    },
+    {
+      "stock_no": "5536",
+      "inv_type": "T",
+      "margin_quota_orig": "0",
+      "margin_quota_avail": "0",
+      "short_quota_orig": "0",
+      "short_quota_avail": "0",
+      "qty_yesterday": "30",
+      "today_bid": "0",
+      "today_ask": "0",
+      "today_buy_filled": "0",
+      "today_sell_filled": "0",
+      "sellable_or_coverable": "30",
+      "margin_offset_qty": "0",
+      "short_offset_qty": "0",
+      "realtime_qty": "30",
+      "ignore_X": "0",
+      "realtime_maintenance_ratio": "",
+      "login_id": "LOGIN_ID",
+      "account_no": "TS_55977ef5"
+    }
+  ],
+  "futures_open_interest": [
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "PBF10",
+      "bs": "B",
+      "oi_qty": "2",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "1190.00",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "PUF11",
+      "bs": "B",
+      "oi_qty": "1",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "4980.00",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "QEF10",
+      "bs": "B",
+      "oi_qty": "3",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "636.33",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "TM10",
+      "bs": "B",
+      "oi_qty": "3",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "48068.33",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    },
+    {
+      "market": "TF",
+      "account": "TF_52f92b59",
+      "product": "TM11",
+      "bs": "B",
+      "oi_qty": "3",
+      "daytrade_oi_qty": "0",
+      "avg_cost": "47360.66",
+      "fee_per_lot": "",
+      "tax_bp": "",
+      "login_id": "LOGIN_ID"
+    }
+  ],
+  "futures_rights": [
+    {
+      "balance": "708096",
+      "floating_pl": "-228550",
+      "realized_fee": "0",
+      "tax": "0",
+      "premium_withheld": "0",
+      "premium_paid": "0",
+      "equity": "479546",
+      "excess_margin": "114860",
+      "deposit_withdraw": "0",
+      "buy_market_value": "0",
+      "sell_market_value": "0",
+      "futures_closed_pl": "0",
+      "intraday_unrealized": "0",
+      "initial_margin": "364686",
+      "maintenance_margin": "279801",
+      "position_initial_margin": "364686",
+      "position_maintenance_margin": "279801",
+      "order_margin": "0",
+      "excess_best_margin": "114860",
+      "option_total_value": "479546",
+      "fee_withheld": "0",
+      "initial_margin_2": "0",
+      "yesterday_balance": "708096",
+      "option_combo_extra_margin": "",
+      "maintenance_ratio": "131",
+      "currency": "NTD",
+      "full_initial_margin": "364686",
+      "full_maintenance_margin": "279801",
+      "full_available": "114860",
+      "collateral_amount": "0",
+      "securities_available": "0",
+      "available_balance": "114860",
+      "full_cash_available": "114860",
+      "securities_value": "0",
+      "risk_index": "135",
+      "option_expiry_diff": "0",
+      "option_expiry_loss": "0",
+      "futures_expiry_pl": "0",
+      "extra_margin": "0",
+      "login_id": "LOGIN_ID",
+      "account_no": "TF_52f92b59"
+    }
+  ],
+  "bank_balance": {
+    "status": "ok",
+    "has_account_link": true,
+    "balance": "51086",
+    "withdrawable": "33041",
+    "today_buyable": "33041"
+  },
+  "t3_settlement": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "currencies": [
+        {
+          "currency": "臺幣",
+          "T": {
+            "trade_date": "1151019",
+            "settle_date": "1151021",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1151016",
+            "settle_date": "1151020",
+            "amount": -18045
+          },
+          "T2": {
+            "trade_date": "1151015",
+            "settle_date": "1151019",
+            "amount": -29209
+          }
+        },
+        {
+          "currency": "人民幣",
+          "T": {
+            "trade_date": "1151019",
+            "settle_date": "1151021",
+            "amount": 0
+          },
+          "T1": {
+            "trade_date": "1151016",
+            "settle_date": "1151020",
+            "amount": 0
+          },
+          "T2": {
+            "trade_date": "1151015",
+            "settle_date": "1151019",
+            "amount": 0
+          }
+        }
+      ]
+    }
+  },
+  "ipa_block": {
+    "TS_55977ef5": {
+      "status": "ok",
+      "blockable": "33041",
+      "blocked": "0",
+      "ordered": "0"
+    }
+  },
+  "order_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "no_data",
+      "rows": []
+    }
+  },
+  "fulfill_report": {
+    "TS_55977ef5": {
+      "status": "no_data",
+      "rows": []
+    },
+    "TF_52f92b59": {
+      "status": "no_data",
+      "rows": []
+    }
+  },
+  "raw": {
+    "order_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "M003"
+    },
+    "fulfill_report": {
+      "TS_55977ef5": "M003",
+      "TF_52f92b59": "M003"
+    },
+    "bank_balance": "true,51086,33041,33041.",
+    "t3_settlement": {
+      "TS_55977ef5": "1151019,1151021,0,1151016,1151020,-18045,1151015,1151019,-29209,臺幣;1151019,1151021,0,1151016,1151020,0,1151015,1151019,0,人民幣;"
+    },
+    "ipa_block": {
+      "TS_55977ef5": "33041,0,0#"
+    },
+    "stock_inventory": {
+      "TS_55977ef5": [
+        "00735,T,0,0,0,0,1750,0,0,0,0,1750,0,0,1750,0,,LOGIN_ID,TS_55977ef5",
+        "00947,T,0,0,0,0,7500,0,0,0,0,7500,0,0,7500,0,,LOGIN_ID,TS_55977ef5",
+        "2059,T,0,0,0,0,1,0,0,0,0,1,0,0,1,0,,LOGIN_ID,TS_55977ef5",
+        "2308,T,0,0,0,0,10,0,0,0,0,10,0,0,10,0,,LOGIN_ID,TS_55977ef5",
+        "2330,T,0,0,0,0,90,0,0,0,0,90,0,0,90,0,,LOGIN_ID,TS_55977ef5",
+        "3008,T,0,0,0,0,5,0,0,0,0,5,0,0,5,0,,LOGIN_ID,TS_55977ef5",
+        "3037,T,0,0,0,0,165,0,0,0,0,165,0,0,165,0,,LOGIN_ID,TS_55977ef5",
+        "3189,T,0,0,0,0,85,0,0,0,0,85,0,0,85,0,,LOGIN_ID,TS_55977ef5",
+        "3491,T,0,0,0,0,20,0,0,0,0,20,0,0,20,0,,LOGIN_ID,TS_55977ef5",
+        "3711,T,0,0,0,0,460,0,0,0,0,460,0,0,460,0,,LOGIN_ID,TS_55977ef5",
+        "4573,T,0,0,0,0,35,0,0,0,0,35,0,0,35,0,,LOGIN_ID,TS_55977ef5",
+        "5274,T,0,0,0,0,2,0,0,0,0,2,0,0,2,0,,LOGIN_ID,TS_55977ef5",
+        "5536,T,0,0,0,0,30,0,0,0,0,30,0,0,30,0,,LOGIN_ID,TS_55977ef5"
+      ]
+    },
+    "futures_open_interest": {
+      "TF_52f92b59": [
+        "TF,TF_52f92b59,PBF10,B,2,0,1190.00,,,LOGIN_ID",
+        "TF,TF_52f92b59,PUF11,B,1,0,4980.00,,,LOGIN_ID",
+        "TF,TF_52f92b59,QEF10,B,3,0,636.33,,,LOGIN_ID",
+        "TF,TF_52f92b59,TM10,B,3,0,48068.33,,,LOGIN_ID",
+        "TF,TF_52f92b59,TM11,B,3,0,47360.66,,,LOGIN_ID"
+      ]
+    },
+    "futures_rights": {
+      "TF_52f92b59": [
+        "708096,-228550,0,0,0,0,479546,114860,0,0,0,0,0,364686,279801,364686,279801,0,114860,479546,0,0,708096,,131,NTD,364686,279801,114860,0,0,114860,114860,0,135,0,0,0,0,LOGIN_ID,TF_52f92b59"
+      ]
+    }
+  },
+  "redacted": true
+}
