@@ -9,25 +9,25 @@
     "equity_partial": true
   },
   "leverage": {
-    "gross_notional": 1428416,
-    "net_notional": 1428416,
-    "nlr_gross": 1.7105,
-    "nlr_net": 1.7105,
+    "gross_notional": 1470366,
+    "net_notional": 1470366,
+    "nlr_gross": 1.7607,
+    "nlr_net": 1.7607,
     "verdict": "OK"
   },
   "stress": [
     {
       "shock": -0.1,
-      "dpnl_total": -108985,
-      "dpnl_pct_equity": -0.1305,
-      "futures_equity_after": 739808,
+      "dpnl_total": -113180,
+      "dpnl_pct_equity": -0.1355,
+      "futures_equity_after": 736363,
       "verdict": "SAFE"
     },
     {
       "shock": -0.2,
-      "dpnl_total": -217969,
-      "dpnl_pct_equity": -0.261,
-      "futures_equity_after": 644534,
+      "dpnl_total": -226359,
+      "dpnl_pct_equity": -0.2711,
+      "futures_equity_after": 637644,
       "verdict": "SAFE"
     }
   ],
@@ -37,11 +37,11 @@
       "name": "南亞科期",
       "asset_type": "futures",
       "kind": "standard",
-      "signed_notional": 529000,
-      "price": 264.5,
+      "signed_notional": 562000,
+      "price": 281.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -105800
+      "dpnl_at_-20pct": -112400
     },
     {
       "symbol": "TXF",
@@ -58,29 +58,29 @@
       "symbol": "3711",
       "name": "日月光投控",
       "asset_type": "spot",
-      "signed_notional": 137100,
-      "price": 457.0,
+      "signed_notional": 144600,
+      "price": 482.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -27420
+      "dpnl_at_-20pct": -28920
     },
     {
       "symbol": "3034",
       "name": "小聯發科",
       "asset_type": "futures",
       "kind": "mini",
-      "signed_notional": 41650,
-      "price": 416.5,
+      "signed_notional": 43100,
+      "price": 431.0,
       "beta": 1.0,
       "beta_source": "member_default",
-      "dpnl_at_-20pct": -8330
+      "dpnl_at_-20pct": -8620
     },
     {
       "symbol": "6510",
       "name": "精測",
       "asset_type": "spot",
       "signed_notional": 0,
-      "price": 2365.0,
+      "price": 2255.0,
       "beta": 1.0,
       "beta_source": "member_default",
       "dpnl_at_-20pct": 0
